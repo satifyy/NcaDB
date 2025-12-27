@@ -1,0 +1,1 @@
+{"version":3,"file":"game_adapter.d.ts","sourceRoot":"","sources":["../src/game_adapter.ts"],"names":[],"mappings":"AAGA,OAAO,EAAE,IAAI,EAAE,MAAM,cAAc,CAAC;AAGpC,qBAAa,kBAAkB;IAC3B,OAAO,CAAC,OAAO,CAAS;gBAEZ,OAAO,EAAE,MAAM;IAIrB,SAAS,CAAC,KAAK,EAAE,IAAI,EAAE,EAAE,MAAM,EAAE,MAAM,GAAG,OAAO,CAAC,IAAI,CAAC;IAmD7D,OAAO,CAAC,SAAS;CAOpB"}

@@ -1,0 +1,88 @@
+{
+    "BC": [
+        "BC",
+        "Boston College",
+        "Boston College Eagles"
+    ],
+    "CAL": [
+        "Cal",
+        "California",
+        "California Golden Bears",
+        "University of California"
+    ],
+    "CLEMSON": [
+        "Clemson",
+        "Clemson University",
+        "Clemson Tigers"
+    ],
+    "DUKE": [
+        "Duke",
+        "Duke University",
+        "Duke Blue Devils"
+    ],
+    "LOUISVILLE": [
+        "Louisville",
+        "U of L",
+        "Louisville Cardinals",
+        "University of Louisville"
+    ],
+    "NC_STATE": [
+        "NC State",
+        "NCSU",
+        "North Carolina State",
+        "NC State Wolfpack"
+    ],
+    "NOTRE_DAME": [
+        "Notre Dame",
+        "ND",
+        "Notre Dame Fighting Irish",
+        "University of Notre Dame"
+    ],
+    "PITT": [
+        "Pitt",
+        "Pittsburgh",
+        "University of Pittsburgh",
+        "Pittsburgh Panthers"
+    ],
+    "SMU": [
+        "SMU",
+        "Southern Methodist",
+        "Southern Methodist University",
+        "SMU Mustangs"
+    ],
+    "STANFORD": [
+        "Stanford",
+        "Stanford Cardinal",
+        "Stanford University"
+    ],
+    "SYRACUSE": [
+        "Syracuse",
+        "Cuse",
+        "Syracuse Orange",
+        "Syracuse University"
+    ],
+    "UNC": [
+        "UNC",
+        "North Carolina",
+        "Tar Heels",
+        "North Carolina Tar Heels",
+        "University of North Carolina"
+    ],
+    "UVA": [
+        "UVA",
+        "Virginia",
+        "Virginia Cavaliers",
+        "University of Virginia"
+    ],
+    "VT": [
+        "VT",
+        "Virginia Tech",
+        "Va Tech",
+        "Virginia Tech Hokies"
+    ],
+    "WAKE_FOREST": [
+        "Wake Forest",
+        "Wake",
+        "Wake Forest Demon Deacons"
+    ]
+}

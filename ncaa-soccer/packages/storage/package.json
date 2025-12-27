@@ -1,0 +1,17 @@
+{
+    "name": "@ncaa/storage",
+    "version": "0.0.0",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "build": "tsc"
+    },
+    "dependencies": {
+        "@ncaa/shared": "*",
+        "csv-parse": "^6.1.0",
+        "csv-stringify": "^6.6.0"
+    },
+    "devDependencies": {
+        "typescript": "^5.0.0"
+    }
+}

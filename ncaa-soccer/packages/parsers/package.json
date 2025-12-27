@@ -1,0 +1,16 @@
+{
+    "name": "@ncaa/parsers",
+    "version": "0.0.0",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "build": "tsc"
+    },
+    "dependencies": {
+        "@ncaa/shared": "*",
+        "cheerio": "^1.1.2"
+    },
+    "devDependencies": {
+        "typescript": "^5.0.0"
+    }
+}

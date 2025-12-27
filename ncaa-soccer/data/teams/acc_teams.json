@@ -1,0 +1,208 @@
+[
+    {
+        "team_id": "BC",
+        "name_canonical": "Boston College",
+        "conference": "ACC",
+        "sport": "msoc",
+        "schedule_url": "https://bceagles.com/sports/mens-soccer/schedule/2024",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "BC",
+            "Boston College Eagles"
+        ]
+    },
+    {
+        "team_id": "CAL",
+        "name_canonical": "California",
+        "conference": "ACC",
+        "sport": "msoc",
+        "schedule_url": "https://calbears.com/sports/mens-soccer/schedule/2024",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Cal",
+            "California Golden Bears",
+            "University of California"
+        ]
+    },
+    {
+        "team_id": "CLEMSON",
+        "name_canonical": "Clemson",
+        "conference": "ACC",
+        "sport": "msoc",
+        "schedule_url": "https://clemsontigers.com/sports/mens-soccer/schedule/",
+        "platform_guess": "wmt",
+        "parser_key": "wmt_std",
+        "aliases": [
+            "Clemson University",
+            "Clemson Tigers"
+        ]
+    },
+    {
+        "team_id": "DUKE",
+        "name_canonical": "Duke",
+        "conference": "ACC",
+        "sport": "msoc",
+        "schedule_url": "https://goduke.com/sports/mens-soccer/schedule/2024",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Duke University",
+            "Duke Blue Devils"
+        ]
+    },
+    {
+        "team_id": "LOUISVILLE",
+        "name_canonical": "Louisville",
+        "conference": "ACC",
+        "sport": "msoc",
+        "schedule_url": "https://gocards.com/sports/mens-soccer/schedule/2024",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "U of L",
+            "Louisville Cardinals",
+            "University of Louisville"
+        ]
+    },
+    {
+        "team_id": "NC_STATE",
+        "name_canonical": "NC State",
+        "conference": "ACC",
+        "sport": "msoc",
+        "schedule_url": "https://gopack.com/sports/mens-soccer/schedule/2024",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "NCSU",
+            "North Carolina State",
+            "NC State Wolfpack"
+        ]
+    },
+    {
+        "team_id": "NOTRE_DAME",
+        "name_canonical": "Notre Dame",
+        "conference": "ACC",
+        "sport": "msoc",
+        "schedule_url": "https://fightingirish.com/sports/mens-soccer/schedule/",
+        "platform_guess": "wmt",
+        "parser_key": "wmt_std",
+        "aliases": [
+            "ND",
+            "Notre Dame Fighting Irish",
+            "University of Notre Dame"
+        ]
+    },
+    {
+        "team_id": "PITT",
+        "name_canonical": "Pittsburgh",
+        "conference": "ACC",
+        "sport": "msoc",
+        "schedule_url": "https://pittsburghpanthers.com/sports/mens-soccer/schedule/2024",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Pitt",
+            "University of Pittsburgh",
+            "Pittsburgh Panthers"
+        ]
+    },
+    {
+        "team_id": "SMU",
+        "name_canonical": "SMU",
+        "conference": "ACC",
+        "sport": "msoc",
+        "schedule_url": "https://smumustangs.com/sports/mens-soccer/schedule/2024",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Southern Methodist",
+            "Southern Methodist University",
+            "SMU Mustangs"
+        ]
+    },
+    {
+        "team_id": "STANFORD",
+        "name_canonical": "Stanford",
+        "conference": "ACC",
+        "sport": "msoc",
+        "schedule_url": "https://gostanford.com/sports/mens-soccer/schedule/2024",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Stanford Cardinal",
+            "Stanford University"
+        ]
+    },
+    {
+        "team_id": "SYRACUSE",
+        "name_canonical": "Syracuse",
+        "conference": "ACC",
+        "sport": "msoc",
+        "schedule_url": "https://cuse.com/sports/mens-soccer/schedule/2024",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Cuse",
+            "Syracuse Orange",
+            "Syracuse University"
+        ]
+    },
+    {
+        "team_id": "UNC",
+        "name_canonical": "North Carolina",
+        "conference": "ACC",
+        "sport": "msoc",
+        "schedule_url": "https://goheels.com/sports/mens-soccer/schedule/2024",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "UNC",
+            "Tar Heels",
+            "North Carolina Tar Heels",
+            "University of North Carolina"
+        ]
+    },
+    {
+        "team_id": "UVA",
+        "name_canonical": "Virginia",
+        "conference": "ACC",
+        "sport": "msoc",
+        "schedule_url": "https://virginia.prestosports.com/sports/msoc/2024-25/schedule",
+        "platform_guess": "presto",
+        "parser_key": "presto_std",
+        "aliases": [
+            "UVA",
+            "Virginia Cavaliers",
+            "University of Virginia"
+        ]
+    },
+    {
+        "team_id": "VT",
+        "name_canonical": "Virginia Tech",
+        "conference": "ACC",
+        "sport": "msoc",
+        "schedule_url": "https://hokiesports.com/sports/mens-soccer/schedule/2024",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "VT",
+            "Va Tech",
+            "Virginia Tech Hokies"
+        ]
+    },
+    {
+        "team_id": "WAKE_FOREST",
+        "name_canonical": "Wake Forest",
+        "conference": "ACC",
+        "sport": "msoc",
+        "schedule_url": "https://godeacs.com/sports/mens-soccer/schedule/2024",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Wake",
+            "Wake Forest Demon Deacons"
+        ]
+    }
+]

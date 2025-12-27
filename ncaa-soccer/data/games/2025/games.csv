@@ -1,0 +1,161 @@
+game_id,date,home_team_name,away_team_name,home_score,away_score,location_type,status,schedule_url,boxscore_url,dedupe_key
+sidearm-html-2025-08-10-Campbell-(Exhibition),2025-08-10,UNC,Campbell (Exhibition),,,home,scheduled,,,2025-08-10-UNC-Campbell (Exhibition)
+sidearm-html-2025-08-16-UNCW-(Exhibition),2025-08-16,UNCW (Exhibition),UNC,,,away,scheduled,,,2025-08-16-UNCW (Exhibition)-UNC
+sidearm-html-2025-08-22-UAB,2025-08-22,UAB,UNC,,,away,final,,,2025-08-22-UAB-UNC
+sidearm-html-2025-08-25-California-Baptist,2025-08-25,UNC,California Baptist,,,home,final,,,2025-08-25-UNC-California Baptist
+sidearm-html-2025-08-29-FIU,2025-08-29,UNC,FIU,,,home,final,,,2025-08-29-UNC-FIU
+sidearm-html-2025-09-02-ETSU,2025-09-02,UNC,ETSU,,,home,final,,,2025-09-02-UNC-ETSU
+sidearm-html-2025-09-06-St.-John's,2025-09-06,UNC,St. John's,,,home,final,,,2025-09-06-UNC-St. John's
+sidearm-html-2025-09-13-Duke,2025-09-13,Duke,UNC,,,away,final,,,2025-09-13-Duke-UNC
+sidearm-html-2025-09-20-NC-State,2025-09-20,UNC,NC State,,,home,final,,,2025-09-20-UNC-NC State
+sidearm-html-2025-09-24-Mercer,2025-09-24,UNC,Mercer,,,home,final,,,2025-09-24-UNC-Mercer
+sidearm-html-2025-09-28-California,2025-09-28,UNC,California,,,home,final,,,2025-09-28-UNC-California
+sidearm-html-2025-10-04-Clemson,2025-10-04,Clemson,UNC,,,away,final,,,2025-10-04-Clemson-UNC
+sidearm-html-2025-10-08-College-of-Charleston,2025-10-08,UNC,College of Charleston,,,home,final,,,2025-10-08-UNC-College of Charleston
+sidearm-html-2025-10-11-Notre-Dame,2025-10-11,Notre Dame,UNC,,,away,final,,,2025-10-11-Notre Dame-UNC
+sidearm-html-2025-10-15-William-&-Mary,2025-10-15,William & Mary,UNC,,,away,final,,,2025-10-15-William & Mary-UNC
+sidearm-html-2025-10-19-Pitt,2025-10-19,UNC,Pitt,,,home,final,,,2025-10-19-UNC-Pitt
+sidearm-html-2025-10-27-Stanford,2025-10-27,Stanford,UNC,,,away,final,,,2025-10-27-Stanford-UNC
+sidearm-html-2025-11-01-Boston-College,2025-11-01,UNC,Boston College,,,home,final,,,2025-11-01-UNC-Boston College
+sidearm-html-2025-11-06-California,2025-11-06,UNC,California,,,home,final,,,2025-11-06-UNC-California
+sidearm-html-2025-11-21-Furman,2025-11-21,UNC,Furman,,,home,final,,,2025-11-21-UNC-Furman
+sidearm-html-2025-08-10-Campbell-(Exhibition),2025-08-10,UNC,Campbell (Exhibition),,,home,scheduled,,,2025-08-10-UNC-Campbell (Exhibition)
+sidearm-html-2025-08-16-UNCW-(Exhibition),2025-08-16,UNCW (Exhibition),UNC,,,away,scheduled,,,2025-08-16-UNCW (Exhibition)-UNC
+sidearm-html-2025-08-22-UAB,2025-08-22,UAB,UNC,,,away,final,,,2025-08-22-UAB-UNC
+sidearm-html-2025-08-25-California-Baptist,2025-08-25,UNC,California Baptist,,,home,final,,,2025-08-25-UNC-California Baptist
+sidearm-html-2025-08-29-FIU,2025-08-29,UNC,FIU,,,home,final,,,2025-08-29-UNC-FIU
+sidearm-html-2025-09-02-ETSU,2025-09-02,UNC,ETSU,,,home,final,,,2025-09-02-UNC-ETSU
+sidearm-html-2025-09-06-St.-John's,2025-09-06,UNC,St. John's,,,home,final,,,2025-09-06-UNC-St. John's
+sidearm-html-2025-09-13-Duke,2025-09-13,Duke,UNC,,,away,final,,,2025-09-13-Duke-UNC
+sidearm-html-2025-09-20-NC-State,2025-09-20,UNC,NC State,,,home,final,,,2025-09-20-UNC-NC State
+sidearm-html-2025-09-24-Mercer,2025-09-24,UNC,Mercer,,,home,final,,,2025-09-24-UNC-Mercer
+sidearm-html-2025-09-28-California,2025-09-28,UNC,California,,,home,final,,,2025-09-28-UNC-California
+sidearm-html-2025-10-04-Clemson,2025-10-04,Clemson,UNC,,,away,final,,,2025-10-04-Clemson-UNC
+sidearm-html-2025-10-08-College-of-Charleston,2025-10-08,UNC,College of Charleston,,,home,final,,,2025-10-08-UNC-College of Charleston
+sidearm-html-2025-10-11-Notre-Dame,2025-10-11,Notre Dame,UNC,,,away,final,,,2025-10-11-Notre Dame-UNC
+sidearm-html-2025-10-15-William-&-Mary,2025-10-15,William & Mary,UNC,,,away,final,,,2025-10-15-William & Mary-UNC
+sidearm-html-2025-10-19-Pitt,2025-10-19,UNC,Pitt,,,home,final,,,2025-10-19-UNC-Pitt
+sidearm-html-2025-10-27-Stanford,2025-10-27,Stanford,UNC,,,away,final,,,2025-10-27-Stanford-UNC
+sidearm-html-2025-11-01-Boston-College,2025-11-01,UNC,Boston College,,,home,final,,,2025-11-01-UNC-Boston College
+sidearm-html-2025-11-06-California,2025-11-06,UNC,California,,,home,final,,,2025-11-06-UNC-California
+sidearm-html-2025-11-21-Furman,2025-11-21,UNC,Furman,,,home,final,,,2025-11-21-UNC-Furman
+sidearm-html-2025-08-10-Campbell-(Exhibition),2025-08-10,UNC,Campbell (Exhibition),,,home,scheduled,,,2025-08-10-UNC-Campbell (Exhibition)
+sidearm-html-2025-08-16-UNCW-(Exhibition),2025-08-16,UNCW (Exhibition),UNC,,,away,scheduled,,,2025-08-16-UNCW (Exhibition)-UNC
+sidearm-html-2025-08-22-UAB,2025-08-22,UAB,UNC,,,away,final,,,2025-08-22-UAB-UNC
+sidearm-html-2025-08-25-California-Baptist,2025-08-25,UNC,California Baptist,,,home,final,,,2025-08-25-UNC-California Baptist
+sidearm-html-2025-08-29-FIU,2025-08-29,UNC,FIU,,,home,final,,,2025-08-29-UNC-FIU
+sidearm-html-2025-09-02-ETSU,2025-09-02,UNC,ETSU,,,home,final,,,2025-09-02-UNC-ETSU
+sidearm-html-2025-09-06-St.-John's,2025-09-06,UNC,St. John's,,,home,final,,,2025-09-06-UNC-St. John's
+sidearm-html-2025-09-13-Duke,2025-09-13,Duke,UNC,,,away,final,,,2025-09-13-Duke-UNC
+sidearm-html-2025-09-20-NC-State,2025-09-20,UNC,NC State,,,home,final,,,2025-09-20-UNC-NC State
+sidearm-html-2025-09-24-Mercer,2025-09-24,UNC,Mercer,,,home,final,,,2025-09-24-UNC-Mercer
+sidearm-html-2025-09-28-California,2025-09-28,UNC,California,,,home,final,,,2025-09-28-UNC-California
+sidearm-html-2025-10-04-Clemson,2025-10-04,Clemson,UNC,,,away,final,,,2025-10-04-Clemson-UNC
+sidearm-html-2025-10-08-College-of-Charleston,2025-10-08,UNC,College of Charleston,,,home,final,,,2025-10-08-UNC-College of Charleston
+sidearm-html-2025-10-11-Notre-Dame,2025-10-11,Notre Dame,UNC,,,away,final,,,2025-10-11-Notre Dame-UNC
+sidearm-html-2025-10-15-William-&-Mary,2025-10-15,William & Mary,UNC,,,away,final,,,2025-10-15-William & Mary-UNC
+sidearm-html-2025-10-19-Pitt,2025-10-19,UNC,Pitt,,,home,final,,,2025-10-19-UNC-Pitt
+sidearm-html-2025-10-27-Stanford,2025-10-27,Stanford,UNC,,,away,final,,,2025-10-27-Stanford-UNC
+sidearm-html-2025-11-01-Boston-College,2025-11-01,UNC,Boston College,,,home,final,,,2025-11-01-UNC-Boston College
+sidearm-html-2025-11-06-California,2025-11-06,UNC,California,,,home,final,,,2025-11-06-UNC-California
+sidearm-html-2025-11-21-Furman,2025-11-21,UNC,Furman,,,home,final,,,2025-11-21-UNC-Furman
+sidearm-html-2025-08-10-Campbell-(Exhibition),2025-08-10,UNC,Campbell (Exhibition),,,home,scheduled,,,2025-08-10-UNC-Campbell (Exhibition)
+sidearm-html-2025-08-16-UNCW-(Exhibition),2025-08-16,UNCW (Exhibition),UNC,,,away,scheduled,,,2025-08-16-UNCW (Exhibition)-UNC
+sidearm-html-2025-08-22-UAB,2025-08-22,UAB,UNC,,,away,final,,,2025-08-22-UAB-UNC
+sidearm-html-2025-08-25-California-Baptist,2025-08-25,UNC,California Baptist,,,home,final,,,2025-08-25-UNC-California Baptist
+sidearm-html-2025-08-29-FIU,2025-08-29,UNC,FIU,,,home,final,,,2025-08-29-UNC-FIU
+sidearm-html-2025-09-02-ETSU,2025-09-02,UNC,ETSU,,,home,final,,,2025-09-02-UNC-ETSU
+sidearm-html-2025-09-06-St.-John's,2025-09-06,UNC,St. John's,,,home,final,,,2025-09-06-UNC-St. John's
+sidearm-html-2025-09-13-Duke,2025-09-13,Duke,UNC,,,away,final,,,2025-09-13-Duke-UNC
+sidearm-html-2025-09-20-NC-State,2025-09-20,UNC,NC State,,,home,final,,,2025-09-20-UNC-NC State
+sidearm-html-2025-09-24-Mercer,2025-09-24,UNC,Mercer,,,home,final,,,2025-09-24-UNC-Mercer
+sidearm-html-2025-09-28-California,2025-09-28,UNC,California,,,home,final,,,2025-09-28-UNC-California
+sidearm-html-2025-10-04-Clemson,2025-10-04,Clemson,UNC,,,away,final,,,2025-10-04-Clemson-UNC
+sidearm-html-2025-10-08-College-of-Charleston,2025-10-08,UNC,College of Charleston,,,home,final,,,2025-10-08-UNC-College of Charleston
+sidearm-html-2025-10-11-Notre-Dame,2025-10-11,Notre Dame,UNC,,,away,final,,,2025-10-11-Notre Dame-UNC
+sidearm-html-2025-10-15-William-&-Mary,2025-10-15,William & Mary,UNC,,,away,final,,,2025-10-15-William & Mary-UNC
+sidearm-html-2025-10-19-Pitt,2025-10-19,UNC,Pitt,,,home,final,,,2025-10-19-UNC-Pitt
+sidearm-html-2025-10-27-Stanford,2025-10-27,Stanford,UNC,,,away,final,,,2025-10-27-Stanford-UNC
+sidearm-html-2025-11-01-Boston-College,2025-11-01,UNC,Boston College,,,home,final,,,2025-11-01-UNC-Boston College
+sidearm-html-2025-11-06-California,2025-11-06,UNC,California,,,home,final,,,2025-11-06-UNC-California
+sidearm-html-2025-11-21-Furman,2025-11-21,UNC,Furman,,,home,final,,,2025-11-21-UNC-Furman
+sidearm-html-2025-08-10-Campbell-(Exhibition),2025-08-10,UNC,Campbell (Exhibition),,,home,scheduled,,,2025-08-10-UNC-Campbell (Exhibition)
+sidearm-html-2025-08-16-UNCW-(Exhibition),2025-08-16,UNCW (Exhibition),UNC,,,away,scheduled,,,2025-08-16-UNCW (Exhibition)-UNC
+sidearm-html-2025-08-22-UAB,2025-08-22,UAB,UNC,,,away,final,,,2025-08-22-UAB-UNC
+sidearm-html-2025-08-25-California-Baptist,2025-08-25,UNC,California Baptist,,,home,final,,,2025-08-25-UNC-California Baptist
+sidearm-html-2025-08-29-FIU,2025-08-29,UNC,FIU,,,home,final,,,2025-08-29-UNC-FIU
+sidearm-html-2025-09-02-ETSU,2025-09-02,UNC,ETSU,,,home,final,,,2025-09-02-UNC-ETSU
+sidearm-html-2025-09-06-St.-John's,2025-09-06,UNC,St. John's,,,home,final,,,2025-09-06-UNC-St. John's
+sidearm-html-2025-09-13-Duke,2025-09-13,Duke,UNC,,,away,final,,,2025-09-13-Duke-UNC
+sidearm-html-2025-09-20-NC-State,2025-09-20,UNC,NC State,,,home,final,,,2025-09-20-UNC-NC State
+sidearm-html-2025-09-24-Mercer,2025-09-24,UNC,Mercer,,,home,final,,,2025-09-24-UNC-Mercer
+sidearm-html-2025-09-28-California,2025-09-28,UNC,California,,,home,final,,,2025-09-28-UNC-California
+sidearm-html-2025-10-04-Clemson,2025-10-04,Clemson,UNC,,,away,final,,,2025-10-04-Clemson-UNC
+sidearm-html-2025-10-08-College-of-Charleston,2025-10-08,UNC,College of Charleston,,,home,final,,,2025-10-08-UNC-College of Charleston
+sidearm-html-2025-10-11-Notre-Dame,2025-10-11,Notre Dame,UNC,,,away,final,,,2025-10-11-Notre Dame-UNC
+sidearm-html-2025-10-15-William-&-Mary,2025-10-15,William & Mary,UNC,,,away,final,,,2025-10-15-William & Mary-UNC
+sidearm-html-2025-10-19-Pitt,2025-10-19,UNC,Pitt,,,home,final,,,2025-10-19-UNC-Pitt
+sidearm-html-2025-10-27-Stanford,2025-10-27,Stanford,UNC,,,away,final,,,2025-10-27-Stanford-UNC
+sidearm-html-2025-11-01-Boston-College,2025-11-01,UNC,Boston College,,,home,final,,,2025-11-01-UNC-Boston College
+sidearm-html-2025-11-06-California,2025-11-06,UNC,California,,,home,final,,,2025-11-06-UNC-California
+sidearm-html-2025-11-21-Furman,2025-11-21,UNC,Furman,,,home,final,,,2025-11-21-UNC-Furman
+sidearm-html-2025-08-10-Campbell-(Exhibition),2025-08-10,UNC,Campbell (Exhibition),,,home,scheduled,,,2025-08-10-UNC-Campbell (Exhibition)
+sidearm-html-2025-08-16-UNCW-(Exhibition),2025-08-16,UNCW (Exhibition),UNC,,,away,scheduled,,,2025-08-16-UNCW (Exhibition)-UNC
+sidearm-html-2025-08-22-UAB,2025-08-22,UAB,UNC,,,away,final,,,2025-08-22-UAB-UNC
+sidearm-html-2025-08-25-California-Baptist,2025-08-25,UNC,California Baptist,,,home,final,,,2025-08-25-UNC-California Baptist
+sidearm-html-2025-08-29-FIU,2025-08-29,UNC,FIU,,,home,final,,,2025-08-29-UNC-FIU
+sidearm-html-2025-09-02-ETSU,2025-09-02,UNC,ETSU,,,home,final,,,2025-09-02-UNC-ETSU
+sidearm-html-2025-09-06-St.-John's,2025-09-06,UNC,St. John's,,,home,final,,,2025-09-06-UNC-St. John's
+sidearm-html-2025-09-13-Duke,2025-09-13,Duke,UNC,,,away,final,,,2025-09-13-Duke-UNC
+sidearm-html-2025-09-20-NC-State,2025-09-20,UNC,NC State,,,home,final,,,2025-09-20-UNC-NC State
+sidearm-html-2025-09-24-Mercer,2025-09-24,UNC,Mercer,,,home,final,,,2025-09-24-UNC-Mercer
+sidearm-html-2025-09-28-California,2025-09-28,UNC,California,,,home,final,,,2025-09-28-UNC-California
+sidearm-html-2025-10-04-Clemson,2025-10-04,Clemson,UNC,,,away,final,,,2025-10-04-Clemson-UNC
+sidearm-html-2025-10-08-College-of-Charleston,2025-10-08,UNC,College of Charleston,,,home,final,,,2025-10-08-UNC-College of Charleston
+sidearm-html-2025-10-11-Notre-Dame,2025-10-11,Notre Dame,UNC,,,away,final,,,2025-10-11-Notre Dame-UNC
+sidearm-html-2025-10-15-William-&-Mary,2025-10-15,William & Mary,UNC,,,away,final,,,2025-10-15-William & Mary-UNC
+sidearm-html-2025-10-19-Pitt,2025-10-19,UNC,Pitt,,,home,final,,,2025-10-19-UNC-Pitt
+sidearm-html-2025-10-27-Stanford,2025-10-27,Stanford,UNC,,,away,final,,,2025-10-27-Stanford-UNC
+sidearm-html-2025-11-01-Boston-College,2025-11-01,UNC,Boston College,,,home,final,,,2025-11-01-UNC-Boston College
+sidearm-html-2025-11-06-California,2025-11-06,UNC,California,,,home,final,,,2025-11-06-UNC-California
+sidearm-html-2025-11-21-Furman,2025-11-21,UNC,Furman,,,home,final,,,2025-11-21-UNC-Furman
+sidearm-html-2025-08-10-Campbell-(Exhibition),2025-08-10,UNC,Campbell (Exhibition),,,home,scheduled,,,2025-08-10-UNC-Campbell (Exhibition)
+sidearm-html-2025-08-16-UNCW-(Exhibition),2025-08-16,UNCW (Exhibition),UNC,,,away,scheduled,,,2025-08-16-UNCW (Exhibition)-UNC
+sidearm-html-2025-08-22-UAB,2025-08-22,UAB,UNC,,,away,final,,,2025-08-22-UAB-UNC
+sidearm-html-2025-08-25-California-Baptist,2025-08-25,UNC,California Baptist,,,home,final,,,2025-08-25-UNC-California Baptist
+sidearm-html-2025-08-29-FIU,2025-08-29,UNC,FIU,,,home,final,,,2025-08-29-UNC-FIU
+sidearm-html-2025-09-02-ETSU,2025-09-02,UNC,ETSU,,,home,final,,,2025-09-02-UNC-ETSU
+sidearm-html-2025-09-06-St.-John's,2025-09-06,UNC,St. John's,,,home,final,,,2025-09-06-UNC-St. John's
+sidearm-html-2025-09-13-Duke,2025-09-13,Duke,UNC,,,away,final,,,2025-09-13-Duke-UNC
+sidearm-html-2025-09-20-NC-State,2025-09-20,UNC,NC State,,,home,final,,,2025-09-20-UNC-NC State
+sidearm-html-2025-09-24-Mercer,2025-09-24,UNC,Mercer,,,home,final,,,2025-09-24-UNC-Mercer
+sidearm-html-2025-09-28-California,2025-09-28,UNC,California,,,home,final,,,2025-09-28-UNC-California
+sidearm-html-2025-10-04-Clemson,2025-10-04,Clemson,UNC,,,away,final,,,2025-10-04-Clemson-UNC
+sidearm-html-2025-10-08-College-of-Charleston,2025-10-08,UNC,College of Charleston,,,home,final,,,2025-10-08-UNC-College of Charleston
+sidearm-html-2025-10-11-Notre-Dame,2025-10-11,Notre Dame,UNC,,,away,final,,,2025-10-11-Notre Dame-UNC
+sidearm-html-2025-10-15-William-&-Mary,2025-10-15,William & Mary,UNC,,,away,final,,,2025-10-15-William & Mary-UNC
+sidearm-html-2025-10-19-Pitt,2025-10-19,UNC,Pitt,,,home,final,,,2025-10-19-UNC-Pitt
+sidearm-html-2025-10-27-Stanford,2025-10-27,Stanford,UNC,,,away,final,,,2025-10-27-Stanford-UNC
+sidearm-html-2025-11-01-Boston-College,2025-11-01,UNC,Boston College,,,home,final,,,2025-11-01-UNC-Boston College
+sidearm-html-2025-11-06-California,2025-11-06,UNC,California,,,home,final,,,2025-11-06-UNC-California
+sidearm-html-2025-11-21-Furman,2025-11-21,UNC,Furman,,,home,final,,,2025-11-21-UNC-Furman
+sidearm-html-2025-08-10-Campbell-(Exhibition),2025-08-10,UNC,Campbell (Exhibition),,,home,scheduled,,,2025-08-10-UNC-Campbell (Exhibition)
+sidearm-html-2025-08-16-UNCW-(Exhibition),2025-08-16,UNCW (Exhibition),UNC,,,away,scheduled,,,2025-08-16-UNCW (Exhibition)-UNC
+sidearm-html-2025-08-22-UAB,2025-08-22,UAB,UNC,,,away,final,,,2025-08-22-UAB-UNC
+sidearm-html-2025-08-25-California-Baptist,2025-08-25,UNC,California Baptist,,,home,final,,,2025-08-25-UNC-California Baptist
+sidearm-html-2025-08-29-FIU,2025-08-29,UNC,FIU,,,home,final,,,2025-08-29-UNC-FIU
+sidearm-html-2025-09-02-ETSU,2025-09-02,UNC,ETSU,,,home,final,,,2025-09-02-UNC-ETSU
+sidearm-html-2025-09-06-St.-John's,2025-09-06,UNC,St. John's,,,home,final,,,2025-09-06-UNC-St. John's
+sidearm-html-2025-09-13-Duke,2025-09-13,Duke,UNC,,,away,final,,,2025-09-13-Duke-UNC
+sidearm-html-2025-09-20-NC-State,2025-09-20,UNC,NC State,,,home,final,,,2025-09-20-UNC-NC State
+sidearm-html-2025-09-24-Mercer,2025-09-24,UNC,Mercer,,,home,final,,,2025-09-24-UNC-Mercer
+sidearm-html-2025-09-28-California,2025-09-28,UNC,California,,,home,final,,,2025-09-28-UNC-California
+sidearm-html-2025-10-04-Clemson,2025-10-04,Clemson,UNC,,,away,final,,,2025-10-04-Clemson-UNC
+sidearm-html-2025-10-08-College-of-Charleston,2025-10-08,UNC,College of Charleston,,,home,final,,,2025-10-08-UNC-College of Charleston
+sidearm-html-2025-10-11-Notre-Dame,2025-10-11,Notre Dame,UNC,,,away,final,,,2025-10-11-Notre Dame-UNC
+sidearm-html-2025-10-15-William-&-Mary,2025-10-15,William & Mary,UNC,,,away,final,,,2025-10-15-William & Mary-UNC
+sidearm-html-2025-10-19-Pitt,2025-10-19,UNC,Pitt,,,home,final,,,2025-10-19-UNC-Pitt
+sidearm-html-2025-10-27-Stanford,2025-10-27,Stanford,UNC,,,away,final,,,2025-10-27-Stanford-UNC
+sidearm-html-2025-11-01-Boston-College,2025-11-01,UNC,Boston College,,,home,final,,,2025-11-01-UNC-Boston College
+sidearm-html-2025-11-06-California,2025-11-06,UNC,California,,,home,final,,,2025-11-06-UNC-California
+sidearm-html-2025-11-21-Furman,2025-11-21,UNC,Furman,,,home,final,,,2025-11-21-UNC-Furman
