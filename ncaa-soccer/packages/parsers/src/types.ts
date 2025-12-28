@@ -4,6 +4,8 @@ export interface ParserOptions {
     teamId?: string;
     teamName?: string;
     sourceUrl?: string;
+    baseUrl?: string; // used to resolve relative links
+    debug?: boolean; // enable verbose logging
 }
 
 export interface ParseResult {

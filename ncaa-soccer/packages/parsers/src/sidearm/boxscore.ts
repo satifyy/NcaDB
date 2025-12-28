@@ -11,12 +11,19 @@ export class SidearmBoxScoreParser {
         const playerStats: PlayerStat[] = [];
         const gameId = options?.sourceUrl ? this.extractGameId(options.sourceUrl) : 'unknown-game';
 
-        // Find tables with class 'sidearm-table overall-stats'
+        // Find tables with class 'sidearm-table overall-stats' OR 'w-full'
         // There are usually two: one for visitor, one for home. 
         // We need to identify which is which. 
         // The captions usually say "Home Team - Player Stats" or similar.
 
-        const tables = $('table.sidearm-table.overall-stats');
+        // Try multiple selectors to handle different Sidearm layouts
+        let tables = $('table.sidearm-table.overall-stats');
+        if (tables.length === 0) {
+            tables = $('table.w-full');
+        }
+        if (tables.length === 0) {
+            tables = $('table');
+        }
 
         tables.each((i, table) => {
             const caption = $(table).find('caption').text().trim();

@@ -3,6 +3,8 @@ export interface ParserOptions {
     teamId?: string;
     teamName?: string;
     sourceUrl?: string;
+    baseUrl?: string;
+    debug?: boolean;
 }
 export interface ParseResult {
     game: Partial<Game>;

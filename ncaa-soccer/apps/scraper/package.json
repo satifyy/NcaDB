@@ -11,7 +11,8 @@
         "@ncaa/shared": "*",
         "@ncaa/storage": "*",
         "axios": "^1.13.2",
-        "axios-retry": "^4.5.0"
+        "axios-retry": "^4.5.0",
+        "playwright-chromium": "^1.48.0"
     },
     "devDependencies": {
         "typescript": "^5.0.0"

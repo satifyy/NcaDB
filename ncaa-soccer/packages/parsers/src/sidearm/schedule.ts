@@ -34,7 +34,7 @@ export class SidearmParser implements Parser {
 
     async parseSchedule(input: string, options?: ParserOptions): Promise<Game[]> {
         const games: Game[] = [];
-        let domain = '';
+        let domain = options?.baseUrl ? this.extractOrigin(options.baseUrl) : '';
 
         // Try to parse as JSON first
         try {
@@ -49,20 +49,60 @@ export class SidearmParser implements Parser {
 
         // HTML Parsing
         const $ = cheerio.load(input);
+        if (!domain) {
+            domain = this.extractOrigin(this.findCanonical($));
+        }
+        const debug = options?.debug;
         const gameCards = $('.s-game-card');
+        const scoreboardItems = $('.c-scoreboard__item');
+        const gamesByKey: Record<string, Game> = {};
+        const tableRows = $('.c-schedule__table tbody tr, table tbody tr');
+
+        if (debug) {
+            console.log(`[sidearm] domain=${domain || 'n/a'} cards=${gameCards.length} tables=${tableRows.length} scoreboardItems=${scoreboardItems.length}`);
+        }
 
         // If we found any game cards with this selector
         if (gameCards.length > 0) {
             gameCards.each((_, el) => {
                 const card = $(el);
-                const game = this.parseHtmlGame(card, $, options);
-                if (game) games.push(game);
+                const game = this.parseHtmlGame(card, $, { ...options, baseUrl: domain });
+                if (game) {
+                    gamesByKey[game.dedupe_key] = game;
+                }
             });
-            return games;
         }
 
-        // Fallback for older Sidearm layouts (if any, e.g. .sidearm-schedule-game as backup)
-        // ...
+        // Parse tabular schedule view if present (often shows full season)
+        if (tableRows.length > 0) {
+            tableRows.each((_, el) => {
+                const row = $(el);
+                const game = this.parseTableRow(row, $, { ...options, baseUrl: domain });
+                if (game) {
+                    gamesByKey[game.dedupe_key] = game;
+                } else if (debug) {
+                    console.log('[sidearm] table row skipped');
+                }
+            });
+        }
+
+        // Also try the scoreboard slider, which often has scores even when the game cards do not.
+        if (scoreboardItems.length > 0) {
+            scoreboardItems.each((_, el) => {
+                const item = $(el);
+                const game = this.parseScoreboardItem(item, $, { ...options, baseUrl: domain });
+                if (game && !gamesByKey[game.dedupe_key]) {
+                    gamesByKey[game.dedupe_key] = game;
+                }
+            });
+        }
+
+        if (Object.keys(gamesByKey).length > 0) {
+            if (debug) {
+                console.log(`[sidearm] returning ${Object.keys(gamesByKey).length} games`);
+            }
+            return Object.values(gamesByKey);
+        }
 
         return games;
     }
@@ -230,6 +270,181 @@ export class SidearmParser implements Parser {
         }
     }
 
+    private parseScoreboardItem(item: cheerio.Cheerio<any>, $: cheerio.CheerioAPI, options?: ParserOptions): Game | null {
+        try {
+            const opponentName = item.find('.c-scoreboard__logo img').attr('alt')?.trim() || 'Unknown Opponent';
+            const dateText = item.find('.c-scoreboard__date span').first().text().trim();
+            const year = new Date().getFullYear().toString();
+            const dateStr = this.parseDate(dateText, year);
+
+            const atVsText = item.find('.c-scoreboard__atvs').text().trim().toLowerCase();
+            let location_type: "home" | "away" | "neutral" | "unknown" = 'unknown';
+            let isHome = true;
+
+            if (item.hasClass('c-scoreboard__item--home') || atVsText === 'vs') {
+                location_type = 'home';
+                isHome = true;
+            } else if (item.hasClass('c-scoreboard__item--away') || atVsText === 'at') {
+                location_type = 'away';
+                isHome = false;
+            }
+
+            const contextTeamName = options?.teamName || 'Unknown Team';
+            const home_team_name = isHome ? contextTeamName : opponentName;
+            const away_team_name = isHome ? opponentName : contextTeamName;
+
+            const scoreText = item.find('.c-scoreboard__scores').text().trim().replace(/\s+/g, '');
+            let home_score: number | null = null;
+            let away_score: number | null = null;
+            let status: Game["status"] = 'scheduled';
+            const scoreMatch = scoreText.match(/(?:([WL])\s*)?(\d+)-(\d+)/i);
+            if (scoreMatch) {
+                status = 'final';
+                const first = parseInt(scoreMatch[2], 10);
+                const second = parseInt(scoreMatch[3], 10);
+                if (isHome) {
+                    home_score = first;
+                    away_score = second;
+                } else {
+                    home_score = second;
+                    away_score = first;
+                }
+            } else {
+                const statusText = item.find('.c-scoreboard__status').text().toLowerCase();
+                if (statusText.includes('final')) status = 'final';
+                else if (statusText.includes('post')) status = 'postponed';
+                else if (statusText.includes('cancel')) status = 'canceled';
+            }
+
+            const boxscore_url = item.find('.s-icon-boxscore').closest('a').attr('href') || undefined;
+
+            const safeHome = home_team_name.replace(/\s+/g, '-');
+            const safeAway = away_team_name.replace(/\s+/g, '-');
+            const derivedId = `sidearm-${dateStr}-${safeHome}-${safeAway}`;
+
+            return {
+                game_id: derivedId,
+                date: dateStr,
+                home_team_name,
+                away_team_name,
+                home_score,
+                away_score,
+                location_type,
+                status,
+                source_urls: {
+                    boxscore_url: boxscore_url ? this.resolveUrl(boxscore_url, options?.baseUrl) : undefined
+                },
+                dedupe_key: `${dateStr}-${home_team_name}-${away_team_name}`
+            };
+        } catch (e) {
+            console.error('Error parsing scoreboard item', e);
+            return null;
+        }
+    }
+
+    private parseTableRow(row: cheerio.Cheerio<any>, $: cheerio.CheerioAPI, options?: ParserOptions): Game | null {
+        try {
+            const cells = row.find('td');
+            if (cells.length === 0) return null;
+
+            // Try to infer columns by header labels if available
+            const headerCells = row.closest('table').find('thead th');
+            const headers: string[] = [];
+            headerCells.each((_, h) => headers.push($(h).text().trim().toLowerCase()));
+
+            const getCellByHeader = (label: string): cheerio.Cheerio<any> | null => {
+                const idx = headers.findIndex(h => h.includes(label));
+                if (idx === -1) return null;
+                return $(cells.get(idx));
+            };
+
+            const dateCell = getCellByHeader('date') || $(cells.get(0));
+            const opponentCell = getCellByHeader('opponent') || $(cells.get(1));
+            const resultCell = getCellByHeader('result') || $(cells.get(cells.length - 1));
+
+            const dateTextRaw = dateCell.text().trim();
+            const dateTextMatch = dateTextRaw.match(/([A-Za-z]{3,})\s+(\d{1,2})/);
+            const monthDay = dateTextMatch ? `${dateTextMatch[1]} ${dateTextMatch[2]}` : dateTextRaw.split(/\s+/).slice(0, 2).join(' ');
+            const year = new Date().getFullYear().toString();
+            const dateStr = this.parseDate(monthDay, year);
+
+            const opponentText = opponentCell.text().replace(/\s+/g, ' ').trim();
+            const stampMatch = opponentText.match(/^(vs|at)\s+/i);
+            const stamp = stampMatch ? stampMatch[1].toLowerCase() : '';
+            let opponentName = opponentText.replace(/^(vs|at)\s+/i, '').trim();
+            if (!opponentName) opponentName = 'Unknown Opponent';
+
+            let location_type: "home" | "away" | "neutral" | "unknown" = 'unknown';
+            let isHome = true;
+            if (stamp === 'at') {
+                location_type = 'away';
+                isHome = false;
+            } else if (stamp === 'vs') {
+                location_type = 'home';
+                isHome = true;
+            }
+
+            const contextTeamName = options?.teamName || 'Unknown Team';
+            const home_team_name = isHome ? contextTeamName : opponentName;
+            const away_team_name = isHome ? opponentName : contextTeamName;
+
+            const resultText = resultCell.text().replace(/\s+/g, ' ').trim();
+            let home_score: number | null = null;
+            let away_score: number | null = null;
+            let status: Game["status"] = 'scheduled';
+            const scoreMatch = resultText.match(/(\d+)\s*-\s*(\d+)/);
+            if (scoreMatch) {
+                status = 'final';
+                const first = parseInt(scoreMatch[1], 10);
+                const second = parseInt(scoreMatch[2], 10);
+                if (isHome) {
+                    home_score = first;
+                    away_score = second;
+                } else {
+                    home_score = second;
+                    away_score = first;
+                }
+            } else if (/final/i.test(resultText)) {
+                status = 'final';
+            } else if (/post/i.test(resultText)) {
+                status = 'postponed';
+            } else if (/cancel/i.test(resultText)) {
+                status = 'canceled';
+            }
+
+            // Attempt to capture boxscore / stats link from the links cell
+            // Capture the first link in the links/media cell (often stats/box)
+            let boxscore_url: string | undefined;
+            const linkCell = getCellByHeader('links') || getCellByHeader('media') || (row.find('a').length ? row : null);
+            if (linkCell) {
+                const firstHref = linkCell.find('a').first().attr('href');
+                if (firstHref) boxscore_url = this.resolveUrl(firstHref, options?.baseUrl);
+            }
+
+            const safeHome = home_team_name.replace(/\s+/g, '-');
+            const safeAway = away_team_name.replace(/\s+/g, '-');
+            const derivedId = `sidearm-${dateStr}-${safeHome}-${safeAway}`;
+
+            return {
+                game_id: derivedId,
+                date: dateStr,
+                home_team_name,
+                away_team_name,
+                home_score,
+                away_score,
+                location_type,
+                status,
+                source_urls: {
+                    boxscore_url
+                },
+                dedupe_key: `${dateStr}-${home_team_name}-${away_team_name}`
+            };
+        } catch (e) {
+            console.error('Error parsing table row', e);
+            return null;
+        }
+    }
+
     private parseDate(dateText: string, year: string): string {
         // Simple parser for "Aug 10" -> "2025-08-10"
         try {
@@ -239,6 +454,31 @@ export class SidearmParser implements Parser {
         } catch (e) {
             return `${year}-01-01`;
         }
+    }
+
+    private resolveUrl(href: string, baseUrl?: string): string {
+        if (!href) return href;
+        if (href.startsWith('http')) return href;
+        if (!baseUrl) return href;
+        const origin = this.extractOrigin(baseUrl);
+        if (!origin) return href;
+        if (href.startsWith('/')) return `${origin}${href}`;
+        return `${origin}/${href}`;
+    }
+
+    private extractOrigin(url?: string): string {
+        if (!url) return '';
+        try {
+            const u = new URL(url);
+            return u.origin;
+        } catch {
+            return '';
+        }
+    }
+
+    private findCanonical($: cheerio.CheerioAPI): string | undefined {
+        const link = $('link[rel="canonical"]').attr('href');
+        return link || undefined;
     }
 
     async parseBoxScore(html: string, options?: ParserOptions): Promise<ParseResult> {
