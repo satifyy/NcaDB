@@ -1,1 +1,60 @@
 game_id,team_id,player_name,player_key,jersey_number,minutes,goals,assists,shots,shots_on_goal,saves
+sidearm-2025-08-24-UNC-Seattle,North Carolina,"Catlett, Coleman",northcarolina:catlettcoleman,0,0,0,0,0,0,0
+sidearm-2025-08-24-UNC-Seattle,North Carolina,"Cordes, Andrew",northcarolina:cordesandrew,1,90,0,0,0,0,2
+sidearm-2025-08-24-UNC-Seattle,North Carolina,"Rutkowski, Alan",northcarolina:rutkowskialan,12,0,0,0,0,0,0
+sidearm-2025-08-24-UNC-Seattle,North Carolina,"Saborio-Perez, Alejandro",northcarolina:saborioperezalejandro,24,0,0,0,0,0,0
+sidearm-2025-08-24-UNC-Seattle,North Carolina,"Cheevers , Scott",northcarolina:cheeversscott,2,0,0,0,0,0,0
+sidearm-2025-08-24-UNC-Seattle,North Carolina,"Kropp, Dylan",northcarolina:kroppdylan,4,75,1,0,1,1,0
+sidearm-2025-08-24-UNC-Seattle,North Carolina,"Mathe , Immanuel",northcarolina:matheimmanuel,5,90,0,0,0,0,0
+sidearm-2025-08-24-UNC-Seattle,North Carolina,"Antonelius, Charlie",northcarolina:antoneliuscharlie,6,12,0,0,0,0,0
+sidearm-2025-08-24-UNC-Seattle,North Carolina,"Abeal, Nacho",northcarolina:abealnacho,7,81,1,0,6,3,0
+sidearm-2025-08-24-UNC-Seattle,North Carolina,"Mayanja, Abubaker",northcarolina:mayanjaabubaker,8,0,0,0,0,0,0
+sidearm-2025-08-24-UNC-Seattle,North Carolina,"Klink, Dan",northcarolina:klinkdan,9,0,0,0,0,0,0
+sidearm-2025-08-24-UNC-Seattle,North Carolina,"Dugan, Ryan",northcarolina:duganryan,11,21,1,0,1,1,0
+sidearm-2025-08-24-UNC-Seattle,North Carolina,"Nikolai, Luca",northcarolina:nikolailuca,13,90,0,1,1,1,0
+sidearm-2025-08-24-UNC-Seattle,North Carolina,"McDowell, John",northcarolina:mcdowelljohn,14,0,0,0,0,0,0
+sidearm-2025-08-24-UNC-Seattle,North Carolina,"Fisher, Max",northcarolina:fishermax,15,69,0,0,2,0,0
+sidearm-2025-08-24-UNC-Seattle,North Carolina,"Swett, Maclovio",northcarolina:swettmaclovio,16,0,0,0,0,0,0
+sidearm-2025-08-24-UNC-Seattle,North Carolina,"Hernandez , Javier",northcarolina:hernandezjavier,18,27,0,0,0,0,0
+sidearm-2025-08-24-UNC-Seattle,North Carolina,"Rygaard Hansen, Bertil",northcarolina:rygaardhansenbertil,19,62,0,0,1,0,0
+sidearm-2025-08-24-UNC-Seattle,North Carolina,"Jones, Milton",northcarolina:jonesmilton,20,0,0,0,0,0,0
+sidearm-2025-08-24-UNC-Seattle,North Carolina,"O'Ferral, Parker",northcarolina:oferralparker,21,15,0,0,0,0,0
+sidearm-2025-08-24-UNC-Seattle,North Carolina,"Waller, Drew",northcarolina:wallerdrew,22,0,0,0,0,0,0
+sidearm-2025-08-24-UNC-Seattle,North Carolina,"Frogson, Callum",northcarolina:frogsoncallum,23,90,0,0,0,0,0
+sidearm-2025-08-24-UNC-Seattle,North Carolina,"Vera, Luis",northcarolina:veraluis,25,0,0,0,0,0,0
+sidearm-2025-08-24-UNC-Seattle,North Carolina,"Mai, Martin",northcarolina:maimartin,26,0,0,0,0,0,0
+sidearm-2025-08-24-UNC-Seattle,North Carolina,"Czech, Andrew",northcarolina:czechandrew,27,75,0,1,1,0,0
+sidearm-2025-08-24-UNC-Seattle,North Carolina,"Sandmeyer, Jack",northcarolina:sandmeyerjack,28,90,0,0,0,0,0
+sidearm-2025-08-24-UNC-Seattle,North Carolina,"Bracken Serra, Gabriel",northcarolina:brackenserragabriel,29,51,0,0,3,0,0
+sidearm-2025-08-24-UNC-Seattle,North Carolina,"Berge, Riley",northcarolina:bergeriley,33,15,0,0,0,0,0
+sidearm-2025-08-24-UNC-Seattle,North Carolina,"Bakayoko, Yaya",northcarolina:bakayokoyaya,35,9,0,0,0,0,0
+sidearm-2025-08-24-UNC-Seattle,North Carolina,"Ross, Lucas",northcarolina:rosslucas,17,28,0,1,1,0,0
+sidearm-2025-08-24-UNC-Seattle,UCF,"Haböck, Timo",ucf:habcktimo,1,0,0,0,0,0,0
+sidearm-2025-08-24-UNC-Seattle,UCF,"Muñoz, Juanvi",ucf:muozjuanvi,13,90,0,0,0,0,3
+sidearm-2025-08-24-UNC-Seattle,UCF,"Lacayo, Marcelo",ucf:lacayomarcelo,31,0,0,0,0,0,0
+sidearm-2025-08-24-UNC-Seattle,UCF,"Smith, Alex",ucf:smithalex,2,73,0,0,1,0,0
+sidearm-2025-08-24-UNC-Seattle,UCF,"Eugène Degorce, Gwendal",ucf:eugnedegorcegwendal,3,90,0,0,0,0,0
+sidearm-2025-08-24-UNC-Seattle,UCF,"Hewlett, Jem",ucf:hewlettjem,4,90,0,1,0,0,0
+sidearm-2025-08-24-UNC-Seattle,UCF,"Boudinar, Younes",ucf:boudinaryounes,5,0,0,0,0,0,0
+sidearm-2025-08-24-UNC-Seattle,UCF,"Mueller, Joey",ucf:muellerjoey,6,90,0,0,1,0,0
+sidearm-2025-08-24-UNC-Seattle,UCF,"Thiaw, Malick",ucf:thiawmalick,7,28,0,0,0,0,0
+sidearm-2025-08-24-UNC-Seattle,UCF,"Wingsternaes, Petter",ucf:wingsternaespetter,8,17,0,0,0,0,0
+sidearm-2025-08-24-UNC-Seattle,UCF,"N'goubou, Claudel",ucf:ngoubouclaudel,9,57,0,0,3,2,0
+sidearm-2025-08-24-UNC-Seattle,UCF,"Awoudor, Clarence",ucf:awoudorclarence,10,90,0,0,1,0,0
+sidearm-2025-08-24-UNC-Seattle,UCF,"Funakoshi, Sora",ucf:funakoshisora,11,37,0,0,0,0,0
+sidearm-2025-08-24-UNC-Seattle,UCF,"Velez, Gabi",ucf:velezgabi,12,0,0,0,0,0,0
+sidearm-2025-08-24-UNC-Seattle,UCF,"Guerreiro, Fabio",ucf:guerreirofabio,14,0,0,0,0,0,0
+sidearm-2025-08-24-UNC-Seattle,UCF,"Monsee Jr, Abraham",ucf:monseejrabraham,15,0,0,0,0,0,0
+sidearm-2025-08-24-UNC-Seattle,UCF,"Arias, Timothy",ucf:ariastimothy,16,0,0,0,0,0,0
+sidearm-2025-08-24-UNC-Seattle,UCF,"Benedix, Frederic",ucf:benedixfrederic,17,54,0,0,0,0,0
+sidearm-2025-08-24-UNC-Seattle,UCF,"Hansen, Drew",ucf:hansendrew,18,44,0,0,0,0,0
+sidearm-2025-08-24-UNC-Seattle,UCF,"Ono, Seiryu",ucf:onoseiryu,19,0,0,0,0,0,0
+sidearm-2025-08-24-UNC-Seattle,UCF,"Ricol, Lilian",ucf:ricollilian,20,61,1,0,1,1,0
+sidearm-2025-08-24-UNC-Seattle,UCF,"Calloway, Finn",ucf:callowayfinn,21,0,0,0,0,0,0
+sidearm-2025-08-24-UNC-Seattle,UCF,"Michaelis, Arne",ucf:michaelisarne,23,0,0,0,0,0,0
+sidearm-2025-08-24-UNC-Seattle,UCF,"Torres, Yordan",ucf:torresyordan,24,0,0,0,0,0,0
+sidearm-2025-08-24-UNC-Seattle,UCF,"Muendo, Kenn",ucf:muendokenn,28,79,0,0,1,0,0
+sidearm-2025-08-24-UNC-Seattle,UCF,"Martinez Albiol, Izan",ucf:martinezalbiolizan,32,0,0,0,0,0,0
+sidearm-2025-08-24-UNC-Seattle,UCF,"Dejesus, Mateus",ucf:dejesusmateus,33,19,0,0,0,0,0
+sidearm-2025-08-24-UNC-Seattle,UCF,"Pulkkinen, Mikael",ucf:pulkkinenmikael,34,71,0,0,0,0,0
+sidearm-2025-08-24-UNC-Seattle,UCF,"Vien, Hugo",ucf:vienhugo,35,0,0,0,0,0,0

@@ -1,7 +1,8 @@
+// @ts-nocheck
 import * as fs from 'fs';
 import * as path from 'path';
-import { SidearmBoxScoreParser } from '@ncaa/parsers';
-import { chromium } from 'playwright-chromium';
+import { SidearmBoxScoreParser } from '../../../../packages/parsers/src';
+const { chromium } = require('playwright-chromium');
 
 interface GameRow {
     game_id: string;
@@ -79,13 +80,13 @@ async function main() {
         try {
             await page.goto(boxUrl, { waitUntil: 'networkidle' });
             await page.waitForTimeout(1500);
-            
+
             // Scroll to load any lazy-loaded content
             await page.evaluate(() => {
                 window.scrollTo(0, document.body.scrollHeight);
             });
             await page.waitForTimeout(1000);
-            
+
             // Try multiple selector patterns for the Individual Stats tab
             const tabSelectors = [
                 'button:has-text("Individual Stats")',
@@ -100,7 +101,7 @@ async function main() {
                 '[role="tab"]:has-text("Player Stats")',
                 '[role="tab"]:has-text("Stats")'
             ];
-            
+
             let tabClicked = false;
             for (const selector of tabSelectors) {
                 try {
@@ -109,20 +110,20 @@ async function main() {
                         console.log(`Found tab with selector: ${selector}`);
                         await tab.click();
                         tabClicked = true;
-                        
+
                         // CRITICAL: Wait for JavaScript to render the tables
                         // The page is a Nuxt.js SPA that hydrates tables from JSON data
                         // We need to wait for actual table rows to appear, not just the table elements
                         console.log(`Waiting for tables to be populated by JavaScript...`);
-                        
+
                         // Wait for network to be idle after clicking tab (ensures Vue.js hydration completes)
                         await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {
                             console.warn('Network did not become idle, but continuing...');
                         });
-                        
+
                         // Give extra time for Vue.js to render the tables
                         await page.waitForTimeout(3000);
-                        
+
                         // Try to wait for table content with actual player data (position like "gk" or "mid")
                         try {
                             await page.waitForSelector('table tbody tr td:has-text("gk"), table tbody tr td:has-text("mid")', { timeout: 5000 });
@@ -130,24 +131,24 @@ async function main() {
                         } catch (error: any) {
                             console.warn(`Could not detect player position data - HTML may not be fully hydrated`);
                         }
-                        
+
                         break;
                     }
                 } catch (e) {
                     // Try next selector
                 }
             }
-            
+
             if (!tabClicked) {
                 console.warn('No Individual/Player Stats tab found; attempting to parse visible content');
             }
-            
+
             // Scroll again after clicking tab to ensure tables are visible
             await page.evaluate(() => {
                 window.scrollTo(0, document.body.scrollHeight);
             });
             await page.waitForTimeout(1000);
-            
+
             // Try multiple table selector patterns
             const tableSelectors = [
                 'table.sidearm-table',
@@ -159,7 +160,7 @@ async function main() {
                 'table tbody tr',
                 'table'
             ];
-            
+
             let tableFound = false;
             for (const selector of tableSelectors) {
                 try {
@@ -171,11 +172,11 @@ async function main() {
                     // Try next selector
                 }
             }
-            
+
             if (!tableFound) {
                 console.warn('No stats tables detected; saving HTML anyway for inspection');
             }
-            
+
             // CRITICAL: Get the RENDERED HTML from the live DOM, not the source HTML
             // page.content() returns the original source before JavaScript runs
             // We need the actual rendered DOM after Vue.js hydration
@@ -215,6 +216,9 @@ async function main() {
                 });
             });
             console.log(`Parsed ${res.playerStats.length} player rows`);
+            if (res.playerStats.length > 0) {
+                console.log('DEBUG First Player:', JSON.stringify(res.playerStats[0], null, 2));
+            }
         } catch (e: any) {
             console.error(`Failed ${boxUrl}: ${e.message}`);
         }

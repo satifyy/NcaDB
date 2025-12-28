@@ -83,10 +83,14 @@ class SidearmParser {
         if (!domain) {
             domain = this.extractOrigin(this.findCanonical($));
         }
+        const debug = options?.debug;
         const gameCards = $('.s-game-card');
         const scoreboardItems = $('.c-scoreboard__item');
-        const tableRows = $('.c-schedule__table tbody tr, table tbody tr');
         const gamesByKey = {};
+        const tableRows = $('.c-schedule__table tbody tr, table tbody tr');
+        if (debug) {
+            console.log(`[sidearm] domain=${domain || 'n/a'} cards=${gameCards.length} tables=${tableRows.length} scoreboardItems=${scoreboardItems.length}`);
+        }
         // If we found any game cards with this selector
         if (gameCards.length > 0) {
             gameCards.each((_, el) => {
@@ -105,6 +109,9 @@ class SidearmParser {
                 if (game) {
                     gamesByKey[game.dedupe_key] = game;
                 }
+                else if (debug) {
+                    console.log('[sidearm] table row skipped');
+                }
             });
         }
         // Also try the scoreboard slider, which often has scores even when the game cards do not.
@@ -118,6 +125,9 @@ class SidearmParser {
             });
         }
         if (Object.keys(gamesByKey).length > 0) {
+            if (debug) {
+                console.log(`[sidearm] returning ${Object.keys(gamesByKey).length} games`);
+            }
             return Object.values(gamesByKey);
         }
         return games;
@@ -217,6 +227,7 @@ class SidearmParser {
     }
     parseHtmlGame(card, $, options) {
         try {
+            // Opponent name (the team opposite of the context team)
             const opponentName = card.find('.s-game-card__header__team .s-text-paragraph-bold').text().trim() || 'Unknown Opponent';
             // Date extraction (e.g., "Aug 10")
             const dateText = card.find('[data-test-id="s-game-card-standard__header-game-date-details"] span').first().text().trim();
@@ -274,105 +285,6 @@ class SidearmParser {
         }
         catch (e) {
             console.error('Error parsing HTML game card', e);
-            return null;
-        }
-    }
-    parseTableRow(row, $, options) {
-        try {
-            const cells = row.find('td');
-            if (cells.length === 0)
-                return null;
-            const headerCells = row.closest('table').find('thead th');
-            const headers = [];
-            headerCells.each((_, h) => headers.push($(h).text().trim().toLowerCase()));
-            const getCellByHeader = (label) => {
-                const idx = headers.findIndex(h => h.includes(label));
-                if (idx === -1)
-                    return null;
-                return $(cells.get(idx));
-            };
-            const dateCell = getCellByHeader('date') || $(cells.get(0));
-            const opponentCell = getCellByHeader('opponent') || $(cells.get(1));
-            const resultCell = getCellByHeader('result') || $(cells.get(cells.length - 1));
-            const dateTextRaw = dateCell.text().trim();
-            const dateTextMatch = dateTextRaw.match(/([A-Za-z]{3,})\s+(\d{1,2})/);
-            const monthDay = dateTextMatch ? `${dateTextMatch[1]} ${dateTextMatch[2]}` : dateTextRaw.split(/\s+/).slice(0, 2).join(' ');
-            const year = new Date().getFullYear().toString();
-            const dateStr = this.parseDate(monthDay, year);
-            const opponentText = opponentCell.text().replace(/\s+/g, ' ').trim();
-            const stampMatch = opponentText.match(/^(vs|at)\s+/i);
-            const stamp = stampMatch ? stampMatch[1].toLowerCase() : '';
-            let opponentName = opponentText.replace(/^(vs|at)\s+/i, '').trim();
-            if (!opponentName)
-                opponentName = 'Unknown Opponent';
-            let location_type = 'unknown';
-            let isHome = true;
-            if (stamp === 'at') {
-                location_type = 'away';
-                isHome = false;
-            }
-            else if (stamp === 'vs') {
-                location_type = 'home';
-                isHome = true;
-            }
-            const contextTeamName = options?.teamName || 'Unknown Team';
-            const home_team_name = isHome ? contextTeamName : opponentName;
-            const away_team_name = isHome ? opponentName : contextTeamName;
-            const resultText = resultCell.text().replace(/\s+/g, ' ').trim();
-            let home_score = null;
-            let away_score = null;
-            let status = 'scheduled';
-            const scoreMatch = resultText.match(/(\d+)\s*-\s*(\d+)/);
-            if (scoreMatch) {
-                status = 'final';
-                const first = parseInt(scoreMatch[1], 10);
-                const second = parseInt(scoreMatch[2], 10);
-                if (isHome) {
-                    home_score = first;
-                    away_score = second;
-                }
-                else {
-                    home_score = second;
-                    away_score = first;
-                }
-            }
-            else if (/final/i.test(resultText)) {
-                status = 'final';
-            }
-            else if (/post/i.test(resultText)) {
-                status = 'postponed';
-            }
-            else if (/cancel/i.test(resultText)) {
-                status = 'canceled';
-            }
-            // Attempt to capture boxscore / stats link from the links cell
-            let boxscore_url;
-            const linkCell = getCellByHeader('links') || getCellByHeader('media') || (row.find('a').length ? row : null);
-            if (linkCell) {
-                const firstHref = linkCell.find('a').first().attr('href');
-                if (firstHref)
-                    boxscore_url = this.resolveUrl(firstHref, options?.baseUrl);
-            }
-            const safeHome = home_team_name.replace(/\s+/g, '-');
-            const safeAway = away_team_name.replace(/\s+/g, '-');
-            const derivedId = `sidearm-${dateStr}-${safeHome}-${safeAway}`;
-            return {
-                game_id: derivedId,
-                date: dateStr,
-                home_team_name,
-                away_team_name,
-                home_score,
-                away_score,
-                location_type,
-                status,
-                source_urls: {
-                    boxscore_url
-                },
-                dedupe_key: `${dateStr}-${home_team_name}-${away_team_name}`
-            };
-        }
-        catch (e) {
-            console.error('Error parsing table row', e);
             return null;
         }
     }
@@ -447,6 +359,107 @@ class SidearmParser {
             return null;
         }
     }
+    parseTableRow(row, $, options) {
+        try {
+            const cells = row.find('td');
+            if (cells.length === 0)
+                return null;
+            // Try to infer columns by header labels if available
+            const headerCells = row.closest('table').find('thead th');
+            const headers = [];
+            headerCells.each((_, h) => headers.push($(h).text().trim().toLowerCase()));
+            const getCellByHeader = (label) => {
+                const idx = headers.findIndex(h => h.includes(label));
+                if (idx === -1)
+                    return null;
+                return $(cells.get(idx));
+            };
+            const dateCell = getCellByHeader('date') || $(cells.get(0));
+            const opponentCell = getCellByHeader('opponent') || $(cells.get(1));
+            const resultCell = getCellByHeader('result') || $(cells.get(cells.length - 1));
+            const dateTextRaw = dateCell.text().trim();
+            const dateTextMatch = dateTextRaw.match(/([A-Za-z]{3,})\s+(\d{1,2})/);
+            const monthDay = dateTextMatch ? `${dateTextMatch[1]} ${dateTextMatch[2]}` : dateTextRaw.split(/\s+/).slice(0, 2).join(' ');
+            const year = new Date().getFullYear().toString();
+            const dateStr = this.parseDate(monthDay, year);
+            const opponentText = opponentCell.text().replace(/\s+/g, ' ').trim();
+            const stampMatch = opponentText.match(/^(vs|at)\s+/i);
+            const stamp = stampMatch ? stampMatch[1].toLowerCase() : '';
+            let opponentName = opponentText.replace(/^(vs|at)\s+/i, '').trim();
+            if (!opponentName)
+                opponentName = 'Unknown Opponent';
+            let location_type = 'unknown';
+            let isHome = true;
+            if (stamp === 'at') {
+                location_type = 'away';
+                isHome = false;
+            }
+            else if (stamp === 'vs') {
+                location_type = 'home';
+                isHome = true;
+            }
+            const contextTeamName = options?.teamName || 'Unknown Team';
+            const home_team_name = isHome ? contextTeamName : opponentName;
+            const away_team_name = isHome ? opponentName : contextTeamName;
+            const resultText = resultCell.text().replace(/\s+/g, ' ').trim();
+            let home_score = null;
+            let away_score = null;
+            let status = 'scheduled';
+            const scoreMatch = resultText.match(/(\d+)\s*-\s*(\d+)/);
+            if (scoreMatch) {
+                status = 'final';
+                const first = parseInt(scoreMatch[1], 10);
+                const second = parseInt(scoreMatch[2], 10);
+                if (isHome) {
+                    home_score = first;
+                    away_score = second;
+                }
+                else {
+                    home_score = second;
+                    away_score = first;
+                }
+            }
+            else if (/final/i.test(resultText)) {
+                status = 'final';
+            }
+            else if (/post/i.test(resultText)) {
+                status = 'postponed';
+            }
+            else if (/cancel/i.test(resultText)) {
+                status = 'canceled';
+            }
+            // Attempt to capture boxscore / stats link from the links cell
+            // Capture the first link in the links/media cell (often stats/box)
+            let boxscore_url;
+            const linkCell = getCellByHeader('links') || getCellByHeader('media') || (row.find('a').length ? row : null);
+            if (linkCell) {
+                const firstHref = linkCell.find('a').first().attr('href');
+                if (firstHref)
+                    boxscore_url = this.resolveUrl(firstHref, options?.baseUrl);
+            }
+            const safeHome = home_team_name.replace(/\s+/g, '-');
+            const safeAway = away_team_name.replace(/\s+/g, '-');
+            const derivedId = `sidearm-${dateStr}-${safeHome}-${safeAway}`;
+            return {
+                game_id: derivedId,
+                date: dateStr,
+                home_team_name,
+                away_team_name,
+                home_score,
+                away_score,
+                location_type,
+                status,
+                source_urls: {
+                    boxscore_url
+                },
+                dedupe_key: `${dateStr}-${home_team_name}-${away_team_name}`
+            };
+        }
+        catch (e) {
+            console.error('Error parsing table row', e);
+            return null;
+        }
+    }
     parseDate(dateText, year) {
         // Simple parser for "Aug 10" -> "2025-08-10"
         try {
@@ -480,7 +493,7 @@ class SidearmParser {
             const u = new URL(url);
             return u.origin;
         }
-        catch (_a) {
+        catch {
             return '';
         }
     }
