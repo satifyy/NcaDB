@@ -455,19 +455,47 @@ class SidearmParser {
                 }
             }
             const dateTextRaw = dateCell.text().trim();
-            // Match patterns like "Aug 21" or "ThuAug 21" (VT has day-of-week concatenated with month)
-            // First try: VT-style "ThuAug 21" - strip weekday prefix and match Month + space + Day
-            let dateTextMatch = dateTextRaw.match(/^[A-Za-z]{3}([A-Za-z]{3,})\s+(\d{1,2})/);
-            if (!dateTextMatch) {
-                // Second try: Standard "Aug 21" format
-                const parts = dateTextRaw.match(/^([A-Za-z]{3,})\s+(\d{1,2})/);
-                if (parts) {
-                    dateTextMatch = [parts[0], parts[1], parts[2]];
+            const year = new Date().getFullYear().toString();
+            // Try to grab an ISO-like date from attributes or the row HTML first (prevents fallback 01-01)
+            const attrDateCandidates = [
+                dateCell.attr('data-game-date'),
+                dateCell.attr('data-date'),
+                dateCell.attr('data-datetime'),
+                row.attr('data-game-date'),
+                row.attr('data-date'),
+                row.attr('data-datetime')
+            ].filter(Boolean);
+            let dateStr = '';
+            for (const candidate of attrDateCandidates) {
+                dateStr = this.parseDate(candidate, year);
+                if (dateStr && !dateStr.endsWith('-01-01'))
+                    break;
+            }
+            // If no attr-based date, look for ISO in the raw HTML
+            if (!dateStr || dateStr.endsWith('-01-01')) {
+                const html = (row.html() || '') + (dateCell.html() || '');
+                const isoMatch = html.match(/(\d{4}-\d{2}-\d{2})/);
+                if (isoMatch) {
+                    dateStr = isoMatch[1];
                 }
             }
-            const monthDay = dateTextMatch ? `${dateTextMatch[1]} ${dateTextMatch[2]}` : dateTextRaw.split(/\s+/).slice(0, 2).join(' ');
-            const year = new Date().getFullYear().toString();
-            const dateStr = this.parseDate(monthDay, year);
+            // Finally, fall back to text parsing for "Aug 21" style strings (with or without weekday prefixes)
+            if (!dateStr || dateStr.endsWith('-01-01')) {
+                // Match patterns like "Aug 21" or "Thu, Aug 21"
+                let monthDay = '';
+                const weekdayMonth = dateTextRaw.match(/^[A-Za-z]{3},?\s*([A-Za-z]{3,})\.?,?\s+(\d{1,2})/);
+                const plainMonth = dateTextRaw.match(/([A-Za-z]{3,})\.?,?\s+(\d{1,2})/);
+                if (weekdayMonth) {
+                    monthDay = `${weekdayMonth[1]} ${weekdayMonth[2]}`;
+                }
+                else if (plainMonth) {
+                    monthDay = `${plainMonth[1]} ${plainMonth[2]}`;
+                }
+                else {
+                    monthDay = dateTextRaw.split(/\s+/).slice(0, 2).join(' ');
+                }
+                dateStr = this.parseDate(monthDay, year);
+            }
             // Extract opponent text more carefully to avoid nested/duplicate content
             // Both Stanford and VT have desktop dividers, but use different class names
             let opponentText = '';
@@ -607,16 +635,40 @@ class SidearmParser {
         }
     }
     parseDate(dateText, year) {
-        // Simple parser for "Aug 10" -> "2025-08-10"
-        try {
-            const date = new Date(`${dateText} ${year}`);
-            if (isNaN(date.getTime()))
-                return `${year}-01-01`; // Fallback
-            return date.toISOString().split('T')[0];
-        }
-        catch (e) {
+        // More robust parser for Sidearm date formats. Falls back to year-01-01 only when truly unknown.
+        if (!dateText)
             return `${year}-01-01`;
+        const cleaned = dateText.replace(/\s+/g, ' ').trim();
+        // Direct ISO
+        const isoMatch = cleaned.match(/(\d{4}-\d{2}-\d{2})/);
+        if (isoMatch)
+            return isoMatch[1];
+        // Numeric mm/dd[/yyyy]
+        const numeric = cleaned.match(/(\d{1,2})\/(\d{1,2})(?:\/(\d{2,4}))?/);
+        if (numeric) {
+            const month = numeric[1].padStart(2, '0');
+            const day = numeric[2].padStart(2, '0');
+            let resolvedYear = year;
+            if (numeric[3]) {
+                resolvedYear = numeric[3].length === 2 ? `20${numeric[3]}` : numeric[3];
+            }
+            return `${resolvedYear}-${month}-${day}`;
         }
+        // Month name + day (with optional weekday prefix)
+        const monthDay = cleaned.match(/(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun),?\s*([A-Za-z]{3,})\.?,?\s+(\d{1,2})/i)
+            || cleaned.match(/([A-Za-z]{3,})\.?,?\s+(\d{1,2})/i);
+        if (monthDay) {
+            const date = new Date(`${monthDay[1]} ${monthDay[2]} ${year}`);
+            if (!isNaN(date.getTime())) {
+                return date.toISOString().split('T')[0];
+            }
+        }
+        // Last ditch: let JS try with provided year appended
+        const guess = new Date(`${cleaned} ${year}`);
+        if (!isNaN(guess.getTime())) {
+            return guess.toISOString().split('T')[0];
+        }
+        return `${year}-01-01`;
     }
     resolveUrl(href, baseUrl) {
         if (!href)

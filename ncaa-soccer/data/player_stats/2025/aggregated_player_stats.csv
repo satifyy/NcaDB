@@ -1,1 +1,719 @@
 player_key,player_name,team_id,jersey_number,games_played,minutes,goals,assists,shots,shots_on_goal,saves
+northcarolina:klinkdan,"Klink, Dan",North Carolina,9,10,340,6,1,19,11,0
+northcarolina:abealnacho,"Abeal, Nacho",North Carolina,7,10,782,4,4,30,14,0
+northcarolina:rygaardhansenbertil,"Rygaard Hansen, Bertil",North Carolina,19,10,709,3,4,20,11,0
+pittsburgh:vilamitjanaarnau,"Vilamitjana, Arnau",Pittsburgh,14,2,174,4,2,6,4,0
+northcarolina:nikolailuca,"Nikolai, Luca",North Carolina,13,10,928,2,5,30,8,0
+syracuse:omezechimere,"Omeze, Chimere",Syracuse,2,11,747,3,2,12,5,0
+syracuse:zambranocarlos,"Zambrano, Carlos",Syracuse,10,11,612,2,3,21,7,0
+syracuse:brdarictim,"Brdaric, Tim",Syracuse,4,11,944,3,0,6,4,0
+northcarolina:brackenserragabriel,"Bracken Serra, Gabriel",North Carolina,29,10,654,1,4,11,4,0
+syracuse:darkolandon,"Darko, Landon",Syracuse,21,11,406,2,2,8,4,0
+ncstate:phillipdonavan,"Phillip, Donavan",NC State,7,3,195,3,0,11,4,0
+pittsburgh:thorsenalbert,"Thorsen, Albert",Pittsburgh,9,2,170,2,2,16,8,0
+syracuse:mingsachiel,"Ming, Sachiel",Syracuse,24,11,533,2,0,7,3,0
+syracuse:acquahmichael,"Acquah, Michael",Syracuse,19,11,246,2,0,7,4,0
+northcarolina:duganryan,"Dugan, Ryan",North Carolina,11,10,236,0,4,0,0,0
+pittsburgh:srensenniklas,"Sørensen, Niklas",Pittsburgh,5,2,180,0,4,2,0,0
+pittsburgh:oliverlogan,"Oliver, Logan",Pittsburgh,6,2,180,2,0,2,2,0
+smu:clantonpimentelryan,"Clanton-Pimentel, Ryan",SMU,27,2,145,1,2,2,1,0
+cal:7lukicluka,"7 
+                                            Lukic, Luka",CAL,7,1,90,2,0,5,2,0
+siena:stalkercampbell,"Stalker, Campbell",Siena,12,1,61,2,0,3,2,0
+northflorida:graniturluc,"Granitur, Luc",North Florida,11,1,53,2,0,3,2,0
+uab:faganpatrik,"Fagan, Patrik",UAB,19,2,44,2,0,2,2,0
+syracuse:fortierkristjan,"Fortier, Kristjan",Syracuse,26,11,876,0,3,12,2,0
+syracuse:mensahjrernest,"Mensah Jr., Ernest",Syracuse,3,11,432,0,3,6,2,0
+ncstate:catontyler,"Caton, Tyler",NC State,12,3,225,1,1,4,1,0
+northcarolina:antoneliuscharlie,"Antonelius, Charlie",North Carolina,6,10,221,1,1,5,3,0
+smu:brunetcharlesemile,"Brunet, Charles-Emile",SMU,8,2,173,1,1,3,2,0
+smu:soghomonianstephan,"Soghomonian, Stephan",SMU,30,2,101,1,1,2,1,0
+hofstra:goddardlaurie,"Goddard, Laurie",Hofstra,27,1,90,1,1,5,3,0
+virginia:simmondsnicholas,"Simmonds, Nicholas",Virginia,7,1,70,1,1,3,1,0
+siena:maralee,"Mara, Lee",Siena,11,1,66,1,1,3,3,0
+northcarolina:sandmeyerjack,"Sandmeyer, Jack",North Carolina,28,10,913,1,0,10,6,0
+syracuse:leiboldgiona,"Leibold, Giona",Syracuse,17,11,703,0,2,10,6,0
+syracuse:rodriguezbryson,"Rodriguez, Bryson",Syracuse,11,11,517,1,0,10,5,0
+syracuse:scottnathan,"Scott, Nathan",Syracuse,7,11,506,1,0,8,6,0
+ncstate:lovelacedrew,"Lovelace, Drew",NC State,22,3,183,1,0,7,3,0
+pittsburgh:cartergrayson,"Carter, Grayson",Pittsburgh,20,2,168,0,2,4,0,0
+virginiatech:quilldeclan,"Quill, Declan",Virginia Tech,7,2,163,1,0,6,3,0
+smu:mitchelljaylinn,"Mitchell, Jaylinn",SMU,7,2,155,0,2,3,0,0
+northflorida:riosrafa,"Rios, Rafa",North Florida,21,1,110,0,2,0,0,0
+smu:emmanuelmukisa,"Emmanuel, Mukisa",SMU,20,2,93,1,0,7,2,0
+smc:6toelhoejbastian,"6 
+                                            Toelhoej, Bastian",SMC,6,1,90,1,0,1,1,0
+duke:kerrdrew,"Kerr, Drew",Duke,10,1,90,1,0,3,1,0
+duke:hotkenan,"Hot, Kenan",Duke,23,1,90,1,0,1,1,0
+notredame:fergusonmitch,"Ferguson, Mitch",Notre Dame,2,1,90,1,0,1,1,0
+hofstra:burkodaniel,"Burko, Daniel",Hofstra,21,1,90,1,0,3,2,0
+bostoncollege:brownrussell,"Brown, Russell",Boston College,17,2,80,1,0,7,4,0
+kc:10gallucciogabriele,"10 
+                                            Galluccio, Gabriele",KC,10,1,72,0,2,0,0,0
+cornell:carnevalewestin,"Carnevale, Westin",Cornell,23,1,71,1,0,1,1,0
+smc:3dilleytj,"3 
+                                            Dilley, TJ",SMC,3,1,66,1,0,2,2,0
+kc:27muttittwade,"27 
+                                            Muttitt, Wade",KC,27,1,62,1,0,5,3,0
+kc:7beunzamariano,"7 
+                                            Beunza, Mariano",KC,7,1,58,1,0,1,1,0
+smu:25floresluis,"25 
+                                            Flores, Luis",SMU,25,1,58,1,0,3,2,0
+cal:8wilkersoncam,"8 
+                                            Wilkerson, Cam",CAL,8,1,55,1,0,3,1,0
+ncstate:ogawamax,"Ogawa, Max",NC State,21,3,50,1,0,2,2,0
+louisville:leemichael,"Lee, Michael",Louisville,11,1,46,1,0,1,1,0
+cornell:donahueblake,"Donahue, Blake",Cornell,13,1,39,1,0,2,1,0
+maryland:ritaritarocket,"Ritarita, Rocket",Maryland,23,1,36,1,0,1,1,0
+virginia:beauvoistriton,"Beauvois, Triton",Virginia,15,1,33,1,0,1,1,0
+smu:19lopezmilton,"19 
+                                            Lopez, Milton",SMU,19,1,32,1,0,3,1,0
+smu:hickamlandon,"Hickam, Landon",SMU,16,2,30,1,0,1,1,0
+ncstate:team,TEAM,NC State,TM,1,0,1,0,0,0,0
+syracuse:huttomas,"Hut, Tomas",Syracuse,25,11,990,0,1,0,0,58
+northcarolina:kroppdylan,"Kropp, Dylan",North Carolina,4,10,940,0,1,2,0,0
+northcarolina:frogsoncallum,"Frogson, Callum",North Carolina,23,10,911,0,1,2,1,0
+syracuse:wigggavin,"Wigg, Gavin",Syracuse,12,11,802,0,1,3,1,0
+ncstate:moloneyriley,"Moloney, Riley",NC State,3,3,225,0,1,4,1,0
+ncstate:healytaig,"Healy, Taig",NC State,10,3,193,0,1,10,6,0
+smu:starnesslade,"Starnes, Slade",SMU,5,2,180,0,1,2,1,0
+virginiatech:feliciojoao,"Felicio, Joao",Virginia Tech,24,2,180,0,1,0,0,0
+smu:salvoalex,"Salvo, Alex",SMU,6,2,168,0,1,1,0,0
+bostoncollege:burkhardtjack,"Burkhardt, Jack",Boston College,23,2,159,0,1,2,0,0
+ncstate:lamaillethomas,"Lamaille, Thomas",NC State,5,3,137,0,1,1,0,0
+ncstate:tommycalem,"Tommy, Calem",NC State,13,3,135,0,1,0,0,0
+maryland:maserekasadam,"Masereka, Sadam",Maryland,7,1,110,0,1,2,0,0
+smu:2landspergvillads,"2 
+                                            Landsperg, Villads",SMU,2,1,90,0,1,1,0,0
+cornell:johnsonandrew,"Johnson, Andrew",Cornell,24,1,90,0,1,3,1,0
+notredame:greensebastian,"Green, Sebastian",Notre Dame,24,1,90,0,1,0,0,0
+virginia:devicentejesus,"De Vicente, Jesus",Virginia,3,1,90,0,1,3,0,0
+virginia:pelumberto,"Pelà, Umberto",Virginia,6,1,90,0,1,0,0,0
+hofstra:barnettowen,"Barnett, Owen",Hofstra,7,1,90,0,1,0,0,0
+cal:17cordovacesar,"17 
+                                            Cordova, Cesar",CAL,17,1,80,0,1,2,1,0
+smu:7mitchelljaylinn,"7 
+                                            Mitchell, Jaylinn",SMU,7,1,79,0,1,1,0,0
+siena:piedeleumartin,"Piedeleu, Martin",Siena,8,1,76,0,1,3,0,0
+smu:8brunetcharlesemile,"8 
+                                            Brunet, Charles-Emile",SMU,8,1,74,0,1,2,1,0
+cal:15brackenserrakieran,"15 
+                                            Bracken Serra, Kieran",CAL,15,1,69,0,1,0,0,0
+uab:jiwonhanjake,"Jiwon Han, Jake",UAB,24,2,62,0,1,0,0,0
+siena:fogartybenjamin,"Fogarty, Benjamin",Siena,44,1,58,0,1,0,0,0
+smc:10dannersam,"10 
+                                            Danner, Sam",SMC,10,1,58,0,1,0,0,0
+louisville:vazquezchase,"Vazquez, Chase",Louisville,7,1,49,0,1,0,0,0
+maryland:clarkjace,"Clark, Jace",Maryland,18,1,44,0,1,0,0,0
+cal:12jacobsadrian,"12 
+                                            Jacobs, Adrian",CAL,12,1,24,0,1,2,2,0
+smu:27clantonpimentelryan,"27 
+                                            Clanton-Pimentel, Ryan",SMU,27,1,21,0,1,1,0,0
+northflorida:romanomark,"Romano, Mark",North Florida,18,1,2,0,1,0,0,0
+northcarolina:cordesandrew,"Cordes, Andrew",North Carolina,1,10,940,0,0,0,0,20
+northcarolina:bergeriley,"Berge, Riley",North Carolina,33,10,940,0,0,2,0,0
+northcarolina:czechandrew,"Czech, Andrew",North Carolina,27,10,918,0,0,6,1,0
+syracuse:dacostakelvin,"Da Costa, Kelvin",Syracuse,22,11,822,0,0,0,0,0
+syracuse:holmangarrett,"Holman, Garrett",Syracuse,27,11,799,0,0,0,0,0
+northcarolina:matheimmanuel,"Mathe , Immanuel",North Carolina,5,10,632,0,0,2,0,0
+syracuse:irinimbabaziivan,"Irinimbabazi, Ivan",Syracuse,6,11,417,0,0,2,0,0
+syracuse:nutornutsibright,"Nutornutsi, Bright",Syracuse,9,11,322,0,0,6,1,0
+ncstate:erblogan,"Erb, Logan",NC State,1,3,246,0,0,0,0,5
+ncstate:heffessisaac,"Heffess, Isaac",NC State,18,3,225,0,0,1,0,0
+bostoncollege:borakandrej,"Borak, Andrej",Boston College,35,2,180,0,0,0,0,9
+bostoncollege:henzefynn,"Henze, Fynn",Boston College,5,2,180,0,0,0,0,0
+uab:dansletfrederik,"Danslet, Frederik",UAB,4,2,180,0,0,0,0,0
+pittsburgh:moxomjack,"Moxom, Jack",Pittsburgh,1,2,180,0,0,0,0,6
+pittsburgh:gilmanjackson,"Gilman, Jackson",Pittsburgh,2,2,180,0,0,4,2,0
+pittsburgh:svendbycasper,"Svendby, Casper",Pittsburgh,21,2,180,0,0,2,0,0
+pittsburgh:bedourettomas,"Bedouret, Tomas",Pittsburgh,23,2,180,0,0,2,2,0
+pittsburgh:wetzelgavin,"Wetzel, Gavin",Pittsburgh,24,2,180,0,0,0,0,0
+smu:dominguezmartin,"Dominguez, Martin",SMU,1,2,180,0,0,0,0,3
+smu:panozzoenzo,"Panozzo, Enzo",SMU,14,2,180,0,0,1,0,0
+virginiatech:josephsam,"Joseph, Sam",Virginia Tech,1,2,180,0,0,0,0,9
+virginiatech:belatracheyanis,"Belatrache, Yanis",Virginia Tech,5,2,180,0,0,1,0,0
+smu:landspergvillads,"Landsperg, Villads",SMU,2,2,173,0,0,0,0,0
+smu:escorciadaniel,"Escorcia, Daniel",SMU,10,2,173,0,0,0,0,0
+virginiatech:arielyamir,"Ariely, Amir",Virginia Tech,2,2,173,0,0,1,1,0
+virginiatech:uwimananoe,"Uwimana, Noe",Virginia Tech,21,2,172,0,0,1,0,0
+pittsburgh:dahllasse,"Dahl, Lasse",Pittsburgh,7,2,170,0,0,2,0,0
+bostoncollege:williamscj,"Williams, CJ",Boston College,25,2,163,0,0,0,0,0
+virginiatech:schroederevan,"Schroeder, Evan",Virginia Tech,4,2,153,0,0,0,0,0
+uab:kimtony,"Kim, Tony",UAB,7,2,149,0,0,4,2,0
+ncstate:payneaidan,"Payne, Aidan",NC State,15,3,149,0,0,5,1,0
+uab:jessenole,"Jessen, Ole",UAB,2,2,148,0,0,1,0,0
+ncstate:markovicnikola,"Markovic, Nikola",NC State,6,3,142,0,0,1,0,0
+uab:zackrissongael,"Zackrisson, Gael",UAB,18,2,138,0,0,3,0,0
+ncstate:antoinenakai,"Antoine, Nakai",NC State,27,3,135,0,0,3,0,0
+virginiatech:traustasondagur,"Traustason, Dagur",Virginia Tech,13,2,131,0,0,3,1,0
+syracuse:friassantiago,"Frias, Santiago",Syracuse,33,11,127,0,0,0,0,0
+virginiatech:alvarezbeltran,"Alvarez, Beltran",Virginia Tech,17,2,127,0,0,2,1,0
+virginiatech:marcanoian,"Marcano, Ian",Virginia Tech,10,2,124,0,0,3,1,0
+ncstate:tolentinocaden,"Tolentino, Caden",NC State,17,3,121,0,0,0,0,0
+uab:jolivetivan,"Jolivet, Ivan",UAB,8,2,117,0,0,1,0,0
+ncstate:santamariacarlos,"Santamaria, Carlos",NC State,4,3,117,0,0,0,0,0
+ncstate:defrancescofrankie,"DeFrancesco, Frankie",NC State,11,3,113,0,0,4,2,0
+northflorida:natoliluciano,"Natoli, Luciano",North Florida,1,1,110,0,0,0,0,4
+northflorida:barnettalex,"Barnett, Alex",North Florida,4,1,110,0,0,0,0,0
+northflorida:schachererpaul,"Schacherer, Paul",North Florida,5,1,110,0,0,0,0,0
+maryland:macklaurin,"Mack, Laurin",Maryland,38,1,110,0,0,0,0,3
+maryland:costabileluca,"Costabile, Luca",Maryland,3,1,110,0,0,1,0,0
+maryland:kelplasse,"Kelp, Lasse",Maryland,5,1,110,0,0,0,0,0
+maryland:rosetristen,"Rose, Tristen",Maryland,31,1,110,0,0,0,0,0
+northflorida:prebendatyler,"Prebenda, Tyler",North Florida,2,1,108,0,0,0,0,0
+northflorida:yearwoodjaylen,"Yearwood, Jaylen",North Florida,8,1,108,0,0,0,0,0
+uab:rizzolucas,"Rizzo, Lucas",UAB,17,2,107,0,0,2,1,0
+smu:lopezmilton,"Lopez, Milton",SMU,19,2,107,0,0,3,0,0
+bostoncollege:abdulmalakziad,"Abdul-Malak, Ziad",Boston College,8,2,106,0,0,3,2,0
+uab:melendezalan,"Melendez, Alan",UAB,14,2,105,0,0,0,0,0
+northcarolina:oferralparker,"O'Ferral, Parker",North Carolina,21,10,105,0,0,0,0,0
+uab:dohhumphrey,"Doh, Humphrey",UAB,11,2,104,0,0,3,0,0
+ncstate:mcleanjustin,"McLean, Justin",NC State,8,3,103,0,0,5,1,0
+maryland:koehlleon,"Koehl, Leon",Maryland,6,1,103,0,0,1,1,0
+maryland:steinleitnerchris,"Steinleitner, Chris",Maryland,22,1,101,0,0,0,0,0
+bostoncollege:ekelandask,"Ekeland, Ask",Boston College,7,2,100,0,0,3,0,0
+bostoncollege:farwellaidan,"Farwell, Aidan",Boston College,32,2,100,0,0,0,0,0
+virginiatech:beutelcolin,"Beutel, Colin",Virginia Tech,11,2,100,0,0,2,1,0
+northflorida:khelilanton,"Khelil, Anton",North Florida,10,1,100,0,0,0,0,0
+maryland:njikestephane,"Njike, Stephane",Maryland,77,1,96,0,0,2,0,0
+bostoncollege:gibsonconnor,"Gibson, Connor",Boston College,19,2,94,0,0,2,0,0
+maryland:ndrenikaalbi,"Ndrenika, Albi",Maryland,8,1,93,0,0,0,0,0
+uab:bricecarson,"Brice, Carson",UAB,15,2,91,0,0,0,0,0
+bostoncollege:gundelachmoritz,"Gundelach, Moritz",Boston College,4,2,90,0,0,0,0,0
+bostoncollege:killeenmarci,"Killeen, Marci",Boston College,16,2,90,0,0,2,0,0
+siena:glinderbennet,"Glinder, Bennet",Siena,99,1,90,0,0,0,0,2
+siena:samsthomas,"Sams, Thomas",Siena,27,1,90,0,0,0,0,0
+cal:6nishimuragaku,"6 
+                                            Nishimura, Gaku",CAL,6,1,90,0,0,2,1,0
+cal:19ortizalfredo,"19 
+                                            Ortiz, Alfredo",CAL,19,1,90,0,0,0,0,0
+cal:28pickettdandre,"28 
+                                            Pickett, D'Andre",CAL,28,1,90,0,0,1,0,0
+smc:1bentleysam,"1 
+                                            Bentley, Sam",SMC,1,1,90,0,0,0,0,0
+smc:15starekjona,"15 
+                                            Starek, Jona",SMC,15,1,90,0,0,0,0,0
+uab:mabontom,"Mabon, Tom",UAB,1,2,90,0,0,0,0,4
+uab:ranierifrancisco,"Ranieri, Francisco",UAB,30,2,90,0,0,0,0,10
+uab:richtermathis,"Richter, Mathis",UAB,5,2,90,0,0,0,0,0
+uab:wanzernoah,"Wanzer, Noah",UAB,26,2,90,0,0,0,0,0
+louisville:svetanoffalex,"Svetanoff, Alex",Louisville,29,1,90,0,0,0,0,1
+louisville:ogunleyeolayinka,"Ogunleye, Olayinka",Louisville,3,1,90,0,0,1,1,0
+louisville:deblasisnoah,"De Blasis, Noah",Louisville,4,1,90,0,0,0,0,0
+louisville:kahoaliitj,"Kahoalii, TJ",Louisville,8,1,90,0,0,1,1,0
+louisville:quintosryan,"Quintos, Ryan",Louisville,13,1,90,0,0,1,0,0
+louisville:lewisjack,"Lewis, Jack",Louisville,24,1,90,0,0,0,0,0
+wofford:hinterschusterpepe,"Hinterschuster, Pepe",Wofford,1,1,90,0,0,0,0,2
+wofford:celikadam,"Celik, Adam",Wofford,15,1,90,0,0,0,0,0
+wofford:hegleniklasszabo,"Hegle, Niklas Szabo",Wofford,18,1,90,0,0,0,0,0
+kc:1popowmarc,"1 
+                                            Popow, Marc",KC,1,1,90,0,0,0,0,0
+kc:5goschbryson,"5 
+                                            Gosch, Bryson",KC,5,1,90,0,0,0,0,0
+kc:8bauchermathias,"8 
+                                            Baucher, Mathias",KC,8,1,90,0,0,0,0,0
+smu:3zarnickowen,"3 
+                                            Zarnick, Owen",SMU,3,1,90,0,0,0,0,0
+smu:5starnesslade,"5 
+                                            Starnes, Slade",SMU,5,1,90,0,0,0,0,0
+smu:18russellsoren,"18 
+                                            Russell, Soren",SMU,18,1,90,0,0,0,0,0
+lipscomb:karaalex,"Kara, Alex",Lipscomb,1,1,90,0,0,0,0,4
+lipscomb:stampatoridaniel,"Stampatori, Daniel",Lipscomb,3,1,90,0,0,1,0,0
+lipscomb:hurtbaxter,"Hurt, Baxter",Lipscomb,5,1,90,0,0,0,0,0
+lipscomb:daviscaleb,"Davis, Caleb",Lipscomb,28,1,90,0,0,0,0,0
+stthomasmn:krencmoritz,"Krenc, Moritz",St. Thomas (MN),1,1,90,0,0,0,0,4
+stthomasmn:klevbergsimon,"Klevberg, Simon",St. Thomas (MN),2,1,90,0,0,0,0,0
+stthomasmn:schaefermerrick,"Schaefer, Merrick",St. Thomas (MN),5,1,90,0,0,0,0,0
+stthomasmn:guffroymathis,"Guffroy, Mathis",St. Thomas (MN),8,1,90,0,0,2,2,0
+stthomasmn:perazoliveronagabriel,"Perazoli Verona, Gabriel",St. Thomas (MN),22,1,90,0,0,0,0,0
+cornell:friedbergryan,"Friedberg, Ryan",Cornell,1,1,90,0,0,0,0,1
+cornell:martinaidan,"Martin, Aidan",Cornell,3,1,90,0,0,1,1,0
+cornell:kolbldominik,"Kolbl, Dominik",Cornell,16,1,90,0,0,0,0,0
+cornell:reececampbell,"Reece, Campbell",Cornell,18,1,90,0,0,0,0,0
+duke:dymoraeryk,"Dymora, Eryk",Duke,1,1,90,0,0,0,0,2
+duke:acitokamran,"Acito, Kamran",Duke,3,1,90,0,0,1,0,0
+duke:zabinkopreston,"Zabinko, Preston",Duke,20,1,90,0,0,0,0,0
+notredame:kellyblake,"Kelly, Blake",Notre Dame,1,1,90,0,0,0,0,0
+notredame:mcdowdsean,"McDowd, Sean",Notre Dame,3,1,90,0,0,0,0,0
+notredame:lewiswyatt,"Lewis, Wyatt",Notre Dame,6,1,90,0,0,2,1,0
+virginia:molscasper,"Mols, Casper",Virginia,1,1,90,0,0,0,0,4
+virginia:gashialbin,"Gashi, Albin",Virginia,12,1,90,0,0,0,0,0
+virginia:popsebastian,"Pop, Sebastian",Virginia,16,1,90,0,0,0,0,0
+virginia:ehrenpreiszachary,"Ehrenpreis, Zachary",Virginia,18,1,90,0,0,0,0,0
+hofstra:pachecogabriel,"Pacheco, Gabriel",Hofstra,2,1,90,0,0,0,0,0
+hofstra:santipietro,"Santi, Pietro",Hofstra,16,1,90,0,0,0,0,0
+hofstra:ziewiecjan,"Ziewiec, Jan",Hofstra,20,1,90,0,0,1,0,0
+cornell:mellyjustin,"Melly, Justin",Cornell,5,1,89,0,0,1,0,0
+cornell:millerconnor,"Miller, Connor",Cornell,35,1,88,0,0,2,1,0
+lipscomb:firekdaniel,"Firek, Daniel",Lipscomb,8,1,87,0,0,0,0,0
+hofstra:francousamuel,"Francou, Samuel",Hofstra,14,1,87,0,0,0,0,0
+hofstra:armasaleksei,"Armas, Aleksei",Hofstra,34,1,87,0,0,2,0,0
+maryland:picottojosephumberto,"Picotto, Joseph Umberto",Maryland,10,1,86,0,0,0,0,0
+stthomasmn:kaniabaraka,"Kania, Baraka",St. Thomas (MN),15,1,84,0,0,1,0,0
+northflorida:netogeraldo,"Neto, Geraldo",North Florida,9,1,83,0,0,1,1,0
+notredame:borsowyatt,"Borso, Wyatt",Notre Dame,9,1,82,0,0,2,0,0
+notredame:baffourkk,"Baffour, KK",Notre Dame,10,1,82,0,0,5,3,0
+notredame:shaulian,"Shaul, Ian",Notre Dame,15,1,82,0,0,0,0,0
+bostoncollege:asaremichael,"Asare, Michael",Boston College,14,2,81,0,0,1,0,0
+kc:22cribbwesley,"22 
+                                            Cribb, Wesley",KC,22,1,80,0,0,0,0,0
+stthomasmn:kerrsidney,"Kerr, Sidney",St. Thomas (MN),16,1,80,0,0,0,0,0
+notredame:spicernolan,"Spicer, Nolan",Notre Dame,22,1,80,0,0,0,0,0
+smc:17smithian,"17 
+                                            Smith, Ian",SMC,17,1,79,0,0,0,0,0
+smu:6salvoalex,"6 
+                                            Salvo, Alex",SMU,6,1,79,0,0,1,0,0
+lipscomb:walzpatrick,"Walz, Patrick",Lipscomb,19,1,79,0,0,0,0,0
+siena:svenssoneric,"Svensson, Eric",Siena,4,1,76,0,0,2,0,0
+cal:33morrisonbeau,"33 
+                                            Morrison, Beau",CAL,33,1,76,0,0,0,0,0
+wofford:anderssonjakob,"Andersson, Jakob",Wofford,3,1,76,0,0,0,0,0
+wofford:rahbeckkalle,"Rahbeck, Kalle",Wofford,12,1,76,0,0,0,0,0
+kc:15yedmelkenny,"15 
+                                            Yedmel, Kenny",KC,15,1,76,0,0,1,0,0
+duke:kabussujamie,"Kabussu, Jamie",Duke,2,1,76,0,0,0,0,0
+duke:bjornssonulfur,"Bjornsson, Ulfur",Duke,9,1,76,0,0,1,0,0
+smc:5whittakerjaydon,"5 
+                                            Whittaker, Jaydon",SMC,5,1,75,0,0,2,0,0
+kc:2betinajoackim,"2 
+                                            Betina, Joackim",KC,2,1,75,0,0,0,0,0
+lipscomb:joneslevi,"Jones, Levi",Lipscomb,14,1,74,0,0,2,0,0
+duke:burnstrevor,"Burns, Trevor",Duke,4,1,74,0,0,1,1,0
+duke:simpsonmax,"Simpson, Max",Duke,16,1,74,0,0,0,0,0
+northflorida:mcmanusjrbrian,"McManus Jr., Brian",North Florida,23,1,74,0,0,0,0,0
+uab:vivaldiniguilherme,"Vivaldini, Guilherme",UAB,10,2,73,0,0,0,0,0
+virginiatech:perezalex,"Perez, Alex",Virginia Tech,9,2,73,0,0,0,0,0
+ncstate:condeibrahim,"Conde, Ibrahim",NC State,9,3,72,0,0,4,2,0
+smu:20emmanuelmukisa,"20 
+                                            Emmanuel, Mukisa",SMU,20,1,71,0,0,0,0,0
+lipscomb:bryanwilliam,"Bryan, William",Lipscomb,27,1,71,0,0,0,0,0
+virginia:akwaboahjed,"Akwaboah, Jed",Virginia,20,1,71,0,0,1,0,0
+uab:barbosagustavo,"Barbosa, Gustavo",UAB,6,2,70,0,0,0,0,0
+bostoncollege:andrewsmax,"Andrews, Max",Boston College,18,2,69,0,0,0,0,0
+siena:diaismail,"Dia, Ismail",Siena,2,1,69,0,0,1,0,0
+siena:nilssonjonathan,"Nilsson, Jonathan",Siena,24,1,69,0,0,0,0,0
+kc:11francoujeremy,"11 
+                                            Francou, Jeremy",KC,11,1,69,0,0,3,1,0
+smu:14panozzoenzo,"14 
+                                            Panozzo , Enzo",SMU,14,1,69,0,0,0,0,0
+northcarolina:mayanjaabubaker,"Mayanja, Abubaker",North Carolina,8,9,69,0,0,3,1,0
+cal:25thomasisaiah,"25 
+                                            Thomas, Isaiah",CAL,25,1,68,0,0,0,0,0
+stthomasmn:akhigbemiles,"Akhigbe, Miles",St. Thomas (MN),4,1,68,0,0,0,0,0
+smc:2deragonhubert,"2 
+                                            Deragon, Hubert",SMC,2,1,67,0,0,0,0,0
+uab:garciamatthew,"Garcia, Matthew",UAB,21,2,67,0,0,1,0,0
+bostoncollege:mafongdylan,"Mafong, Dylan",Boston College,29,2,66,0,0,2,2,0
+siena:cajamarcamark,"Cajamarca, Mark",Siena,20,1,66,0,0,1,1,0
+cal:27zalayetmalcolm,"27 
+                                            Zalayet, Malcolm",CAL,27,1,66,0,0,0,0,0
+wofford:talleymax,"Talley, Max",Wofford,2,1,66,0,0,0,0,0
+wofford:simesnathan,"Simes, Nathan",Wofford,9,1,66,0,0,0,0,0
+notredame:rosinalex,"Rosin, Alex",Notre Dame,17,1,66,0,0,0,0,0
+wofford:metteedeclan,"Mettee, Declan",Wofford,16,1,64,0,0,0,0,0
+smu:16hickamlandon,"16 
+                                            Hickam, Landon",SMU,16,1,64,0,0,0,0,0
+bostoncollege:rojelnikolai,"Rojel, Nikolai",Boston College,9,2,63,0,0,3,0,0
+louisville:parhamnicholas,"Parham, Nicholas",Louisville,19,1,63,0,0,4,2,0
+wofford:laangdahledvin,"Laangdahl, Edvin",Wofford,5,1,63,0,0,0,0,0
+bostoncollege:torobryan,"Toro, Bryan",Boston College,6,2,62,0,0,0,0,0
+lipscomb:rodriguezrobert,"Rodriguez, Robert",Lipscomb,25,1,62,0,0,1,0,0
+stthomasmn:gineralejandro,"Giner, Alejandro",St. Thomas (MN),10,1,62,0,0,0,0,0
+stthomasmn:selboronan,"Selbo, Ronan",St. Thomas (MN),14,1,62,0,0,1,0,0
+bostoncollege:martinsenwoldsander,"Martinsen-Wold, Sander",Boston College,10,2,61,0,0,1,0,0
+louisville:camarabilal,"Camara, Bilal",Louisville,6,1,61,0,0,1,0,0
+smu:30soghomonianstephan,"30 
+                                            Soghomonian, Stephan",SMU,30,1,61,0,0,3,2,0
+hofstra:campisistefano,"Campisi, Stefano",Hofstra,8,1,61,0,0,0,0,0
+hofstra:adegborioyedavid,"Adegborioye, David",Hofstra,26,1,61,0,0,2,2,0
+smc:24kobeycameron,"24 
+                                            Kobey, Cameron",SMC,24,1,60,0,0,1,1,0
+northflorida:miyakawarentaro,"Miyakawa, Rentaro",North Florida,16,1,60,0,0,0,0,0
+bostoncollege:bejarchristian,"Bejar, Christian",Boston College,3,2,59,0,0,1,0,0
+wofford:dyernick,"Dyer, Nick",Wofford,4,1,59,0,0,0,0,0
+wofford:jacksoneli,"Jackson, Eli",Wofford,31,1,59,0,0,0,0,0
+maryland:cissefarouk,"Cisse, Farouk",Maryland,90,1,59,0,0,1,0,0
+stthomasmn:lakhlifiyanis,"Lakhlifi, Yanis",St. Thomas (MN),7,1,58,0,0,0,0,0
+virginia:tandjigorabacary,"Tandjigora, Bacary",Virginia,17,1,58,0,0,1,0,0
+hofstra:chrysostomouevangelos,"Chrysostomou, Evangelos",Hofstra,28,1,58,0,0,0,0,0
+cal:11moralesnoe,"11 
+                                            Morales, Noe",CAL,11,1,57,0,0,2,1,0
+virginia:parvualex,"Parvu, Alex",Virginia,4,1,57,0,0,0,0,0
+northflorida:mansourikaiss,"Mansouri, Kaiss",North Florida,24,1,57,0,0,1,0,0
+virginiatech:bertelliugo,"Bertelli, Ugo",Virginia Tech,8,2,56,0,0,0,0,0
+wofford:byronsamuel,"Byron, Samuel",Wofford,27,1,55,0,0,0,0,0
+cornell:zapatasergio,"Zapata, Sergio",Cornell,15,1,55,0,0,0,0,0
+smc:7knighttj,"7 
+                                            Knight, TJ",SMC,7,1,54,0,0,0,0,0
+smc:19hoeltingluke,"19 
+                                            Hoelting, Luke",SMC,19,1,54,0,0,0,0,0
+notredame:schroederwill,"Schroeder, Will",Notre Dame,14,1,54,0,0,2,1,0
+siena:kellysean,"Kelly, Sean",Siena,18,1,53,0,0,1,1,0
+lipscomb:kennedywilliam,"Kennedy, William",Lipscomb,6,1,53,0,0,0,0,0
+bostoncollege:almendareserick,"Almendares, Erick",Boston College,22,2,51,0,0,2,0,0
+kc:6fernandezmiguel,"6 
+                                            Fernandez, Miguel",KC,6,1,51,0,0,0,0,0
+duke:racajaridon,"Racaj, Aridon",Duke,15,1,50,0,0,1,0,0
+northflorida:perezdavid,"Perez, David",North Florida,99,1,50,0,0,0,0,0
+uab:carlsonneal,"Carlson, Neal",UAB,3,2,48,0,0,0,0,0
+louisville:brijbasielijah,"Brijbasi, Elijah",Louisville,17,1,48,0,0,0,0,0
+lipscomb:constantraphael,"Constant, Raphael",Lipscomb,10,1,48,0,0,0,0,0
+lipscomb:ramirezdiego,"Ramirez, Diego",Lipscomb,12,1,48,0,0,0,0,0
+cornell:wollsteinkasper,"Wollstein, Kasper",Cornell,19,1,48,0,0,2,1,0
+syracuse:noedingtim,"Noeding, Tim",Syracuse,20,11,47,0,0,0,0,0
+bostoncollege:hankentjostheimjohannes,"Hanken Tjostheim, Johannes",Boston College,77,2,46,0,0,0,0,0
+siena:tchounjinkarl,"Tchounjin, Karl",Siena,3,1,46,0,0,0,0,0
+northcarolina:veraluis,"Vera, Luis",North Carolina,25,10,46,0,0,1,0,0
+cornell:schabanadam,"Schaban, Adam",Cornell,17,1,46,0,0,2,0,0
+siena:vrdoljaktomislav,"Vrdoljak, Tomislav",Siena,6,1,45,0,0,0,0,0
+cal:99andohzack,"99 
+                                            Andoh, Zack",CAL,99,1,45,0,0,0,0,0
+ncstate:caeiropedro,"Caeiro, Pedro",NC State,19,3,45,0,0,0,0,0
+ncstate:busenzeisaac,"Busenze, Isaac",NC State,24,3,45,0,0,2,0,0
+ncstate:abdouhadam,"Abdouh, Adam",NC State,25,3,45,0,0,0,0,0
+wofford:hernandezmikey,"Hernandez, Mikey",Wofford,23,1,45,0,0,0,0,0
+duke:vukovicaleksandar,"Vukovic, Aleksandar",Duke,6,1,45,0,0,1,0,0
+duke:bulljorgensennikolai,"Bull Jorgensen, Nikolai",Duke,8,1,45,0,0,0,0,0
+hofstra:bohansean,"Bohan, Sean",Hofstra,1,1,45,0,0,0,0,3
+hofstra:cervonigino,"Cervoni, Gino",Hofstra,30,1,45,0,0,0,0,0
+cal:24lambeconnor,"24 
+                                            Lambe, Connor",CAL,24,1,44,0,0,0,0,0
+louisville:wilsonquinton,"Wilson, Quinton",Louisville,18,1,44,0,0,0,0,0
+cornell:samwaysdaniel,"Samways, Daniel",Cornell,10,1,44,0,0,0,0,0
+lipscomb:greenjosiah,"Green, Josiah",Lipscomb,11,1,42,0,0,0,0,0
+smu:dickmatthias,"Dick, Matthias",SMU,23,2,41,0,0,0,0,0
+smu:floresluis,"Flores, Luis",SMU,25,2,41,0,0,2,0,0
+virginiatech:peraltatito,"Peralta, Tito",Virginia Tech,22,2,41,0,0,2,1,0
+louisville:sukatikg,"Sukati, KG",Louisville,9,1,40,0,0,0,0,0
+duke:ortegajose,"Ortega, Jose",Duke,13,1,40,0,0,0,0,0
+kc:18schaeferethan,"18 
+                                            Schaefer, Ethan",KC,18,1,39,0,0,0,0,0
+uab:sigurdssonolafur,"Sigurdsson, Olafur",UAB,9,2,37,0,0,0,0,0
+uab:nordinlucas,"Nordin, Lucas",UAB,27,2,37,0,0,1,1,0
+smc:9monfaredkayvon,"9 
+                                            Monfared, Kayvon",SMC,9,1,36,0,0,1,0,0
+smc:29leedavid,"29 
+                                            Lee, David",SMC,29,1,36,0,0,0,0,0
+louisville:kondicleon,"Kondic, Leon",Louisville,10,1,36,0,0,1,0,0
+northflorida:amanciopedro,"Amancio, Pedro",North Florida,6,1,36,0,0,0,0,0
+smc:4gibbsgaige,"4 
+                                            Gibbs, Gaige",SMC,4,1,35,0,0,0,0,0
+virginiatech:sullinsandy,"Sullins, Andy",Virginia Tech,15,2,35,0,0,1,0,0
+cornell:latonasam,"Latona, Sam",Cornell,6,1,35,0,0,3,1,0
+smc:11abebesurafel,"11 
+                                            Abebe, Surafel",SMC,11,1,34,0,0,0,0,0
+louisville:boringjack,"Boring, Jack",Louisville,5,1,33,0,0,0,0,0
+virginia:millerreese,"Miller, Reese",Virginia,19,1,33,0,0,2,0,0
+smc:18jacksonsam,"18 
+                                            Jackson, Sam",SMC,18,1,32,0,0,0,0,0
+uab:kellerhalsjake,"Kellerhals, Jake",UAB,12,2,32,0,0,0,0,0
+syracuse:christeyquentin,"Christey, Quentin",Syracuse,8,11,32,0,0,0,0,0
+kc:32nkumukevin,"32 
+                                            Nkumu, Kevin",KC,32,1,32,0,0,0,0,0
+stthomasmn:corrisoliver,"Corris, Oliver",St. Thomas (MN),13,1,32,0,0,0,0,0
+virginiatech:portelatiago,"Portela, Tiago",Virginia Tech,23,2,32,0,0,0,0,0
+virginia:lambebrendan,"Lambe, Brendan",Virginia,8,1,32,0,0,0,0,0
+virginia:dossantosmarco,"Dos Santos, Marco",Virginia,21,1,32,0,0,0,0,0
+bostoncollege:galluzzodevon,"Galluzzo, Devon",Boston College,24,2,31,0,0,1,0,0
+kc:4munozguille,"4 
+                                            Munoz, Guille",KC,4,1,31,0,0,0,0,0
+northcarolina:mcdowelljohn,"McDowell, John",North Carolina,14,10,31,0,0,0,0,0
+virginiatech:ruizmateosfigueroaalvaro,"Ruiz-Mateos Figueroa, Alvaro",Virginia Tech,18,2,31,0,0,0,0,0
+duke:arlottialessandro,"Arlotti, Alessandro",Duke,7,1,30,0,0,0,0,0
+louisville:fredhallfilip,"Fredhall, Filip",Louisville,12,1,29,0,0,1,0,0
+siena:amaralchristian,"Amaral, Christian",Siena,15,1,28,0,0,1,0,0
+lipscomb:coopermason,"Cooper, Mason",Lipscomb,9,1,28,0,0,0,0,0
+stthomasmn:irelandliam,"Ireland, Liam",St. Thomas (MN),9,1,28,0,0,0,0,0
+stthomasmn:pachecojorge,"Pacheco, Jorge",St. Thomas (MN),12,1,28,0,0,0,0,0
+siena:navarroperezmario,"Navarro Perez, Mario",Siena,10,1,27,0,0,1,0,0
+ncstate:bushaustin,"Bush, Austin",NC State,23,3,27,0,0,0,0,0
+wofford:ricebear,"Rice, Bear",Wofford,8,1,27,0,0,0,0,0
+northflorida:reinhardtjaxon,"Reinhardt, Jaxon",North Florida,19,1,27,0,0,0,0,0
+wofford:spiresfranklin,"Spires, Franklin",Wofford,17,1,26,0,0,1,0,0
+kc:29outmanbryce,"29 
+                                            Outman, Bryce",KC,29,1,26,0,0,0,0,0
+virginia:smithaj,"Smith, AJ",Virginia,9,1,26,0,0,0,0,0
+siena:bitonben,"Biton, Ben",Siena,17,1,24,0,0,1,0,0
+cal:13parkjunhwan,"13 
+                                            Park, Junhwan",CAL,13,1,24,0,0,1,0,0
+ncstate:terranovasamuel,"Terranova, Samuel",NC State,26,3,24,0,0,0,0,0
+wofford:menendezfabian,"Menendez, Fabian",Wofford,33,1,24,0,0,0,0,0
+lipscomb:hanlonluke,"Hanlon, Luke",Lipscomb,29,1,24,0,0,0,0,0
+notredame:zimmermannnate,"Zimmermann, Nate",Notre Dame,7,1,24,0,0,2,0,0
+kc:21ospinatimothy,"21 
+                                            Ospina, Timothy",KC,21,1,23,0,0,0,0,0
+pittsburgh:bordoyanders,"Bordoy, Anders",Pittsburgh,26,2,22,0,0,2,2,0
+stthomasmn:buschgunnar,"Busch, Gunnar",St. Thomas (MN),3,1,22,0,0,0,0,0
+bostoncollege:richmondwatts,"Richmond, Watts",Boston College,28,2,21,0,0,0,0,0
+siena:plazamiguel,"Plaza, Miguel",Siena,5,1,21,0,0,0,0,0
+cal:10juarezallan,"10 
+                                            Juarez, Allan",CAL,10,1,21,0,0,1,0,0
+cornell:diakosgiorgos,"Diakos, Giorgos",Cornell,28,1,21,0,0,2,0,0
+notredame:ochoadiego,"Ochoa, Diego",Notre Dame,18,1,21,0,0,0,0,0
+maryland:quistthersonkenny,"Quist-Therson, Kenny",Maryland,17,1,21,0,0,0,0,0
+smu:ervinnoah,"Ervin, Noah",SMU,17,2,19,0,0,0,0,0
+virginia:sloanparker,"Sloan, Parker",Virginia,5,1,19,0,0,0,0,0
+virginia:burnsluke,"Burns, Luke",Virginia,10,1,19,0,0,1,0,0
+ncstate:peeplesbrendan,"Peeples, Brendan",NC State,28,3,18,0,0,0,0,0
+bostoncollege:wassarmanhenry,"Wassarman, Henry",Boston College,26,2,17,0,0,0,0,0
+northcarolina:bakayokoyaya,"Bakayoko, Yaya",North Carolina,35,10,16,0,0,0,0,0
+duke:voldthomas,"Vold, Thomas",Duke,12,1,16,0,0,0,0,0
+virginiatech:pageethan,"Page, Ethan",Virginia Tech,3,2,15,0,0,0,0,0
+notredame:baquerokarson,"Baquero, Karson",Notre Dame,21,1,15,0,0,0,0,0
+siena:almeidalucas,"Almeida, Lucas",Siena,7,1,14,0,0,0,0,0
+wofford:causeywilliam,"Causey, William",Wofford,21,1,14,0,0,0,0,0
+kc:20kistmannraphael,"20 
+                                            Kistmann, Raphael",KC,20,1,14,0,0,1,0,0
+duke:dambrosioleonardo,"D'Ambrosio, Leonardo",Duke,11,1,14,0,0,1,0,0
+maryland:stmartinbrian,"St. Martin, Brian",Maryland,28,1,14,0,0,1,1,0
+bostoncollege:reddypatrick,"Reddy, Patrick",Boston College,2,2,11,0,0,0,0,0
+smc:23dringadam,"23 
+                                            Dring, Adam",SMC,23,1,11,0,0,0,0,0
+uab:campbelljoshwa,"Campbell, Joshwa",UAB,23,2,11,0,0,0,0,0
+smu:13garciarichard,"13 
+                                            Garcia, Richard",SMU,13,1,11,0,0,0,0,0
+smu:17ervinnoah,"17 
+                                            Ervin, Noah",SMU,17,1,11,0,0,0,0,0
+lipscomb:toledoluis,"Toledo, Luis",Lipscomb,13,1,11,0,0,0,0,0
+pittsburgh:hauskrechtalex,"Hauskrecht, Alex",Pittsburgh,27,2,10,0,0,0,0,0
+kc:9kisokaelie,"9 
+                                            Kisoka, Elie",KC,9,1,10,0,0,0,0,0
+stthomasmn:marshallowen,"Marshall, Owen",St. Thomas (MN),21,1,10,0,0,0,0,0
+notredame:flanaganjack,"Flanagan, Jack",Notre Dame,11,1,10,0,0,0,0,0
+northflorida:graycameron,"Gray, Cameron",North Florida,28,1,10,0,0,0,0,0
+siena:belaidaylan,"Belaid, Aylan",Siena,30,1,9,0,0,0,0,0
+northcarolina:rosslucas,"Ross, Lucas",North Carolina,17,10,8,0,0,0,0,0
+notredame:sylvesterren,"Sylvester, Ren",Notre Dame,19,1,8,0,0,0,0,0
+notredame:hildenbrady,"Hilden, Brady",Notre Dame,20,1,8,0,0,0,0,0
+notredame:burtonluke,"Burton, Luke",Notre Dame,27,1,8,0,0,0,0,0
+smu:grimmmason,"Grimm, Mason",SMU,4,2,7,0,0,0,0,0
+smu:skilbergfredrik,"Skilberg, Fredrik",SMU,11,2,7,0,0,0,0,0
+smu:garciarichard,"Garcia, Richard",SMU,13,2,7,0,0,0,0,0
+virginiatech:kriegharrison,"Krieg, Harrison",Virginia Tech,12,2,7,0,0,0,0,0
+virginiatech:onwudiweosi,"Onwudiwe, Osi",Virginia Tech,14,2,7,0,0,0,0,0
+maryland:bernsteinhenry,"Bernstein, Henry",Maryland,27,1,7,0,0,0,0,0
+pittsburgh:veychekjoshua,"Veychek, Joshua",Pittsburgh,18,2,6,0,0,0,0,0
+stthomasmn:slivakevin,"Sliva, Kevin",St. Thomas (MN),18,1,6,0,0,0,0,0
+hofstra:basenachaaron,"Basenach, Aaron",Hofstra,12,1,6,0,0,0,0,0
+cornell:eckgriffin,"Eck, Griffin",Cornell,14,1,4,0,0,1,0,0
+syracuse:lugtoncallum,"Lugton, Callum",Syracuse,18,11,3,0,0,0,0,0
+lipscomb:kennedyzach,"Kennedy, Zach",Lipscomb,16,1,3,0,0,0,0,0
+siena:acocellanico,"Acocella, Nico",Siena,14,1,2,0,0,0,0,0
+northflorida:ferreiraricardo,"Ferreira, Ricardo",North Florida,12,1,2,0,0,0,0,0
+louisville:sanchezfernando,"Sanchez, Fernando",Louisville,22,1,1,0,0,0,0,0
+kc:14mouramateus,"14 
+                                            Moura, Mateus",KC,14,1,1,0,0,0,0,0
+bostoncollege:donovanpatrick,"Donovan, Patrick",Boston College,1,2,0,0,0,0,0,0
+bostoncollege:seidelleo,"Seidel, Leo",Boston College,13,2,0,0,0,0,0,0
+bostoncollege:copelanddeltorobryce,"Copeland-Del Toro, Bryce",Boston College,34,2,0,0,0,0,0,0
+bostoncollege:karalisalexi,"Karalis, Alexi",Boston College,12,2,0,0,0,0,0,0
+bostoncollege:shevchenkorogersmitchell,"Shevchenko-Rogers, Mitchell",Boston College,20,2,0,0,0,0,0,0
+bostoncollege:raceharald,"Race, Harald",Boston College,27,2,0,0,0,0,0,0
+bostoncollege:odhiambosimba,"Odhiambo, Simba",Boston College,30,2,0,0,0,0,0,0
+siena:kaciczackary,"Kacic, Zackary",Siena,1,1,0,0,0,0,0,0
+siena:rananicky,"Rana, Nicky",Siena,33,1,0,0,0,0,0,0
+siena:kanicmuamer,"Kanic, Muamer",Siena,19,1,0,0,0,0,0,0
+siena:perezjordaalejandro,"Perez Jorda, Alejandro",Siena,22,1,0,0,0,0,0,0
+siena:berbachirayan,"Berbachi, Rayan",Siena,23,1,0,0,0,0,0,0
+siena:capollarienesio,"Capollari, Enesio",Siena,29,1,0,0,0,0,0,0
+uab:olsongarrett,"Olson, Garrett",UAB,13,2,0,0,0,0,0,0
+uab:lovegrothmathias,"Love Groth, Mathias",UAB,16,2,0,0,0,0,0,0
+uab:thompsoncamren,"Thompson, Camren",UAB,20,2,0,0,0,0,0,0
+uab:jowerskaleb,"Jowers, Kaleb",UAB,22,2,0,0,0,0,0,0
+uab:zenzendavid,"Zenzen, David",UAB,25,2,0,0,0,0,0,0
+louisville:abrahamnathaniel,"Abraham, Nathaniel",Louisville,1,1,0,0,0,0,0,0
+louisville:mcclenliam,"McClen, Liam",Louisville,31,1,0,0,0,0,0,0
+louisville:seaversandrew,"Seavers, Andrew",Louisville,33,1,0,0,0,0,0,0
+louisville:dammsilas,"Damm, Silas",Louisville,2,1,0,0,0,0,0,0
+louisville:schenfeldmatt,"Schenfeld, Matt",Louisville,14,1,0,0,0,0,0,0
+louisville:amonesephram,"Amones, Ephram",Louisville,15,1,0,0,0,0,0,0
+louisville:massonfelix,"Masson, Felix",Louisville,16,1,0,0,0,0,0,0
+louisville:flowersashton,"Flowers, Ashton",Louisville,20,1,0,0,0,0,0,0
+louisville:brooksdodge,"Brooks, Dodge",Louisville,21,1,0,0,0,0,0,0
+louisville:griderdaniel,"Grider, Daniel",Louisville,23,1,0,0,0,0,0,0
+louisville:petrusojohnny,"Petruso, Johnny",Louisville,26,1,0,0,0,0,0,0
+ncstate:herlufchristian,"Herluf, Christian",NC State,0,3,0,0,0,0,0,0
+ncstate:francismaddux,"Francis, Maddux",NC State,30,3,0,0,0,0,0,0
+ncstate:cruzervin,"Cruz, Ervin",NC State,2,3,0,0,0,0,0,0
+ncstate:webermoritz,"Weber, Moritz",NC State,14,3,0,0,0,0,0,0
+ncstate:pottlejohn,"Pottle, John",NC State,31,3,0,0,0,0,0,0
+ncstate:rosariogianni,"Rosario, Gianni",NC State,32,3,0,0,0,0,0,0
+wofford:raffgavin,"Raff, Gavin",Wofford,0,1,0,0,0,0,0,0
+wofford:morrisevan,"Morris, Evan",Wofford,32,1,0,0,0,0,0,0
+wofford:porcorokaleb,"Porcoro, Kaleb",Wofford,36,1,0,0,0,0,0,0
+wofford:nicollkyle,"Nicoll, Kyle",Wofford,40,1,0,0,0,0,0,0
+wofford:patnaudstewart,"Patnaud, Stewart",Wofford,7,1,0,0,0,0,0,0
+wofford:erankasebastian,"Eranka, Sebastian",Wofford,10,1,0,0,0,0,0,0
+wofford:dissingercooper,"Dissinger, Cooper",Wofford,13,1,0,0,0,0,0,0
+wofford:sinaniona,"Sinani, Ona",Wofford,14,1,0,0,0,0,0,0
+wofford:rodriguezjacob,"Rodriguez, Jacob",Wofford,19,1,0,0,0,0,0,0
+wofford:lewisgavin,"Lewis, Gavin",Wofford,20,1,0,0,0,0,0,0
+wofford:dieboldsam,"Diebold, Sam",Wofford,22,1,0,0,0,0,0,0
+wofford:morenoalejandro,"Moreno, Alejandro",Wofford,24,1,0,0,0,0,0,0
+wofford:duncanethan,"Duncan, Ethan",Wofford,25,1,0,0,0,0,0,0
+wofford:velapaolo,"Vela, Paolo",Wofford,26,1,0,0,0,0,0,0
+wofford:harveyhugo,"Harvey, Hugo",Wofford,28,1,0,0,0,0,0,0
+wofford:auderiethelliot,"Auderieth, Elliot",Wofford,34,1,0,0,0,0,0,0
+pittsburgh:bishopnick,"Bishop, Nick",Pittsburgh,31,2,0,0,0,0,0,0
+pittsburgh:sissoncooper,"Sisson, Cooper",Pittsburgh,32,2,0,0,0,0,0,0
+pittsburgh:redenforsjacob,"Redenfors, Jacob",Pittsburgh,3,2,0,0,0,0,0,0
+pittsburgh:baquferran,"Baqué, Ferran",Pittsburgh,4,2,0,0,0,0,0,0
+pittsburgh:loppingjakob,"Lopping, Jakob",Pittsburgh,8,2,0,0,0,0,0,0
+pittsburgh:bertranmiguel,"Bertran, Miguel",Pittsburgh,10,2,0,0,0,0,0,0
+pittsburgh:silvamarco,"Silva, Marco",Pittsburgh,11,2,0,0,0,0,0,0
+pittsburgh:hardinjosh,"Hardin, Josh",Pittsburgh,13,2,0,0,0,0,0,0
+pittsburgh:dykezahir,"Dyke, Zahir",Pittsburgh,15,2,0,0,0,0,0,0
+pittsburgh:mattssonloke,"Mattsson, Loke",Pittsburgh,19,2,0,0,0,0,0,0
+pittsburgh:ferreirasantiago,"Ferreira, Santiago",Pittsburgh,28,2,0,0,0,0,0,0
+pittsburgh:christopherowen,"Christopher, Owen",Pittsburgh,29,2,0,0,0,0,0,0
+syracuse:jansenkyle,"Jansen, Kyle",Syracuse,1,11,0,0,0,0,0,0
+syracuse:martinezbastidasjuan,"Martinez-Bastidas, Juan",Syracuse,40,11,0,0,0,0,0,0
+syracuse:cappelloemanuel,"Cappello, Emanuel",Syracuse,15,11,0,0,0,0,0,0
+syracuse:ibraheemfaris,"Ibraheem, Faris",Syracuse,16,11,0,0,0,0,0,0
+lipscomb:kumpnoah,"Kump, Noah",Lipscomb,22,1,0,0,0,0,0,0
+lipscomb:straitbrayden,"Strait, Brayden",Lipscomb,2,1,0,0,0,0,0,0
+lipscomb:hyltoncaleb,"Hylton, Caleb",Lipscomb,4,1,0,0,0,0,0,0
+lipscomb:qureshijaami,"Qureshi, Jaami",Lipscomb,7,1,0,0,0,0,0,0
+lipscomb:badjibril,"Ba, Djibril",Lipscomb,15,1,0,0,0,0,0,0
+lipscomb:franchiyohan,"Franchi, Yohan",Lipscomb,17,1,0,0,0,0,0,0
+lipscomb:appiahkubah,"Appiah, Kubah",Lipscomb,20,1,0,0,0,0,0,0
+lipscomb:stinnetttyler,"Stinnett, Tyler",Lipscomb,21,1,0,0,0,0,0,0
+lipscomb:lombarditony,"Lombardi, Tony",Lipscomb,26,1,0,0,0,0,0,0
+northcarolina:catlettcoleman,"Catlett, Coleman",North Carolina,0,10,0,0,0,0,0,0
+northcarolina:rutkowskialan,"Rutkowski, Alan",North Carolina,12,10,0,0,0,0,0,0
+northcarolina:saborioperezalejandro,"Saborio-Perez, Alejandro",North Carolina,24,9,0,0,0,0,0,0
+northcarolina:cheeversscott,"Cheevers , Scott",North Carolina,2,10,0,0,0,0,0,0
+northcarolina:swettmaclovio,"Swett, Maclovio",North Carolina,16,10,0,0,0,0,0,0
+northcarolina:hernandezjavier,"Hernandez , Javier",North Carolina,18,10,0,0,0,0,0,0
+northcarolina:jonesmilton,"Jones, Milton",North Carolina,20,10,0,0,0,0,0,0
+northcarolina:wallerdrew,"Waller, Drew",North Carolina,22,10,0,0,0,0,0,0
+northcarolina:maimartin,"Mai, Martin",North Carolina,26,10,0,0,0,0,0,0
+northcarolina:fishermax,"Fisher, Max",North Carolina,15,10,0,0,0,0,0,0
+smu:russellsoren,"Russell, Soren",SMU,18,2,0,0,0,0,0,0
+smu:kinsernathan,"Kinser, Nathan",SMU,29,2,0,0,0,0,0,0
+smu:johnsonchance,"Johnson, Chance",SMU,37,2,0,0,0,0,0,0
+smu:zarnickowen,"Zarnick, Owen",SMU,3,2,0,0,0,0,0,0
+smu:bairdbrendan,"Baird, Brendan",SMU,22,2,0,0,0,0,0,0
+smu:deamonchris,"Deamon, Chris",SMU,24,2,0,0,0,0,0,0
+smu:bronoldcaleb,"Bronold, Caleb",SMU,26,2,0,0,0,0,0,0
+smu:ellisanden,"Ellis, Anden",SMU,28,2,0,0,0,0,0,0
+smu:knotekoliver,"Knotek, Oliver",SMU,32,2,0,0,0,0,0,0
+smu:zachgospencer,"Zachgo, Spencer",SMU,33,2,0,0,0,0,0,0
+smu:clementsdonnell,"Clements, Donnell",SMU,34,2,0,0,0,0,0,0
+stthomasmn:olszewskicameron,"Olszewski, Cameron",St. Thomas (MN),30,1,0,0,0,0,0,0
+stthomasmn:moorenathaniel,"Moore, Nathaniel",St. Thomas (MN),31,1,0,0,0,0,0,0
+stthomasmn:saraivajoao,"Saraiva, Joao",St. Thomas (MN),6,1,0,0,0,0,0,0
+stthomasmn:therrienchance,"Therrien, Chance",St. Thomas (MN),11,1,0,0,0,0,0,0
+stthomasmn:bencejohn,"Bence, John",St. Thomas (MN),20,1,0,0,0,0,0,0
+stthomasmn:marshallluke,"Marshall, Luke",St. Thomas (MN),24,1,0,0,0,0,0,0
+stthomasmn:knisertommy,"Kniser, Tommy",St. Thomas (MN),25,1,0,0,0,0,0,0
+stthomasmn:deslongchampszachary,"Deslongchamps, Zachary",St. Thomas (MN),26,1,0,0,0,0,0,0
+stthomasmn:hoelschercharlie,"Hoelscher, Charlie",St. Thomas (MN),27,1,0,0,0,0,0,0
+stthomasmn:wilkinsonkienan,"Wilkinson, Kienan",St. Thomas (MN),28,1,0,0,0,0,0,0
+stthomasmn:kuelthaujack,"Kuelthau, Jack",St. Thomas (MN),29,1,0,0,0,0,0,0
+virginiatech:ledinleo,"Ledin, Leo",Virginia Tech,0,2,0,0,0,0,0,0
+virginiatech:glesiuszach,"Glesius, Zach",Virginia Tech,25,2,0,0,0,0,0,0
+virginiatech:farrellcameron,"Farrell, Cameron",Virginia Tech,27,2,0,0,0,0,0,0
+virginiatech:yohannesmathias,"Yohannes, Mathias",Virginia Tech,6,2,0,0,0,0,0,0
+virginiatech:gardarssondagur,"Gardarsson, Dagur",Virginia Tech,16,2,0,0,0,0,0,0
+virginiatech:rhoumaryassine,"Rhoumar, Yassine",Virginia Tech,20,2,0,0,0,0,0,0
+virginiatech:grangelandan,"Grange, Landan",Virginia Tech,30,2,0,0,0,0,0,0
+cornell:thompsonryan,"Thompson, Ryan",Cornell,0,1,0,0,0,0,0,0
+cornell:delgadoisaac,"Delgado, Isaac",Cornell,30,1,0,0,0,0,0,0
+cornell:gouldingben,"Goulding, Ben",Cornell,2,1,0,0,0,0,0,0
+cornell:feherbalazs,"Feher, Balazs",Cornell,7,1,0,0,0,0,0,0
+cornell:johnsoncolin,"Johnson, Colin",Cornell,8,1,0,0,0,0,0,0
+cornell:hovannate,"Hovan, Nate",Cornell,9,1,0,0,0,0,0,0
+cornell:nevadomassosahyd,"Nevado Masso, Sahyd",Cornell,11,1,0,0,0,0,0,0
+cornell:flanarycooper,"Flanary, Cooper",Cornell,12,1,0,0,0,0,0,0
+cornell:sniderjon,"Snider, Jon",Cornell,15,1,0,0,0,0,0,0
+cornell:mayliam,"May, Liam",Cornell,21,1,0,0,0,0,0,0
+cornell:stewarteddie,"Stewart, Eddie",Cornell,22,1,0,0,0,0,0,0
+cornell:wehibebennett,"Wehibe, Bennett",Cornell,25,1,0,0,0,0,0,0
+cornell:momanyicalvin,"Momanyi, Calvin",Cornell,26,1,0,0,0,0,0,0
+cornell:sobreiromatthew,"Sobreiro, Matthew",Cornell,27,1,0,0,0,0,0,0
+cornell:bredemancaden,"Bredeman, Caden",Cornell,29,1,0,0,0,0,0,0
+cornell:smithnate,"Smith, Nate",Cornell,31,1,0,0,0,0,0,0
+northcarolina:saborioalejandro,"Saborio, Alejandro",North Carolina,24,1,0,0,0,0,0,0
+northcarolina:mayanjaabubakar,"Mayanja, Abubakar",North Carolina,8,1,0,0,0,0,0,0
+duke:gallagherryan,"Gallagher, Ryan",Duke,0,1,0,0,0,0,0,0
+duke:blakeneyjackson,"Blakeney, Jackson",Duke,28,1,0,0,0,0,0,0
+duke:gavisernathan,"Gaviser, Nathan",Duke,30,1,0,0,0,0,0,0
+duke:hauschildalex,"Hauschild, Alex",Duke,5,1,0,0,0,0,0,0
+duke:byasiimaadrian,"Byasiima, Adrian",Duke,17,1,0,0,0,0,0,0
+duke:suberjulius,"Suber, Julius",Duke,18,1,0,0,0,0,0,0
+duke:heckerian,"Hecker, Ian",Duke,19,1,0,0,0,0,0,0
+duke:hillhugo,"Hill, Hugo",Duke,21,1,0,0,0,0,0,0
+duke:donaldsoncaleb,"Donaldson, Caleb",Duke,22,1,0,0,0,0,0,0
+duke:gudbjornssonaxel,"Gudbjornsson, Axel",Duke,24,1,0,0,0,0,0,0
+duke:bagcasey,"Bag, Casey",Duke,25,1,0,0,0,0,0,0
+duke:smithtucker,"Smith, Tucker",Duke,29,1,0,0,0,0,0,0
+duke:arbibsol,"Arbib, Sol",Duke,31,1,0,0,0,0,0,0
+duke:lagosjackson,"Lagos, Jackson",Duke,32,1,0,0,0,0,0,0
+notredame:kowalskicole,"Kowalski, Cole",Notre Dame,0,1,0,0,0,0,0,0
+notredame:eganliam,"Egan, Liam",Notre Dame,30,1,0,0,0,0,0,0
+notredame:rossjack,"Ross, Jack",Notre Dame,4,1,0,0,0,0,0,0
+notredame:bartlettnico,"Bartlett, Nico",Notre Dame,8,1,0,0,0,0,0,0
+notredame:boatengdaniel,"Boateng, Daniel",Notre Dame,12,1,0,0,0,0,0,0
+notredame:vonthunmartin,"von Thun, Martin",Notre Dame,13,1,0,0,0,0,0,0
+notredame:brummellleo,"Brummell, Leo",Notre Dame,16,1,0,0,0,0,0,0
+notredame:dunphystevie,"Dunphy, Stevie",Notre Dame,23,1,0,0,0,0,0,0
+notredame:greendiego,"Green, Diego",Notre Dame,26,1,0,0,0,0,0,0
+virginia:hellmannmelvin,"Hellmann, Melvin",Virginia,0,1,0,0,0,0,0,0
+virginia:tunkscaleb,"Tunks, Caleb",Virginia,00,1,0,0,0,0,0,0
+virginia:sandersonspencer,"Sanderson, Spencer",Virginia,99,1,0,0,0,0,0,0
+virginia:dangnick,"Dang, Nick",Virginia,2,1,0,0,0,0,0,0
+virginia:oulouheusamuel,"Oulouheu, Samuel",Virginia,11,1,0,0,0,0,0,0
+virginia:hurlockstephen,"Hurlock, Stephen",Virginia,13,1,0,0,0,0,0,0
+virginia:serafinodrew,"Serafino, Drew",Virginia,22,1,0,0,0,0,0,0
+virginia:okoriedavid,"Okorie, David",Virginia,23,1,0,0,0,0,0,0
+virginia:jonesgraham,"Jones, Graham",Virginia,24,1,0,0,0,0,0,0
+virginia:maryatdonovan,"Maryat, Donovan",Virginia,25,1,0,0,0,0,0,0
+virginia:akinkoyeemmanuel,"Akinkoye, Emmanuel",Virginia,26,1,0,0,0,0,0,0
+virginia:hallnoah,"Hall, Noah",Virginia,27,1,0,0,0,0,0,0
+virginia:howardgrant,"Howard, Grant",Virginia,33,1,0,0,0,0,0,0
+hofstra:farooqhamad,"Farooq, Hamad",Hofstra,32,1,0,0,0,0,0,0
+hofstra:ganunaidan,"GaNun, Aidan",Hofstra,39,1,0,0,0,0,0,0
+hofstra:jelercicjon,"Jelercic, Jon",Hofstra,4,1,0,0,0,0,0,0
+hofstra:duffyjoe,"Duffy, Joe",Hofstra,11,1,0,0,0,0,0,0
+hofstra:williamscaleb,"Williams, Caleb",Hofstra,17,1,0,0,0,0,0,0
+hofstra:llamozasdaniel,"Llamozas, Daniel",Hofstra,22,1,0,0,0,0,0,0
+hofstra:schmitzcarter,"Schmitz, Carter",Hofstra,23,1,0,0,0,0,0,0
+hofstra:orrasonthengill,"Orrason, Thengill",Hofstra,24,1,0,0,0,0,0,0
+hofstra:blaircharlie,"Blair, Charlie",Hofstra,25,1,0,0,0,0,0,0
+hofstra:grodzkianthony,"Grodzki, Anthony",Hofstra,29,1,0,0,0,0,0,0
+hofstra:hempelmannperezpablo,"Hempelmann-Perez, Pablo",Hofstra,33,1,0,0,0,0,0,0
+hofstra:karageorgiskonstantinos,"Karageorgis, Konstantinos",Hofstra,35,1,0,0,0,0,0,0
+hofstra:wauchopedylan,"Wauchope, Dylan",Hofstra,36,1,0,0,0,0,0,0
+hofstra:poztommy,"Poz, Tommy",Hofstra,37,1,0,0,0,0,0,0
+hofstra:dicksoncole,"Dickson, Cole",Hofstra,38,1,0,0,0,0,0,0
+northflorida:pentinatiu,"Pentinat, Iu",North Florida,0,1,0,0,0,0,0,0
+northflorida:poolaakash,"Poola, Akash",North Florida,00,1,0,0,0,0,0,0
+northflorida:gainsaustin,"Gains, Austin",North Florida,30,1,0,0,0,0,0,0
+northflorida:mattocksalfie,"Mattocks, Alfie",North Florida,3,1,0,0,0,0,0,0
+northflorida:taylorangus,"Taylor, Angus",North Florida,7,1,0,0,0,0,0,0
+northflorida:mcglynnadan,"McGlynn, Adan",North Florida,13,1,0,0,0,0,0,0
+northflorida:moriokaryuta,"Morioka, Ryuta",North Florida,14,1,0,0,0,0,0,0
+northflorida:trtoomar,"Trto, Omar",North Florida,15,1,0,0,0,0,0,0
+northflorida:harrisjacob,"Harris, Jacob",North Florida,17,1,0,0,0,0,0,0
+northflorida:maskerbraden,"Masker, Braden",North Florida,20,1,0,0,0,0,0,0
+northflorida:sadiqkadin,"Sadiq, Kadin",North Florida,22,1,0,0,0,0,0,0
+northflorida:maricsasha,"Maric, Sasha",North Florida,25,1,0,0,0,0,0,0
+northflorida:oyirwothgoffin,"Oyirwoth, Goffin",North Florida,26,1,0,0,0,0,0,0
+northflorida:warhaftbryce,"Warhaft, Bryce",North Florida,27,1,0,0,0,0,0,0
+northflorida:garciadiogo,"Garcia, Diogo",North Florida,33,1,0,0,0,0,0,0
+maryland:wolcottsaxon,"Wolcott, Saxon",Maryland,0,1,0,0,0,0,0,0
+maryland:milosevicalexander,"Milosevic, Alexander",Maryland,50,1,0,0,0,0,0,0
+maryland:burdettluke,"Burdett, Luke",Maryland,2,1,0,0,0,0,0,0
+maryland:devriesmack,"DeVries, Mack",Maryland,4,1,0,0,0,0,0,0
+maryland:griffithcolin,"Griffith, Colin",Maryland,9,1,0,0,0,0,0,0
+maryland:caridemateo,"Caride, Mateo",Maryland,11,1,0,0,0,0,0,0
+maryland:rileymax,"Riley, Max",Maryland,12,1,0,0,0,0,0,0
+maryland:brownjoel,"Brown, Joel",Maryland,13,1,0,0,0,0,0,0
+maryland:micheljameson,"Michel, Jameson",Maryland,15,1,0,0,0,0,0,0
+maryland:pricecasey,"Price, Casey",Maryland,20,1,0,0,0,0,0,0
+maryland:dejesusmatias,"de Jesus, Matias",Maryland,30,1,0,0,0,0,0,0
+maryland:vanheukelumluke,"Van Heukelum, Luke",Maryland,44,1,0,0,0,0,0,0
+maryland:sheppelaaidan,"Sheppela, Aidan",Maryland,49,1,0,0,0,0,0,0
+maryland:nymannemil,"Nymann, Emil",Maryland,55,1,0,0,0,0,0,0
