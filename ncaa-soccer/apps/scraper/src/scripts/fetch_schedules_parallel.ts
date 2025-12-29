@@ -38,7 +38,7 @@ async function retryWithBackoff<T>(
 }
 
 // Configuration
-const CONCURRENCY = 5;
+const CONCURRENCY = 10; // Increased for faster processing
 const VIEWPORT = { width: 1280, height: 720 };
 const inputPath = process.argv[2];
 const TEAMS_JSON_PATH = inputPath
@@ -59,9 +59,19 @@ async function processSchool(browser: any, team: TeamConfig): Promise<any[]> {
         viewport: VIEWPORT
     });
     
-    // Set timeouts for slow sites
-    page.setDefaultNavigationTimeout(60000);
-    page.setDefaultTimeout(30000);
+    // Block images and CSS for faster loading
+    await page.route('**/*', (route: any) => {
+        const resourceType = route.request().resourceType();
+        if (['image', 'stylesheet', 'font', 'media'].includes(resourceType)) {
+            route.abort();
+        } else {
+            route.continue();
+        }
+    });
+    
+    // Reduced timeouts for faster scraping
+    page.setDefaultNavigationTimeout(30000);
+    page.setDefaultTimeout(15000);
 
     // // Capture JSON API responses that might contain schedule data
     // let capturedJsonData: string | null = null;
@@ -92,11 +102,11 @@ async function processSchool(browser: any, team: TeamConfig): Promise<any[]> {
     try {
         const response = await retryWithBackoff(
             () => page.goto(team.schedule_url, { 
-                waitUntil: 'domcontentloaded', 
-                timeout: 60000 
+                waitUntil: 'domcontentloaded',
+                timeout: 30000 
             }),
-            3,
-            2000,
+            2, // Reduced retries from 3 to 2
+            1500,
             `[${team.name_canonical}] navigation`
         );
         
@@ -130,7 +140,7 @@ async function processSchool(browser: any, team: TeamConfig): Promise<any[]> {
                     (p as HTMLElement).style.pointerEvents = 'none';
                 });
             });
-            await page.waitForTimeout(300);
+            await page.waitForTimeout(100);
         } catch (e) {
             // Ignore popup errors
         }
@@ -142,7 +152,7 @@ async function processSchool(browser: any, team: TeamConfig): Promise<any[]> {
             if (dropdown) {
                 console.log(`[${team.name_canonical}] Found dropdown, selecting list view...`);
                 await page.selectOption(dropdownSelector, 'list');
-                await page.waitForTimeout(800);
+                await page.waitForTimeout(300);
             }
         } catch (e) {
             // Ignore dropdown errors

@@ -91,7 +91,8 @@ export class SidearmParser implements Parser {
         const gameCards = $('.s-game-card');
         const scoreboardItems = $('.c-scoreboard__item');
         const gamesByKey: Record<string, Game> = {};
-        const tableRows = $('.c-schedule__table tbody tr, table tbody tr, .s-table-body__row');
+        // Include both table rows and list items (some sites use ul.sidearm-schedule-games-container)
+        const tableRows = $('.c-schedule__table tbody tr, table tbody tr, .s-table-body__row, .sidearm-schedule-game');
 
         if (debug) {
             console.log(`[sidearm] domain=${domain || 'n/a'} cards=${gameCards.length} tables=${tableRows.length} scoreboardItems=${scoreboardItems.length}`);
@@ -251,9 +252,13 @@ export class SidearmParser implements Parser {
             // Opponent name (the team opposite of the context team)
             const opponentName = card.find('.s-game-card__header__team .s-text-paragraph-bold').text().trim() || 'Unknown Opponent';
 
-            // Date extraction (e.g., "Aug 10")
+            // Date extraction (e.g., "Aug 10" or "Aug 10, 2024")
             const dateText = card.find('[data-test-id="s-game-card-standard__header-game-date-details"] span').first().text().trim();
-            const year = new Date().getFullYear().toString(); // Dynamically determine current year
+            
+            // Extract year from text if present, otherwise use current year as default
+            const yearMatch = dateText.match(/\b(20\d{2})\b/);
+            const year = yearMatch ? yearMatch[1] : new Date().getFullYear().toString();
+            
             const dateStr = this.parseDate(dateText, year);
 
             // Determine location type and whether the context team is home
@@ -401,8 +406,99 @@ export class SidearmParser implements Parser {
         }
     }
 
+    private parseListBasedGame(item: cheerio.Cheerio<any>, $: cheerio.CheerioAPI, options?: ParserOptions): Game | null {
+        try {
+            // Parse list-based schedule items like li.sidearm-schedule-game (SMU, Cal, etc.)
+            // Extract year from page heading
+            let year = '2025'; // default fallback
+            $('h1, h2, h3').each((_, el) => {
+                const text = $(el).text();
+                const yearMatch = text.match(/\b(20\d{2})\b/);
+                if (yearMatch) {
+                    year = yearMatch[1];
+                    return false; // break
+                }
+            });
+
+            // Extract date from .sidearm-schedule-game-opponent-date
+            const dateSpan = item.find('.sidearm-schedule-game-opponent-date span').first();
+            const dateText = dateSpan.text().trim(); // e.g., "Aug 21 (Thu)"
+            const date = this.parseDate(dateText, year);
+
+            // Extract opponent
+            const opponentName = item.find('.sidearm-schedule-game-opponent-name').text().trim();
+            if (!opponentName) return null;
+
+            // Check for home/away
+            const isHome = item.hasClass('sidearm-schedule-home-game');
+            const homeTeam = isHome ? 'Unknown Team' : opponentName;
+            const awayTeam = isHome ? opponentName : 'Unknown Team';
+
+            // Extract result if available
+            const resultText = item.find('.sidearm-schedule-game-result').text().trim();
+            let homeScore: number | null = null;
+            let awayScore: number | null = null;
+            let status: Game['status'] = 'scheduled';
+
+            if (resultText && resultText.match(/\d+-\d+/)) {
+                const scoreMatch = resultText.match(/(\d+)-(\d+)/);
+                if (scoreMatch) {
+                    // The score format depends on if it's showing "us vs them" or "them vs us"
+                    const score1 = parseInt(scoreMatch[1]);
+                    const score2 = parseInt(scoreMatch[2]);
+                    if (isHome) {
+                        homeScore = score1;
+                        awayScore = score2;
+                    } else {
+                        awayScore = score1;
+                        homeScore = score2;
+                    }
+                    status = 'final';
+                }
+            }
+
+            // Extract boxscore link
+            let boxscoreUrl: string | undefined;
+            item.find('.sidearm-schedule-game-links a, a').each((_, el) => {
+                const href = $(el).attr('href');
+                const text = $(el).text().toLowerCase();
+                if (href && (text.includes('boxscore') || text.includes('recap') || text.includes('stats'))) {
+                    boxscoreUrl = this.resolveUrl(href, options?.baseUrl);
+                    return false;
+                }
+            });
+
+            const gameId = `sidearm-${date}-${homeTeam.replace(/\s+/g, '-')}-${awayTeam.replace(/\s+/g, '-')}`;
+            const dedupeKey = `${date}-${homeTeam}-${awayTeam}`;
+
+            return {
+                game_id: gameId,
+                date,
+                home_team_name: homeTeam,
+                away_team_name: awayTeam,
+                home_team_ranked: false,
+                away_team_ranked: false,
+                home_score: homeScore,
+                away_score: awayScore,
+                location_type: isHome ? 'home' : 'away',
+                status,
+                source_urls: { boxscore_url: boxscoreUrl },
+                dedupe_key: dedupeKey
+            };
+        } catch (err) {
+            if (options?.debug) console.log('Error parsing list-based game:', err);
+            return null;
+        }
+    }
+
     private parseTableRow(row: cheerio.Cheerio<any>, $: cheerio.CheerioAPI, options?: ParserOptions): Game | null {
         try {
+            // Check if this is a list-based game item (e.g., li.sidearm-schedule-game)
+            // Only use list parser for actual <li> elements, not <tr> elements with same class
+            if (row.hasClass('sidearm-schedule-game') && row.prop('tagName') === 'LI') {
+                return this.parseListBasedGame(row, $, options);
+            }
+
             // Include both th and td cells (Stanford uses th for date column)
             const allCells = row.find('th, td');
             const cells = row.find('td');
@@ -412,7 +508,20 @@ export class SidearmParser implements Parser {
             const workingCells = allCells.length > cells.length ? allCells : cells;
 
             // Try to infer columns by header labels if available
-            const headerCells = row.closest('table').find('thead th');
+            // Look in multiple places: immediate table, parent structures, or sibling header rows
+            let headerCells = row.closest('table').find('thead th, thead td');
+            if (headerCells.length === 0) {
+                // Try finding header row as sibling
+                headerCells = row.prevAll('tr').find('th, td').filter((_, el) => {
+                    const text = $(el).text().trim().toLowerCase();
+                    return text.includes('date') || text.includes('opponent') || text.includes('result');
+                });
+            }
+            if (headerCells.length === 0) {
+                // Try finding any row with class containing "header"
+                headerCells = row.closest('table').find('tr[class*="header"] th, tr[class*="header"] td, .s-table-header__row th, .s-table-header__row td');
+            }
+            
             const headers: string[] = [];
             headerCells.each((_, h) => {
                 headers.push($(h).text().trim().toLowerCase());
@@ -428,8 +537,8 @@ export class SidearmParser implements Parser {
             };
 
             let dateCell = getCellByHeader('date') || $(workingCells.get(0));
-            let opponentCell = getCellByHeader('opponent') || getCellByHeader('teams') || $(workingCells.get(1));
-            let resultCell = getCellByHeader('result') || getCellByHeader('time/results') || $(workingCells.get(workingCells.length - 2)); // -2 because last is links
+            let opponentCell = getCellByHeader('opponent') || getCellByHeader('teams') || null;
+            let resultCell = getCellByHeader('result') || getCellByHeader('time/results') || null;
             
             // Debug: log what we found
             if (options?.debug) {
@@ -439,19 +548,51 @@ export class SidearmParser implements Parser {
                 console.log(`[debug] Result cell text: "${resultCell.text().trim()}"`);
             }
 
-            if (isNextGen && headers.length === 0) {
-                // NextGen layout (e.g. Duke)
-                // 0: Date, 1: Time, 2: Site, 3: Opponent, 4: Location, 5: ?, 6: Type, 7: Result, 8: Links
-                if (workingCells.length >= 8) {
-                    dateCell = $(workingCells.get(0));
-                    opponentCell = $(workingCells.get(3));
-                    resultCell = $(workingCells.get(7));
-                    // Links often at index 8
+            // Fallback: If headers didn't provide the cells, use heuristics to find them
+            if (!opponentCell) {
+                // Look for opponent: typically a longer text cell that's not the first or last
+                for (let i = 1; i < workingCells.length - 1; i++) {
+                    const cellText = $(workingCells.get(i)).text().trim();
+                    // Opponent typically has 5+ characters and isn't a date, time, or score
+                    if (cellText.length >= 5 && 
+                        !cellText.match(/^\d{1,2}:\d{2}/) && // not time
+                        !cellText.match(/^\d{1,2}\/\d{1,2}/) && // not date
+                        !cellText.match(/^[A-Za-z]+\s*\d{1,2}/) && // not "Aug 21" style
+                        !cellText.match(/^\d+\s*-\s*\d+/)) { // not score
+                        opponentCell = $(workingCells.get(i));
+                        break;
+                    }
+                }
+                // Last resort: use position-based fallback
+                if (!opponentCell) {
+                    opponentCell = $(workingCells.get(Math.min(3, workingCells.length - 2)));
+                }
+            }
+            
+            if (!resultCell) {
+                // Look for result: search for cells with score patterns or W/L indicators
+                for (let i = workingCells.length - 3; i < workingCells.length; i++) {
+                    if (i < 0 || i >= workingCells.length) continue;
+                    const cellText = $(workingCells.get(i)).text().trim();
+                    // Match score patterns: "2-1", "W 2-1", "T, 2-2", "L,2-1"
+                    if (cellText.match(/\d+\s*-\s*\d+/) || // score like "2-1" anywhere in text
+                        cellText.toLowerCase().includes('postponed') ||
+                        cellText.toLowerCase().includes('canceled')) {
+                        resultCell = $(workingCells.get(i));
+                        break;
+                    }
+                }
+                // Last resort: assume second-to-last column (before links)
+                if (!resultCell) {
+                    resultCell = $(workingCells.get(Math.max(0, workingCells.length - 2)));
                 }
             }
 
             const dateTextRaw = dateCell.text().trim();
-            const year = new Date().getFullYear().toString();
+            
+            // Extract year from date text if present, otherwise use current year as default
+            const yearMatch = dateTextRaw.match(/\b(20\d{2})\b/);
+            const year = yearMatch ? yearMatch[1] : new Date().getFullYear().toString();
 
             // Try to grab an ISO-like date from attributes or the row HTML first (prevents fallback 01-01)
             const attrDateCandidates = [
@@ -596,14 +737,18 @@ export class SidearmParser implements Parser {
             // Attempt to capture boxscore / stats link from the links cell
             // For Stanford-style: Recap is first, Box Score is second
             let boxscore_url: string | undefined;
-            const linkCell = getCellByHeader('links') || getCellByHeader('media') || (row.find('a').length ? row : null);
-            if (linkCell) {
-                const links = linkCell.find('a');
+            const linkCell = getCellByHeader('links') || getCellByHeader('media');
+            
+            // For 8-column layouts, the last cell is typically links
+            const potentialLinkCell = linkCell || (workingCells.length >= 8 ? $(workingCells.get(7)) : null) || (row.find('a').length ? row : null);
+            
+            if (potentialLinkCell) {
+                const links = potentialLinkCell.find('a');
                 // Try to find explicit "Box Score" link
                 let boxscoreLink = links.filter((_, a) => {
                     const text = $(a).text().toLowerCase();
                     const href = $(a).attr('href') || '';
-                    return text.includes('box score') || href.includes('boxscore');
+                    return text.includes('box score') || text.includes('boxscore') || href.includes('boxscore') || href.includes('/stats/');
                 }).first();
                 
                 // Fallback to first link if no boxscore found
@@ -645,7 +790,8 @@ export class SidearmParser implements Parser {
         // More robust parser for Sidearm date formats. Falls back to year-01-01 only when truly unknown.
         if (!dateText) return `${year}-01-01`;
 
-        const cleaned = dateText.replace(/\s+/g, ' ').trim();
+        // Normalize whitespace and strip parenthetical weekday like "(Thursday)"
+        const cleaned = dateText.replace(/\s+/g, ' ').replace(/\s*\([^)]+\)/g, '').trim();
 
         // Direct ISO
         const isoMatch = cleaned.match(/(\d{4}-\d{2}-\d{2})/);
@@ -663,11 +809,12 @@ export class SidearmParser implements Parser {
             return `${resolvedYear}-${month}-${day}`;
         }
 
-        // Month name + day (with optional weekday prefix)
-        const monthDay = cleaned.match(/(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun),?\s*([A-Za-z]{3,})\.?,?\s+(\d{1,2})/i)
-            || cleaned.match(/([A-Za-z]{3,})\.?,?\s+(\d{1,2})/i);
-        if (monthDay) {
-            const date = new Date(`${monthDay[1]} ${monthDay[2]} ${year}`);
+        // Month name + day + optional year (e.g., "August 16, 2025" or "Aug 16" or "Thu, Aug 21, 2024")
+        const monthDayYear = cleaned.match(/(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun),?\s*([A-Za-z]{3,})\.?,?\s+(\d{1,2})(?:,?\s+(\d{4}))?/i)
+            || cleaned.match(/([A-Za-z]{3,})\.?,?\s+(\d{1,2})(?:,?\s+(\d{4}))?/i);
+        if (monthDayYear) {
+            const extractedYear = monthDayYear[3] || year; // Use year from text if present, otherwise use provided year
+            const date = new Date(`${monthDayYear[1]} ${monthDayYear[2]} ${extractedYear}`);
             if (!isNaN(date.getTime())) {
                 return date.toISOString().split('T')[0];
             }

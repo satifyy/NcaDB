@@ -8,6 +8,7 @@ export declare class SidearmParser implements Parser {
     private parseJsonSchedule;
     private parseHtmlGame;
     private parseScoreboardItem;
+    private parseListBasedGame;
     private parseTableRow;
     private parseDate;
     private resolveUrl;

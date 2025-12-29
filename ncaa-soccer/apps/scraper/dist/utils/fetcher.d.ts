@@ -5,6 +5,7 @@ export interface FetcherConfig {
     retries?: number;
     userAgent?: string;
     rawDir?: string;
+    quiet?: boolean;
 }
 export declare class Fetcher {
     private client;

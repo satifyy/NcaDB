@@ -83,7 +83,8 @@ class Fetcher {
             await this.sleep(this.config.delayMs);
         }
         try {
-            console.log(`Fetching ${url}...`);
+            if (!this.config.quiet)
+                console.log(`Fetching ${url}...`);
             const response = await this.client.get(url, config);
             let html = response.data;
             if (typeof html === 'object') {
@@ -95,7 +96,8 @@ class Fetcher {
                 const filename = `${timestamp}_${slug}.html`;
                 const filepath = path.join(this.config.rawDir, filename);
                 fs.writeFileSync(filepath, html);
-                console.log(`Saved raw HTML to ${filepath}`);
+                if (!this.config.quiet)
+                    console.log(`Saved raw HTML to ${filepath}`);
             }
             return html;
         }

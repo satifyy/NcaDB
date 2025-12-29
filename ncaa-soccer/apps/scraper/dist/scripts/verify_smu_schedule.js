@@ -38,10 +38,18 @@ const path = __importStar(require("path"));
 const parsers_1 = require("@ncaa/parsers");
 async function main() {
     console.log('Verifying SMU Schedule Parser...');
+    // Use the actual file we found in data/raw
     const jsonPath = path.resolve(__dirname, '../../../../data/raw/2025-12-27T18-48-06-419Z_SMU_results_json.html');
     if (!fs.existsSync(jsonPath)) {
         console.error(`File not found: ${jsonPath}`);
-        process.exit(1);
+        // Fallback to checking any json html file if specific one is missing, for robustness in dev
+        const rawDir = path.resolve(__dirname, '../../../../data/raw');
+        const files = fs.readdirSync(rawDir).filter(f => f.includes('SMU_results_json.html'));
+        if (files.length === 0) {
+            console.error("No SMU results json files found.");
+            process.exit(1);
+        }
+        console.log(`Falling back to ${files[0]}`);
     }
     const content = fs.readFileSync(jsonPath, 'utf-8');
     const parser = new parsers_1.SidearmParser();
@@ -51,8 +59,12 @@ async function main() {
         console.log(`Successfully parsed ${games.length} games.`);
         if (games.length > 0) {
             console.log('Sample games:');
-            games.slice(0, 3).forEach(g => {
-                console.log(`[${g.date}] ${g.home_team_name} vs ${g.away_team_name} (${g.home_score ?? '-'}-${g.away_score ?? '-'}) Status: ${g.status}`);
+            // Show more games to verify different statuses
+            games.forEach(g => {
+                const score = (g.home_score !== null && g.away_score !== null)
+                    ? `(${g.home_score}-${g.away_score})`
+                    : '(vs)';
+                console.log(`[${g.date}] ${g.home_team_name} vs ${g.away_team_name} ${score} [${g.location_type}] Status: ${g.status}`);
             });
         }
     }
