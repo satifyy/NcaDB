@@ -6,6 +6,8 @@ export declare const GameSchema: z.ZodObject<{
     away_team_id: z.ZodOptional<z.ZodString>;
     home_team_name: z.ZodString;
     away_team_name: z.ZodString;
+    home_team_ranked: z.ZodOptional<z.ZodBoolean>;
+    away_team_ranked: z.ZodOptional<z.ZodBoolean>;
     home_score: z.ZodNullable<z.ZodNumber>;
     away_score: z.ZodNullable<z.ZodNumber>;
     location_type: z.ZodEnum<["home", "away", "neutral", "unknown"]>;
@@ -41,6 +43,8 @@ export declare const GameSchema: z.ZodObject<{
     dedupe_key: string;
     home_team_id?: string | undefined;
     away_team_id?: string | undefined;
+    home_team_ranked?: boolean | undefined;
+    away_team_ranked?: boolean | undefined;
 }, {
     game_id: string;
     date: string;
@@ -58,6 +62,8 @@ export declare const GameSchema: z.ZodObject<{
     dedupe_key: string;
     home_team_id?: string | undefined;
     away_team_id?: string | undefined;
+    home_team_ranked?: boolean | undefined;
+    away_team_ranked?: boolean | undefined;
 }>;
 export type Game = z.infer<typeof GameSchema>;
 //# sourceMappingURL=game.d.ts.map

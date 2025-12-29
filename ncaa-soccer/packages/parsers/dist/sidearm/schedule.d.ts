@@ -2,6 +2,8 @@ import { Parser, ParseResult, ParserOptions } from '../types';
 import { Game } from '@ncaa/shared';
 export declare class SidearmParser implements Parser {
     name: string;
+    private makeDedupeKey;
+    private cleanTeamName;
     parseSchedule(input: string, options?: ParserOptions): Promise<Game[]>;
     private parseJsonSchedule;
     private parseHtmlGame;

@@ -9,6 +9,8 @@ exports.GameSchema = zod_1.z.object({
     away_team_id: zod_1.z.string().optional(),
     home_team_name: zod_1.z.string(),
     away_team_name: zod_1.z.string(),
+    home_team_ranked: zod_1.z.boolean().optional(),
+    away_team_ranked: zod_1.z.boolean().optional(),
     home_score: zod_1.z.number().nullable(),
     away_score: zod_1.z.number().nullable(),
     location_type: zod_1.z.enum(["home", "away", "neutral", "unknown"]),

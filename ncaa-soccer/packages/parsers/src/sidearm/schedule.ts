@@ -32,6 +32,32 @@ const SidearmResponseSchema = z.array(SidearmGameSchema);
 
 export class SidearmParser implements Parser {
     name = 'sidearm';
+    
+    // Helper to create normalized dedupe key (alphabetically sorted teams to avoid duplicates)
+    private makeDedupeKey(date: string, homeTeam: string, awayTeam: string): string {
+        const teams = [homeTeam, awayTeam].sort();
+        // Normalize by replacing spaces with hyphens
+        const team1 = teams[0].replace(/\s+/g, '-');
+        const team2 = teams[1].replace(/\s+/g, '-');
+        return `${date}-${team1}-${team2}`;
+    }
+    
+    // Helper to clean team names and detect rankings
+    private cleanTeamName(name: string): { cleanName: string; isRanked: boolean } {
+        let cleanName = name;
+        let isRanked = false;
+        
+        // Check for rankings: "No. 7 Stanford", "#5 Duke", etc.
+        if (/^(No\.?|#)\s*\d+\s+/i.test(cleanName)) {
+            isRanked = true;
+            cleanName = cleanName.replace(/^(No\.?|#)\s*\d+\s+/i, '').trim();
+        }
+        
+        // Remove stars and asterisks: "Clemson * *" -> "Clemson"
+        cleanName = cleanName.replace(/\s*\*+\s*/g, ' ').trim();
+        
+        return { cleanName, isRanked };
+    }
 
     async parseSchedule(input: string, options?: ParserOptions): Promise<Game[]> {
         if (options?.debug) console.log('[sidearm] parseSchedule called with debug=true (v5 - stdout)');
@@ -175,6 +201,12 @@ export class SidearmParser implements Parser {
                     away_score = item.result.team_score ? parseInt(item.result.team_score, 10) : null;
                 }
             }
+            
+            // Clean team names and detect rankings
+            const homeInfo = this.cleanTeamName(home_team_name);
+            const awayInfo = this.cleanTeamName(away_team_name);
+            home_team_name = homeInfo.cleanName;
+            away_team_name = awayInfo.cleanName;
 
             let boxscore_url = item.result?.boxscore;
             if (boxscore_url && !boxscore_url.startsWith('http') && domain) {
@@ -196,6 +228,8 @@ export class SidearmParser implements Parser {
                 date: dateStr,
                 home_team_name,
                 away_team_name,
+                home_team_ranked: homeInfo.isRanked,
+                away_team_ranked: awayInfo.isRanked,
                 home_score,
                 away_score,
                 location_type,
@@ -204,7 +238,7 @@ export class SidearmParser implements Parser {
                     schedule_url: item.schedule?.url || undefined,
                     boxscore_url: boxscore_url || undefined
                 },
-                dedupe_key: `${dateStr}-${home_team_name}-${away_team_name}`
+                dedupe_key: this.makeDedupeKey(dateStr, home_team_name, away_team_name)
             };
 
             games.push(game);
@@ -235,8 +269,14 @@ export class SidearmParser implements Parser {
             }
 
             const contextTeamName = options?.teamName || 'Unknown Team';
-            const home_team_name = isHome ? contextTeamName : opponentName;
-            const away_team_name = isHome ? opponentName : contextTeamName;
+            let home_team_name = isHome ? contextTeamName : opponentName;
+            let away_team_name = isHome ? opponentName : contextTeamName;
+            
+            // Clean team names and detect rankings
+            const homeInfo = this.cleanTeamName(home_team_name);
+            const awayInfo = this.cleanTeamName(away_team_name);
+            home_team_name = homeInfo.cleanName;
+            away_team_name = awayInfo.cleanName;
 
             // Score extraction (e.g., "W 2-1" or "L 0-3")
             const scoreText = card.find('.c-scoreboard__scores').text().trim().replace(/\s+/g, '');
@@ -266,12 +306,14 @@ export class SidearmParser implements Parser {
                 date: dateStr,
                 home_team_name,
                 away_team_name,
+                home_team_ranked: homeInfo.isRanked,
+                away_team_ranked: awayInfo.isRanked,
                 home_score,
                 away_score,
                 location_type,
                 status,
                 source_urls: {},
-                dedupe_key: `${dateStr}-${home_team_name}-${away_team_name}`
+                dedupe_key: this.makeDedupeKey(dateStr, home_team_name, away_team_name)
             };
         } catch (e) {
             console.error('Error parsing HTML game card', e);
@@ -299,8 +341,14 @@ export class SidearmParser implements Parser {
             }
 
             const contextTeamName = options?.teamName || 'Unknown Team';
-            const home_team_name = isHome ? contextTeamName : opponentName;
-            const away_team_name = isHome ? opponentName : contextTeamName;
+            let home_team_name = isHome ? contextTeamName : opponentName;
+            let away_team_name = isHome ? opponentName : contextTeamName;
+            
+            // Clean team names and detect rankings
+            const homeInfo = this.cleanTeamName(home_team_name);
+            const awayInfo = this.cleanTeamName(away_team_name);
+            home_team_name = homeInfo.cleanName;
+            away_team_name = awayInfo.cleanName;
 
             const scoreText = item.find('.c-scoreboard__scores').text().trim().replace(/\s+/g, '');
             let home_score: number | null = null;
@@ -336,6 +384,8 @@ export class SidearmParser implements Parser {
                 date: dateStr,
                 home_team_name,
                 away_team_name,
+                home_team_ranked: homeInfo.isRanked,
+                away_team_ranked: awayInfo.isRanked,
                 home_score,
                 away_score,
                 location_type,
@@ -343,7 +393,7 @@ export class SidearmParser implements Parser {
                 source_urls: {
                     boxscore_url: boxscore_url ? this.resolveUrl(boxscore_url, options?.baseUrl) : undefined
                 },
-                dedupe_key: `${dateStr}-${home_team_name}-${away_team_name}`
+                dedupe_key: this.makeDedupeKey(dateStr, home_team_name, away_team_name)
             };
         } catch (e) {
             console.error('Error parsing scoreboard item', e);
@@ -353,8 +403,13 @@ export class SidearmParser implements Parser {
 
     private parseTableRow(row: cheerio.Cheerio<any>, $: cheerio.CheerioAPI, options?: ParserOptions): Game | null {
         try {
+            // Include both th and td cells (Stanford uses th for date column)
+            const allCells = row.find('th, td');
             const cells = row.find('td');
-            if (cells.length === 0) return null;
+            if (allCells.length === 0 && cells.length === 0) return null;
+            
+            // Use allCells if we have th elements (like Stanford)
+            const workingCells = allCells.length > cells.length ? allCells : cells;
 
             // Try to infer columns by header labels if available
             const headerCells = row.closest('table').find('thead th');
@@ -364,39 +419,134 @@ export class SidearmParser implements Parser {
             });
 
             const isNextGen = row.hasClass('s-table-body__row');
-            if (options?.debug) console.log(`[debug] Row isNextGen=${isNextGen} headers=${headers.length} cells=${cells.length}`);
+            if (options?.debug) console.log(`[debug] Row isNextGen=${isNextGen} headers=${headers.length} cells=${workingCells.length}`);
 
             const getCellByHeader = (label: string): cheerio.Cheerio<any> | null => {
                 const idx = headers.findIndex(h => h.includes(label));
                 if (idx === -1) return null;
-                return $(cells.get(idx));
+                return $(workingCells.get(idx));
             };
 
-            let dateCell = getCellByHeader('date') || $(cells.get(0));
-            let opponentCell = getCellByHeader('opponent') || $(cells.get(1));
-            let resultCell = getCellByHeader('result') || $(cells.get(cells.length - 1));
+            let dateCell = getCellByHeader('date') || $(workingCells.get(0));
+            let opponentCell = getCellByHeader('opponent') || getCellByHeader('teams') || $(workingCells.get(1));
+            let resultCell = getCellByHeader('result') || getCellByHeader('time/results') || $(workingCells.get(workingCells.length - 2)); // -2 because last is links
+            
+            // Debug: log what we found
+            if (options?.debug) {
+                console.log(`[debug] Headers: ${JSON.stringify(headers)}`);
+                console.log(`[debug] Date cell text: "${dateCell.text().trim()}"`);
+                console.log(`[debug] Opponent cell text: "${opponentCell.text().trim()}"`);
+                console.log(`[debug] Result cell text: "${resultCell.text().trim()}"`);
+            }
 
             if (isNextGen && headers.length === 0) {
                 // NextGen layout (e.g. Duke)
                 // 0: Date, 1: Time, 2: Site, 3: Opponent, 4: Location, 5: ?, 6: Type, 7: Result, 8: Links
-                if (cells.length >= 8) {
-                    dateCell = $(cells.get(0));
-                    opponentCell = $(cells.get(3));
-                    resultCell = $(cells.get(7));
+                if (workingCells.length >= 8) {
+                    dateCell = $(workingCells.get(0));
+                    opponentCell = $(workingCells.get(3));
+                    resultCell = $(workingCells.get(7));
                     // Links often at index 8
                 }
             }
 
             const dateTextRaw = dateCell.text().trim();
-            const dateTextMatch = dateTextRaw.match(/([A-Za-z]{3,})\s+(\d{1,2})/);
-            const monthDay = dateTextMatch ? `${dateTextMatch[1]} ${dateTextMatch[2]}` : dateTextRaw.split(/\s+/).slice(0, 2).join(' ');
             const year = new Date().getFullYear().toString();
-            const dateStr = this.parseDate(monthDay, year);
 
-            const opponentText = opponentCell.text().replace(/\s+/g, ' ').trim();
-            const stampMatch = opponentText.match(/^(vs|at)\s+/i);
+            // Try to grab an ISO-like date from attributes or the row HTML first (prevents fallback 01-01)
+            const attrDateCandidates = [
+                dateCell.attr('data-game-date'),
+                dateCell.attr('data-date'),
+                dateCell.attr('data-datetime'),
+                row.attr('data-game-date'),
+                row.attr('data-date'),
+                row.attr('data-datetime')
+            ].filter(Boolean) as string[];
+
+            let dateStr = '';
+            for (const candidate of attrDateCandidates) {
+                dateStr = this.parseDate(candidate, year);
+                if (dateStr && !dateStr.endsWith('-01-01')) break;
+            }
+
+            // If no attr-based date, look for ISO in the raw HTML
+            if (!dateStr || dateStr.endsWith('-01-01')) {
+                const html = (row.html() || '') + (dateCell.html() || '');
+                const isoMatch = html.match(/(\d{4}-\d{2}-\d{2})/);
+                if (isoMatch) {
+                    dateStr = isoMatch[1];
+                }
+            }
+
+            // Finally, fall back to text parsing for "Aug 21" style strings (with or without weekday prefixes)
+            if (!dateStr || dateStr.endsWith('-01-01')) {
+                // Match patterns like "Aug 21" or "Thu, Aug 21"
+                let monthDay = '';
+                const weekdayMonth = dateTextRaw.match(/^[A-Za-z]{3},?\s*([A-Za-z]{3,})\.?,?\s+(\d{1,2})/);
+                const plainMonth = dateTextRaw.match(/([A-Za-z]{3,})\.?,?\s+(\d{1,2})/);
+                if (weekdayMonth) {
+                    monthDay = `${weekdayMonth[1]} ${weekdayMonth[2]}`;
+                } else if (plainMonth) {
+                    monthDay = `${plainMonth[1]} ${plainMonth[2]}`;
+                } else {
+                    monthDay = dateTextRaw.split(/\s+/).slice(0, 2).join(' ');
+                }
+                dateStr = this.parseDate(monthDay, year);
+            }
+
+            // Extract opponent text more carefully to avoid nested/duplicate content
+            // Both Stanford and VT have desktop dividers, but use different class names
+            let opponentText = '';
+            let stampFromDesktop = '';
+            
+            // Strategy 1: Look for Stanford-style structure
+            const stanfordDivider = opponentCell.find('.schedule-event-item-team__divider--desktop').first();
+            if (stanfordDivider.length) {
+                stampFromDesktop = stanfordDivider.text().trim().toLowerCase();
+            }
+            
+            // Strategy 2: Look for Virginia Tech-style structure (uses different classes)
+            const vtDivider = opponentCell.find('.schedule-default-team__divider').first();
+            if (!stampFromDesktop && vtDivider.length) {
+                stampFromDesktop = vtDivider.text().trim().toLowerCase();
+            }
+            
+            // Now get opponent name - try both Stanford and VT class names
+            let opponentNameElement = opponentCell.find('.schedule-event-item-team__opponent-name').first();
+            if (!opponentNameElement.length) {
+                opponentNameElement = opponentCell.find('.schedule-default-team__opponent-name').first();
+            }
+            
+            if (opponentNameElement.length) {
+                // Get all text nodes directly (not from descendants) to avoid nested elements
+                let textParts: string[] = [];
+                opponentNameElement.contents().each((_, node) => {
+                    if (node.type === 'text') {
+                        const text = $(node).text().trim();
+                        if (text) textParts.push(text);
+                    }
+                });
+                const cleanName = textParts.join(' ').replace(/\s+/g, ' ').trim();
+                
+                // Combine stamp with clean name
+                opponentText = stampFromDesktop ? `${stampFromDesktop} ${cleanName}` : cleanName;
+            } 
+            
+            // Strategy 2: If no Stanford-style structure, clean up the cell
+            if (!opponentText) {
+                const cellClone = opponentCell.clone();
+                cellClone.find('.schedule-event-item-team__promo-title').remove();
+                cellClone.find('.schedule-event-item-team__divider').remove();
+                opponentText = cellClone.text().replace(/\s+/g, ' ').trim();
+            }
+            
+            if (options?.debug && opponentText) {
+                console.log(`[debug] Extracted opponent text: "${opponentText}"`);
+            }
+            
+            const stampMatch = opponentText.match(/^(vs|at)\.?\s+/i);
             const stamp = stampMatch ? stampMatch[1].toLowerCase() : '';
-            let opponentName = opponentText.replace(/^(vs|at)\s+/i, '').trim();
+            let opponentName = opponentText.replace(/^(vs|at)\.?\s+/i, '').trim();
             if (!opponentName) opponentName = 'Unknown Opponent';
 
             let location_type: "home" | "away" | "neutral" | "unknown" = 'unknown';
@@ -410,8 +560,14 @@ export class SidearmParser implements Parser {
             }
 
             const contextTeamName = options?.teamName || 'Unknown Team';
-            const home_team_name = isHome ? contextTeamName : opponentName;
-            const away_team_name = isHome ? opponentName : contextTeamName;
+            let home_team_name = isHome ? contextTeamName : opponentName;
+            let away_team_name = isHome ? opponentName : contextTeamName;
+            
+            // Clean team names and detect rankings
+            const homeInfo = this.cleanTeamName(home_team_name);
+            const awayInfo = this.cleanTeamName(away_team_name);
+            home_team_name = homeInfo.cleanName;
+            away_team_name = awayInfo.cleanName;
 
             const resultText = resultCell.text().replace(/\s+/g, ' ').trim();
             let home_score: number | null = null;
@@ -438,12 +594,25 @@ export class SidearmParser implements Parser {
             }
 
             // Attempt to capture boxscore / stats link from the links cell
-            // Capture the first link in the links/media cell (often stats/box)
+            // For Stanford-style: Recap is first, Box Score is second
             let boxscore_url: string | undefined;
             const linkCell = getCellByHeader('links') || getCellByHeader('media') || (row.find('a').length ? row : null);
             if (linkCell) {
-                const firstHref = linkCell.find('a').first().attr('href');
-                if (firstHref) boxscore_url = this.resolveUrl(firstHref, options?.baseUrl);
+                const links = linkCell.find('a');
+                // Try to find explicit "Box Score" link
+                let boxscoreLink = links.filter((_, a) => {
+                    const text = $(a).text().toLowerCase();
+                    const href = $(a).attr('href') || '';
+                    return text.includes('box score') || href.includes('boxscore');
+                }).first();
+                
+                // Fallback to first link if no boxscore found
+                if (!boxscoreLink.length) {
+                    boxscoreLink = links.first();
+                }
+                
+                const href = boxscoreLink.attr('href');
+                if (href) boxscore_url = this.resolveUrl(href, options?.baseUrl);
             }
 
             const safeHome = home_team_name.replace(/\s+/g, '-');
@@ -455,6 +624,8 @@ export class SidearmParser implements Parser {
                 date: dateStr,
                 home_team_name,
                 away_team_name,
+                home_team_ranked: homeInfo.isRanked,
+                away_team_ranked: awayInfo.isRanked,
                 home_score,
                 away_score,
                 location_type,
@@ -462,7 +633,7 @@ export class SidearmParser implements Parser {
                 source_urls: {
                     boxscore_url
                 },
-                dedupe_key: `${dateStr}-${home_team_name}-${away_team_name}`
+                dedupe_key: this.makeDedupeKey(dateStr, home_team_name, away_team_name)
             };
         } catch (e) {
             console.error('Error parsing table row', e);
@@ -471,14 +642,44 @@ export class SidearmParser implements Parser {
     }
 
     private parseDate(dateText: string, year: string): string {
-        // Simple parser for "Aug 10" -> "2025-08-10"
-        try {
-            const date = new Date(`${dateText} ${year}`);
-            if (isNaN(date.getTime())) return `${year}-01-01`; // Fallback
-            return date.toISOString().split('T')[0];
-        } catch (e) {
-            return `${year}-01-01`;
+        // More robust parser for Sidearm date formats. Falls back to year-01-01 only when truly unknown.
+        if (!dateText) return `${year}-01-01`;
+
+        const cleaned = dateText.replace(/\s+/g, ' ').trim();
+
+        // Direct ISO
+        const isoMatch = cleaned.match(/(\d{4}-\d{2}-\d{2})/);
+        if (isoMatch) return isoMatch[1];
+
+        // Numeric mm/dd[/yyyy]
+        const numeric = cleaned.match(/(\d{1,2})\/(\d{1,2})(?:\/(\d{2,4}))?/);
+        if (numeric) {
+            const month = numeric[1].padStart(2, '0');
+            const day = numeric[2].padStart(2, '0');
+            let resolvedYear = year;
+            if (numeric[3]) {
+                resolvedYear = numeric[3].length === 2 ? `20${numeric[3]}` : numeric[3];
+            }
+            return `${resolvedYear}-${month}-${day}`;
         }
+
+        // Month name + day (with optional weekday prefix)
+        const monthDay = cleaned.match(/(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun),?\s*([A-Za-z]{3,})\.?,?\s+(\d{1,2})/i)
+            || cleaned.match(/([A-Za-z]{3,})\.?,?\s+(\d{1,2})/i);
+        if (monthDay) {
+            const date = new Date(`${monthDay[1]} ${monthDay[2]} ${year}`);
+            if (!isNaN(date.getTime())) {
+                return date.toISOString().split('T')[0];
+            }
+        }
+
+        // Last ditch: let JS try with provided year appended
+        const guess = new Date(`${cleaned} ${year}`);
+        if (!isNaN(guess.getTime())) {
+            return guess.toISOString().split('T')[0];
+        }
+
+        return `${year}-01-01`;
     }
 
     private resolveUrl(href: string, baseUrl?: string): string {
@@ -693,7 +894,7 @@ export class SidearmParser implements Parser {
                         source_urls: {
                             boxscore_url: boxscore_url || undefined
                         },
-                        dedupe_key: `${dateStr}-${home_team_name}-${away_team_name}`
+                        dedupe_key: this.makeDedupeKey(dateStr, home_team_name, away_team_name)
                     };
 
                     games.push(game);

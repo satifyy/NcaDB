@@ -1,0 +1,14 @@
+[
+  {
+    "team_id": "stanford",
+    "name_canonical": "Stanford",
+    "schedule_url": "https://gostanford.com/sports/mens-soccer/schedule",
+    "platform_guess": "sidearm"
+  },
+  {
+    "team_id": "virginia-tech",
+    "name_canonical": "Virginia Tech",
+    "schedule_url": "https://hokiesports.com/sports/mens-soccer/schedule",
+    "platform_guess": "sidearm"
+  }
+]

@@ -1,26 +1,40 @@
-game_id,date,home_team_name,away_team_name,home_score,away_score,location_type,status,schedule_url,boxscore_url,dedupe_key
-sidearm-2025-01-01-SMU-Away-Team-Final-Score,2025-01-01,SMU,Away Team Final Score,,,unknown,final,,,2025-01-01-SMU-Away Team Final Score
-sidearm-2025-01-01-SMU-Home-Team-Final-Score,2025-01-01,SMU,Home Team Final Score,,,unknown,final,,,2025-01-01-SMU-Home Team Final Score
-sidearm-2025-08-08-Coastal-Carolina-Duke,2025-08-08,Coastal Carolina,Duke,,,away,scheduled,,,2025-08-08-Coastal Carolina-Duke
-sidearm-2025-08-12-UNC-Asheville-Duke,2025-08-12,UNC Asheville,Duke,,,away,scheduled,,,2025-08-12-UNC Asheville-Duke
-sidearm-2025-08-16-Duke-James-Madison,2025-08-16,Duke,James Madison,,,home,scheduled,,,2025-08-16-Duke-James Madison
-sidearm-2025-08-21-Duke-#10-San-Diego,2025-08-21,Duke,#10 San Diego,,,home,scheduled,,,2025-08-21-Duke-#10 San Diego
-sidearm-2025-08-24-Duke-UC-San-Diego,2025-08-24,Duke,UC San Diego,,,home,scheduled,,,2025-08-24-Duke-UC San Diego
-sidearm-2025-08-31-Furman-Duke,2025-08-31,Furman,Duke,,,away,scheduled,,,2025-08-31-Furman-Duke
-sidearm-2025-09-05-Georgetown-Duke,2025-09-05,Georgetown,Duke,,,away,scheduled,,,2025-09-05-Georgetown-Duke
-sidearm-2025-09-14-California-Duke,2025-09-14,California,Duke,,,away,scheduled,,,2025-09-14-California-Duke
-sidearm-2025-09-19-Duke-Syracuse,2025-09-19,Duke,Syracuse,,,home,scheduled,,,2025-09-19-Duke-Syracuse
-sidearm-2025-09-23-Duke-Howard,2025-09-23,Duke,Howard,,,home,scheduled,,,2025-09-23-Duke-Howard
-sidearm-2025-09-26-Duke-Louisville,2025-09-26,Duke,Louisville,,,home,scheduled,,,2025-09-26-Duke-Louisville
-sidearm-2025-09-30-Duke-Averett,2025-09-30,Duke,Averett,,,home,scheduled,,,2025-09-30-Duke-Averett
-sidearm-2025-10-03-Duke-Pitt,2025-10-03,Duke,Pitt,,,home,scheduled,,,2025-10-03-Duke-Pitt
-sidearm-2025-10-07-Duke-Elon,2025-10-07,Duke,Elon,,,home,scheduled,,,2025-10-07-Duke-Elon
-sidearm-2025-10-10-Boston-College-Duke,2025-10-10,Boston College,Duke,,,away,scheduled,,,2025-10-10-Boston College-Duke
-sidearm-2025-10-17-Clemson-Duke,2025-10-17,Clemson,Duke,,,away,scheduled,,,2025-10-17-Clemson-Duke
-sidearm-2025-10-21-Duke-Queens,2025-10-21,Duke,Queens,,,home,scheduled,,,2025-10-21-Duke-Queens
-sidearm-2025-10-25-Duke-#3-NC-State,2025-10-25,Duke,#3 NC State,,,home,scheduled,,,2025-10-25-Duke-#3 NC State
-sidearm-2025-10-31-North-Carolina-Duke,2025-10-31,North Carolina,Duke,,,away,scheduled,,,2025-10-31-North Carolina-Duke
-sidearm-2025-11-05-Duke-California,2025-11-05,Duke,California,,,home,scheduled,,,2025-11-05-Duke-California
-sidearm-2025-11-20-Duke-FDU,2025-11-20,Duke,FDU,,,home,scheduled,,,2025-11-20-Duke-FDU
-sidearm-2025-11-23-#3-Princeton-Duke,2025-11-23,#3 Princeton,Duke,,,away,scheduled,,,2025-11-23-#3 Princeton-Duke
-sidearm-2025-11-30-#14-Akron-Duke,2025-11-30,#14 Akron,Duke,,,away,scheduled,,,2025-11-30-#14 Akron-Duke
+game_id,date,home_team_name,away_team_name,home_team_ranked,away_team_ranked,home_score,away_score,location_type,status,schedule_url,boxscore_url,dedupe_key
+sidearm-2025-08-01-Stanford-San-Francisco,2025-08-01,Stanford,San Francisco,false,false,2,0,home,final,,https://gostanford.com/news/2025/08/11/card-wins-preseason-opener,2025-08-01-San-Francisco-Stanford
+sidearm-2025-08-01-Stanford-Cal-State-Bakersfield,2025-08-01,Stanford,Cal State Bakersfield,false,false,2,1,home,final,,https://gostanford.com/news/2025/08/13/late-push-lifts-cardinal,2025-08-01-Cal-State-Bakersfield-Stanford
+sidearm-2025-08-01-Stanford-Cal-Poly,2025-08-01,Stanford,Cal Poly,false,false,1,0,home,final,,https://gostanford.com/news/2025/08/17/a-perfect-preseason,2025-08-01-Cal-Poly-Stanford
+sidearm-2025-08-01-Stanford-Sacramento-State,2025-08-01,Stanford,Sacramento State,false,false,5,1,home,final,,https://gostanford.com/boxscore/25671,2025-08-01-Sacramento-State-Stanford
+sidearm-2025-08-01-Stanford-Denver,2025-08-01,Stanford,Denver,false,false,2,1,home,final,,https://gostanford.com/boxscore/25672,2025-08-01-Denver-Stanford
+sidearm-2025-08-01-Santa-Clara-Stanford,2025-08-01,Santa Clara,Stanford,false,false,1,2,away,final,,https://gostanford.com/boxscore/25692,2025-08-01-Santa-Clara-Stanford
+sidearm-2025-08-01-Stanford-UC-Davis,2025-08-01,Stanford,UC Davis,false,false,1,0,home,final,,https://gostanford.com/boxscore/25674,2025-08-01-Stanford-UC-Davis
+sidearm-2025-08-21-Virginia-Tech-Ohio-State,2025-08-21,Virginia Tech,Ohio State,false,false,1,0,home,final,,https://hokiesports.com/boxscore/22145,2025-08-21-Ohio-State-Virginia-Tech
+sidearm-2025-08-24-Virginia-Tech-Canisius,2025-08-24,Virginia Tech,Canisius,false,false,2,0,home,final,,https://hokiesports.com/boxscore/22146,2025-08-24-Canisius-Virginia-Tech
+sidearm-2025-08-29-Marshall-Virginia-Tech,2025-08-29,Marshall,Virginia Tech,false,false,2,2,away,final,,https://hokiesports.com/boxscore/22147,2025-08-29-Marshall-Virginia-Tech
+sidearm-2025-09-01-Louisville-Stanford,2025-09-01,Louisville,Stanford,false,false,1,0,away,final,,https://gostanford.com/boxscore/25675,2025-09-01-Louisville-Stanford
+sidearm-2025-09-01-Stanford-Saint-Mary's,2025-09-01,Stanford,Saint Mary's,false,false,3,1,home,final,,https://gostanford.com/boxscore/25676,2025-09-01-Saint-Mary's-Stanford
+sidearm-2025-09-01-Syracuse-Stanford,2025-09-01,Syracuse,Stanford,false,false,2,3,away,final,,https://gostanford.com/boxscore/25677,2025-09-01-Stanford-Syracuse
+sidearm-2025-09-01-San-Jose-State-Stanford,2025-09-01,San Jose State,Stanford,false,false,2,2,away,final,,https://gostanford.com/boxscore/25678,2025-09-01-San-Jose-State-Stanford
+sidearm-2025-09-01-Stanford-Virginia-Tech,2025-09-01,Stanford,Virginia Tech,false,false,3,1,home,final,,https://gostanford.com/boxscore/25679,2025-09-01-Stanford-Virginia-Tech
+sidearm-2025-09-01-Stanford-Oregon-State,2025-09-01,Stanford,Oregon State,false,false,3,2,home,final,,https://gostanford.com/boxscore/25680,2025-09-01-Oregon-State-Stanford
+sidearm-2025-09-01-Stanford-Boston-College,2025-09-01,Stanford,Boston College,false,false,3,0,home,final,,https://gostanford.com/boxscore/25681,2025-09-01-Boston-College-Stanford
+sidearm-2025-09-05-Virginia-Tech-Virginia,2025-09-05,Virginia Tech,Virginia,false,false,2,2,home,final,,https://hokiesports.com/boxscore/22148,2025-09-05-Virginia-Virginia-Tech
+sidearm-2025-09-09-Virginia-Tech-Furman,2025-09-09,Virginia Tech,Furman,false,false,0,0,home,final,,https://hokiesports.com/boxscore/22149,2025-09-09-Furman-Virginia-Tech
+sidearm-2025-09-14-Virginia-Tech-Boston-College,2025-09-14,Virginia Tech,Boston College,false,false,0,1,home,final,,https://hokiesports.com/boxscore/22150,2025-09-14-Boston-College-Virginia-Tech
+sidearm-2025-09-21-Stanford-Virginia-Tech,2025-09-21,Stanford,Virginia Tech,false,false,3,1,away,final,,https://hokiesports.com/boxscore/22151,2025-09-21-Stanford-Virginia-Tech
+sidearm-2025-09-29-ETSU-Virginia-Tech,2025-09-29,ETSU,Virginia Tech,false,false,0,1,away,final,,https://hokiesports.com/boxscore/22152,2025-09-29-ETSU-Virginia-Tech
+sidearm-2025-10-01-Wake-Forest-Stanford,2025-10-01,Wake Forest,Stanford,false,false,0,2,away,final,,https://gostanford.com/boxscore/25682,2025-10-01-Stanford-Wake-Forest
+sidearm-2025-10-01-Stanford-Pittsburgh,2025-10-01,Stanford,Pittsburgh,false,false,2,0,home,final,,https://gostanford.com/boxscore/25683,2025-10-01-Pittsburgh-Stanford
+sidearm-2025-10-01-Stanford-San-Francisco,2025-10-01,Stanford,San Francisco,false,false,1,0,home,final,,https://gostanford.com/boxscore/25684,2025-10-01-San-Francisco-Stanford
+sidearm-2025-10-01-Stanford-SMU,2025-10-01,Stanford,SMU,false,false,0,0,home,final,,https://gostanford.com/boxscore/25685,2025-10-01-SMU-Stanford
+sidearm-2025-10-01-California-Stanford,2025-10-01,California,Stanford,false,false,1,0,away,final,,https://gostanford.com/boxscore/25686,2025-10-01-California-Stanford
+sidearm-2025-10-03-Notre-Dame-Virginia-Tech,2025-10-03,Notre Dame,Virginia Tech,false,false,1,1,away,final,,https://hokiesports.com/boxscore/22153,2025-10-03-Notre-Dame-Virginia-Tech
+sidearm-2025-10-07-Virginia-Tech-Longwood,2025-10-07,Virginia Tech,Longwood,false,false,3,0,home,final,,https://hokiesports.com/boxscore/22154,2025-10-07-Longwood-Virginia-Tech
+sidearm-2025-10-11-Virginia-Tech-Louisville,2025-10-11,Virginia Tech,Louisville,false,false,2,0,home,final,,https://hokiesports.com/boxscore/22155,2025-10-11-Louisville-Virginia-Tech
+sidearm-2025-10-19-North-Carolina-Virginia-Tech,2025-10-19,North Carolina,Virginia Tech,false,false,3,0,away,final,,https://hokiesports.com/boxscore/22156,2025-10-19-North-Carolina-Virginia-Tech
+sidearm-2025-10-22-Virginia-Tech-Winthrop,2025-10-22,Virginia Tech,Winthrop,false,false,2,0,home,final,,https://hokiesports.com/boxscore/22157,2025-10-22-Virginia-Tech-Winthrop
+sidearm-2025-10-26-Virginia-Tech-Cal,2025-10-26,Virginia Tech,Cal,false,false,3,2,home,final,,https://hokiesports.com/boxscore/22158,2025-10-26-Cal-Virginia-Tech
+sidearm-2025-10-31-Clemson-Virginia-Tech,2025-10-31,Clemson,Virginia Tech,false,false,3,3,away,final,,https://hokiesports.com/boxscore/22159,2025-10-31-Clemson-Virginia-Tech
+sidearm-2025-11-01-Stanford-Boston-College,2025-11-01,Stanford,Boston College,false,false,4,2,home,final,,https://gostanford.com/boxscore/26660,2025-11-01-Boston-College-Stanford
+sidearm-2025-11-01-Stanford-SMU,2025-11-01,Stanford,SMU,false,false,0,1,home,final,,https://gostanford.com/boxscore/26663,2025-11-01-SMU-Stanford
+sidearm-2025-11-01-Stanford-Kansas-City,2025-11-01,Stanford,Kansas City,false,false,1,0,home,final,,https://gostanford.com/boxscore/26746,2025-11-01-Kansas-City-Stanford
+sidearm-2025-11-01-Stanford-Washington,2025-11-01,Stanford,Washington,false,false,0,1,home,final,,https://gostanford.com/boxscore/26785,2025-11-01-Stanford-Washington
+sidearm-2025-11-05-Syracuse-Virginia-Tech,2025-11-05,Syracuse,Virginia Tech,false,false,2,1,away,final,,https://hokiesports.com/boxscore/22698,2025-11-05-Syracuse-Virginia-Tech

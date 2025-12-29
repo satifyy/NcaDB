@@ -7,6 +7,8 @@ export const GameSchema = z.object({
     away_team_id: z.string().optional(),
     home_team_name: z.string(),
     away_team_name: z.string(),
+    home_team_ranked: z.boolean().optional(),
+    away_team_ranked: z.boolean().optional(),
     home_score: z.number().nullable(),
     away_score: z.number().nullable(),
     location_type: z.enum(["home", "away", "neutral", "unknown"]),

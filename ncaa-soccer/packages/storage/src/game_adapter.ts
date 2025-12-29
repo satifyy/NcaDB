@@ -7,9 +7,11 @@ import { stringify } from 'csv-stringify/sync';
 
 export class GameStorageAdapter {
     private baseDir: string;
+    private verbose: boolean;
 
-    constructor(baseDir: string) {
+    constructor(baseDir: string, options?: { verbose?: boolean }) {
         this.baseDir = baseDir;
+        this.verbose = options?.verbose || false;
     }
 
     async saveGames(games: Game[], season: string): Promise<void> {
@@ -23,6 +25,7 @@ export class GameStorageAdapter {
         const filePath = path.join(dir, 'games.csv');
         const headers = [
             'game_id', 'date', 'home_team_name', 'away_team_name',
+            'home_team_ranked', 'away_team_ranked',
             'home_score', 'away_score', 'location_type', 'status',
             'schedule_url', 'boxscore_url', 'dedupe_key'
         ];
@@ -49,7 +52,7 @@ export class GameStorageAdapter {
             }
         }
 
-        // 2. Upsert new games
+        // 2. Upsert new games with smart merging
         for (const game of games) {
             // Flatten game object to match CSV structure
             const row = {
@@ -57,6 +60,8 @@ export class GameStorageAdapter {
                 date: game.date,
                 home_team_name: game.home_team_name,
                 away_team_name: game.away_team_name,
+                home_team_ranked: game.home_team_ranked ? 'true' : 'false',
+                away_team_ranked: game.away_team_ranked ? 'true' : 'false',
                 home_score: game.home_score !== null ? String(game.home_score) : '',
                 away_score: game.away_score !== null ? String(game.away_score) : '',
                 location_type: game.location_type,
@@ -66,7 +71,43 @@ export class GameStorageAdapter {
                 dedupe_key: game.dedupe_key
             };
 
-            gamesMap.set(game.dedupe_key, row);
+            // Smart merge: if game already exists, update with better data
+            const existing = gamesMap.get(game.dedupe_key);
+            if (existing) {
+                if (this.verbose) {
+                    console.log(`🔄 Duplicate detected: ${game.dedupe_key}`);
+                }
+                
+                // Prefer known location_type over "unknown"
+                if (existing.location_type === 'unknown' && row.location_type !== 'unknown') {
+                    existing.location_type = row.location_type;
+                }
+                
+                // Prefer non-empty scores
+                if (!existing.home_score && row.home_score) {
+                    existing.home_score = row.home_score;
+                }
+                if (!existing.away_score && row.away_score) {
+                    existing.away_score = row.away_score;
+                }
+                
+                // Update status if we have better info
+                if (existing.status === 'scheduled' && row.status !== 'scheduled') {
+                    existing.status = row.status;
+                }
+                
+                // Prefer non-empty URLs
+                if (!existing.boxscore_url && row.boxscore_url) {
+                    existing.boxscore_url = row.boxscore_url;
+                }
+                if (!existing.schedule_url && row.schedule_url) {
+                    existing.schedule_url = row.schedule_url;
+                }
+                
+                gamesMap.set(game.dedupe_key, existing);
+            } else {
+                gamesMap.set(game.dedupe_key, row);
+            }
         }
 
         // 3. Write back
