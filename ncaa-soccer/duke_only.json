@@ -1,0 +1,14 @@
+[
+    {
+        "team_id": "DUKE",
+        "name_canonical": "Duke",
+        "conference": "ACC",
+        "sport": "msoc",
+        "schedule_url": "https://goduke.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Duke Blue Devils"
+        ]
+    }
+]

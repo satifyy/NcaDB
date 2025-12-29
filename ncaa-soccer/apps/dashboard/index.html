@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NCAA Soccer Analytics | 2025</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="data.js"></script>
+</head>
+
+<body>
+    <div class="app-container">
+
+        <header>
+            <div class="brand">
+                <h1>NCAA Soccer Analytics</h1>
+                <p class="subtitle">2025 Season • Player Performance Aggregation</p>
+            </div>
+            <div class="search-container">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="search-input" placeholder="Search players or teams...">
+            </div>
+        </header>
+
+        <main>
+            <!-- KPI Section -->
+            <section class="kpi-grid">
+                <div class="kpi-card">
+                    <p class="kpi-label">Total Players</p>
+                    <p class="kpi-value" id="total-players">0</p>
+                </div>
+                <div class="kpi-card">
+                    <p class="kpi-label">Total Goals</p>
+                    <p class="kpi-value" id="total-goals">0</p>
+                    <p class="kpi-subtext" id="avg-goals-game">0.0 per game</p>
+                </div>
+                <div class="kpi-card">
+                    <p class="kpi-label">Top Scorer</p>
+                    <p class="kpi-value highlight" id="top-scorer-name">-</p>
+                    <p class="kpi-subtext" id="top-scorer-goals">0 Goals</p>
+                </div>
+                <div class="kpi-card">
+                    <p class="kpi-label">Most Efficient</p>
+                    <p class="kpi-value highlight" id="most-efficient-name">-</p>
+                    <p class="kpi-subtext" id="most-efficient-rate">0% Conv. Rate</p>
+                </div>
+            </section>
+
+            <!-- Charts Section -->
+            <section class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h2 class="chart-title">Top Goal Scorers</h2>
+                    </div>
+                    <div class="chart-canvas-container">
+                        <canvas id="goalsChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h2 class="chart-title">Efficiency: Goals vs Shots</h2>
+                    </div>
+                    <div class="chart-canvas-container">
+                        <canvas id="efficiencyChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h2 class="chart-title">G/90 vs A/90 (Min 300 mins)</h2>
+                    </div>
+                    <div class="chart-canvas-container">
+                        <canvas id="per90Chart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h2 class="chart-title">Goal Contributions (G + A)</h2>
+                    </div>
+                    <div class="chart-canvas-container">
+                        <canvas id="contributionChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Table Section -->
+            <section class="table-section">
+                <div class="table-controls">
+                    <h2 class="chart-title">Detailed Player Statistics</h2>
+                    <select id="team-filter">
+                        <option value="all">All Teams</option>
+                    </select>
+                </div>
+                <div class="table-container">
+                    <table id="stats-table">
+                        <thead>
+                            <tr>
+                                <th data-sort="rank">#</th>
+                                <th data-sort="player_name">Player</th>
+                                <th data-sort="team_id">Team</th>
+                                <th data-sort="games_played" class="cell-numeric">GP</th>
+                                <th data-sort="minutes" class="cell-numeric">Min</th>
+                                <th data-sort="goals" class="cell-numeric">G</th>
+                                <th data-sort="assists" class="cell-numeric">A</th>
+                                <th data-sort="g_per_90" class="cell-numeric">G/90</th>
+                                <th data-sort="a_per_90" class="cell-numeric">A/90</th>
+                                <th data-sort="conversion_rate" class="cell-numeric">Conv %</th>
+                                <th data-sort="shots" class="cell-numeric">Sh</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Rows populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination">
+                    <span id="page-info">Page 1 of 1</span>
+                    <div>
+                        <button id="prev-page" disabled>Previous</button>
+                        <button id="next-page" disabled>Next</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+
+</html>

@@ -27,6 +27,11 @@ interface PlayerRow {
     saves: number | null;
 }
 
+// Configuration
+const BATCH_SIZE = 50; // Restart browser after this many games to free memory
+const CONCURRENCY = 5; // Number of parallel tabs
+const VIEWPORT = { width: 1280, height: 720 };
+
 function parseGamesCsv(csvPath: string): GameRow[] {
     const text = fs.readFileSync(csvPath, 'utf8');
     const lines = text.trim().split(/\r?\n/);
@@ -49,186 +54,159 @@ function parseGamesCsv(csvPath: string): GameRow[] {
     return games;
 }
 
+async function processGame(browser: any, game: GameRow, rawDir: string, boxParser: SidearmBoxScoreParser): Promise<PlayerRow[]> {
+    const boxUrl = game.boxscore_url!;
+
+    let page;
+    try {
+        page = await browser.newPage({
+            userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122 Safari/537.36',
+            viewport: VIEWPORT
+        });
+
+        // Fast navigation
+        await page.goto(boxUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
+        await page.waitForTimeout(800);
+
+        // Scroll once
+        await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+        await page.waitForTimeout(500);
+
+        // Quick check for tab
+        const tabSelectors = [
+            'button:has-text("Individual Stats")',
+            'button:has-text("Player Stats")',
+            '[role="tab"]:has-text("Stats")'
+        ];
+
+        let tabClicked = false;
+        for (const selector of tabSelectors) {
+            const tab = await page.$(selector);
+            if (tab) {
+                await tab.click();
+                tabClicked = true;
+                // Wait for hydration - optimized
+                await page.waitForTimeout(1500);
+                break;
+            }
+        }
+
+        // Just grab HTML now - assume it loaded or failed
+        const html = await page.evaluate(() => document.documentElement.outerHTML);
+
+        // NOTE: HTML file saving has been removed to save disk space as requested.
+
+        const res = boxParser.parse(html, { sourceUrl: boxUrl });
+
+        await page.close(); // Critical: close page immediately
+
+        if (res.playerStats.length > 0) {
+            console.log(`✅ [${game.game_id}] Parsed ${res.playerStats.length} stats`);
+            return res.playerStats.map(p => ({
+                game_id: game.game_id,
+                team_id: p.team_id,
+                player_name: p.player_name,
+                player_key: p.player_key,
+                jersey_number: p.jersey_number ?? null,
+                minutes: p.minutes ?? null,
+                goals: (p as any).goals ?? null,
+                assists: (p as any).assists ?? null,
+                shots: (p as any).shots ?? null,
+                shots_on_goal: toNumber(p.stats?.shots_on_goal),
+                saves: toNumber(p.stats?.saves)
+            }));
+        } else {
+            console.warn(`⚠️ [${game.game_id}] No stats found`);
+            return [];
+        }
+
+    } catch (e: any) {
+        console.error(`❌ [${game.game_id}] Failed: ${e.message}`);
+        if (page) await page.close().catch(() => { });
+        return [];
+    }
+}
+
 async function main() {
+    const startTotal = Date.now();
     const [, , gamesCsv = 'data/games/2025/games.csv', limitArg] = process.argv;
     const limit = limitArg ? Number(limitArg) : undefined;
     const csvPath = path.resolve(process.cwd(), gamesCsv);
+
     if (!fs.existsSync(csvPath)) {
         console.error(`games.csv not found at ${csvPath}`);
         process.exit(1);
     }
 
     let games = parseGamesCsv(csvPath).filter(g => g.boxscore_url);
+
+    // --- DEDUPLICATION LOGIC ---
+    // Rule: Teams are only allowed one game per day.
+    const processedSet = new Set<string>();
+    const uniqueGames: GameRow[] = [];
+    let dupeCount = 0;
+
+    for (const g of games) {
+        const d = g.date.trim();
+        const t1 = g.home_team_name.trim();
+        const t2 = g.away_team_name.trim();
+
+        // Keys: Date-Team
+        const k1 = `${d}|${t1}`;
+        const k2 = `${d}|${t2}`;
+
+        // If EITHER team has been seen on this date, this game is a duplicate
+        if (processedSet.has(k1) || processedSet.has(k2)) {
+            dupeCount++;
+            continue;
+        }
+
+        processedSet.add(k1);
+        processedSet.add(k2);
+        uniqueGames.push(g);
+    }
+    games = uniqueGames;
+    // ---------------------------
+
     if (limit && !isNaN(limit)) {
         games = games.slice(0, limit);
     }
-    console.log(`Loaded ${games.length} games with boxscore URLs from ${csvPath}${limit ? ` (limit ${limit})` : ''}`);
+    console.log(`🚀 Loading ${games.length} games to process... (Removed ${dupeCount} duplicates of existing team-dates)`);
 
     const rawDir = path.resolve(__dirname, '../../../../data/raw');
     if (!fs.existsSync(rawDir)) fs.mkdirSync(rawDir, { recursive: true });
+
     const boxParser = new SidearmBoxScoreParser();
-    const rows: PlayerRow[] = [];
+    const allRows: PlayerRow[] = [];
 
-    const browser = await chromium.launch({ headless: true });
-    const page = await browser.newPage({
-        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122 Safari/537.36'
-    });
+    // Process in Batches
+    for (let i = 0; i < games.length; i += BATCH_SIZE) {
+        const batch = games.slice(i, i + BATCH_SIZE);
+        console.log(`\nStarting Batch ${Math.floor(i / BATCH_SIZE) + 1} (${batch.length} games)...`);
 
-    for (const g of games) {
-        const boxUrl = g.boxscore_url!;
-        console.log(`Fetching boxscore ${boxUrl} for ${g.date} ${g.home_team_name} vs ${g.away_team_name}`);
-        try {
-            await page.goto(boxUrl, { waitUntil: 'networkidle' });
-            await page.waitForTimeout(1500);
+        // Launch Browser for this batch
+        const browser = await chromium.launch({
+            headless: true,
+            args: ['--disable-dev-shm-usage', '--no-sandbox']
+        });
 
-            // Scroll to load any lazy-loaded content
-            await page.evaluate(() => {
-                window.scrollTo(0, document.body.scrollHeight);
-            });
-            await page.waitForTimeout(1000);
-
-            // Try multiple selector patterns for the Individual Stats tab
-            const tabSelectors = [
-                'button:has-text("Individual Stats")',
-                'button:has-text("Player Stats")',
-                'button:has-text("Stats")',
-                'button[aria-label*="Individual Stats" i]',
-                'button[aria-label*="Player Stats" i]',
-                'button[aria-label*="Stats" i]',
-                'a:has-text("Individual Stats")',
-                'a:has-text("Player Stats")',
-                '[role="tab"]:has-text("Individual Stats")',
-                '[role="tab"]:has-text("Player Stats")',
-                '[role="tab"]:has-text("Stats")'
-            ];
-
-            let tabClicked = false;
-            for (const selector of tabSelectors) {
-                try {
-                    const tab = await page.$(selector);
-                    if (tab) {
-                        console.log(`Found tab with selector: ${selector}`);
-                        await tab.click();
-                        tabClicked = true;
-
-                        // CRITICAL: Wait for JavaScript to render the tables
-                        // The page is a Nuxt.js SPA that hydrates tables from JSON data
-                        // We need to wait for actual table rows to appear, not just the table elements
-                        console.log(`Waiting for tables to be populated by JavaScript...`);
-
-                        // Wait for network to be idle after clicking tab (ensures Vue.js hydration completes)
-                        await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {
-                            console.warn('Network did not become idle, but continuing...');
-                        });
-
-                        // Give extra time for Vue.js to render the tables
-                        await page.waitForTimeout(3000);
-
-                        // Try to wait for table content with actual player data (position like "gk" or "mid")
-                        try {
-                            await page.waitForSelector('table tbody tr td:has-text("gk"), table tbody tr td:has-text("mid")', { timeout: 5000 });
-                            console.log(`Tables with player position data detected`);
-                        } catch (error: any) {
-                            console.warn(`Could not detect player position data - HTML may not be fully hydrated`);
-                        }
-
-                        break;
-                    }
-                } catch (e) {
-                    // Try next selector
-                }
-            }
-
-            if (!tabClicked) {
-                console.warn('No Individual/Player Stats tab found; attempting to parse visible content');
-            }
-
-            // Scroll again after clicking tab to ensure tables are visible
-            await page.evaluate(() => {
-                window.scrollTo(0, document.body.scrollHeight);
-            });
-            await page.waitForTimeout(1000);
-
-            // Try multiple table selector patterns
-            const tableSelectors = [
-                'table.sidearm-table',
-                'table.overall-stats',
-                'table[class*="stats"]',
-                'table[class*="player"]',
-                '.stats-table table',
-                '.player-stats table',
-                'table tbody tr',
-                'table'
-            ];
-
-            let tableFound = false;
-            for (const selector of tableSelectors) {
-                try {
-                    await page.waitForSelector(selector, { timeout: 3000 });
-                    console.log(`Found table with selector: ${selector}`);
-                    tableFound = true;
-                    break;
-                } catch (e) {
-                    // Try next selector
-                }
-            }
-
-            if (!tableFound) {
-                console.warn('No stats tables detected; saving HTML anyway for inspection');
-            }
-
-            // CRITICAL: Get the RENDERED HTML from the live DOM, not the source HTML
-            // page.content() returns the original source before JavaScript runs
-            // We need the actual rendered DOM after Vue.js hydration
-            const html = await page.evaluate(() => document.documentElement.outerHTML);
-
-            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-            const rawPath = path.join(rawDir, `${timestamp}_boxscore_${g.dedupe_key}.html`);
-            fs.writeFileSync(rawPath, html, 'utf8');
-            console.log(`Saved HTML to ${rawPath}`);
-
-            // Debug: Check what tabs and tables exist in the page
-            const debugInfo = await page.evaluate(() => {
-                const buttons = Array.from(document.querySelectorAll('button')).map(b => b.textContent?.trim());
-                const tables = document.querySelectorAll('table');
-                const tableInfo = Array.from(tables).map(t => ({
-                    classes: t.className,
-                    rows: t.querySelectorAll('tr').length
-                }));
-                return { buttons, tableCount: tables.length, tableInfo };
-            });
-            console.log('Page debug info:', JSON.stringify(debugInfo, null, 2));
-
-            const res = boxParser.parse(html, { sourceUrl: boxUrl });
-            res.playerStats.forEach(p => {
-                rows.push({
-                    game_id: g.game_id,
-                    team_id: p.team_id,
-                    player_name: p.player_name,
-                    player_key: p.player_key,
-                    jersey_number: p.jersey_number ?? null,
-                    minutes: p.minutes ?? null,
-                    goals: (p as any).goals ?? null,
-                    assists: (p as any).assists ?? null,
-                    shots: (p as any).shots ?? null,
-                    shots_on_goal: toNumber(p.stats?.shots_on_goal),
-                    saves: toNumber(p.stats?.saves)
-                });
-            });
-            console.log(`Parsed ${res.playerStats.length} player rows`);
-            if (res.playerStats.length > 0) {
-                console.log('DEBUG First Player:', JSON.stringify(res.playerStats[0], null, 2));
-            }
-        } catch (e: any) {
-            console.error(`Failed ${boxUrl}: ${e.message}`);
+        // specific concurrency logic
+        // We will execute 'CONCURRENCY' promises at a time from the batch
+        for (let j = 0; j < batch.length; j += CONCURRENCY) {
+            const chunk = batch.slice(j, j + CONCURRENCY);
+            const promises = chunk.map(game => processGame(browser, game, rawDir, boxParser));
+            const results = await Promise.all(promises);
+            results.forEach(rows => allRows.push(...rows));
         }
+
+        await browser.close();
+        console.log(`Batch ${Math.floor(i / BATCH_SIZE) + 1} complete. Memory cleared.`);
     }
 
-    await browser.close();
-
-    const year = games[0]?.date?.split('-')[0] || 'unknown';
+    // Write Output
+    const year = games[0]?.date?.split('-')[0] || '2025';
     const statsDir = path.resolve(__dirname, '../../../../data/player_stats', year);
-    fs.mkdirSync(statsDir, { recursive: true });
+    if (!fs.existsSync(statsDir)) fs.mkdirSync(statsDir, { recursive: true });
     const outPath = path.join(statsDir, 'player_stats.csv');
 
     const header = [
@@ -236,25 +214,20 @@ async function main() {
         'minutes', 'goals', 'assists', 'shots', 'shots_on_goal', 'saves'
     ];
     const lines = [header.join(',')];
-    rows.forEach(r => {
+    allRows.forEach(r => {
         const vals = [
-            r.game_id,
-            r.team_id,
-            r.player_name,
-            r.player_key,
-            r.jersey_number ?? '',
-            r.minutes ?? '',
-            r.goals ?? '',
-            r.assists ?? '',
-            r.shots ?? '',
-            r.shots_on_goal ?? '',
-            r.saves ?? ''
+            r.game_id, r.team_id, r.player_name, r.player_key, r.jersey_number ?? '',
+            r.minutes ?? '', r.goals ?? '', r.assists ?? '', r.shots ?? '',
+            r.shots_on_goal ?? '', r.saves ?? ''
         ];
         lines.push(vals.map(v => escapeCsv(String(v))).join(','));
     });
 
     fs.writeFileSync(outPath, lines.join('\n'), 'utf8');
-    console.log(`Wrote ${rows.length} player rows to ${outPath}`);
+
+    const duration = (Date.now() - startTotal) / 1000;
+    console.log(`\n✨ DONE! Processed ${games.length} games in ${duration.toFixed(1)}s`);
+    console.log(`Stats written to ${outPath}`);
 }
 
 function escapeCsv(field: string): string {
@@ -272,6 +245,5 @@ function toNumber(val: any): number | null {
 }
 
 main().catch(err => {
-    console.error('fetch_boxscores_from_csv failed:', err);
-    process.exit(1);
+    console.error('Fatal error:', err);
 });

@@ -36,7 +36,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.GameStorageAdapter = void 0;
 const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
-// import { writeCsv } from './csv/writers'; // If available
+const sync_1 = require("csv-parse/sync");
+const sync_2 = require("csv-stringify/sync");
 class GameStorageAdapter {
     constructor(baseDir) {
         this.baseDir = baseDir;
@@ -49,49 +50,59 @@ class GameStorageAdapter {
             fs.mkdirSync(dir, { recursive: true });
         }
         const filePath = path.join(dir, 'games.csv');
-        // Headers based on Game schema
         const headers = [
             'game_id', 'date', 'home_team_name', 'away_team_name',
             'home_score', 'away_score', 'location_type', 'status',
             'schedule_url', 'boxscore_url', 'dedupe_key'
         ];
-        let content = '';
-        if (!fs.existsSync(filePath)) {
-            content += headers.join(',') + '\n';
+        const gamesMap = new Map();
+        // 1. Read existing
+        if (fs.existsSync(filePath)) {
+            try {
+                const fileContent = fs.readFileSync(filePath, 'utf-8');
+                const records = (0, sync_1.parse)(fileContent, {
+                    columns: true,
+                    skip_empty_lines: true
+                });
+                for (const record of records) {
+                    // Normalize dedupe_key just in case
+                    if (record.dedupe_key) {
+                        gamesMap.set(record.dedupe_key, record);
+                    }
+                }
+            }
+            catch (e) {
+                console.warn(`Error reading existing CSV at ${filePath}:`, e);
+            }
         }
-        // Read existing keys to dedupe if appending? 
-        // For now, simple append or overwrite?
-        // Implementation plan said "saveGames". Usually we want to merge or overwrite.
-        // Let's assume overwrite for the session or append new ones. 
-        // For simplicity and to avoid duplicates in file, we might want to read all, merge, write all.
-        // But for this phase, simple write is fine.
+        // 2. Upsert new games
         for (const game of games) {
-            const row = [
-                this.escapeCsv(game.game_id),
-                this.escapeCsv(game.date),
-                this.escapeCsv(game.home_team_name),
-                this.escapeCsv(game.away_team_name),
-                game.home_score !== null ? game.home_score : '',
-                game.away_score !== null ? game.away_score : '',
-                this.escapeCsv(game.location_type),
-                this.escapeCsv(game.status),
-                this.escapeCsv(game.source_urls?.schedule_url || ''),
-                this.escapeCsv(game.source_urls?.boxscore_url || ''),
-                this.escapeCsv(game.dedupe_key)
-            ];
-            content += row.join(',') + '\n';
+            // Flatten game object to match CSV structure
+            const row = {
+                game_id: game.game_id,
+                date: game.date,
+                home_team_name: game.home_team_name,
+                away_team_name: game.away_team_name,
+                home_score: game.home_score !== null ? String(game.home_score) : '',
+                away_score: game.away_score !== null ? String(game.away_score) : '',
+                location_type: game.location_type,
+                status: game.status,
+                schedule_url: game.source_urls?.schedule_url || '',
+                boxscore_url: game.source_urls?.boxscore_url || '',
+                dedupe_key: game.dedupe_key
+            };
+            gamesMap.set(game.dedupe_key, row);
         }
-        // naive append for now.
-        fs.appendFileSync(filePath, content);
-        console.log(`Saved ${games.length} games to ${filePath}`);
-    }
-    escapeCsv(field) {
-        if (!field)
-            return '';
-        if (field.includes(',') || field.includes('"') || field.includes('\n')) {
-            return `"${field.replace(/"/g, '""')}"`;
-        }
-        return field;
+        // 3. Write back
+        const allGames = Array.from(gamesMap.values());
+        // ensure sorting by date
+        allGames.sort((a, b) => a.date.localeCompare(b.date));
+        const output = (0, sync_2.stringify)(allGames, {
+            header: true,
+            columns: headers
+        });
+        fs.writeFileSync(filePath, output);
+        console.log(`Saved ${games.length} games (merged with existing) to ${filePath}`);
     }
 }
 exports.GameStorageAdapter = GameStorageAdapter;

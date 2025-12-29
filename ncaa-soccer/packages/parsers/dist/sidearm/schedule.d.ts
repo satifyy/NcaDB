@@ -12,5 +12,6 @@ export declare class SidearmParser implements Parser {
     private extractOrigin;
     private findCanonical;
     parseBoxScore(html: string, options?: ParserOptions): Promise<ParseResult>;
+    private parseNextGenJson;
 }
 //# sourceMappingURL=schedule.d.ts.map
