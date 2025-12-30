@@ -4,6 +4,28 @@ import { chromium } from 'playwright-chromium';
 import { SidearmParser } from '@ncaa/parsers';
 import { GameStorageAdapter } from '@ncaa/storage';
 
+// Normalize a boxscore URL using the schedule page as base. No hardcoded team overrides.
+const resolveBoxscoreUrl = (rawUrl: string | undefined, baseUrl: string): string | undefined => {
+    if (!rawUrl) return undefined;
+    const trimmed = rawUrl.trim();
+    if (!trimmed) return undefined;
+    if (/^https?:\/\//i.test(trimmed)) return trimmed;
+    const originFromBase = (() => {
+        try {
+            return new URL(baseUrl).origin;
+        } catch {
+            return '';
+        }
+    })();
+    if (trimmed.startsWith('//')) return `https:${trimmed}`;
+    if (trimmed.startsWith('/')) return originFromBase ? `${originFromBase}${trimmed}` : undefined;
+    try {
+        return new URL(trimmed, originFromBase || baseUrl).toString();
+    } catch {
+        return undefined;
+    }
+};
+
 interface TeamConfig {
     team_id: string;
     name_canonical: string;
@@ -295,12 +317,14 @@ async function processSchool(browser: any, team: TeamConfig): Promise<any[]> {
         // Enrich
         games.forEach((game, index) => {
             const rowKey = `row_${index}`; // Logic assumes simple row mapping matching index
-            const boxscoreUrl = linkButtonsBoxscoreMap.get(rowKey);
-            if (boxscoreUrl && !game.source_urls?.boxscore_url) {
+            const mapped = linkButtonsBoxscoreMap.get(rowKey);
+            const mappedResolved = resolveBoxscoreUrl(mapped, team.schedule_url);
+            const parsedResolved = resolveBoxscoreUrl(game.source_urls?.boxscore_url, team.schedule_url);
+            const finalBox = mappedResolved || parsedResolved;
+
+            if (finalBox) {
                 if (!game.source_urls) game.source_urls = {};
-                game.source_urls.boxscore_url = boxscoreUrl.startsWith('http')
-                    ? boxscoreUrl
-                    : new URL(boxscoreUrl, team.schedule_url).toString();
+                game.source_urls.boxscore_url = finalBox;
             }
         });
 

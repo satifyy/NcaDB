@@ -11,6 +11,11 @@ export declare class SidearmParser implements Parser {
     private parseListBasedGame;
     private parseTableRow;
     private parseDate;
+    private parseLdJsonSchedule;
+    private updateGameIdentifiers;
+    private findMatchingGame;
+    private namesLikelyMatch;
+    private teamsMatch;
     private resolveUrl;
     private extractOrigin;
     private findCanonical;

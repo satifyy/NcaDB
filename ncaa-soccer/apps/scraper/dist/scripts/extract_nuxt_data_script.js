@@ -42,15 +42,17 @@ const cheerio = __importStar(require("cheerio"));
 const htmlPath = path_1.default.join(process.cwd(), 'unc_boxscore_page.html');
 const html = fs_1.default.readFileSync(htmlPath, 'utf8');
 const $ = cheerio.load(html);
-let nuxtScript = null;
+let nuxtScript = '';
+let found = false;
 $('script').each((i, el) => {
     const content = $(el).html() || '';
     if (content.includes('Cordes') || content.includes('"boxscore"')) {
         nuxtScript = content;
+        found = true;
         return false; // break
     }
 });
-if (nuxtScript) {
+if (found && nuxtScript) {
     fs_1.default.writeFileSync('nuxt_data_script.js', nuxtScript);
     console.log(`Extracted Nuxt data script. Length: ${nuxtScript.length}`);
     console.log('Start of script:', nuxtScript.substring(0, 200));

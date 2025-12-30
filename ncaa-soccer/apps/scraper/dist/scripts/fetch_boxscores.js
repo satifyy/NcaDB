@@ -75,8 +75,8 @@ async function main() {
                     goals: p.goals ?? null,
                     assists: p.assists ?? null,
                     shots: p.shots ?? null,
-                    shots_on_goal: p.stats?.shots_on_goal ?? null,
-                    saves: p.stats?.saves ?? null
+                    shots_on_goal: toNumberOrNull(p.stats?.shots_on_goal),
+                    saves: toNumberOrNull(p.stats?.saves)
                 });
             });
             console.log(`Parsed ${res.playerStats.length} player rows`);
@@ -120,6 +120,14 @@ function escapeCsv(field) {
         return `"${field.replace(/"/g, '""')}"`;
     }
     return field;
+}
+function toNumberOrNull(value) {
+    if (value === null || value === undefined)
+        return null;
+    if (typeof value === 'number')
+        return value;
+    const num = Number(value);
+    return Number.isNaN(num) ? null : num;
 }
 main().catch(err => {
     console.error('fetch_boxscores failed:', err);

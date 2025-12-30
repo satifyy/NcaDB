@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require('fs');
 const path = require('path');
 const cheerio = require('cheerio');
@@ -31,7 +32,12 @@ async function main() {
             console.log('Meta JSON keys:', Object.keys(res.data));
         }
         catch (e) {
-            console.error('Fetch failed:', e.message);
+            if (e instanceof Error) {
+                console.error('Fetch failed:', e.message);
+            }
+            else {
+                console.error('Fetch failed:', e);
+            }
         }
     }
 }

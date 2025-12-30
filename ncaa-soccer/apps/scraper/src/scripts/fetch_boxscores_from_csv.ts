@@ -27,6 +27,11 @@ interface PlayerRow {
     saves: number | null;
 }
 
+interface ProcessResult {
+    rows: PlayerRow[];
+    success: boolean;
+}
+
 // Configuration
 const BATCH_SIZE = 50; // Restart browser after this many games to free memory
 const CONCURRENCY = 5; // Number of parallel tabs
@@ -54,8 +59,10 @@ function parseGamesCsv(csvPath: string): GameRow[] {
     return games;
 }
 
-async function processGame(browser: any, game: GameRow, rawDir: string, boxParser: SidearmBoxScoreParser): Promise<PlayerRow[]> {
+async function processGame(browser: any, game: GameRow, rawDir: string, boxParser: SidearmBoxScoreParser, opts?: { attempt?: number; waitLonger?: boolean }): Promise<ProcessResult> {
     const boxUrl = game.boxscore_url!;
+    const attempt = opts?.attempt ?? 1;
+    const waitLonger = opts?.waitLonger ?? false;
 
     let page;
     try {
@@ -66,11 +73,11 @@ async function processGame(browser: any, game: GameRow, rawDir: string, boxParse
 
         // Fast navigation
         await page.goto(boxUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
-        await page.waitForTimeout(800);
+        await page.waitForTimeout(waitLonger ? 2000 : 800);
 
         // Scroll once
         await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-        await page.waitForTimeout(500);
+        await page.waitForTimeout(waitLonger ? 1200 : 500);
 
         // Quick check for tab
         const tabSelectors = [
@@ -86,7 +93,7 @@ async function processGame(browser: any, game: GameRow, rawDir: string, boxParse
                 await tab.click();
                 tabClicked = true;
                 // Wait for hydration - optimized
-                await page.waitForTimeout(1500);
+                await page.waitForTimeout(waitLonger ? 2500 : 1500);
                 break;
             }
         }
@@ -101,8 +108,8 @@ async function processGame(browser: any, game: GameRow, rawDir: string, boxParse
         await page.close(); // Critical: close page immediately
 
         if (res.playerStats.length > 0) {
-            console.log(`✅ [${game.game_id}] Parsed ${res.playerStats.length} stats`);
-            return res.playerStats.map(p => ({
+            console.log(`✅ [${game.game_id}] Parsed ${res.playerStats.length} stats (attempt ${attempt})`);
+            const rows = res.playerStats.map(p => ({
                 game_id: game.game_id,
                 team_id: p.team_id,
                 player_name: p.player_name,
@@ -115,15 +122,16 @@ async function processGame(browser: any, game: GameRow, rawDir: string, boxParse
                 shots_on_goal: toNumber(p.stats?.shots_on_goal),
                 saves: toNumber(p.stats?.saves)
             }));
+            return { rows, success: true };
         } else {
-            console.warn(`⚠️ [${game.game_id}] No stats found`);
-            return [];
+            console.warn(`⚠️ [${game.game_id}] No stats found (attempt ${attempt})`);
+            return { rows: [], success: false };
         }
 
     } catch (e: any) {
         console.error(`❌ [${game.game_id}] Failed: ${e.message}`);
         if (page) await page.close().catch(() => { });
-        return [];
+        return { rows: [], success: false };
     }
 }
 
@@ -144,7 +152,7 @@ async function main() {
     // Rule: Teams are only allowed one game per day.
     const processedSet = new Set<string>();
     const uniqueGames: GameRow[] = [];
-    let dupeCount = 0;
+    const removedDuplicates: { reason: string; game: GameRow }[] = [];
 
     for (const g of games) {
         const d = g.date.trim();
@@ -157,7 +165,7 @@ async function main() {
 
         // If EITHER team has been seen on this date, this game is a duplicate
         if (processedSet.has(k1) || processedSet.has(k2)) {
-            dupeCount++;
+            removedDuplicates.push({ reason: 'team-date duplicate', game: g });
             continue;
         }
 
@@ -171,13 +179,20 @@ async function main() {
     if (limit && !isNaN(limit)) {
         games = games.slice(0, limit);
     }
-    console.log(`🚀 Loading ${games.length} games to process... (Removed ${dupeCount} duplicates of existing team-dates)`);
+    console.log(`🚀 Loading ${games.length} games to process... (Removed ${removedDuplicates.length} duplicates of existing team-dates)`);
+    if (removedDuplicates.length > 0) {
+        console.log('Duplicate removals:');
+        removedDuplicates.forEach(({ game }) => {
+            console.log(` - ${game.date} ${game.home_team_name} vs ${game.away_team_name} (box=${game.boxscore_url || 'none'})`);
+        });
+    }
 
     const rawDir = path.resolve(__dirname, '../../../../data/raw');
     if (!fs.existsSync(rawDir)) fs.mkdirSync(rawDir, { recursive: true });
 
     const boxParser = new SidearmBoxScoreParser();
     const allRows: PlayerRow[] = [];
+    const failedGames: GameRow[] = [];
 
     // Process in Batches
     for (let i = 0; i < games.length; i += BATCH_SIZE) {
@@ -190,13 +205,31 @@ async function main() {
             args: ['--disable-dev-shm-usage', '--no-sandbox']
         });
 
+        const batchFailures: GameRow[] = [];
+
         // specific concurrency logic
         // We will execute 'CONCURRENCY' promises at a time from the batch
         for (let j = 0; j < batch.length; j += CONCURRENCY) {
             const chunk = batch.slice(j, j + CONCURRENCY);
             const promises = chunk.map(game => processGame(browser, game, rawDir, boxParser));
             const results = await Promise.all(promises);
-            results.forEach(rows => allRows.push(...rows));
+            results.forEach((res, idx) => {
+                allRows.push(...res.rows);
+                if (!res.success) batchFailures.push(chunk[idx]);
+            });
+        }
+
+        if (batchFailures.length > 0) {
+            console.log(`↩️ Retrying ${batchFailures.length} games with longer waits...`);
+            for (let j = 0; j < batchFailures.length; j += CONCURRENCY) {
+                const retryChunk = batchFailures.slice(j, j + CONCURRENCY);
+                const retryPromises = retryChunk.map(game => processGame(browser, game, rawDir, boxParser, { attempt: 2, waitLonger: true }));
+                const retryResults = await Promise.all(retryPromises);
+                retryResults.forEach((res, idx) => {
+                    allRows.push(...res.rows);
+                    if (!res.success) failedGames.push(retryChunk[idx]);
+                });
+            }
         }
 
         await browser.close();
@@ -228,6 +261,15 @@ async function main() {
     const duration = (Date.now() - startTotal) / 1000;
     console.log(`\n✨ DONE! Processed ${games.length} games in ${duration.toFixed(1)}s`);
     console.log(`Stats written to ${outPath}`);
+
+    if (failedGames.length > 0) {
+        const failDir = path.resolve(__dirname, '../../../../data/player_stats');
+        if (!fs.existsSync(failDir)) fs.mkdirSync(failDir, { recursive: true });
+        const failLogPath = path.join(failDir, 'failed_boxscores.log');
+        const failLines = failedGames.map(g => `${g.game_id},${g.date},${g.home_team_name} vs ${g.away_team_name},${g.boxscore_url ?? ''}`);
+        fs.writeFileSync(failLogPath, failLines.join('\n'), 'utf8');
+        console.warn(`⚠️ ${failedGames.length} games still missing stats after retry. Logged to ${failLogPath}`);
+    }
 }
 
 function escapeCsv(field: string): string {

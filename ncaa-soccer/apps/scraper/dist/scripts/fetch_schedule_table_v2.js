@@ -38,6 +38,34 @@ const playwright_chromium_1 = require("playwright-chromium");
 const parsers_1 = require("@ncaa/parsers");
 const storage_1 = require("@ncaa/storage");
 const fs = __importStar(require("fs"));
+// Normalize a boxscore URL using the schedule page as base. Works across layouts without hardcoded team overrides.
+const resolveBoxscoreUrl = (rawUrl, baseUrl) => {
+    if (!rawUrl)
+        return undefined;
+    const trimmed = rawUrl.trim();
+    if (!trimmed)
+        return undefined;
+    if (/^https?:\/\//i.test(trimmed))
+        return trimmed;
+    const originFromBase = (() => {
+        try {
+            return new URL(baseUrl).origin;
+        }
+        catch {
+            return '';
+        }
+    })();
+    if (trimmed.startsWith('//'))
+        return `https:${trimmed}`;
+    if (trimmed.startsWith('/'))
+        return originFromBase ? `${originFromBase}${trimmed}` : undefined;
+    try {
+        return new URL(trimmed, originFromBase || baseUrl).toString();
+    }
+    catch {
+        return undefined;
+    }
+};
 // Retry wrapper with exponential backoff
 async function retryWithBackoff(fn, maxAttempts = 3, initialDelayMs = 2000, operation = 'operation') {
     let lastError = null;
@@ -325,18 +353,17 @@ async function main() {
     // Parse with Sidearm parser
     const parser = new parsers_1.SidearmParser();
     const games = await parser.parseSchedule(html, { teamName, baseUrl: url, debug: true });
-    // Enrich games with extracted boxscore links
+    // Enrich games with extracted boxscore links and normalize any relative URLs
     games.forEach((game, index) => {
         const rowKey = `row_${index}`;
-        const boxscoreUrl = linkButtonsBoxscoreMap.get(rowKey);
-        if (boxscoreUrl && !game.source_urls?.boxscore_url) {
-            if (!game.source_urls) {
+        const mapped = linkButtonsBoxscoreMap.get(rowKey);
+        const mappedResolved = resolveBoxscoreUrl(mapped, url);
+        const parsedResolved = resolveBoxscoreUrl(game.source_urls?.boxscore_url, url);
+        const finalBox = mappedResolved || parsedResolved;
+        if (finalBox) {
+            if (!game.source_urls)
                 game.source_urls = {};
-            }
-            // Resolve relative URLs
-            game.source_urls.boxscore_url = boxscoreUrl.startsWith('http')
-                ? boxscoreUrl
-                : new URL(boxscoreUrl, url).toString();
+            game.source_urls.boxscore_url = finalBox;
         }
     });
     console.log(`Parsed ${games.length} games for ${teamName}.`);

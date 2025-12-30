@@ -47,6 +47,15 @@ export class SidearmParser implements Parser {
         let cleanName = name;
         let isRanked = false;
         
+        // Normalize whitespace early to avoid embedded newlines/indentation from scraped HTML
+        cleanName = cleanName.replace(/\s+/g, ' ').trim();
+
+        // Collapse exact double repeats like "UC Davis UC Davis"
+        const repeatMatch = cleanName.match(/^(.+?)\s+\1$/i);
+        if (repeatMatch) {
+            cleanName = repeatMatch[1].trim();
+        }
+
         // Check for rankings: "No. 7 Stanford", "#5 Duke", etc.
         if (/^(No\.?|#)\s*\d+\s+/i.test(cleanName)) {
             isRanked = true;
@@ -61,6 +70,8 @@ export class SidearmParser implements Parser {
 
     async parseSchedule(input: string, options?: ParserOptions): Promise<Game[]> {
         if (options?.debug) console.log('[sidearm] parseSchedule called with debug=true (v5 - stdout)');
+        // Enable parseDate debug logging when requested
+        if (options?.debug) (globalThis as any).__sidearmDebugDates = true;
         const games: Game[] = [];
         let domain = options?.baseUrl ? this.extractOrigin(options.baseUrl) : '';
 
@@ -133,11 +144,54 @@ export class SidearmParser implements Parser {
             });
         }
 
+        // Fall back to ld+json SportsEvent scripts when table parsing drops dates to 01-01 (e.g., SMU, Cal)
+        const ldJsonGames = this.parseLdJsonSchedule(input, { ...options, baseUrl: domain });
+        if (ldJsonGames.length > 0) {
+            ldJsonGames.forEach(ldGame => {
+                const matchKey = this.findMatchingGame(gamesByKey, ldGame);
+                if (matchKey) {
+                    const existing = gamesByKey[matchKey];
+                    const needsDateFix = !existing.date || existing.date.endsWith('-01-01');
+                    if (needsDateFix && ldGame.date) {
+                        this.updateGameIdentifiers(existing, ldGame.date);
+                        if (matchKey !== existing.dedupe_key) {
+                            delete gamesByKey[matchKey];
+                            gamesByKey[existing.dedupe_key] = existing;
+                        }
+                    }
+                    if (existing.location_type === 'unknown' && ldGame.location_type !== 'unknown') {
+                        existing.location_type = ldGame.location_type;
+                    }
+                    const ldHasScores = ldGame.home_score !== null && ldGame.away_score !== null;
+                    const existingHasScores = existing.home_score !== null && existing.away_score !== null;
+                    if (!existingHasScores && ldHasScores) {
+                        existing.home_score = ldGame.home_score;
+                        existing.away_score = ldGame.away_score;
+                    }
+                    if ((existing.status === 'scheduled' || existing.status === 'unknown') && ldGame.status === 'final') {
+                        existing.status = 'final';
+                    }
+                    if ((!existing.source_urls?.boxscore_url) && ldGame.source_urls?.boxscore_url) {
+                        existing.source_urls = {
+                            ...existing.source_urls,
+                            boxscore_url: ldGame.source_urls.boxscore_url
+                        };
+                    }
+                } else {
+                    gamesByKey[ldGame.dedupe_key] = ldGame;
+                }
+            });
+        }
+
         if (Object.keys(gamesByKey).length > 0) {
             if (debug) {
                 console.log(`[sidearm] returning ${Object.keys(gamesByKey).length} games`);
             }
             return Object.values(gamesByKey);
+        }
+
+        if (ldJsonGames.length > 0) {
+            return ldJsonGames;
         }
 
         return games;
@@ -431,8 +485,12 @@ export class SidearmParser implements Parser {
 
             // Check for home/away
             const isHome = item.hasClass('sidearm-schedule-home-game');
-            const homeTeam = isHome ? 'Unknown Team' : opponentName;
-            const awayTeam = isHome ? opponentName : 'Unknown Team';
+            const contextTeamName = options?.teamName || 'Unknown Team';
+            // Normalize names to strip newlines/extra spacing from Sidearm markup
+            const homeInfo = this.cleanTeamName(isHome ? contextTeamName : opponentName);
+            const awayInfo = this.cleanTeamName(isHome ? opponentName : contextTeamName);
+            const homeTeam = homeInfo.cleanName;
+            const awayTeam = awayInfo.cleanName;
 
             // Extract result if available
             const resultText = item.find('.sidearm-schedule-game-result').text().trim();
@@ -476,8 +534,8 @@ export class SidearmParser implements Parser {
                 date,
                 home_team_name: homeTeam,
                 away_team_name: awayTeam,
-                home_team_ranked: false,
-                away_team_ranked: false,
+                home_team_ranked: homeInfo.isRanked,
+                away_team_ranked: awayInfo.isRanked,
                 home_score: homeScore,
                 away_score: awayScore,
                 location_type: isHome ? 'home' : 'away',
@@ -506,6 +564,15 @@ export class SidearmParser implements Parser {
             
             // Use allCells if we have th elements (like Stanford)
             const workingCells = allCells.length > cells.length ? allCells : cells;
+
+            // Drop obvious advertisement spacer rows (e.g., single cell that says "Skip Ad")
+            if (workingCells.length === 1) {
+                const soloText = workingCells.text().trim().toLowerCase();
+                if (soloText.includes('skip ad') || soloText === '') {
+                    if (options?.debug) console.log('[debug] Skipping ad/spacer row');
+                    return null;
+                }
+            }
 
             // Try to infer columns by header labels if available
             // Look in multiple places: immediate table, parent structures, or sibling header rows
@@ -544,8 +611,14 @@ export class SidearmParser implements Parser {
             if (options?.debug) {
                 console.log(`[debug] Headers: ${JSON.stringify(headers)}`);
                 console.log(`[debug] Date cell text: "${dateCell.text().trim()}"`);
-                console.log(`[debug] Opponent cell text: "${opponentCell.text().trim()}"`);
-                console.log(`[debug] Result cell text: "${resultCell.text().trim()}"`);
+                console.log(`[debug] Opponent cell text: "${opponentCell ? opponentCell.text().trim() : ''}"`);
+                console.log(`[debug] Result cell text: "${resultCell ? resultCell.text().trim() : ''}"`);
+            }
+
+            // Skip obvious boxscore/stat tables (team/period/f) that are not schedule rows
+            if (headers.length && headers.every(h => ['team', 'period', 'f'].includes(h))) {
+                if (options?.debug) console.log('[debug] Skipping boxscore/stat table row');
+                return null;
             }
 
             // Fallback: If headers didn't provide the cells, use heuristics to find them
@@ -594,6 +667,10 @@ export class SidearmParser implements Parser {
             const yearMatch = dateTextRaw.match(/\b(20\d{2})\b/);
             const year = yearMatch ? yearMatch[1] : new Date().getFullYear().toString();
 
+            // Normalize date text (flatten newlines like "August<br> 08, 2025")
+            const dateTextNormalized = dateTextRaw.replace(/\s+/g, ' ').replace(/\s*,\s*/g, ', ').trim();
+            const inlineYear = (dateTextNormalized.match(/\b(20\d{2})\b/) || [])[1] || year;
+
             // Try to grab an ISO-like date from attributes or the row HTML first (prevents fallback 01-01)
             const attrDateCandidates = [
                 dateCell.attr('data-game-date'),
@@ -619,20 +696,33 @@ export class SidearmParser implements Parser {
                 }
             }
 
+            // Try the full normalized text (with year appended if missing)
+            if (!dateStr || dateStr.endsWith('-01-01')) {
+                const withYear = /\b20\d{2}\b/.test(dateTextNormalized) ? dateTextNormalized : `${dateTextNormalized} ${inlineYear}`;
+                dateStr = this.parseDate(withYear, inlineYear);
+            }
+
             // Finally, fall back to text parsing for "Aug 21" style strings (with or without weekday prefixes)
             if (!dateStr || dateStr.endsWith('-01-01')) {
                 // Match patterns like "Aug 21" or "Thu, Aug 21"
                 let monthDay = '';
-                const weekdayMonth = dateTextRaw.match(/^[A-Za-z]{3},?\s*([A-Za-z]{3,})\.?,?\s+(\d{1,2})/);
+                // Prefer a direct month-day capture to avoid chopping the month name (e.g., "August" being seen as weekday)
                 const plainMonth = dateTextRaw.match(/([A-Za-z]{3,})\.?,?\s+(\d{1,2})/);
-                if (weekdayMonth) {
-                    monthDay = `${weekdayMonth[1]} ${weekdayMonth[2]}`;
-                } else if (plainMonth) {
+                const weekdayMonth = dateTextRaw.match(/^[A-Za-z]{3},\s*([A-Za-z]{3,})\.?,?\s+(\d{1,2})/);
+                if (plainMonth) {
                     monthDay = `${plainMonth[1]} ${plainMonth[2]}`;
+                } else if (weekdayMonth) {
+                    monthDay = `${weekdayMonth[1]} ${weekdayMonth[2]}`;
                 } else {
                     monthDay = dateTextRaw.split(/\s+/).slice(0, 2).join(' ');
                 }
-                dateStr = this.parseDate(monthDay, year);
+                // Append year if the text lost it (e.g., "August 08,")
+                const monthDayWithYear = /\b20\d{2}\b/.test(monthDay) ? monthDay : `${monthDay} ${inlineYear}`;
+                dateStr = this.parseDate(monthDayWithYear, inlineYear);
+            }
+
+            if (options?.debug) {
+                console.log(`[debug] Parsed date: ${dateStr}`);
             }
 
             // Extract opponent text more carefully to avoid nested/duplicate content
@@ -734,29 +824,54 @@ export class SidearmParser implements Parser {
                 status = 'canceled';
             }
 
-            // Attempt to capture boxscore / stats link from the links cell
-            // For Stanford-style: Recap is first, Box Score is second
+            // Attempt to capture boxscore / stats link from the row. Strategy:
+            // 1) Prefer inline anchors with text containing "box" / "box score".
+            // 2) If absent, look inside the links/media cell (dropdown content is still in the DOM when fetched server-side).
+            // 3) Fallback to any anchor that looks like stats/boxscore or, as a last resort, regex the row HTML for boxscore URLs.
             let boxscore_url: string | undefined;
             const linkCell = getCellByHeader('links') || getCellByHeader('media');
-            
-            // For 8-column layouts, the last cell is typically links
-            const potentialLinkCell = linkCell || (workingCells.length >= 8 ? $(workingCells.get(7)) : null) || (row.find('a').length ? row : null);
-            
-            if (potentialLinkCell) {
-                const links = potentialLinkCell.find('a');
-                // Try to find explicit "Box Score" link
-                let boxscoreLink = links.filter((_, a) => {
-                    const text = $(a).text().toLowerCase();
-                    const href = $(a).attr('href') || '';
-                    return text.includes('box score') || text.includes('boxscore') || href.includes('boxscore') || href.includes('/stats/');
-                }).first();
-                
-                // Fallback to first link if no boxscore found
-                if (!boxscoreLink.length) {
-                    boxscoreLink = links.first();
+            const potentialLinkCell = linkCell || (workingCells.length >= 8 ? $(workingCells.get(7)) : null) || row;
+
+            const findBoxAnchor = (scope: cheerio.Cheerio<any>) => {
+                const anchors = scope.find('a');
+                if (options?.debug && anchors.length) {
+                    const linkSummaries = anchors.map((_, a) => `${$(a).text().trim()} -> ${$(a).attr('href') || ''}`).get().join(' | ');
+                    console.log(`[debug] Link candidates: ${linkSummaries}`);
                 }
-                
-                const href = boxscoreLink.attr('href');
+                // Most specific: text mentions box / box score
+                let anchor = anchors.filter((_, a) => {
+                    const text = $(a).text().toLowerCase();
+                    return text.includes('box score') || text === 'box';
+                }).first();
+                // Next: href hints at boxscore/stats even if text is generic
+                if (!anchor.length) {
+                    anchor = anchors.filter((_, a) => {
+                        const href = ($(a).attr('href') || '').toLowerCase();
+                        return href.includes('boxscore') || href.includes('/stats/');
+                    }).first();
+                }
+                return anchor;
+            };
+
+            // Step 1: inline/row-level anchors
+            let boxscoreAnchor = findBoxAnchor(row);
+
+            // Step 2: dropdown/links cell anchors
+            if (!boxscoreAnchor.length && potentialLinkCell) {
+                boxscoreAnchor = findBoxAnchor(potentialLinkCell);
+            }
+
+            // Final fallback: scrape from raw HTML for any boxscore-like href
+            if (!boxscoreAnchor.length) {
+                const html = row.html() || '';
+                const match = html.match(/href=\"([^\"]*boxscore[^\"]*)\"/i) || html.match(/"boxscore"\s*:\s*"([^"]+)"/i);
+                if (match) {
+                    boxscore_url = this.resolveUrl(match[1], options?.baseUrl);
+                }
+            }
+
+            if (!boxscore_url && boxscoreAnchor.length) {
+                const href = boxscoreAnchor.attr('href');
                 if (href) boxscore_url = this.resolveUrl(href, options?.baseUrl);
             }
 
@@ -790,8 +905,20 @@ export class SidearmParser implements Parser {
         // More robust parser for Sidearm date formats. Falls back to year-01-01 only when truly unknown.
         if (!dateText) return `${year}-01-01`;
 
-        // Normalize whitespace and strip parenthetical weekday like "(Thursday)"
-        const cleaned = dateText.replace(/\s+/g, ' ').replace(/\s*\([^)]+\)/g, '').trim();
+        // Normalize whitespace (including NBSP) and strip parenthetical weekday like "(Thursday)"
+        const cleaned = dateText
+            .replace(/\u00a0/g, ' ')
+            .replace(/\s+/g, ' ')
+            .replace(/[.,]+$/, '')
+            .replace(/\s*\([^)]+\)/g, '')
+            .trim();
+
+        // Debug date cleaning to track 01-01 issues
+        // Note: guarded to avoid noisy logs unless debug enabled upstream
+        // eslint-disable-next-line no-console
+        if ((globalThis as any).__sidearmDebugDates) {
+            console.log(`[parseDate] raw="${dateText}" cleaned="${cleaned}" year=${year}`);
+        }
 
         // Direct ISO
         const isoMatch = cleaned.match(/(\d{4}-\d{2}-\d{2})/);
@@ -814,6 +941,29 @@ export class SidearmParser implements Parser {
             || cleaned.match(/([A-Za-z]{3,})\.?,?\s+(\d{1,2})(?:,?\s+(\d{4}))?/i);
         if (monthDayYear) {
             const extractedYear = monthDayYear[3] || year; // Use year from text if present, otherwise use provided year
+            const monthName = monthDayYear[1].toLowerCase();
+            const monthMap: Record<string, string> = {
+                jan: '01', january: '01',
+                feb: '02', february: '02',
+                mar: '03', march: '03',
+                apr: '04', april: '04',
+                may: '05',
+                jun: '06', june: '06',
+                jul: '07', july: '07',
+                aug: '08', august: '08',
+                sep: '09', sept: '09', september: '09',
+                oct: '10', october: '10',
+                nov: '11', november: '11',
+                dec: '12', december: '12'
+            };
+            const monthKey = monthName.slice(0, 3);
+            const month = monthMap[monthName] || monthMap[monthKey];
+            const day = monthDayYear[2].padStart(2, '0');
+            if (month) {
+                return `${extractedYear}-${month}-${day}`;
+            }
+
+            // Fallback to Date if month map somehow misses
             const date = new Date(`${monthDayYear[1]} ${monthDayYear[2]} ${extractedYear}`);
             if (!isNaN(date.getTime())) {
                 return date.toISOString().split('T')[0];
@@ -827,6 +977,211 @@ export class SidearmParser implements Parser {
         }
 
         return `${year}-01-01`;
+    }
+
+    private parseLdJsonSchedule(html: string, options?: ParserOptions): Game[] {
+        const games: Game[] = [];
+        try {
+            const $ = cheerio.load(html);
+            const scripts = $('script[type="application/ld+json"]');
+            if (!scripts.length) return games;
+
+            const parsed: any[] = [];
+            scripts.each((_, el) => {
+                const content = $(el).contents().text();
+                if (!content) return;
+                try {
+                    parsed.push(JSON.parse(content));
+                } catch (e) {
+                    // ignore invalid JSON blocks
+                }
+            });
+
+            const events: any[] = [];
+            const collectEvents = (node: any) => {
+                if (!node) return;
+                if (Array.isArray(node)) {
+                    node.forEach(collectEvents);
+                    return;
+                }
+                if (node['@graph']) {
+                    collectEvents(node['@graph']);
+                }
+                const type = node['@type'];
+                if (type === 'SportsEvent' || (Array.isArray(type) && type.includes('SportsEvent'))) {
+                    events.push(node);
+                }
+            };
+            parsed.forEach(collectEvents);
+
+            const contextTeamName = options?.teamName || 'Unknown Team';
+
+            const extractTeamName = (team: any): string => {
+                if (!team) return '';
+                if (typeof team === 'string') return team;
+                if (Array.isArray(team) && team.length) return extractTeamName(team[0]);
+                return team.name || team.Team || '';
+            };
+
+            for (const evt of events) {
+                const rawDate = evt.startDate || evt.start_date || evt.date;
+                if (!rawDate) continue;
+                const dateStr = String(rawDate).split('T')[0];
+                if (!dateStr) continue;
+
+                const title = (evt.name || '').replace(/\s+/g, ' ').trim();
+                let location_type: Game['location_type'] = 'unknown';
+                let isHome = true;
+                let opponentName = '';
+
+                // Prefer explicit matchup strings in the event title
+                const matchup = title.match(/(.+?)\s+(vs\.?|at)\s+(.+)/i);
+                if (matchup) {
+                    const left = matchup[1].trim();
+                    const separator = matchup[2].toLowerCase();
+                    const right = matchup[3].trim();
+
+                    const leftIsContext = this.namesLikelyMatch(left, contextTeamName);
+                    const rightIsContext = this.namesLikelyMatch(right, contextTeamName);
+
+                    if (leftIsContext && !rightIsContext) {
+                        isHome = separator.startsWith('vs');
+                        opponentName = right;
+                    } else if (rightIsContext && !leftIsContext) {
+                        isHome = !separator.startsWith('vs');
+                        opponentName = left;
+                    } else {
+                        isHome = separator.startsWith('vs');
+                        opponentName = right;
+                    }
+
+                    location_type = isHome ? 'home' : 'away';
+                }
+
+                // Fallback to schema teams if title did not help
+                if (!opponentName) {
+                    const homeNameRaw = extractTeamName(evt.homeTeam);
+                    const awayNameRaw = extractTeamName(evt.awayTeam);
+                    const homeMatchesContext = this.namesLikelyMatch(homeNameRaw, contextTeamName);
+                    const awayMatchesContext = this.namesLikelyMatch(awayNameRaw, contextTeamName);
+
+                    if (homeMatchesContext && awayNameRaw) {
+                        opponentName = awayNameRaw;
+                        isHome = true;
+                        location_type = 'home';
+                    } else if (awayMatchesContext && homeNameRaw) {
+                        opponentName = homeNameRaw;
+                        isHome = false;
+                        location_type = 'away';
+                    } else if (homeNameRaw && awayNameRaw) {
+                        // Default to context as home if unknown
+                        opponentName = awayNameRaw;
+                        isHome = true;
+                        location_type = 'home';
+                    }
+                }
+
+                // Skip schema entries that don't provide a real opponent
+                if (!opponentName || /^(unknown opponent|away team|home team)$/i.test(opponentName)) {
+                    continue;
+                }
+
+                let home_team_name = isHome ? contextTeamName : opponentName;
+                let away_team_name = isHome ? opponentName : contextTeamName;
+
+                const homeInfo = this.cleanTeamName(home_team_name);
+                const awayInfo = this.cleanTeamName(away_team_name);
+                home_team_name = homeInfo.cleanName;
+                away_team_name = awayInfo.cleanName;
+
+                const homeScoreRaw = (evt.homeTeam && (evt.homeTeam.score ?? evt.homeTeam.homeScore)) ?? evt.homeScore;
+                const awayScoreRaw = (evt.awayTeam && (evt.awayTeam.score ?? evt.awayTeam.awayScore)) ?? evt.awayScore;
+                let home_score: number | null = null;
+                let away_score: number | null = null;
+                let status: Game['status'] = 'scheduled';
+
+                if (homeScoreRaw !== undefined && awayScoreRaw !== undefined) {
+                    const hs = parseInt(homeScoreRaw, 10);
+                    const as = parseInt(awayScoreRaw, 10);
+                    if (!isNaN(hs) && !isNaN(as)) {
+                        home_score = hs;
+                        away_score = as;
+                        status = 'final';
+                    }
+                }
+
+                const dedupe_key = this.makeDedupeKey(dateStr, home_team_name, away_team_name);
+                games.push({
+                    game_id: `sidearm-${dateStr}-${home_team_name.replace(/\s+/g, '-')}-${away_team_name.replace(/\s+/g, '-')}`,
+                    date: dateStr,
+                    home_team_name,
+                    away_team_name,
+                    home_team_ranked: homeInfo.isRanked,
+                    away_team_ranked: awayInfo.isRanked,
+                    home_score,
+                    away_score,
+                    location_type,
+                    status,
+                    source_urls: { schedule_url: options?.baseUrl },
+                    dedupe_key
+                });
+            }
+        } catch (e) {
+            if (options?.debug) console.error('[sidearm] failed to parse ld+json schedule', e);
+        }
+        return games;
+    }
+
+    private updateGameIdentifiers(game: Game, newDate: string) {
+        game.date = newDate;
+        const safeHome = game.home_team_name.replace(/\s+/g, '-');
+        const safeAway = game.away_team_name.replace(/\s+/g, '-');
+        game.game_id = `sidearm-${newDate}-${safeHome}-${safeAway}`;
+        game.dedupe_key = this.makeDedupeKey(newDate, game.home_team_name, game.away_team_name);
+    }
+
+    private findMatchingGame(gamesByKey: Record<string, Game>, candidate: Game): string | undefined {
+        const candidateHome = candidate.home_team_name;
+        const candidateAway = candidate.away_team_name;
+        const candidateDate = candidate.date;
+
+        for (const [key, game] of Object.entries(gamesByKey)) {
+            const sameDate = game.date === candidateDate || game.date.endsWith('-01-01');
+            const directMatch = this.teamsMatch(game, candidate);
+            const looseHome = this.namesLikelyMatch(game.home_team_name, candidateHome);
+            const looseAway = this.namesLikelyMatch(game.away_team_name, candidateAway);
+            const looseSwap = this.namesLikelyMatch(game.home_team_name, candidateAway) && this.namesLikelyMatch(game.away_team_name, candidateHome);
+
+            if (directMatch || ((looseHome && looseAway) || looseSwap) && sameDate) {
+                return key;
+            }
+        }
+        return undefined;
+    }
+
+    private namesLikelyMatch(a: string, b: string): boolean {
+        if (!a || !b) return false;
+        const norm = (val: string) => val.toLowerCase().replace(/[^a-z0-9]/g, '');
+        const initials = (val: string) => val
+            .split(/[^a-zA-Z0-9]+/)
+            .filter(Boolean)
+            .map(part => part.length <= 3 ? part.toLowerCase() : part[0]?.toLowerCase() || '')
+            .join('');
+        const na = norm(a);
+        const nb = norm(b);
+        if (!na || !nb) return false;
+        return na.includes(nb) || nb.includes(na) || initials(a) === initials(b);
+    }
+
+    private teamsMatch(a: Game, b: Game): boolean {
+        const normalize = (name: string) => name.toLowerCase().replace(/\s+/g, '-');
+        const setA = new Set([normalize(a.home_team_name), normalize(a.away_team_name)]);
+        const setB = new Set([normalize(b.home_team_name), normalize(b.away_team_name)]);
+        if (setA.size !== setB.size) return false;
+        for (const name of setA) {
+            if (!setB.has(name)) return false;
+        }
+        return true;
     }
 
     private resolveUrl(href: string, baseUrl?: string): string {
@@ -869,43 +1224,131 @@ export class SidearmParser implements Parser {
             const $ = cheerio.load(html);
             let scriptContent = '';
 
-            $('script').each((_, el) => {
-                const content = $(el).html();
-                if (content && content.includes('"schedule":') && content.includes('ShallowReactive')) {
-                    scriptContent = content;
-                    return false; // break
+            // Prefer the typed JSON payload if present (id="__NUXT_DATA__")
+            let data: any[] | null = null;
+
+            // Fast regex extraction in case cheerio struggles with very large script bodies
+            const nuxtRegex = /<script[^>]*id="__NUXT_DATA__"[^>]*>([\s\S]*?)<\/script>/;
+            const nuxtMatch = html.match(nuxtRegex);
+            if (options?.debug) {
+                const markerIdx = html.indexOf('id="__NUXT_DATA__">');
+                console.log(`[sidearm] __NUXT_DATA__ regexMatch=${!!nuxtMatch} markerIdx=${markerIdx}`);
+            }
+            if (nuxtMatch && nuxtMatch[1]) {
+                try {
+                    const parsed = JSON.parse(nuxtMatch[1]);
+                    if (Array.isArray(parsed)) {
+                        data = parsed;
+                        if (options?.debug) console.log(`[sidearm] Parsed __NUXT_DATA__ via regex length=${parsed.length}`);
+                    }
+                } catch (e) {
+                    if (options?.debug) console.error('[sidearm] Regex JSON.parse __NUXT_DATA__ failed', e);
                 }
-            });
-
-            if (!scriptContent) {
-                if (options?.debug) console.log('[sidearm] No NextGen script found');
-                return [];
             }
 
-            // Extract the array structure
-            // It usually starts with [["ShallowReactive" or similar
-            // We'll try to find the outermost array
-            const match = scriptContent.match(/=\s*(\[\["ShallowReactive".*\]\]);?/s) || scriptContent.match(/(\[\["ShallowReactive".*\]\])/s);
-            if (!match) {
-                if (options?.debug) console.log('[sidearm] Regex failed to match ShallowReactive array');
-                return [];
+            if (!data) {
+                const nuxtJsonScript = $('script#__NUXT_DATA__');
+                if (nuxtJsonScript.length) {
+                    const content = nuxtJsonScript.contents().text();
+                    if (content) {
+                        try {
+                            const parsed = JSON.parse(content);
+                            if (Array.isArray(parsed)) {
+                                data = parsed;
+                                if (options?.debug) console.log(`[sidearm] Parsed __NUXT_DATA__ array length=${parsed.length}`);
+                            }
+                        } catch (e) {
+                            if (options?.debug) console.error('[sidearm] Failed to JSON.parse __NUXT_DATA__', e);
+                        }
+                    }
+                }
             }
 
-            const rawJson = match[1];
-            let data: any[] = [];
-
-            try {
-                // Use a safe approach to parse this JS array literal
-                // Since it might contain undefined or other JS values, JSON.parse might fail
-                // We'll use Function return
-                data = new Function(`return ${rawJson}`)();
-            } catch (e) {
-                if (options?.debug) console.error('[sidearm] Failed to eval NextGen JSON', e);
-                return [];
+            // Final fallback: manual slice between marker and closing tag
+            if (!data) {
+                const marker = 'id="__NUXT_DATA__">';
+                const start = html.indexOf(marker);
+                if (start !== -1) {
+                    const end = html.indexOf('</script>', start);
+                    if (end !== -1) {
+                        const content = html.slice(start + marker.length, end);
+                        try {
+                            const parsed = JSON.parse(content);
+                            if (Array.isArray(parsed)) {
+                                data = parsed;
+                                if (options?.debug) console.log(`[sidearm] Parsed __NUXT_DATA__ via manual slice length=${parsed.length}`);
+                            }
+                        } catch (e) {
+                            if (options?.debug) console.error('[sidearm] Manual slice JSON.parse __NUXT_DATA__ failed', e);
+                        }
+                    }
+                }
             }
 
-            if (!Array.isArray(data)) {
-                if (options?.debug) console.log('[sidearm] Evaluated data is not an array');
+            if (!data) {
+                $('script').each((_, el) => {
+                    const content = $(el).html();
+                    if (content && content.includes('"schedule":') && content.includes('ShallowReactive')) {
+                        scriptContent = content;
+                        return false; // break
+                    }
+                });
+
+                if (!scriptContent) {
+                    if (options?.debug) console.log('[sidearm] No NextGen script found');
+                    return [];
+                }
+
+                // Extract the array structure
+                // It usually starts with [["ShallowReactive" or similar, possibly wrapped in window.__NUXT__ = { data:[ ... ] }
+                let parsedFromScript: any[] = [];
+                const startIdx = scriptContent.indexOf('[["ShallowReactive"');
+                if (startIdx !== -1) {
+                    // Try to slice from the first ShallowReactive to the matching closing bracket using a bracket counter
+                    let endIdx = -1;
+                    let depth = 0;
+                    for (let i = startIdx; i < scriptContent.length; i++) {
+                        const ch = scriptContent[i];
+                        if (ch === '[') depth++;
+                        if (ch === ']') depth--;
+                        if (depth === 0) {
+                            endIdx = i;
+                            break;
+                        }
+                    }
+                    const rawJson = endIdx !== -1 ? scriptContent.slice(startIdx, endIdx + 1) : scriptContent.slice(startIdx);
+                    try {
+                        parsedFromScript = new Function(`return ${rawJson}`)();
+                    } catch (e) {
+                        if (options?.debug) console.error('[sidearm] Failed to eval sliced NextGen array', e);
+                    }
+                }
+
+                // Fallback: attempt to evaluate window.__NUXT__ object and pull its data array
+                if (!Array.isArray(parsedFromScript) || parsedFromScript.length === 0) {
+                    try {
+                        const wrapped = `(function(){ const window = {}; const globalThis = {}; ${scriptContent}; return (window.__NUXT__ || (globalThis as any).__NUXT__ || (typeof __NUXT__ !== 'undefined' ? __NUXT__ : null)); })()`;
+                        const nuxtObj = new Function(wrapped)();
+                        if (nuxtObj && Array.isArray(nuxtObj.data)) {
+                            // Flatten in case data is nested arrays
+                            const flat = ([] as any[]).concat(...nuxtObj.data);
+                            const shallow = flat.find((item: any) => Array.isArray(item) && item[0] === 'ShallowReactive');
+                            parsedFromScript = shallow ? flat : nuxtObj.data;
+                            if (options?.debug) console.log(`[sidearm] Parsed __NUXT__ payload length=${parsedFromScript.length}`);
+                        }
+                    } catch (e) {
+                        if (options?.debug) console.error('[sidearm] Failed to eval __NUXT__ payload', e);
+                    }
+                }
+
+                data = parsedFromScript;
+            }
+
+            if (!Array.isArray(data) || data.length === 0) {
+                if (options?.debug) {
+                    console.log('[sidearm] Regex failed to match ShallowReactive array');
+                    console.log('[sidearm] Script head:', scriptContent.slice(0, 200));
+                }
                 return [];
             }
 
@@ -917,7 +1360,7 @@ export class SidearmParser implements Parser {
 
             // Recursive resolver
             const deepResolve = (obj: any, depth = 0): any => {
-                if (depth > 5) return obj;
+                if (depth > 8) return obj;
                 if (Array.isArray(obj)) {
                     return obj.map(item => deepResolve(resolve(item), depth + 1));
                 }
@@ -957,15 +1400,34 @@ export class SidearmParser implements Parser {
             const scheduleListIdx = schedulesContainer[scheduleListKey];
             const scheduleList = resolve(scheduleListIdx);
 
-            if (!scheduleList || !scheduleList.games || !Array.isArray(scheduleList.games)) return [];
+            const resolvedGames = scheduleList ? resolve(scheduleList.games) : null;
+            if (!scheduleList || !resolvedGames || !Array.isArray(resolvedGames)) return [];
 
-            const gameIndices = scheduleList.games;
+            const gameIndices = resolvedGames;
             const contextTeamName = options?.teamName || 'Duke'; // Default or from options
 
             for (const gameIdx of gameIndices) {
                 try {
                     const rawGame = deepResolve(resolve(gameIdx));
                     if (!rawGame) continue;
+
+                    const normalizeBoxscore = (value: any): string | undefined => {
+                        if (!value) return undefined;
+                        if (typeof value === 'string') return value;
+                        if (typeof value === 'number') return `${value}`;
+                        if (Array.isArray(value)) {
+                            const first = value.find((entry: any) => typeof entry === 'string' || (entry && typeof entry.url === 'string'));
+                            if (typeof first === 'string') return first;
+                            if (first && typeof first.url === 'string') return first.url;
+                            return undefined;
+                        }
+                        if (typeof value === 'object') {
+                            if (typeof value.url === 'string') return value.url;
+                            if (typeof (value as any).href === 'string') return (value as any).href;
+                            if (typeof (value as any).link === 'string') return (value as any).link;
+                        }
+                        return undefined;
+                    };
 
                     // Map to Game interface
                     const dateStr = rawGame.date ? rawGame.date.split('T')[0] : '';
@@ -1007,19 +1469,22 @@ export class SidearmParser implements Parser {
                     }
 
                     // Boxscore URL extraction
-                    let boxscore_url = rawGame.result?.boxscore;
+                    let boxscore_url: any = normalizeBoxscore(rawGame.result?.boxscore);
                     if (!boxscore_url && rawGame.game_links) {
                         // Sometimes in game_links array
                         const links = rawGame.game_links; // This is extracted as array of objects if recursed
                         if (Array.isArray(links)) {
                             const box = links.find((l: any) => l.title && l.title.toLowerCase().includes('box score'));
-                            if (box && box.url) boxscore_url = box.url;
+                            if (box) boxscore_url = normalizeBoxscore(box.url ?? box);
                         }
                     }
-
-                    if (boxscore_url && !boxscore_url.startsWith('http')) {
-                        const origin = options?.baseUrl ? this.extractOrigin(options.baseUrl) : '';
-                        boxscore_url = boxscore_url.startsWith('/') ? `${origin}${boxscore_url}` : `${origin}/${boxscore_url}`;
+                    if (typeof boxscore_url === 'string' && boxscore_url) {
+                        if (!boxscore_url.startsWith('http')) {
+                            const origin = options?.baseUrl ? this.extractOrigin(options.baseUrl) : '';
+                            boxscore_url = boxscore_url.startsWith('/') ? `${origin}${boxscore_url}` : `${origin}/${boxscore_url}`;
+                        }
+                    } else {
+                        boxscore_url = undefined;
                     }
 
                     // Filter duplicates/invalid

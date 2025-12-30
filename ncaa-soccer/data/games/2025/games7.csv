@@ -1,0 +1,227 @@
+game_id,date,home_team_name,away_team_name,home_team_ranked,away_team_ranked,home_score,away_score,location_type,status,schedule_url,boxscore_url,dedupe_key
+sidearm-2025-01-01-Boston-College-Fairfield,2025-01-01,Boston College,Fairfield,false,false,,,home,scheduled,,,2025-01-01-Boston-College-Fairfield
+sidearm-2025-01-01-Boston-College-UConn,2025-01-01,UConn,Boston College,false,false,,,away,scheduled,,,2025-01-01-Boston-College-UConn
+sidearm-2025-01-01-Lindsey-Wilson-College-(Ky.)-(EXH)-Louisville,2025-01-01,Louisville,Lindsey Wilson College (Ky.) (EXH),false,false,,,home,scheduled,,,2025-01-01-Lindsey-Wilson-College-(Ky.)-(EXH)-Louisville
+sidearm-2025-01-01-Indiana-University-(EXH)-Louisville,2025-01-01,Indiana University (EXH),Louisville,false,false,,,away,scheduled,,,2025-01-01-Indiana-University-(EXH)-Louisville
+sidearm-2025-01-01-Tulsa-(Exhibition)-Wake-Forest,2025-01-01,Wake Forest,Tulsa (Exhibition),false,false,,,home,scheduled,,,2025-01-01-Tulsa-(Exhibition)-Wake-Forest
+sidearm-2025-01-01-Maryland-Wake-Forest,2025-01-01,Wake Forest,Maryland,false,false,,,home,scheduled,,,2025-01-01-Maryland-Wake-Forest
+sidearm-2025-08-08-Coastal-Carolina-Duke,2025-08-08,Coastal Carolina,Duke,false,false,,,away,scheduled,,,2025-08-08-Coastal-Carolina-Duke
+sidearm-2025-08-09-Marist-Syracuse,2025-08-09,Syracuse,Marist,false,false,,,home,scheduled,,,2025-08-09-Marist-Syracuse
+sidearm-2025-08-09-UNC-Greensboro-(Exhibition)-Wake-Forest,2025-08-09,UNC Greensboro (Exhibition),Wake Forest,false,false,,,away,scheduled,,,2025-08-09-UNC-Greensboro-(Exhibition)-Wake-Forest
+sidearm-2025-08-10-San-Francisco-Stanford,2025-08-10,Stanford,San Francisco,false,false,2,0,home,final,,https://gostanford.com/news/2025/08/11/card-wins-preseason-opener,2025-08-10-San-Francisco-Stanford
+sidearm-2025-08-10-California-Sacramento-State,2025-08-10,California,Sacramento State,false,false,,,home,scheduled,,,2025-08-10-California-Sacramento-State
+sidearm-2025-08-12-Duke-UNC-Asheville,2025-08-12,UNC Asheville,Duke,false,false,,,away,scheduled,,,2025-08-12-Duke-UNC-Asheville
+sidearm-2025-08-12-Cal-State-Bakersfield-Stanford,2025-08-12,Stanford,Cal State Bakersfield,false,false,2,1,home,final,,https://gostanford.com/news/2025/08/13/late-push-lifts-cardinal,2025-08-12-Cal-State-Bakersfield-Stanford
+sidearm-2025-08-12-Mercyhurst-Syracuse,2025-08-12,Syracuse,Mercyhurst,false,false,,,home,scheduled,,,2025-08-12-Mercyhurst-Syracuse
+sidearm-2025-08-16-Duke-James-Madison,2025-08-16,Duke,James Madison,false,false,,,home,scheduled,,,2025-08-16-Duke-James-Madison
+sidearm-2025-08-16-Cal-Poly-Stanford,2025-08-16,Stanford,Cal Poly,false,false,1,0,home,final,,https://gostanford.com/news/2025/08/17/a-perfect-preseason,2025-08-16-Cal-Poly-Stanford
+sidearm-2025-08-16-St.-John's-Syracuse,2025-08-16,Syracuse,St. John's,false,false,,,home,scheduled,,,2025-08-16-St.-John's-Syracuse
+sidearm-2025-08-16-California-UC-Davis,2025-08-16,UC Davis,California,false,false,,,away,scheduled,,,2025-08-16-California-UC-Davis
+sidearm-2025-08-21-Binghamton-Boston-College,2025-08-21,Boston College,Binghamton,false,false,,,home,scheduled,,,2025-08-21-Binghamton-Boston-College
+sidearm-2025-08-21-Duke-San-Diego,2025-08-21,Duke,San Diego,false,true,,,home,scheduled,,,2025-08-21-Duke-San-Diego
+sidearm-2025-08-21-Louisville-University-of-Southern-Indiana,2025-08-21,Louisville,University of Southern Indiana,false,false,,,home,scheduled,,,2025-08-21-Louisville-University-of-Southern-Indiana
+sidearm-2025-08-21-NC-State-Queens,2025-08-21,NC State,Queens,false,false,,,home,scheduled,,,2025-08-21-NC-State-Queens
+sidearm-2025-08-21-Pittsburgh-Quinnipiac,2025-08-21,Pittsburgh,Quinnipiac,false,false,,,home,scheduled,,,2025-08-21-Pittsburgh-Quinnipiac
+sidearm-2025-08-21-Sacramento-State-Stanford,2025-08-21,Stanford,Sacramento State,false,false,5,1,home,final,,https://gostanford.com/boxscore/25671,2025-08-21-Sacramento-State-Stanford
+sidearm-2025-08-21-Syracuse-UConn,2025-08-21,Syracuse,UConn,false,false,,,home,scheduled,,,2025-08-21-Syracuse-UConn
+sidearm-2025-08-21-North-Carolina-UCF,2025-08-21,North Carolina,UCF,false,false,,,home,scheduled,,,2025-08-21-North-Carolina-UCF
+sidearm-2025-08-21-Ohio-State-Virginia-Tech,2025-08-21,Virginia Tech,Ohio State,false,false,1,0,home,final,,https://hokiesports.com/boxscore/22145,2025-08-21-Ohio-State-Virginia-Tech
+sidearm-2025-08-21-No.-18-UMKC-Southern%20Methodist%20University,2025-08-21,Southern%20Methodist%20University,No. 18 UMKC,false,false,2,2,home,final,,https://hokiesports.com/news/2025/8/21/mens-soccer-no-5-smu-ties-no-18-kansas-city-in-its-season-opener.aspx,2025-08-21-No.-18-UMKC-Southern%20Methodist%20University
+sidearm-2025-08-21-California-Saint-Mary's,2025-08-21,Saint Mary's,California,false,false,2,3,away,final,,https://gostanford.com/news/2025/8/21/mens-soccer-cal-tops-gaels-3-2-in-season-opener.aspx,2025-08-21-California-Saint-Mary's
+sidearm-2025-08-24-Duke-UC-San-Diego,2025-08-24,Duke,UC San Diego,false,false,,,home,scheduled,,,2025-08-24-Duke-UC-San-Diego
+sidearm-2025-08-24-NC-State-Wofford,2025-08-24,NC State,Wofford,false,false,,,home,scheduled,,,2025-08-24-NC-State-Wofford
+sidearm-2025-08-24-Denver-Stanford,2025-08-24,Stanford,Denver,false,false,2,1,home,final,,https://gostanford.com/boxscore/25672,2025-08-24-Denver-Stanford
+sidearm-2025-08-24-Loyola-Syracuse,2025-08-24,Loyola,Syracuse,false,false,,,away,scheduled,,,2025-08-24-Loyola-Syracuse
+sidearm-2025-08-24-North-Carolina-Seattle,2025-08-24,North Carolina,Seattle,false,false,,,home,scheduled,,,2025-08-24-North-Carolina-Seattle
+sidearm-2025-08-24-Canisius-Virginia-Tech,2025-08-24,Virginia Tech,Canisius,false,false,2,0,home,final,,https://hokiesports.com/boxscore/22146,2025-08-24-Canisius-Virginia-Tech
+sidearm-2025-08-24-UCF-Wake-Forest,2025-08-24,Wake Forest,UCF,false,false,,,home,scheduled,,,2025-08-24-UCF-Wake-Forest
+sidearm-2025-08-24-Saint-Louis-Southern%20Methodist%20University,2025-08-24,Saint Louis,Southern%20Methodist%20University,false,false,1,0,away,final,,https://hokiesports.com/news/2025/8/24/mens-soccer-no-5-smus-relentless-offense-fell-short-at-saint-louis.aspx,2025-08-24-Saint-Louis-Southern%20Methodist%20University
+sidearm-2025-08-24-California-UCLA,2025-08-24,UCLA,California,false,false,0,1,away,final,,https://gostanford.com/news/2025/8/24/mens-soccer-cal-beats-ucla-1-0-on-last-minute-goal.aspx,2025-08-24-California-UCLA
+sidearm-2025-08-25-Boston-College-Siena,2025-08-25,Boston College,Siena,false,false,,,home,scheduled,,,2025-08-25-Boston-College-Siena
+sidearm-2025-08-25-Louisville-UAB,2025-08-25,UAB,Louisville,false,false,,,away,scheduled,,,2025-08-25-Louisville-UAB
+sidearm-2025-08-25-Michigan-State-Pittsburgh,2025-08-25,Pittsburgh,Michigan State,false,false,,,home,scheduled,,,2025-08-25-Michigan-State-Pittsburgh
+sidearm-2025-08-28-Santa-Clara-Stanford,2025-08-28,Santa Clara,Stanford,false,false,1,2,away,final,,https://gostanford.com/boxscore/25692,2025-08-28-Santa-Clara-Stanford
+sidearm-2025-08-28-Penn-State-Syracuse,2025-08-28,Syracuse,Penn State,false,false,,,home,scheduled,,,2025-08-28-Penn-State-Syracuse
+sidearm-2025-08-28-Evansville-North-Carolina,2025-08-28,North Carolina,Evansville,false,false,,,home,scheduled,,,2025-08-28-Evansville-North-Carolina
+sidearm-2025-08-28-Oral-Roberts-Wake-Forest,2025-08-28,Wake Forest,Oral Roberts,false,false,,,home,scheduled,,,2025-08-28-Oral-Roberts-Wake-Forest
+sidearm-2025-08-28-LMU-Southern%20Methodist%20University,2025-08-28,Southern%20Methodist%20University,LMU,false,false,3,1,home,final,,https://hokiesports.com/news/2025/8/29/mens-soccer-smu-scores-three-past-lmu-in-dominant-win.aspx,2025-08-28-LMU-Southern%20Methodist%20University
+sidearm-2025-08-28-California-San-Francisco,2025-08-28,California,San Francisco,false,false,1,2,home,final,,https://gostanford.com/news/2025/8/28/mens-soccer-no-17-cal-falls-to-usf-in-home-opener.aspx,2025-08-28-California-San-Francisco
+sidearm-2025-08-29-Boston-College-Providence,2025-08-29,Providence,Boston College,false,false,,,away,scheduled,,,2025-08-29-Boston-College-Providence
+sidearm-2025-08-29-IU-Indy-Louisville,2025-08-29,Louisville,IU Indy,false,false,,,home,scheduled,,,2025-08-29-IU-Indy-Louisville
+sidearm-2025-08-29-FIU-NC-State,2025-08-29,NC State,FIU,false,false,,,home,scheduled,,,2025-08-29-FIU-NC-State
+sidearm-2025-08-29-Georgetown-Pittsburgh,2025-08-29,Georgetown,Pittsburgh,false,false,,,away,scheduled,,,2025-08-29-Georgetown-Pittsburgh
+sidearm-2025-08-29-Marshall-Virginia-Tech,2025-08-29,Marshall,Virginia Tech,false,false,2,2,away,final,,https://hokiesports.com/boxscore/22147,2025-08-29-Marshall-Virginia-Tech
+sidearm-2025-08-31-Duke-Furman,2025-08-31,Furman,Duke,false,false,,,away,scheduled,,,2025-08-31-Duke-Furman
+sidearm-2025-08-31-Stanford-UC-Davis,2025-08-31,Stanford,UC Davis,false,false,1,0,home,final,,https://gostanford.com/boxscore/25674,2025-08-31-Stanford-UC-Davis
+sidearm-2025-08-31-St.-John's-Wake-Forest,2025-08-31,Wake Forest,St. John's,false,false,,,home,scheduled,,,2025-08-31-St.-John's-Wake-Forest
+sidearm-2025-08-31-Oral-Roberts-Southern%20Methodist%20University,2025-08-31,Southern%20Methodist%20University,Oral Roberts,false,false,2,1,home,final,,https://hokiesports.com/news/2025/8/31/mens-soccer-emmanuel-brace-smu-wins-2-1-over-oral-roberts.aspx,2025-08-31-Oral-Roberts-Southern%20Methodist%20University
+sidearm-2025-08-31-California-UC-San-Diego,2025-08-31,California,UC San Diego,false,false,1,1,home,final,,https://gostanford.com/news/2025/8/31/mens-soccer-no-17-cal-ties-ucsd-1-1.aspx,2025-08-31-California-UC-San-Diego
+sidearm-2025-09-01-Syracuse-Yale,2025-09-01,Yale,Syracuse,false,false,,,away,scheduled,,,2025-09-01-Syracuse-Yale
+sidearm-2025-09-01-College-of-Charleston-North-Carolina,2025-09-01,College of Charleston,North Carolina,false,false,,,away,scheduled,,,2025-09-01-College-of-Charleston-North-Carolina
+sidearm-2025-09-02-Boston-College-Northeastern,2025-09-02,Boston College,Northeastern,false,false,,,home,scheduled,,,2025-09-02-Boston-College-Northeastern
+sidearm-2025-09-04-GCU-Southern%20Methodist%20University,2025-09-04,GCU,Southern%20Methodist%20University,false,false,0,1,away,final,,https://hokiesports.com/news/2025/9/4/mens-soccer-smu-shuts-out-gcu-1-0-in-phoenix.aspx,2025-09-04-GCU-Southern%20Methodist%20University
+sidearm-2025-09-05-Duke-Georgetown,2025-09-05,Georgetown,Duke,false,false,,,away,scheduled,,,2025-09-05-Duke-Georgetown
+sidearm-2025-09-05-Louisville-Stanford-University,2025-09-05,Louisville,Stanford University,false,true,,,home,scheduled,,,2025-09-05-Louisville-Stanford-University
+sidearm-2025-09-05-NC-State-North-Carolina,2025-09-05,NC State,North Carolina,false,false,,,home,scheduled,,,2025-09-05-NC-State-North-Carolina
+sidearm-2025-09-05-Clemson-Pittsburgh,2025-09-05,Clemson,Pittsburgh,true,false,,,away,scheduled,,,2025-09-05-Clemson-Pittsburgh
+sidearm-2025-09-05-Louisville-Stanford,2025-09-05,Louisville,Stanford,false,false,1,0,away,final,,https://gostanford.com/boxscore/25675,2025-09-05-Louisville-Stanford
+sidearm-2025-09-05-Duquesne-Syracuse,2025-09-05,Syracuse,Duquesne,false,false,,,home,scheduled,,,2025-09-05-Duquesne-Syracuse
+sidearm-2025-09-05-Virginia-Virginia-Tech,2025-09-05,Virginia Tech,Virginia,false,false,2,2,home,final,,https://hokiesports.com/boxscore/22148,2025-09-05-Virginia-Virginia-Tech
+sidearm-2025-09-05-Lipscomb-Wake-Forest,2025-09-05,Wake Forest,Lipscomb,false,false,,,home,scheduled,,,2025-09-05-Lipscomb-Wake-Forest
+sidearm-2025-09-07-Boston-College-California,2025-09-07,Boston College,California,false,false,0,2,away,final,,https://hokiesports.com/news/2025/9/7/mens-soccer-cal-opens-acc-slate-with-2-0-win-at-bc.aspx,2025-09-07-Boston-College-California
+sidearm-2025-09-08-Butler-Pittsburgh,2025-09-08,Pittsburgh,Butler,false,false,,,home,scheduled,,,2025-09-08-Butler-Pittsburgh
+sidearm-2025-09-08-New-Haven-Syracuse,2025-09-08,Syracuse,New Haven,false,false,,,home,scheduled,,,2025-09-08-New-Haven-Syracuse
+sidearm-2025-09-08-Incarnate-Word-Southern%20Methodist%20University,2025-09-08,Southern%20Methodist%20University,Incarnate Word,false,false,1,2,home,final,,https://hokiesports.com/news/2025/9/8/mens-soccer-mustangs-fall-to-uiw.aspx,2025-09-08-Incarnate-Word-Southern%20Methodist%20University
+sidearm-2025-09-09-Louisville-Ohio-State-University,2025-09-09,Ohio State University,Louisville,false,false,,,away,scheduled,,,2025-09-09-Louisville-Ohio-State-University
+sidearm-2025-09-09-Saint-Mary's-Stanford,2025-09-09,Stanford,Saint Mary's,false,false,3,1,home,final,,https://gostanford.com/boxscore/25676,2025-09-09-Saint-Mary's-Stanford
+sidearm-2025-09-09-Furman-Virginia-Tech,2025-09-09,Virginia Tech,Furman,false,false,0,0,home,final,,https://hokiesports.com/boxscore/22149,2025-09-09-Furman-Virginia-Tech
+sidearm-2025-09-09-Campbell-Wake-Forest,2025-09-09,Wake Forest,Campbell,false,false,,,home,scheduled,,,2025-09-09-Campbell-Wake-Forest
+sidearm-2025-09-10-Boston-College-Dean,2025-09-10,Boston College,Dean,false,false,,,home,scheduled,,,2025-09-10-Boston-College-Dean
+sidearm-2025-09-10-NC-State-Stetson,2025-09-10,NC State,Stetson,false,false,,,home,scheduled,,,2025-09-10-NC-State-Stetson
+sidearm-2025-09-10-California-Harvard,2025-09-10,Harvard,California,false,false,3,1,away,final,,https://gostanford.com/news/2025/9/10/mens-soccer-cal-suffers-first-road-loss-at-harvard.aspx,2025-09-10-California-Harvard
+sidearm-2025-09-12-Notre-Dame-Pittsburgh,2025-09-12,Pittsburgh,Notre Dame,false,false,,,home,scheduled,,,2025-09-12-Notre-Dame-Pittsburgh
+sidearm-2025-09-12-North-Carolina-Wake-Forest,2025-09-12,North Carolina,Wake Forest,false,false,,,home,scheduled,,,2025-09-12-North-Carolina-Wake-Forest
+sidearm-2025-09-13-#24/RV-University-of-Virginia-Louisville,2025-09-13,Louisville,#24/RV University of Virginia,false,false,,,home,scheduled,,,2025-09-13-#24/RV-University-of-Virginia-Louisville
+sidearm-2025-09-13-FAU-NC-State,2025-09-13,NC State,FAU,false,false,,,home,scheduled,,,2025-09-13-FAU-NC-State
+sidearm-2025-09-13-Stanford-Syracuse,2025-09-13,Syracuse,Stanford,false,false,2,3,away,final,,https://gostanford.com/boxscore/25677,2025-09-13-Stanford-Syracuse
+sidearm-2025-09-13-No.-2-Clemson-Southern%20Methodist%20University,2025-09-13,Southern%20Methodist%20University,No. 2 Clemson,false,false,1,1,home,final,,https://hokiesports.com/news/2025/9/13/mens-soccer-smu-ties-no-2-clemson-in-acc-opener.aspx,2025-09-13-No.-2-Clemson-Southern%20Methodist%20University
+sidearm-2025-09-14-Boston-College-Virginia-Tech,2025-09-14,Virginia Tech,Boston College,true,false,0,1,away,final,,https://hokiesports.com/boxscore/22150,2025-09-14-Boston-College-Virginia-Tech
+sidearm-2025-09-14-California-Duke,2025-09-14,California,Duke,false,false,1,1,home,final,,https://gostanford.com/news/2025/9/14/mens-soccer-cal-ties-no-19-duke-1-1.aspx,2025-09-14-California-Duke
+sidearm-2025-09-15-Incarnate-Word-Pittsburgh,2025-09-15,Pittsburgh,Incarnate Word,false,false,,,home,scheduled,,,2025-09-15-Incarnate-Word-Pittsburgh
+sidearm-2025-09-16-NC-State-William-&-Mary,2025-09-16,NC State,William & Mary,false,false,,,home,scheduled,,,2025-09-16-NC-State-William-&-Mary
+sidearm-2025-09-16-Memphis-North-Carolina,2025-09-16,North Carolina,Memphis,false,false,,,home,scheduled,,,2025-09-16-Memphis-North-Carolina
+sidearm-2025-09-16-UNCW-Wake-Forest,2025-09-16,Wake Forest,UNCW,false,false,,,home,scheduled,,,2025-09-16-UNCW-Wake-Forest
+sidearm-2025-09-17-San-Jose-State-Stanford,2025-09-17,San Jose State,Stanford,false,false,2,2,away,final,,https://gostanford.com/boxscore/25678,2025-09-17-San-Jose-State-Stanford
+sidearm-2025-09-19-Boston-College-NC-State,2025-09-19,Boston College,NC State,false,true,,,home,scheduled,,,2025-09-19-Boston-College-NC-State
+sidearm-2025-09-19-Duke-Syracuse,2025-09-19,Duke,Syracuse,false,false,,,home,scheduled,,,2025-09-19-Duke-Syracuse
+sidearm-2025-09-19-Louisville-University-of-Notre-Dame,2025-09-19,University of Notre Dame,Louisville,false,false,,,away,scheduled,,,2025-09-19-Louisville-University-of-Notre-Dame
+sidearm-2025-09-19-Maryland-Pittsburgh,2025-09-19,Maryland,Pittsburgh,false,false,,,away,scheduled,,,2025-09-19-Maryland-Pittsburgh
+sidearm-2025-09-19-Virginia-Wake-Forest,2025-09-19,Virginia,Wake Forest,false,false,,,away,scheduled,,,2025-09-19-Virginia-Wake-Forest
+sidearm-2025-09-19-California-Clemson,2025-09-19,Clemson,California,false,false,3,1,away,final,,https://hokiesports.com/news/2025/9/19/mens-soccer-cal-suffers-first-acc-loss-at-no-14-clemson.aspx,2025-09-19-California-Clemson
+sidearm-2025-09-20-North-Carolina-SMU,2025-09-20,North Carolina,SMU,false,false,,,home,scheduled,,,2025-09-20-North-Carolina-SMU
+sidearm-2025-09-20-North-Carolina-Southern%20Methodist%20University,2025-09-20,North Carolina,Southern%20Methodist%20University,false,false,1,1,away,final,,https://hokiesports.com/news/2025/9/20/mens-soccer-smu-draws-unc-in-chapel-hill.aspx,2025-09-20-North-Carolina-Southern%20Methodist%20University
+sidearm-2025-09-21-Stanford-Virginia-Tech,2025-09-21,Stanford,Virginia Tech,false,false,3,1,home,final,,https://gostanford.com/boxscore/25679,2025-09-21-Stanford-Virginia-Tech
+sidearm-2025-09-22-Mercyhurst-Pittsburgh,2025-09-22,Pittsburgh,Mercyhurst,false,false,,,home,scheduled,,,2025-09-22-Mercyhurst-Pittsburgh
+sidearm-2025-09-22-Liberty-Wake-Forest,2025-09-22,Wake Forest,Liberty,false,false,,,home,scheduled,,,2025-09-22-Liberty-Wake-Forest
+sidearm-2025-09-23-Boston-College-Boston-University,2025-09-23,Boston College,Boston University,false,false,,,home,scheduled,,,2025-09-23-Boston-College-Boston-University
+sidearm-2025-09-23-Duke-Howard,2025-09-23,Duke,Howard,false,false,,,home,scheduled,,,2025-09-23-Duke-Howard
+sidearm-2025-09-23-Louisville-University-of-Kentucky,2025-09-23,Louisville,University of Kentucky,false,true,,,home,scheduled,,,2025-09-23-Louisville-University-of-Kentucky
+sidearm-2025-09-23-Colgate-Syracuse,2025-09-23,Syracuse,Colgate,false,false,,,home,scheduled,,,2025-09-23-Colgate-Syracuse
+sidearm-2025-09-23-California-UNC-Asheville,2025-09-23,UNC Asheville,California,false,false,0,1,away,final,,https://gostanford.com/news/2025/9/23/mens-soccer-cal-beats-unc-asheville-1-0.aspx,2025-09-23-California-UNC-Asheville
+sidearm-2025-09-24-Oregon-State-Stanford,2025-09-24,Stanford,Oregon State,false,false,3,2,home,final,,https://gostanford.com/boxscore/25680,2025-09-24-Oregon-State-Stanford
+sidearm-2025-09-26-Duke-Louisville,2025-09-26,Duke,Louisville,false,false,,,home,scheduled,,,2025-09-26-Duke-Louisville
+sidearm-2025-09-26-Duke-University-Louisville,2025-09-26,Duke University,Louisville,true,false,,,away,scheduled,,,2025-09-26-Duke-University-Louisville
+sidearm-2025-09-26-NC-State-Pittsburgh,2025-09-26,Pittsburgh,NC State,false,false,,,away,scheduled,,,2025-09-26-NC-State-Pittsburgh
+sidearm-2025-09-26-Clemson-Wake-Forest,2025-09-26,Wake Forest,Clemson,false,false,,,home,scheduled,,,2025-09-26-Clemson-Wake-Forest
+sidearm-2025-09-27-North-Carolina-Virginia,2025-09-27,Virginia,North Carolina,false,false,,,away,scheduled,,,2025-09-27-North-Carolina-Virginia
+sidearm-2025-09-27-No.-21-Notre-Dame-Southern%20Methodist%20University,2025-09-27,No. 21 Notre Dame,Southern%20Methodist%20University,false,false,0,2,away,final,,https://hokiesports.com/news/2025/9/27/mens-soccer-lopez-brace-smu-takes-down-no-21-notre-dame.aspx,2025-09-27-No.-21-Notre-Dame-Southern%20Methodist%20University
+sidearm-2025-09-27-California-Syracuse,2025-09-27,California,Syracuse,false,false,0,2,home,final,,https://gostanford.com/news/2025/9/27/mens-soccer-cal-blanked-by-orange.aspx,2025-09-27-California-Syracuse
+sidearm-2025-09-28-Boston-College-Stanford,2025-09-28,Stanford,Boston College,true,false,3,0,away,final,,https://gostanford.com/boxscore/25681,2025-09-28-Boston-College-Stanford
+sidearm-2025-09-29-ETSU-Virginia-Tech,2025-09-29,ETSU,Virginia Tech,false,false,0,1,away,final,,https://hokiesports.com/boxscore/22152,2025-09-29-ETSU-Virginia-Tech
+sidearm-2025-09-30-Averett-Duke,2025-09-30,Duke,Averett,false,false,,,home,scheduled,,,2025-09-30-Averett-Duke
+sidearm-2025-10-01-NC-State-UNCW,2025-10-01,UNCW,NC State,false,false,,,away,scheduled,,,2025-10-01-NC-State-UNCW
+sidearm-2025-10-03-Boston-College-Syracuse,2025-10-03,Syracuse,Boston College,false,false,,,away,scheduled,,,2025-10-03-Boston-College-Syracuse
+sidearm-2025-10-03-Duke-Pitt,2025-10-03,Duke,Pitt,false,false,,,home,scheduled,,,2025-10-03-Duke-Pitt
+sidearm-2025-10-03-Louisville-University-of-North-Carolina,2025-10-03,Louisville,University of North Carolina,false,false,,,home,scheduled,,,2025-10-03-Louisville-University-of-North-Carolina
+sidearm-2025-10-03-Duke-Pittsburgh,2025-10-03,Duke,Pittsburgh,true,false,,,away,scheduled,,,2025-10-03-Duke-Pittsburgh
+sidearm-2025-10-03-Syracuse-Syracuse-University-Athletics,2025-10-03,Syracuse,Syracuse University Athletics,false,false,,,unknown,scheduled,,https://cuse.com/boxscore.aspx?id=18468,2025-10-03-Syracuse-Syracuse-University-Athletics
+sidearm-2025-10-03-Louisville-North-Carolina,2025-10-03,Louisville,North Carolina,false,false,,,away,scheduled,,,2025-10-03-Louisville-North-Carolina
+sidearm-2025-10-03-Notre-Dame-Virginia-Tech,2025-10-03,Notre Dame,Virginia Tech,false,false,1,1,away,final,,https://hokiesports.com/boxscore/22153,2025-10-03-Notre-Dame-Virginia-Tech
+sidearm-2025-10-03-California-Southern-Methodist-University,2025-10-03,Southern Methodist University,California,false,false,4,0,away,final,,https://gostanford.com/news/2025/10/3/mens-soccer-cal-shut-out-in-dallas.aspx,2025-10-03-California-Southern-Methodist-University
+sidearm-2025-10-04-Stanford-Wake-Forest,2025-10-04,Wake Forest,Stanford,false,false,0,2,away,final,,https://gostanford.com/boxscore/25682,2025-10-04-Stanford-Wake-Forest
+sidearm-2025-10-05-NC-State-Virginia,2025-10-05,NC State,Virginia,false,true,,,home,scheduled,,,2025-10-05-NC-State-Virginia
+sidearm-2025-10-07-Duke-Elon,2025-10-07,Duke,Elon,false,false,,,home,scheduled,,,2025-10-07-Duke-Elon
+sidearm-2025-10-07-Belmont-University-Louisville,2025-10-07,Louisville,Belmont University,false,false,,,home,scheduled,,,2025-10-07-Belmont-University-Louisville
+sidearm-2025-10-07-Lipscomb-North-Carolina,2025-10-07,Lipscomb,North Carolina,false,false,,,away,scheduled,,,2025-10-07-Lipscomb-North-Carolina
+sidearm-2025-10-07-Longwood-Virginia-Tech,2025-10-07,Virginia Tech,Longwood,false,false,3,0,home,final,,https://hokiesports.com/boxscore/22154,2025-10-07-Longwood-Virginia-Tech
+sidearm-2025-10-07-Southern%20Methodist%20University-UTRGV,2025-10-07,Southern%20Methodist%20University,UTRGV,false,false,,,home,scheduled,,,2025-10-07-Southern%20Methodist%20University-UTRGV
+sidearm-2025-10-10-Boston-College-Duke,2025-10-10,Boston College,Duke,false,true,,,home,scheduled,,,2025-10-10-Boston-College-Duke
+sidearm-2025-10-10-Clemson-NC-State,2025-10-10,NC State,Clemson,false,false,,,home,scheduled,,,2025-10-10-Clemson-NC-State
+sidearm-2025-10-11-Louisville-Virginia-Tech,2025-10-11,Virginia Tech,Louisville,false,false,2,0,away,final,,https://hokiesports.com/boxscore/22155,2025-10-11-Louisville-Virginia-Tech
+sidearm-2025-10-11-Pittsburgh-Stanford,2025-10-11,Stanford,Pittsburgh,true,false,2,0,away,final,,https://gostanford.com/boxscore/25683,2025-10-11-Pittsburgh-Stanford
+sidearm-2025-10-11-SMU-Syracuse,2025-10-11,Syracuse,SMU,false,true,,,home,scheduled,,,2025-10-11-SMU-Syracuse
+sidearm-2025-10-11-Syracuse-Syracuse-University-Athletics,2025-10-11,Syracuse,Syracuse University Athletics,false,false,,,unknown,scheduled,,https://cuse.com/boxscore.aspx?id=18469,2025-10-11-Syracuse-Syracuse-University-Athletics
+sidearm-2025-10-11-North-Carolina-St.-Thomas,2025-10-11,North Carolina,St. Thomas,false,false,,,home,scheduled,,,2025-10-11-North-Carolina-St.-Thomas
+sidearm-2025-10-11-Cal-Wake-Forest,2025-10-11,Cal,Wake Forest,false,false,,,away,scheduled,,,2025-10-11-Cal-Wake-Forest
+sidearm-2025-10-11-Southern%20Methodist%20University-Syracuse,2025-10-11,Syracuse,Southern%20Methodist%20University,false,false,2,0,away,final,,https://gostanford.com/news/2025/10/11/mens-soccer-mustangs-fall-at-syracuse.aspx,2025-10-11-Southern%20Methodist%20University-Syracuse
+sidearm-2025-10-11-California-Wake-Forest,2025-10-11,California,Wake Forest,false,false,1,2,home,final,,https://gostanford.com/news/2025/10/11/mens-soccer-cal-edged-by-wake-forest-2-1.aspx,2025-10-11-California-Wake-Forest
+sidearm-2025-10-14-AIC-Boston-College,2025-10-14,Boston College,AIC,false,false,,,home,scheduled,,,2025-10-14-AIC-Boston-College
+sidearm-2025-10-14-Denver-Pittsburgh,2025-10-14,Pittsburgh,Denver,false,false,,,home,scheduled,,,2025-10-14-Denver-Pittsburgh
+sidearm-2025-10-14-Central-Arkansas-Southern%20Methodist%20University,2025-10-14,Southern%20Methodist%20University,Central Arkansas,false,false,2,0,home,final,,https://hokiesports.com/news/2025/10/14/mens-soccer-soghomonian-brace-smu-take-down-central-arkansas.aspx,2025-10-14-Central-Arkansas-Southern%20Methodist%20University
+sidearm-2025-10-15-North-Carolina-UAB,2025-10-15,North Carolina,UAB,false,false,,,home,scheduled,,,2025-10-15-North-Carolina-UAB
+sidearm-2025-10-17-Clemson-Duke,2025-10-17,Clemson,Duke,false,false,,,away,scheduled,,,2025-10-17-Clemson-Duke
+sidearm-2025-10-17-Louisville-Wake-Forest-University,2025-10-17,Wake Forest University,Louisville,false,false,,,away,scheduled,,,2025-10-17-Louisville-Wake-Forest-University
+sidearm-2025-10-17-NC-State-Notre-Dame,2025-10-17,Notre Dame,NC State,false,false,,,away,scheduled,,,2025-10-17-NC-State-Notre-Dame
+sidearm-2025-10-17-Louisville-Wake-Forest,2025-10-17,Wake Forest,Louisville,false,false,,,home,scheduled,,,2025-10-17-Louisville-Wake-Forest
+sidearm-2025-10-18-Boston-College-SMU,2025-10-18,SMU,Boston College,false,false,,,away,scheduled,,,2025-10-18-Boston-College-SMU
+sidearm-2025-10-18-Pittsburgh-Syracuse,2025-10-18,Pittsburgh,Syracuse,false,false,,,home,scheduled,,,2025-10-18-Pittsburgh-Syracuse
+sidearm-2025-10-18-Syracuse-Syracuse-University-Athletics,2025-10-18,Syracuse,Syracuse University Athletics,false,false,,,unknown,scheduled,,https://cuse.com/boxscore.aspx?id=18470,2025-10-18-Syracuse-Syracuse-University-Athletics
+sidearm-2025-10-18-Boston-College-Southern%20Methodist%20University,2025-10-18,Southern%20Methodist%20University,Boston College,false,false,3,2,home,final,,https://hokiesports.com/news/2025/10/18/mens-soccer-soghomonian-hat-trick-smu-defeats-boston-college.aspx,2025-10-18-Boston-College-Southern%20Methodist%20University
+sidearm-2025-10-19-North-Carolina-Virginia-Tech,2025-10-19,North Carolina,Virginia Tech,false,false,3,0,home,final,,https://hokiesports.com/boxscore/22156,2025-10-19-North-Carolina-Virginia-Tech
+sidearm-2025-10-21-Duke-Queens,2025-10-21,Duke,Queens,false,false,,,home,scheduled,,,2025-10-21-Duke-Queens
+sidearm-2025-10-21-Lipscomb-University-Louisville,2025-10-21,Lipscomb University,Louisville,false,false,,,away,scheduled,,,2025-10-21-Lipscomb-University-Louisville
+sidearm-2025-10-21-NC-State-UNC-Greensboro,2025-10-21,NC State,UNC Greensboro,false,true,,,home,scheduled,,,2025-10-21-NC-State-UNC-Greensboro
+sidearm-2025-10-21-Cornell-Syracuse,2025-10-21,Cornell,Syracuse,false,false,,,away,scheduled,,,2025-10-21-Cornell-Syracuse
+sidearm-2025-10-21-Syracuse-Syracuse-University-Athletics,2025-10-21,Syracuse,Syracuse University Athletics,false,false,,,unknown,scheduled,,https://cuse.com/boxscore.aspx?id=18471,2025-10-21-Syracuse-Syracuse-University-Athletics
+sidearm-2025-10-21-Wake-Forest-Wofford,2025-10-21,Wake Forest,Wofford,false,false,,,home,scheduled,,,2025-10-21-Wake-Forest-Wofford
+sidearm-2025-10-22-San-Francisco-Stanford,2025-10-22,Stanford,San Francisco,false,false,1,0,home,final,,https://gostanford.com/boxscore/25684,2025-10-22-San-Francisco-Stanford
+sidearm-2025-10-22-Virginia-Tech-Winthrop,2025-10-22,Virginia Tech,Winthrop,false,false,2,0,home,final,,https://hokiesports.com/boxscore/22157,2025-10-22-Virginia-Tech-Winthrop
+sidearm-2025-10-22-California-Radford,2025-10-22,Radford,California,false,false,1,6,away,final,,https://gostanford.com/news/2025/10/22/mens-soccer-cal-routs-radford-6-1.aspx,2025-10-22-California-Radford
+sidearm-2025-10-24-Boston-College-Notre-Dame,2025-10-24,Boston College,Notre Dame,false,false,,,home,scheduled,,,2025-10-24-Boston-College-Notre-Dame
+sidearm-2025-10-24-Pittsburgh-Wake-Forest,2025-10-24,Pittsburgh,Wake Forest,false,false,,,home,scheduled,,,2025-10-24-Pittsburgh-Wake-Forest
+sidearm-2025-10-24-Pitt-Wake-Forest,2025-10-24,Pitt,Wake Forest,false,false,,,away,scheduled,,,2025-10-24-Pitt-Wake-Forest
+sidearm-2025-10-25-Duke-NC-State,2025-10-25,Duke,NC State,false,true,,,home,scheduled,,,2025-10-25-Duke-NC-State
+sidearm-2025-10-25-North-Carolina-Syracuse,2025-10-25,Syracuse,North Carolina,false,true,,,home,scheduled,,,2025-10-25-North-Carolina-Syracuse
+sidearm-2025-10-25-Syracuse-Syracuse-University-Athletics,2025-10-25,Syracuse,Syracuse University Athletics,false,false,,,unknown,scheduled,,https://cuse.com/boxscore.aspx?id=18472,2025-10-25-Syracuse-Syracuse-University-Athletics
+sidearm-2025-10-26-SMU-Stanford,2025-10-26,Stanford,SMU,false,false,0,0,home,final,,https://gostanford.com/boxscore/25685,2025-10-26-SMU-Stanford
+sidearm-2025-10-26-Cal-Virginia-Tech,2025-10-26,Virginia Tech,Cal,false,false,3,2,home,final,,https://hokiesports.com/boxscore/22158,2025-10-26-Cal-Virginia-Tech
+sidearm-2025-10-26-No.-1-Stanford-Southern%20Methodist%20University,2025-10-26,No. 1 Stanford,Southern%20Methodist%20University,false,false,0,0,away,final,,https://hokiesports.com/news/2025/10/26/mens-soccer-resilient-defensive-display-smu-ties-no-1-stanford.aspx,2025-10-26-No.-1-Stanford-Southern%20Methodist%20University
+sidearm-2025-10-26-California-Virginia-Tech,2025-10-26,Virginia Tech,California,false,false,3,2,away,final,,https://hokiesports.com/news/2025/10/26/mens-soccer-cal-falls-at-virginia-tech-3-2.aspx,2025-10-26-California-Virginia-Tech
+sidearm-2025-10-27-Louisville-University-of-Evansville,2025-10-27,Louisville,University of Evansville,false,false,,,home,scheduled,,,2025-10-27-Louisville-University-of-Evansville
+sidearm-2025-10-31-Boston-College-Saint-Joseph's,2025-10-31,Boston College,Saint Joseph's,false,false,,,home,scheduled,,,2025-10-31-Boston-College-Saint-Joseph's
+sidearm-2025-10-31-Duke-North-Carolina,2025-10-31,North Carolina,Duke,false,false,,,away,scheduled,,,2025-10-31-Duke-North-Carolina
+sidearm-2025-10-31-Louisville-University-of-Pittsburgh,2025-10-31,Louisville,University of Pittsburgh,false,false,,,home,scheduled,,,2025-10-31-Louisville-University-of-Pittsburgh
+sidearm-2025-10-31-NC-State-Syracuse,2025-10-31,NC State,Syracuse,false,false,,,home,scheduled,,,2025-10-31-NC-State-Syracuse
+sidearm-2025-10-31-Louisville-Pittsburgh,2025-10-31,Louisville,Pittsburgh,false,false,,,away,scheduled,,,2025-10-31-Louisville-Pittsburgh
+sidearm-2025-10-31-Syracuse-Syracuse-University-Athletics,2025-10-31,Syracuse,Syracuse University Athletics,false,false,,,unknown,scheduled,,https://cuse.com/boxscore.aspx?id=18473,2025-10-31-Syracuse-Syracuse-University-Athletics
+sidearm-2025-10-31-Clemson-Virginia-Tech,2025-10-31,Clemson,Virginia Tech,false,false,3,3,away,final,,https://hokiesports.com/boxscore/22159,2025-10-31-Clemson-Virginia-Tech
+sidearm-2025-10-31-Notre-Dame-Wake-Forest,2025-10-31,Wake Forest,Notre Dame,false,false,,,home,scheduled,,,2025-10-31-Notre-Dame-Wake-Forest
+sidearm-2025-10-31-No.-6-Virginia-Southern%20Methodist%20University,2025-10-31,Southern%20Methodist%20University,No. 6 Virginia,false,false,0,1,home,final,,https://hokiesports.com/news/2025/10/31/mens-soccer-mustangs-fall-1-0-to-no-6-virginia.aspx,2025-10-31-No.-6-Virginia-Southern%20Methodist%20University
+sidearm-2025-10-31-California-Stanford,2025-10-31,California,Stanford,false,false,1,0,home,final,,https://gostanford.com/news/2025/10/31/mens-soccer-cal-stuns-top-ranked-stanford-in-regular-season-finale.aspx,2025-10-31-California-Stanford
+sidearm-2025-11-05-Boston-College-Stanford,2025-11-05,Stanford,Boston College,true,false,4,2,away,final,,https://gostanford.com/boxscore/26660,2025-11-05-Boston-College-Stanford
+sidearm-2025-11-05-(3)-NC-State-University-Louisville,2025-11-05,(3) NC State University,Louisville,false,false,,,away,scheduled,,,2025-11-05-(3)-NC-State-University-Louisville
+sidearm-2025-11-05-(14)-Louisville-NC-State,2025-11-05,NC State,(14) Louisville,false,false,,,home,scheduled,,,2025-11-05-(14)-Louisville-NC-State
+sidearm-2025-11-05-Clemson-Pittsburgh,2025-11-05,Clemson,Pittsburgh,false,false,,,away,scheduled,,,2025-11-05-Clemson-Pittsburgh
+sidearm-2025-11-05-Syracuse-Virginia-Tech,2025-11-05,Syracuse,Virginia Tech,false,false,2,1,home,final,,https://hokiesports.com/boxscore/22698,2025-11-05-Syracuse-Virginia-Tech
+sidearm-2025-11-05-Syracuse-Syracuse-University-Athletics,2025-11-05,Syracuse,Syracuse University Athletics,false,false,,,unknown,scheduled,,https://cuse.com/boxscore.aspx?id=18655,2025-11-05-Syracuse-Syracuse-University-Athletics
+sidearm-2025-11-05-North-Carolina-Notre-Dame,2025-11-05,Notre Dame,North Carolina,false,false,,,away,scheduled,,,2025-11-05-North-Carolina-Notre-Dame
+sidearm-2025-11-05-(7)-SMU-Wake-Forest,2025-11-05,(7) SMU,Wake Forest,false,false,,,away,scheduled,,,2025-11-05-(7)-SMU-Wake-Forest
+sidearm-2025-11-05-#10-Wake-Forest-Southern%20Methodist%20University,2025-11-05,Southern%20Methodist%20University,#10 Wake Forest,false,false,5,4,home,final,,https://hokiesports.com/news/2025/11/5/mens-soccer-hickam-late-winner-smu-bests-wake-forest-in-acc-championship-first-round-thriller.aspx,2025-11-05-#10-Wake-Forest-Southern%20Methodist%20University
+sidearm-2025-11-05-California-Duke,2025-11-05,Duke,California,false,false,0,2,away,final,,https://gostanford.com/news/2025/11/5/mens-soccer-cal-blanks-duke-to-advance-to-acc-quarterfinals.aspx,2025-11-05-California-Duke
+sidearm-2025-11-09-(6)-Syracuse-NC-State,2025-11-09,NC State,(6) Syracuse,false,false,,,home,scheduled,,,2025-11-09-(6)-Syracuse-NC-State
+sidearm-2025-11-09-SMU-Stanford,2025-11-09,Stanford,SMU,false,false,0,1,home,final,,https://gostanford.com/boxscore/26663,2025-11-09-SMU-Stanford
+sidearm-2025-11-09-NC-State-Syracuse,2025-11-09,NC State,Syracuse,false,false,,,away,scheduled,,,2025-11-09-NC-State-Syracuse
+sidearm-2025-11-09-Syracuse-Syracuse-University-Athletics,2025-11-09,Syracuse,Syracuse University Athletics,false,false,,,unknown,scheduled,,https://cuse.com/boxscore.aspx?id=18662,2025-11-09-Syracuse-Syracuse-University-Athletics
+sidearm-2025-11-09-North-Carolina-Virginia,2025-11-09,Virginia,North Carolina,false,false,,,away,scheduled,,,2025-11-09-North-Carolina-Virginia
+sidearm-2025-11-09-#2-No.-7-Stanford-Southern%20Methodist%20University,2025-11-09,#2 No. 7 Stanford,Southern%20Methodist%20University,false,false,0,1,away,final,,https://hokiesports.com/news/2025/11/9/mens-soccer-smu-takes-down-no-7-stanford-advances-to-acc-championship-semifinals.aspx,2025-11-09-#2-No.-7-Stanford-Southern%20Methodist%20University
+sidearm-2025-11-09-California-Pitt,2025-11-09,California,Pitt,false,false,1,0,home,final,,https://gostanford.com/news/2025/11/9/cal-beats-pitt-to-return-to-acc-semifinals.aspx,2025-11-09-California-Pitt
+sidearm-2025-11-13-SMU-Syracuse,2025-11-13,Syracuse,SMU,false,false,,,unknown,scheduled,,,2025-11-13-SMU-Syracuse
+sidearm-2025-11-13-Syracuse-Syracuse-University-Athletics,2025-11-13,Syracuse,Syracuse University Athletics,false,false,,,unknown,scheduled,,https://cuse.com/boxscore.aspx?id=18665,2025-11-13-Syracuse-Syracuse-University-Athletics
+sidearm-2025-11-13-#6-Syracuse-Southern%20Methodist%20University,2025-11-13,#6 Syracuse,Southern%20Methodist%20University,false,false,1,5,away,final,,https://hokiesports.com/news/2025/11/13/mens-soccer-no-25-smu-advances-to-acc-championship-finals-dominates-syracuse.aspx,2025-11-13-#6-Syracuse-Southern%20Methodist%20University
+sidearm-2025-11-13-California-Virginia,2025-11-13,Virginia,California,false,false,2,1,away,final,,https://hokiesports.com/news/2025/11/13/mens-soccer-cal-falls-to-no-4-virginia-in-acc-semifinals.aspx,2025-11-13-California-Virginia
+sidearm-2025-11-16-#1-Virginia-Southern%20Methodist%20University,2025-11-16,#1 Virginia,Southern%20Methodist%20University,false,false,0,1,away,final,,https://hokiesports.com/news/2025/11/16/mens-soccer-no-25-smu-wins-acc-championship-title.aspx,2025-11-16-#1-Virginia-Southern%20Methodist%20University
+sidearm-2025-11-20-Duke-FDU,2025-11-20,Duke,FDU,false,false,,,home,scheduled,,,2025-11-20-Duke-FDU
+sidearm-2025-11-20-Hofstra-Syracuse,2025-11-20,Syracuse,Hofstra,false,false,,,home,scheduled,,,2025-11-20-Hofstra-Syracuse
+sidearm-2025-11-20-Syracuse-Syracuse-University-Athletics,2025-11-20,Syracuse,Syracuse University Athletics,false,false,,,unknown,scheduled,,https://cuse.com/boxscore.aspx?id=18666,2025-11-20-Syracuse-Syracuse-University-Athletics
+sidearm-2025-11-20-North-Carolina-North-Florida,2025-11-20,North Carolina,North Florida,false,false,,,home,scheduled,,,2025-11-20-North-Carolina-North-Florida
+sidearm-2025-11-23-Duke-Princeton,2025-11-23,Princeton,Duke,true,false,,,away,scheduled,,,2025-11-23-Duke-Princeton
+sidearm-2025-11-23-Marshall-(Second-Round)-NC-State,2025-11-23,NC State,Marshall (Second Round),false,false,,,home,scheduled,,,2025-11-23-Marshall-(Second-Round)-NC-State
+sidearm-2025-11-23-Kansas-City-Stanford,2025-11-23,Stanford,Kansas City,false,false,1,0,home,final,,https://gostanford.com/boxscore/26746,2025-11-23-Kansas-City-Stanford
+sidearm-2025-11-23-Maryland-North-Carolina,2025-11-23,Maryland,North Carolina,true,false,,,away,scheduled,,,2025-11-23-Maryland-North-Carolina
+sidearm-2025-11-23-Southern%20Methodist%20University-Washington,2025-11-23,Southern%20Methodist%20University,Washington,false,false,0,1,home,final,,https://gostanford.com/news/2025/11/23/mens-soccer-no-5-seed-smu-falls-in-ncaa-championship-second-round.aspx,2025-11-23-Southern%20Methodist%20University-Washington
+sidearm-2025-11-30-Akron-Duke,2025-11-30,Akron,Duke,true,false,,,away,scheduled,,,2025-11-30-Akron-Duke
+sidearm-2025-11-30-NC-State-UNC-Greensboro-(Third-Round),2025-11-30,NC State,UNC Greensboro (Third Round),false,false,,,home,scheduled,,,2025-11-30-NC-State-UNC-Greensboro-(Third-Round)
+sidearm-2025-11-30-Stanford-Washington,2025-11-30,Stanford,Washington,false,false,0,1,home,final,,https://gostanford.com/boxscore/26785,2025-11-30-Stanford-Washington
+sidearm-2025-12-06-(7)-Georgetown-(Quarterfinals)-NC-State,2025-12-06,(7) Georgetown (Quarterfinals),NC State,false,false,,,away,scheduled,,,2025-12-06-(7)-Georgetown-(Quarterfinals)-NC-State
+sidearm-2025-12-12-NC-State-Saint-Louis-(Semifinals),2025-12-12,NC State,Saint Louis (Semifinals),false,false,,,unknown,scheduled,,,2025-12-12-NC-State-Saint-Louis-(Semifinals)
+sidearm-2025-12-15-NC-State-Washington,2025-12-15,NC State,Washington,false,false,,,home,scheduled,,,2025-12-15-NC-State-Washington

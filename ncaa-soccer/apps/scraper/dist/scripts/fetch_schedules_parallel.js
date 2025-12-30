@@ -38,6 +38,34 @@ const fs = __importStar(require("fs"));
 const playwright_chromium_1 = require("playwright-chromium");
 const parsers_1 = require("@ncaa/parsers");
 const storage_1 = require("@ncaa/storage");
+// Normalize a boxscore URL using the schedule page as base. No hardcoded team overrides.
+const resolveBoxscoreUrl = (rawUrl, baseUrl) => {
+    if (!rawUrl)
+        return undefined;
+    const trimmed = rawUrl.trim();
+    if (!trimmed)
+        return undefined;
+    if (/^https?:\/\//i.test(trimmed))
+        return trimmed;
+    const originFromBase = (() => {
+        try {
+            return new URL(baseUrl).origin;
+        }
+        catch {
+            return '';
+        }
+    })();
+    if (trimmed.startsWith('//'))
+        return `https:${trimmed}`;
+    if (trimmed.startsWith('/'))
+        return originFromBase ? `${originFromBase}${trimmed}` : undefined;
+    try {
+        return new URL(trimmed, originFromBase || baseUrl).toString();
+    }
+    catch {
+        return undefined;
+    }
+};
 // Retry wrapper with exponential backoff
 async function retryWithBackoff(fn, maxAttempts = 3, initialDelayMs = 2000, operation = 'operation') {
     let lastError = null;
@@ -59,7 +87,7 @@ async function retryWithBackoff(fn, maxAttempts = 3, initialDelayMs = 2000, oper
     throw lastError || new Error(`Failed after ${maxAttempts} attempts`);
 }
 // Configuration
-const CONCURRENCY = 5;
+const CONCURRENCY = 10; // Increased for faster processing
 const VIEWPORT = { width: 1280, height: 720 };
 const inputPath = process.argv[2];
 const TEAMS_JSON_PATH = inputPath
@@ -76,9 +104,19 @@ async function processSchool(browser, team) {
         userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122 Safari/537.36',
         viewport: VIEWPORT
     });
-    // Set timeouts for slow sites
-    page.setDefaultNavigationTimeout(60000);
-    page.setDefaultTimeout(30000);
+    // Block images and CSS for faster loading
+    await page.route('**/*', (route) => {
+        const resourceType = route.request().resourceType();
+        if (['image', 'stylesheet', 'font', 'media'].includes(resourceType)) {
+            route.abort();
+        }
+        else {
+            route.continue();
+        }
+    });
+    // Reduced timeouts for faster scraping
+    page.setDefaultNavigationTimeout(30000);
+    page.setDefaultTimeout(15000);
     // // Capture JSON API responses that might contain schedule data
     // let capturedJsonData: string | null = null;
     // const apiResponses: Array<{url: string, data: any}> = [];
@@ -105,8 +143,9 @@ async function processSchool(browser, team) {
     try {
         const response = await retryWithBackoff(() => page.goto(team.schedule_url, {
             waitUntil: 'domcontentloaded',
-            timeout: 60000
-        }), 3, 2000, `[${team.name_canonical}] navigation`);
+            timeout: 30000
+        }), 2, // Reduced retries from 3 to 2
+        1500, `[${team.name_canonical}] navigation`);
         // // Check if the main page itself returned JSON
         // const contentType = response?.headers()['content-type'] || '';
         // if (contentType.includes('application/json') && response) {
@@ -136,7 +175,7 @@ async function processSchool(browser, team) {
                     p.style.pointerEvents = 'none';
                 });
             });
-            await page.waitForTimeout(300);
+            await page.waitForTimeout(100);
         }
         catch (e) {
             // Ignore popup errors
@@ -148,7 +187,7 @@ async function processSchool(browser, team) {
             if (dropdown) {
                 console.log(`[${team.name_canonical}] Found dropdown, selecting list view...`);
                 await page.selectOption(dropdownSelector, 'list');
-                await page.waitForTimeout(800);
+                await page.waitForTimeout(300);
             }
         }
         catch (e) {
@@ -283,13 +322,14 @@ async function processSchool(browser, team) {
         // Enrich
         games.forEach((game, index) => {
             const rowKey = `row_${index}`; // Logic assumes simple row mapping matching index
-            const boxscoreUrl = linkButtonsBoxscoreMap.get(rowKey);
-            if (boxscoreUrl && !game.source_urls?.boxscore_url) {
+            const mapped = linkButtonsBoxscoreMap.get(rowKey);
+            const mappedResolved = resolveBoxscoreUrl(mapped, team.schedule_url);
+            const parsedResolved = resolveBoxscoreUrl(game.source_urls?.boxscore_url, team.schedule_url);
+            const finalBox = mappedResolved || parsedResolved;
+            if (finalBox) {
                 if (!game.source_urls)
                     game.source_urls = {};
-                game.source_urls.boxscore_url = boxscoreUrl.startsWith('http')
-                    ? boxscoreUrl
-                    : new URL(boxscoreUrl, team.schedule_url).toString();
+                game.source_urls.boxscore_url = finalBox;
             }
         });
         console.log(`[${team.name_canonical}] Parsed ${games.length} games`);

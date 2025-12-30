@@ -37,6 +37,12 @@ exports.SidearmBoxScoreParser = void 0;
 const cheerio = __importStar(require("cheerio"));
 // import { z } from 'zod'; // Not needed for HTML parsing unless we validate the final object
 class SidearmBoxScoreParser {
+    normalizePlayerName(name) {
+        if (!name)
+            return '';
+        // Strip leading jersey numbers or symbols (e.g., "27 Ryan", "#12 John Doe")
+        return name.replace(/^\s*[#-]?\s*\d+\s+/, '').trim();
+    }
     parse(html, options) {
         const $ = cheerio.load(html);
         const playerStats = [];
@@ -85,7 +91,8 @@ class SidearmBoxScoreParser {
                 // 6: A
                 // 7: MIN
                 const playerCell = $(cols[2]);
-                const playerName = playerCell.text().trim();
+                const playerNameRaw = playerCell.text().trim();
+                const playerName = this.normalizePlayerName(playerNameRaw);
                 // Extract Player ID from link? e.g. /sports/mens-soccer/roster/bailey-sparks/1234
                 const playerLink = playerCell.find('a').attr('href');
                 let playerId = playerName.replace(/\s+/g, '-').toLowerCase(); // fallback
@@ -187,7 +194,8 @@ class SidearmBoxScoreParser {
                                     playerObj = data[playerObj];
                                 if (typeof playerObj === 'object' && playerObj) {
                                     // Extract stats
-                                    const name = String(resolve(playerObj.name) || resolve(playerObj.playerFirstLastName) || 'Unknown');
+                                    const nameRaw = String(resolve(playerObj.name) || resolve(playerObj.playerFirstLastName) || 'Unknown');
+                                    const name = this.normalizePlayerName(nameRaw);
                                     const jersey = String(resolve(playerObj.uniform) || '');
                                     const position = String(resolve(playerObj.position) || '');
                                     const playerId = String(resolve(playerObj.playerUrl) || name).split('/').pop() || name;
