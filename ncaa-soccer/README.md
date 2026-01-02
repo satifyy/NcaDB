@@ -2,6 +2,16 @@
 
 This repository is a TypeScript/Node monorepo that scrapes NCAA men’s soccer schedules and box scores, normalizes them into shared schemas, saves them to CSV, and can render a lightweight dashboard. Below is a detailed map of every important piece and how they interact.
 
+## Quick start
+- Prereqs: Node 18+ and npm. For Playwright flows, install browser binaries once with `npx playwright install chromium`.
+- Install deps at the repo root: `npm install`.
+- Build all packages/apps: `npm run build` (outputs to each workspace `dist/`).
+- Fetch one schedule (after build):
+  - `node apps/scraper/dist/scripts/fetch_schedule.js <scheduleUrl> "<Team Name>" [alias]`
+  - Output merges into `data/games/<year>/games.csv` and captures raw HTML under `data/raw/` if enabled.
+- Pull box scores from a schedule page: `node apps/scraper/dist/scripts/fetch_boxscores.js <scheduleUrl> "<Team Name>" [alias]` → writes `data/player_stats/<year>/player_stats.csv`.
+- Generate dashboard data after aggregating player stats: `node apps/scraper/dist/scripts/generate_dashboard_data.js`, then open `apps/dashboard/index.html` in a browser.
+
 ## Monorepo layout
 - `package.json`: Root workspace config (TypeScript build, Cheerio dependency).
 - `apps/`: Executable surfaces.
@@ -51,19 +61,15 @@ This repository is a TypeScript/Node monorepo that scrapes NCAA men’s soccer s
 - Inventory validator (`src/validate_inventory.ts`): Zod validation, uniqueness checks, and required metadata (`schedule_url`, `platform_guess`, `parser_key`) across `data/teams/acc_teams.json`.
 - Utility:
   - `utils/fetcher.ts`: Axios + axios-retry wrapper with optional delay, UA spoofing, raw HTML saving to `data/raw`, and basic retry logic.
-- Key scripts (`src/scripts/`):
+- Key scripts (`src/scripts/`, maintained):
   - `fetch_schedule.ts`: Fetch one Sidearm schedule URL, parse games, log summary, and save into `data/games/<year>/games.csv` via `GameStorageAdapter`.
+  - `fetch_schedules_parallel.ts`: Playwright-powered multi-school Sidearm fetcher. Loads `data/teams/acc_teams.json` (or a provided teams file), skips non-Sidearm, navigates with resource blocking, handles view toggles/popups, retries navigation, parses with `SidearmParser`, normalizes box score URLs, and saves merged schedules per season.
   - `fetch_boxscores.ts`: Given a schedule URL, scrape schedule, collect box score links, fetch each, parse player stats, and write `data/player_stats/<year>/player_stats.csv` (CSV escaping included).
   - `fetch_boxscores_from_csv.ts`: Read an existing `games.csv`, de-duplicate by team/date, Playwright-fetch box score pages in parallel batches, parse player stats, and emit player CSV rows.
-  - `fetch_schedules_parallel.ts`: Playwright-powered multi-school Sidearm fetcher. Loads `data/teams/acc_teams.json` (or a provided teams file), skips non-Sidearm, navigates with resource blocking, handles view toggles/popups, retries navigation, parses with `SidearmParser`, normalizes box score URLs, and saves merged schedules per season.
+  - `compare_schedule_to_csv.ts`: Diff parsed schedule vs. existing CSV.
   - `aggregate_player_stats.ts`: Summarize `player_stats.csv` into per-player season totals (games played, minutes, goals, assists, shots, SOG, saves) and write `aggregated_player_stats.csv` sorted by points then minutes.
   - `generate_dashboard_data.ts`: Convert `aggregated_player_stats.csv` into `apps/dashboard/data.js` (assigns `window.playerStats` with numeric fields for the dashboard).
-  - Other helper/debug scripts (selected highlights):
-    - `compare_schedule_to_csv.ts`: Diff parsed schedule vs. existing CSV.
-    - `fetch_schedule_table.ts` / `fetch_schedule_table_v2.ts`: Table-centric sched fetchers.
-    - `debug_*`, `inspect_*`, `verify_*`, `peek_*`, `extract_*`, `inspect_*`: One-off probes for HTML/JSON structures, parser checks, and live/debug runs.
-    - `test_boxscore_parser.ts`, `verify_boxscore_*`, `verify_nuxt_fetch.ts`: Parser regression and live fetch spot-checks.
-    - `generate_dashboard_data.ts` + `apps/dashboard` pairing noted below.
+- Archived probes (`src/scripts/archive/`): Former `debug_*`, `inspect_*`, `verify_*`, `peek_*`, `extract_*`, `fetch_schedule_table*`, `test_*`, and other one-off scripts have been moved out of the build for reference only.
 
 ## Dashboard app (`apps/dashboard`)
 - Static HTML/CSS/JS showing charts and tables of aggregated player stats.
@@ -91,7 +97,7 @@ This repository is a TypeScript/Node monorepo that scrapes NCAA men’s soccer s
 ## Build/test notes
 - Install: `npm install` at repo root (workspaces cover apps + packages).
 - Build all TS: `npm run build` (runs `tsc -b` across workspaces).
-- Tests: none formal; many scripts double as manual checks (`verify_*`, `test_*`).
+- Tests: none formal; legacy manual checks (`verify_*`, `test_*`, etc.) now live under `apps/scraper/src/scripts/archive` if you need to resurrect them.
 - Playwright scripts (`fetch_schedules_parallel.ts`, `fetch_boxscores_from_csv.ts`) require the `playwright-chromium` dependency (already in `apps/scraper` via `package-lock`) and browser binaries available.
 
 ## Operational considerations

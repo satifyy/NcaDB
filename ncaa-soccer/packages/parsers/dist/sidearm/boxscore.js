@@ -37,6 +37,19 @@ exports.SidearmBoxScoreParser = void 0;
 const cheerio = __importStar(require("cheerio"));
 // import { z } from 'zod'; // Not needed for HTML parsing unless we validate the final object
 class SidearmBoxScoreParser {
+    parseMinutes(value) {
+        if (!value)
+            return 0;
+        const trimmed = value.trim();
+        const match = trimmed.match(/^(\d+):(\d{2})/);
+        if (match) {
+            const mins = parseInt(match[1], 10) || 0;
+            const secs = parseInt(match[2], 10) || 0;
+            return mins + secs / 60;
+        }
+        const numeric = parseFloat(trimmed.replace(/[^0-9.]/g, ''));
+        return Number.isFinite(numeric) ? numeric : 0;
+    }
     normalizePlayerName(name) {
         if (!name)
             return '';
@@ -55,6 +68,11 @@ class SidearmBoxScoreParser {
         const nuxtResult = this.parseNuxt(html, gameId);
         if (nuxtResult.playerStats.length > 0) {
             return nuxtResult;
+        }
+        // Handle new Sidearm "advanced-table" layout (Stanford/Virginia Tech)
+        const advancedTableStats = this.parseAdvancedTables($, gameId);
+        if (advancedTableStats.length > 0) {
+            return { game: {}, playerStats: advancedTableStats };
         }
         // Find tables with class 'sidearm-table overall-stats' OR 'w-full'
         // Try multiple selectors to handle different Sidearm layouts
@@ -145,6 +163,71 @@ class SidearmBoxScoreParser {
             game: {},
             playerStats
         };
+    }
+    parseAdvancedTables($, gameId) {
+        const playerStats = [];
+        $('table.advanced-table__table').each((_, table) => {
+            const headerText = $(table).find('thead th').first().text().trim();
+            const teamName = headerText.split('-')[0].trim() || 'Unknown';
+            const firstBodyRow = $(table).find('tbody tr').first();
+            const colCount = firstBodyRow.find('td').length;
+            if (colCount === 0)
+                return;
+            const isGoalkeeping = colCount === 6; // [Pos, #, Player, Minutes, GA, Saves]
+            $(table).find('tbody tr').each((__, row) => {
+                const cells = $(row).find('td');
+                if (cells.length !== colCount)
+                    return;
+                const position = $(cells[0]).text().trim();
+                const jersey = $(cells[1]).text().trim();
+                const playerNameRaw = $(cells[2]).text().trim();
+                const playerName = this.normalizePlayerName(playerNameRaw);
+                if (!playerName)
+                    return;
+                const playerKey = `${teamName.toLowerCase().replace(/[^a-z0-9]/g, '')}:${playerName.toLowerCase().replace(/[^a-z0-9]/g, '')}`;
+                if (isGoalkeeping) {
+                    const minutes = this.parseMinutes($(cells[3]).text());
+                    const goalsAllowed = parseInt($(cells[4]).text().trim(), 10) || 0;
+                    const saves = parseInt($(cells[5]).text().trim(), 10) || 0;
+                    playerStats.push({
+                        game_id: gameId,
+                        team_id: teamName,
+                        player_name: playerName,
+                        player_key: playerKey,
+                        jersey_number: jersey || null,
+                        minutes,
+                        stats: {
+                            position,
+                            goals_allowed: goalsAllowed,
+                            saves
+                        }
+                    });
+                }
+                else {
+                    const shots = parseInt($(cells[3]).text().trim(), 10) || 0;
+                    const sog = parseInt($(cells[4]).text().trim(), 10) || 0;
+                    const goals = parseInt($(cells[5]).text().trim(), 10) || 0;
+                    const assists = parseInt($(cells[6]).text().trim(), 10) || 0;
+                    const minutes = this.parseMinutes($(cells[7]).text());
+                    playerStats.push({
+                        game_id: gameId,
+                        team_id: teamName,
+                        player_name: playerName,
+                        player_key: playerKey,
+                        jersey_number: jersey || null,
+                        minutes,
+                        goals,
+                        assists,
+                        shots,
+                        stats: {
+                            position,
+                            shots_on_goal: sog
+                        }
+                    });
+                }
+            });
+        });
+        return playerStats;
     }
     parseNuxt(html, gameId) {
         const playerStats = [];
