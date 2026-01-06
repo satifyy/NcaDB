@@ -1,1 +1,0 @@
-{"version":3,"file":"boxscore.d.ts","sourceRoot":"","sources":["../../src/sidearm/boxscore.ts"],"names":[],"mappings":"AACA,OAAO,EAAE,WAAW,EAAE,aAAa,EAAE,MAAM,UAAU,CAAC;AAKtD,qBAAa,qBAAqB;IAE9B,OAAO,CAAC,YAAY;IAcpB,OAAO,CAAC,mBAAmB;IAM3B,KAAK,CAAC,IAAI,EAAE,MAAM,EAAE,OAAO,CAAC,EAAE,aAAa,GAAG,WAAW;IAgIzD,OAAO,CAAC,mBAAmB;IAwE3B,OAAO,CAAC,SAAS;IAqIjB,OAAO,CAAC,aAAa;CAIxB"}
