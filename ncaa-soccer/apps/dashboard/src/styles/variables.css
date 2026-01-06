@@ -1,0 +1,65 @@
+:root {
+    /* Colors - Slate (Dark Backgrounds) */
+    --color-bg-primary: #0f172a;
+    /* Slate 950 */
+    --color-bg-secondary: #1e293b;
+    /* Slate 800 */
+    --color-bg-tertiary: #334155;
+    /* Slate 700 */
+    --color-bg-elevated: #1e293b;
+
+    /* Colors - Text */
+    --color-text-primary: #f8fafc;
+    /* Slate 50 */
+    --color-text-secondary: #94a3b8;
+    /* Slate 400 */
+    --color-text-muted: #64748b;
+    /* Slate 500 */
+    --color-text-accent: #818cf8;
+    /* Indigo 400 */
+
+    /* Colors - Accent (Indigo) */
+    --color-accent-primary: #6366f1;
+    /* Indigo 500 */
+    --color-accent-hover: #4f46e5;
+    /* Indigo 600 */
+    --color-accent-light: rgba(99, 102, 241, 0.1);
+
+    /* Colors - Status */
+    --color-success: #10b981;
+    /* Emerald 500 */
+    --color-warning: #f59e0b;
+    /* Amber 500 */
+    --color-danger: #ef4444;
+    /* Red 500 */
+    --color-border: #334155;
+    /* Slate 700 */
+
+    /* Spacing */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-6: 1.5rem;
+    --space-8: 2rem;
+    --space-12: 3rem;
+
+    /* Radius */
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-full: 9999px;
+
+    /* Typography */
+    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+    /* Transitions */
+    --transition-fast: 150ms ease;
+    --transition-normal: 300ms ease;
+}

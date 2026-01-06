@@ -18,11 +18,17 @@ interface AggregatedStat {
 }
 
 const inputPath = path.join(process.cwd(), 'data/player_stats/2025/aggregated_player_stats.csv');
-const outputPath = path.join(process.cwd(), 'apps/dashboard/data.js');
+const outputDir = path.join(process.cwd(), 'apps/dashboard/src/data');
+const outputPath = path.join(outputDir, 'player_stats.json');
 
 if (!fs.existsSync(inputPath)) {
     console.error(`Input file not found: ${inputPath}`);
     process.exit(1);
+}
+
+// Ensure output directory exists
+if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
 }
 
 console.log(`Reading stats from ${inputPath}...`);
@@ -46,7 +52,5 @@ const processedData = records.map(record => ({
     saves: parseInt(record.saves, 10),
 }));
 
-const fileContentJs = `window.playerStats = ${JSON.stringify(processedData, null, 2)};`;
-
-fs.writeFileSync(outputPath, fileContentJs);
+fs.writeFileSync(outputPath, JSON.stringify(processedData, null, 2));
 console.log(`Wrote dashboard data to ${outputPath}`);
