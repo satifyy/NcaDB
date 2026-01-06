@@ -1,3 +1,30 @@
 node_modules
 data/raw/
 scratch/
+
+# Build artifacts
+dist/
+*.tsbuildinfo
+
+# Logs
+*.log
+
+# Environment files
+.env
+.env.*
+*.env
+
+# Debug and temporary files
+*.html.bak
+fileshtml.html
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
