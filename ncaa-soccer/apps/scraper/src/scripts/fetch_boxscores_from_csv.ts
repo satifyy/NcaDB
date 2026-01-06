@@ -129,6 +129,27 @@ async function processGame(
     const scrollWaitMs = opts?.scrollWaitMs ?? 800;
 
     let page;
+    const findWmtUrl = (html: string): string | null => {
+        const match = html.match(/https?:\/\/wmt\.games\/[^\s"'<>]+/i);
+        if (!match) return null;
+        return match[0].replace(/&amp;/g, '&');
+    };
+
+    const findPdfUrls = (html: string): string[] => {
+        const matches = html.match(/https?:\/\/[^\s"'<>]+\.pdf/gi) || [];
+        return Array.from(new Set(matches.map(u => u.replace(/&amp;/g, '&'))));
+    };
+
+    const parseWmtPage = async (url: string, wait: { waitLonger: boolean; waitMs: number; scrollWaitMs: number }) => {
+        const wmtPage = await browser.newPage({ viewport: VIEWPORT });
+        await wmtPage.goto(url, { waitUntil: 'domcontentloaded', timeout: 35000 });
+        await wmtPage.waitForTimeout(wait.waitLonger ? Math.max(wait.waitMs, 2500) : wait.waitMs);
+        await wmtPage.waitForSelector('table', { timeout: 4000 }).catch(() => { });
+        const wmtHtml = await wmtPage.content();
+        await wmtPage.close();
+        return boxParser.parse(wmtHtml, { sourceUrl: url });
+    };
+
     try {
         page = await browser.newPage({
             userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122 Safari/537.36',
@@ -181,10 +202,24 @@ async function processGame(
 
         // Just grab HTML now - assume it loaded or failed
         const html = await page.evaluate(() => document.documentElement.outerHTML);
+        const wmtUrl = findWmtUrl(html);
+        const pdfUrls = findPdfUrls(html);
 
         // NOTE: HTML file saving has been removed to save disk space as requested.
 
         let res = boxParser.parse(html, { sourceUrl: boxUrl });
+
+        // If Sidearm parsing failed but a WMT iframe is present, fetch and parse the WMT page instead.
+        if (res.playerStats.length === 0 && wmtUrl) {
+            let wmtRes = await parseWmtPage(wmtUrl, { waitLonger, waitMs, scrollWaitMs });
+            if (wmtRes.playerStats.length === 0 && wmtUrl.includes('/match/full/')) {
+                const compactUrl = wmtUrl.replace('/match/full/', '/match/');
+                wmtRes = await parseWmtPage(compactUrl, { waitLonger: true, waitMs: Math.max(waitMs, 2000), scrollWaitMs: Math.max(scrollWaitMs, 1500) });
+            }
+            if (wmtRes.playerStats.length > 0) {
+                res = wmtRes;
+            }
+        }
 
         // If first attempt found nothing, wait briefly and re-parse once before giving up this attempt
         if (res.playerStats.length === 0 && attempt === 1) {
@@ -212,7 +247,10 @@ async function processGame(
             }));
             return { rows, success: true };
         } else {
-            logDebug(`WARN [${game.game_id}] No stats found (attempt ${attempt})`);
+            const meta: string[] = [];
+            if (wmtUrl) meta.push(`wmt=${wmtUrl}`);
+            if (pdfUrls.length) meta.push(`pdfs=${pdfUrls.join('|')}`);
+            logDebug(`WARN [${game.game_id}] No stats found (attempt ${attempt})${meta.length ? ' | ' + meta.join(' ; ') : ''}`);
             return { rows: [], success: false };
         }
 
