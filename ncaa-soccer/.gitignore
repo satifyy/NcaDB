@@ -11,8 +11,8 @@ dist/
 
 # Environment files
 .env
-.env.local
-.env.*.local
+.env.*
+*.env
 
 # Debug and temporary files
 *.html.bak
