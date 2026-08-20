@@ -28,13 +28,13 @@ export declare const GameSchema: z.ZodObject<{
     dedupe_key: z.ZodString;
 }, "strip", z.ZodTypeAny, {
     game_id: string;
+    status: "unknown" | "final" | "scheduled" | "canceled" | "postponed";
     date: string;
     home_team_name: string;
     away_team_name: string;
     home_score: number | null;
     away_score: number | null;
     location_type: "unknown" | "home" | "away" | "neutral";
-    status: "unknown" | "final" | "scheduled" | "canceled" | "postponed";
     source_urls: {
         schedule_url?: string | undefined;
         boxscore_url?: string | undefined;
@@ -47,13 +47,13 @@ export declare const GameSchema: z.ZodObject<{
     away_team_ranked?: boolean | undefined;
 }, {
     game_id: string;
+    status: "unknown" | "final" | "scheduled" | "canceled" | "postponed";
     date: string;
     home_team_name: string;
     away_team_name: string;
     home_score: number | null;
     away_score: number | null;
     location_type: "unknown" | "home" | "away" | "neutral";
-    status: "unknown" | "final" | "scheduled" | "canceled" | "postponed";
     source_urls: {
         schedule_url?: string | undefined;
         boxscore_url?: string | undefined;

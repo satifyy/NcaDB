@@ -1,0 +1,114 @@
+[
+    {
+        "team_id": "BROWN_UNIVERSITY",
+        "name_canonical": "Brown University",
+        "conference": "Ivy",
+        "sport": "msoc",
+        "schedule_url": "https://brownbears.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Brown University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 15
+    },
+    {
+        "team_id": "COLUMBIA_UNIVERSITY",
+        "name_canonical": "Columbia University",
+        "conference": "Ivy",
+        "sport": "msoc",
+        "schedule_url": "https://gocolumbialions.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Columbia University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 15
+    },
+    {
+        "team_id": "CORNELL_UNIVERSITY",
+        "name_canonical": "Cornell University",
+        "conference": "Ivy",
+        "sport": "msoc",
+        "schedule_url": "https://cornellbigred.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Cornell University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 157
+    },
+    {
+        "team_id": "DARTMOUTH_COLLEGE",
+        "name_canonical": "Dartmouth College",
+        "conference": "Ivy",
+        "sport": "msoc",
+        "schedule_url": "https://dartmouthsports.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Dartmouth College"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 16
+    },
+    {
+        "team_id": "HARVARD_UNIVERSITY",
+        "name_canonical": "Harvard University",
+        "conference": "Ivy",
+        "sport": "msoc",
+        "schedule_url": "https://gocrimson.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Harvard University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 145
+    },
+    {
+        "team_id": "PRINCETON_UNIVERSITY",
+        "name_canonical": "Princeton University",
+        "conference": "Ivy",
+        "sport": "msoc",
+        "schedule_url": "https://goprincetontigers.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Princeton University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 19
+    },
+    {
+        "team_id": "PENN",
+        "name_canonical": "Penn",
+        "conference": "Ivy",
+        "sport": "msoc",
+        "schedule_url": "https://pennathletics.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Penn"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 173
+    },
+    {
+        "team_id": "YALE_UNIVERSITY",
+        "name_canonical": "Yale University",
+        "conference": "Ivy",
+        "sport": "msoc",
+        "schedule_url": "https://yalebulldogs.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Yale University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 90
+    }
+]

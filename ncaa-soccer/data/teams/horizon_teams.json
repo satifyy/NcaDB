@@ -1,0 +1,128 @@
+[
+    {
+        "team_id": "CLEVELAND_STATE_UNIVERSITY",
+        "name_canonical": "Cleveland State University",
+        "conference": "Horizon",
+        "sport": "msoc",
+        "schedule_url": "https://csuvikings.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Cleveland State University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 114
+    },
+    {
+        "team_id": "UNIVERSITY_OF_DETROIT_MERCY",
+        "name_canonical": "University of Detroit Mercy",
+        "conference": "Horizon",
+        "sport": "msoc",
+        "schedule_url": "https://detroittitans.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of Detroit Mercy"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 64
+    },
+    {
+        "team_id": "IU_INDY",
+        "name_canonical": "IU Indy",
+        "conference": "Horizon",
+        "sport": "msoc",
+        "schedule_url": "https://iuindyjags.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "IU Indy"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 166
+    },
+    {
+        "team_id": "MILWAUKEE",
+        "name_canonical": "Milwaukee",
+        "conference": "Horizon",
+        "sport": "msoc",
+        "schedule_url": "https://mkepanthers.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Milwaukee"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 158
+    },
+    {
+        "team_id": "NORTHERN_KENTUCKY_UNIVERSITY",
+        "name_canonical": "Northern Kentucky University",
+        "conference": "Horizon",
+        "sport": "msoc",
+        "schedule_url": "https://nkunorse.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Northern Kentucky University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 105
+    },
+    {
+        "team_id": "OAKLAND_UNIVERSITY",
+        "name_canonical": "Oakland University",
+        "conference": "Horizon",
+        "sport": "msoc",
+        "schedule_url": "https://goldengrizzlies.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Oakland University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 123
+    },
+    {
+        "team_id": "PURDUE_FORT_WAYNE",
+        "name_canonical": "Purdue Fort Wayne",
+        "conference": "Horizon",
+        "sport": "msoc",
+        "schedule_url": "https://gomastodons.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Purdue Fort Wayne"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 20
+    },
+    {
+        "team_id": "ROBERT_MORRIS_UNIVERSITY",
+        "name_canonical": "Robert Morris University",
+        "conference": "Horizon",
+        "sport": "msoc",
+        "schedule_url": "https://rmucolonials.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Robert Morris University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 77
+    },
+    {
+        "team_id": "WRIGHT_STATE_UNIVERSITY",
+        "name_canonical": "Wright State University",
+        "conference": "Horizon",
+        "sport": "msoc",
+        "schedule_url": "https://wsuraiders.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Wright State University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 18
+    }
+]

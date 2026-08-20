@@ -11,8 +11,8 @@ export declare const PlayerStatSchema: z.ZodObject<{
     shots: z.ZodOptional<z.ZodNumber>;
     minutes: z.ZodOptional<z.ZodNumber>;
 }, "strip", z.ZodTypeAny, {
-    team_id: string;
     game_id: string;
+    team_id: string;
     player_name: string;
     player_key: string;
     stats: Record<string, string | number | null>;
@@ -22,8 +22,8 @@ export declare const PlayerStatSchema: z.ZodObject<{
     shots?: number | undefined;
     minutes?: number | undefined;
 }, {
-    team_id: string;
     game_id: string;
+    team_id: string;
     player_name: string;
     player_key: string;
     stats: Record<string, string | number | null>;

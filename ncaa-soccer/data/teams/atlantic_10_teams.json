@@ -1,0 +1,184 @@
+[
+    {
+        "team_id": "DAVIDSON_COLLEGE",
+        "name_canonical": "Davidson College",
+        "conference": "Atlantic 10",
+        "sport": "msoc",
+        "schedule_url": "https://davidsonwildcats.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Davidson College"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 19
+    },
+    {
+        "team_id": "UNIVERSITY_OF_DAYTON",
+        "name_canonical": "University of Dayton",
+        "conference": "Atlantic 10",
+        "sport": "msoc",
+        "schedule_url": "https://daytonflyers.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of Dayton"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 157
+    },
+    {
+        "team_id": "DUQUESNE_UNIVERSITY",
+        "name_canonical": "Duquesne University",
+        "conference": "Atlantic 10",
+        "sport": "msoc",
+        "schedule_url": "https://goduquesne.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Duquesne University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 96
+    },
+    {
+        "team_id": "FORDHAM_UNIVERSITY",
+        "name_canonical": "Fordham University",
+        "conference": "Atlantic 10",
+        "sport": "msoc",
+        "schedule_url": "https://fordhamsports.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Fordham University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 114
+    },
+    {
+        "team_id": "GEORGE_MASON_UNIVERSITY",
+        "name_canonical": "George Mason University",
+        "conference": "Atlantic 10",
+        "sport": "msoc",
+        "schedule_url": "https://gomason.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "George Mason University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 19
+    },
+    {
+        "team_id": "GEORGE_WASHINGTON_UNIVERSITY",
+        "name_canonical": "George Washington University",
+        "conference": "Atlantic 10",
+        "sport": "msoc",
+        "schedule_url": "https://gwsports.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "George Washington University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 20
+    },
+    {
+        "team_id": "LA_SALLE_UNIVERSITY",
+        "name_canonical": "La Salle University",
+        "conference": "Atlantic 10",
+        "sport": "msoc",
+        "schedule_url": "https://goexplorers.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "La Salle University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 102
+    },
+    {
+        "team_id": "LOYOLA_UNIVERSITY_CHICAGO",
+        "name_canonical": "Loyola University Chicago",
+        "conference": "Atlantic 10",
+        "sport": "msoc",
+        "schedule_url": "https://loyolaramblers.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Loyola University Chicago"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 102
+    },
+    {
+        "team_id": "UNIVERSITY_OF_RHODE_ISLAND",
+        "name_canonical": "University of Rhode Island",
+        "conference": "Atlantic 10",
+        "sport": "msoc",
+        "schedule_url": "https://gorhody.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of Rhode Island"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 89
+    },
+    {
+        "team_id": "ST_BONAVENTURE_UNIVERSITY",
+        "name_canonical": "St. Bonaventure University",
+        "conference": "Atlantic 10",
+        "sport": "msoc",
+        "schedule_url": "https://gobonnies.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "St. Bonaventure University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 100
+    },
+    {
+        "team_id": "SAINT_JOSEPH_S_UNIVERSITY",
+        "name_canonical": "Saint Joseph's University",
+        "conference": "Atlantic 10",
+        "sport": "msoc",
+        "schedule_url": "https://sjuhawks.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Saint Joseph's University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 108
+    },
+    {
+        "team_id": "SAINT_LOUIS_UNIVERSITY_UNITED_STATES",
+        "name_canonical": "Saint Louis University (United States)",
+        "conference": "Atlantic 10",
+        "sport": "msoc",
+        "schedule_url": "https://slubillikens.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Saint Louis University (United States)"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 152
+    },
+    {
+        "team_id": "VCU",
+        "name_canonical": "VCU",
+        "conference": "Atlantic 10",
+        "sport": "msoc",
+        "schedule_url": "https://vcuathletics.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "VCU"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 126
+    }
+]

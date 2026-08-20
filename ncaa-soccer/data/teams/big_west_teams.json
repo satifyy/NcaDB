@@ -1,0 +1,72 @@
+[
+    {
+        "team_id": "CAL_STATE_FULLERTON",
+        "name_canonical": "Cal State Fullerton",
+        "conference": "Big West",
+        "sport": "msoc",
+        "schedule_url": "https://fullertontitans.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Cal State Fullerton"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 115
+    },
+    {
+        "team_id": "SACRAMENTO_STATE",
+        "name_canonical": "Sacramento State",
+        "conference": "Big West",
+        "sport": "msoc",
+        "schedule_url": "https://hornetsports.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Sacramento State"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 118
+    },
+    {
+        "team_id": "UC_IRVINE",
+        "name_canonical": "UC Irvine",
+        "conference": "Big West",
+        "sport": "msoc",
+        "schedule_url": "https://ucirvinesports.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "UC Irvine"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 21
+    },
+    {
+        "team_id": "UC_SANTA_BARBARA",
+        "name_canonical": "UC Santa Barbara",
+        "conference": "Big West",
+        "sport": "msoc",
+        "schedule_url": "https://ucsbgauchos.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "UC Santa Barbara"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 168
+    },
+    {
+        "team_id": "UTAH_VALLEY_UNIVERSITY",
+        "name_canonical": "Utah Valley University",
+        "conference": "Big West",
+        "sport": "msoc",
+        "schedule_url": "https://wolverinegreen.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Utah Valley University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 63
+    }
+]

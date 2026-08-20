@@ -1,0 +1,114 @@
+[
+    {
+        "team_id": "AMERICAN_UNIVERSITY",
+        "name_canonical": "American University",
+        "conference": "Patriot",
+        "sport": "msoc",
+        "schedule_url": "https://aueagles.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "American University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 108
+    },
+    {
+        "team_id": "ARMY",
+        "name_canonical": "Army",
+        "conference": "Patriot",
+        "sport": "msoc",
+        "schedule_url": "https://goarmywestpoint.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Army"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 20
+    },
+    {
+        "team_id": "BOSTON_UNIVERSITY",
+        "name_canonical": "Boston University",
+        "conference": "Patriot",
+        "sport": "msoc",
+        "schedule_url": "https://goterriers.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Boston University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 20
+    },
+    {
+        "team_id": "BUCKNELL_UNIVERSITY",
+        "name_canonical": "Bucknell University",
+        "conference": "Patriot",
+        "sport": "msoc",
+        "schedule_url": "https://bucknellbison.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Bucknell University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 19
+    },
+    {
+        "team_id": "LAFAYETTE_COLLEGE",
+        "name_canonical": "Lafayette College",
+        "conference": "Patriot",
+        "sport": "msoc",
+        "schedule_url": "https://goleopards.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Lafayette College"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 138
+    },
+    {
+        "team_id": "LEHIGH_UNIVERSITY",
+        "name_canonical": "Lehigh University",
+        "conference": "Patriot",
+        "sport": "msoc",
+        "schedule_url": "https://lehighsports.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Lehigh University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 20
+    },
+    {
+        "team_id": "LOYOLA_UNIVERSITY_MARYLAND",
+        "name_canonical": "Loyola University Maryland",
+        "conference": "Patriot",
+        "sport": "msoc",
+        "schedule_url": "https://loyolagreyhounds.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Loyola University Maryland"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 68
+    },
+    {
+        "team_id": "NAVY",
+        "name_canonical": "Navy",
+        "conference": "Patriot",
+        "sport": "msoc",
+        "schedule_url": "https://navysports.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Navy"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 100
+    }
+]

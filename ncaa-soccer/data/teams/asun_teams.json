@@ -1,0 +1,114 @@
+[
+    {
+        "team_id": "BELLARMINE_UNIVERSITY",
+        "name_canonical": "Bellarmine University",
+        "conference": "ASUN",
+        "sport": "msoc",
+        "schedule_url": "https://athletics.bellarmine.edu/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Bellarmine University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 123
+    },
+    {
+        "team_id": "UNIVERSITY_OF_CENTRAL_ARKANSAS",
+        "name_canonical": "University of Central Arkansas",
+        "conference": "ASUN",
+        "sport": "msoc",
+        "schedule_url": "https://ucasports.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of Central Arkansas"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 105
+    },
+    {
+        "team_id": "FGCU",
+        "name_canonical": "FGCU",
+        "conference": "ASUN",
+        "sport": "msoc",
+        "schedule_url": "https://fgcuathletics.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "FGCU"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 75
+    },
+    {
+        "team_id": "JACKSONVILLE_UNIVERSITY",
+        "name_canonical": "Jacksonville University",
+        "conference": "ASUN",
+        "sport": "msoc",
+        "schedule_url": "https://judolphins.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Jacksonville University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 96
+    },
+    {
+        "team_id": "LIPSCOMB_UNIVERSITY",
+        "name_canonical": "Lipscomb University",
+        "conference": "ASUN",
+        "sport": "msoc",
+        "schedule_url": "https://lipscombsports.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Lipscomb University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 19
+    },
+    {
+        "team_id": "UNIVERSITY_OF_NORTH_FLORIDA",
+        "name_canonical": "University of North Florida",
+        "conference": "ASUN",
+        "sport": "msoc",
+        "schedule_url": "https://unfospreys.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of North Florida"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 20
+    },
+    {
+        "team_id": "QUEENS_UNIVERSITY_OF_CHARLOTTE",
+        "name_canonical": "Queens University of Charlotte",
+        "conference": "ASUN",
+        "sport": "msoc",
+        "schedule_url": "https://queensathletics.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Queens University of Charlotte"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 125
+    },
+    {
+        "team_id": "STETSON_UNIVERSITY",
+        "name_canonical": "Stetson University",
+        "conference": "ASUN",
+        "sport": "msoc",
+        "schedule_url": "https://gohatters.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Stetson University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 122
+    }
+]

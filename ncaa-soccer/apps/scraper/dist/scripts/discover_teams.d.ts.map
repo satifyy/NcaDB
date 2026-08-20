@@ -1,0 +1,1 @@
+{"version":3,"file":"discover_teams.d.ts","sourceRoot":"","sources":["../../src/scripts/discover_teams.ts"],"names":[],"mappings":"AAAA;;;;;;;;;;;;;;;;;;;;;GAqBG;AAKH,OAAO,EAAa,UAAU,EAAE,MAAM,gBAAgB,CAAC;AAwIvD,MAAM,WAAW,cAAe,SAAQ,UAAU;IAC9C,UAAU,EAAE,MAAM,CAAC;IACnB,KAAK,EAAE,MAAM,CAAC;IACd,OAAO,EAAE,MAAM,EAAE,CAAC;IAClB,cAAc,CAAC,EAAE,MAAM,CAAC;CAC3B"}

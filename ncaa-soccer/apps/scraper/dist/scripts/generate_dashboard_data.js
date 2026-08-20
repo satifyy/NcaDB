@@ -7,10 +7,15 @@ const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const sync_1 = require("csv-parse/sync");
 const inputPath = path_1.default.join(process.cwd(), 'data/player_stats/2025/aggregated_player_stats.csv');
-const outputPath = path_1.default.join(process.cwd(), 'apps/dashboard/data.js');
+const outputDir = path_1.default.join(process.cwd(), 'apps/dashboard/src/data');
+const outputPath = path_1.default.join(outputDir, 'player_stats.json');
 if (!fs_1.default.existsSync(inputPath)) {
     console.error(`Input file not found: ${inputPath}`);
     process.exit(1);
+}
+// Ensure output directory exists
+if (!fs_1.default.existsSync(outputDir)) {
+    fs_1.default.mkdirSync(outputDir, { recursive: true });
 }
 console.log(`Reading stats from ${inputPath}...`);
 const fileContent = fs_1.default.readFileSync(inputPath, 'utf-8');
@@ -30,7 +35,6 @@ const processedData = records.map(record => ({
     shots_on_goal: parseInt(record.shots_on_goal, 10),
     saves: parseInt(record.saves, 10),
 }));
-const fileContentJs = `window.playerStats = ${JSON.stringify(processedData, null, 2)};`;
-fs_1.default.writeFileSync(outputPath, fileContentJs);
+fs_1.default.writeFileSync(outputPath, JSON.stringify(processedData, null, 2));
 console.log(`Wrote dashboard data to ${outputPath}`);
 //# sourceMappingURL=generate_dashboard_data.js.map

@@ -1,0 +1,86 @@
+[
+    {
+        "team_id": "CHICAGO_STATE_UNIVERSITY",
+        "name_canonical": "Chicago State University",
+        "conference": "NEC",
+        "sport": "msoc",
+        "schedule_url": "https://gocsucougars.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Chicago State University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 73
+    },
+    {
+        "team_id": "HOWARD_UNIVERSITY",
+        "name_canonical": "Howard University",
+        "conference": "NEC",
+        "sport": "msoc",
+        "schedule_url": "https://hubison.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Howard University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 122
+    },
+    {
+        "team_id": "LE_MOYNE_COLLEGE",
+        "name_canonical": "Le Moyne College",
+        "conference": "NEC",
+        "sport": "msoc",
+        "schedule_url": "https://lemoynedolphins.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Le Moyne College"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 89
+    },
+    {
+        "team_id": "MERCYHURST_UNIVERSITY",
+        "name_canonical": "Mercyhurst University",
+        "conference": "NEC",
+        "sport": "msoc",
+        "schedule_url": "https://hurstathletics.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Mercyhurst University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 102
+    },
+    {
+        "team_id": "UNIVERSITY_OF_NEW_HAVEN",
+        "name_canonical": "University of New Haven",
+        "conference": "NEC",
+        "sport": "msoc",
+        "schedule_url": "https://newhavenchargers.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of New Haven"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 94
+    },
+    {
+        "team_id": "STONEHILL_COLLEGE",
+        "name_canonical": "Stonehill College",
+        "conference": "NEC",
+        "sport": "msoc",
+        "schedule_url": "https://stonehillskyhawks.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Stonehill College"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 108
+    }
+]

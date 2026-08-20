@@ -1,8 +1,10 @@
 // @ts-nocheck
 import * as fs from 'fs';
 import * as path from 'path';
-import { SidearmBoxScoreParser } from '../../../../packages/parsers/src';
+import { SidearmBoxScoreParser, TeamNameResolver, WmtBoxScoreParser } from '@ncaa/parsers';
+import { buildTeamNameResolver, loadAllTeams } from '../utils/teams';
 const { chromium } = require('playwright-chromium');
+import { parse } from 'csv-parse/sync';
 
 interface GameRow {
     game_id: string;
@@ -10,6 +12,8 @@ interface GameRow {
     home_team_name: string;
     away_team_name: string;
     boxscore_url?: string;
+    /** The other school's box score for the same fixture, when the two differ. */
+    boxscore_url_alt?: string;
     dedupe_key: string;
 }
 
@@ -38,6 +42,145 @@ const CONCURRENCY = 8; // Number of parallel tabs (safer; raise cautiously if st
 const DEBUG_LOG_PATH = path.resolve(process.cwd(), 'data/player_stats/debug_boxscore.log');
 const VIEWPORT = { width: 1280, height: 720 };
 
+/**
+ * Box scores on WMT Digital sites (Clemson, Notre Dame, Virginia) are an iframe onto
+ * wmt.games backed by a JSON stats feed. Scraping the iframe's DOM returns scoring
+ * plays interleaved with players, so those URLs are routed to the JSON feed instead
+ * and never touch the browser pool.
+ */
+const wmtBoxParser = new WmtBoxScoreParser();
+let wmtHosts = new Set<string>();
+let teamNameResolver: TeamNameResolver | undefined;
+
+function hostOf(url: string): string {
+    try {
+        return new URL(url).hostname.replace(/^www\./, '');
+    } catch {
+        return '';
+    }
+}
+
+function isWmtBoxscore(url: string): boolean {
+    const host = hostOf(url);
+    return host === 'wmt.games' || wmtHosts.has(host);
+}
+
+function isPdf(url: string): boolean {
+    return /\.pdf(\?|#|$)/i.test(url);
+}
+
+function slugify(value: string): string {
+    return value.toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+/**
+ * Maps the labels a box score uses for its two squads onto the game's actual teams.
+ *
+ * Pages name a team however that school writes it — "CAL", "Cal", "California", "USD",
+ * "VIL", or nothing at all — and chasing every abbreviation with an alias never ends.
+ * A box score has exactly two sides and `games.csv` already says who played, so any
+ * label the resolver cannot place is assigned to whichever of the two teams is still
+ * unclaimed. Only a label that resolves to a team in this game is trusted outright,
+ * which keeps a stray "Unknown" from stealing the wrong side.
+ */
+function resolveTeamLabels(game: GameRow, labels: string[]): Map<string, string> {
+    const canonical = (name: string) =>
+        teamNameResolver ? teamNameResolver.canonical(name) : name;
+    const sides = [canonical(game.home_team_name), canonical(game.away_team_name)];
+    const assignment = new Map<string, string>();
+    const claimed = new Set<string>();
+
+    for (const label of labels) {
+        const resolved = canonical(label);
+        if (sides.includes(resolved) && !claimed.has(resolved)) {
+            assignment.set(label, resolved);
+            claimed.add(resolved);
+        }
+    }
+
+    const unassigned = labels.filter(label => !assignment.has(label));
+    const remaining = sides.filter(side => !claimed.has(side));
+
+    if (unassigned.length === 1 && remaining.length === 1) {
+        assignment.set(unassigned[0], remaining[0]);
+    } else if (unassigned.length === 2 && remaining.length === 2) {
+        // Both sides are abbreviations ("VIL"/"ION", "USD"/"SDSU"). Score each of the
+        // two possible pairings and take the better one, so long as something matched.
+        const straight = affinity(unassigned[0], remaining[0]) + affinity(unassigned[1], remaining[1]);
+        const crossed = affinity(unassigned[0], remaining[1]) + affinity(unassigned[1], remaining[0]);
+        if (Math.max(straight, crossed) > 0 && straight !== crossed) {
+            const order = straight > crossed ? remaining : [remaining[1], remaining[0]];
+            assignment.set(unassigned[0], order[0]);
+            assignment.set(unassigned[1], order[1]);
+        } else {
+            for (const label of unassigned) assignment.set(label, canonical(label));
+        }
+    } else {
+        // More labels than sides, or nothing left to give: keep what we were handed
+        // rather than guessing.
+        for (const label of unassigned) assignment.set(label, canonical(label));
+    }
+    return assignment;
+}
+
+/**
+ * How strongly an abbreviation points at a team name.
+ *
+ * "VIL" prefixes "Villanova"; "GSU" opens with the initials of "Georgia State". Scores
+ * are only ever compared against each other within one game, so the absolute values
+ * just need to rank prefix matches above initial matches and longer matches above
+ * shorter ones.
+ */
+function affinity(label: string, team: string): number {
+    const l = slugify(label);
+    const t = slugify(team);
+    if (!l || !t) return 0;
+    if (l === t) return 100;
+    if (t.startsWith(l)) return 50 + l.length;
+    if (l.startsWith(t)) return 40 + t.length;
+    const initials = team.split(/\s+/).filter(Boolean).map(word => word[0]).join('').toLowerCase();
+    if (initials.length > 1 && l.startsWith(initials)) return 20 + initials.length;
+    if (initials.length > 1 && initials.startsWith(l)) return 15 + l.length;
+    return 0;
+}
+
+/** Canonicalises `team_id` and rebuilds `player_key`, which embeds it. */
+function toPlayerRows(game: GameRow, parsed: any[]): PlayerRow[] {
+    const labels = [...new Set(parsed.map(p => String(p.team_id ?? '')))];
+    const teamFor = resolveTeamLabels(game, labels);
+    return parsed.map(p => {
+        const teamId = teamFor.get(String(p.team_id ?? '')) || String(p.team_id ?? '');
+        return {
+            game_id: game.game_id,
+            team_id: teamId,
+            player_name: p.player_name,
+            player_key: `${slugify(teamId)}:${slugify(p.player_name)}`,
+            jersey_number: p.jersey_number ?? null,
+            minutes: p.minutes ?? null,
+            goals: p.goals ?? null,
+            assists: p.assists ?? null,
+            shots: p.shots ?? null,
+            shots_on_goal: toNumber(p.stats?.shots_on_goal),
+            saves: toNumber(p.stats?.saves)
+        };
+    });
+}
+
+async function processWmtGame(game: GameRow): Promise<ProcessResult> {
+    try {
+        const res = await wmtBoxParser.fetchBoxScore(game.boxscore_url!, { nameResolver: teamNameResolver });
+        if (res.playerStats.length === 0) {
+            logDebug(`WARN [${game.game_id}] WMT stats feed returned no players for ${game.boxscore_url}`);
+            return { rows: [], success: false };
+        }
+        logDebug(`OK [${game.game_id}] Parsed ${res.playerStats.length} stats from WMT stats feed`);
+        return { rows: toPlayerRows(game, res.playerStats), success: true };
+    } catch (e: any) {
+        logDebug(`ERR [${game.game_id}] WMT stats feed failed: ${e.message}`);
+        return { rows: [], success: false };
+    }
+}
+
 function parseGamesCsv(csvPath: string): GameRow[] {
     const text = fs.readFileSync(csvPath, 'utf8');
     const lines = text.trim().split(/\r?\n/);
@@ -53,6 +196,7 @@ function parseGamesCsv(csvPath: string): GameRow[] {
             home_team_name: parts[idx('home_team_name')] || '',
             away_team_name: parts[idx('away_team_name')] || '',
             boxscore_url: parts[idx('boxscore_url')] || '',
+            boxscore_url_alt: idx('boxscore_url_alt') >= 0 ? parts[idx('boxscore_url_alt')] || '' : '',
             dedupe_key: parts[idx('dedupe_key')] || ''
         };
         games.push(row);
@@ -115,6 +259,13 @@ function startStatusTicker(status: StatusState) {
     return setInterval(() => renderStatus(status), 1000);
 }
 
+/**
+ * Tries the fixture's primary box score, then the other school's copy of the same game.
+ *
+ * The two schools publish independently, and one side is sometimes a dead end — Notre
+ * Dame's stats feed returns no players for several 2025 games that Virginia's feed
+ * covers in full. Falling back recovers the game instead of dropping it.
+ */
 async function processGame(
     browser: any,
     game: GameRow,
@@ -122,7 +273,41 @@ async function processGame(
     boxParser: SidearmBoxScoreParser,
     opts?: { attempt?: number; waitLonger?: boolean; waitMs?: number; scrollWaitMs?: number }
 ): Promise<ProcessResult> {
+    const primary = await processGameOnce(browser, game, rawDir, boxParser, opts);
+    if (primary.success || !game.boxscore_url_alt) return primary;
+
+    logDebug(`FALLBACK [${game.game_id}] Primary box score empty, trying ${game.boxscore_url_alt}`);
+    const fallback = await processGameOnce(
+        browser,
+        { ...game, boxscore_url: game.boxscore_url_alt, boxscore_url_alt: '' },
+        rawDir,
+        boxParser,
+        opts
+    );
+    if (fallback.success) {
+        logDebug(`FALLBACK OK [${game.game_id}] Recovered ${fallback.rows.length} stats from the alternate source`);
+    }
+    return fallback;
+}
+
+async function processGameOnce(
+    browser: any,
+    game: GameRow,
+    rawDir: string,
+    boxParser: SidearmBoxScoreParser,
+    opts?: { attempt?: number; waitLonger?: boolean; waitMs?: number; scrollWaitMs?: number }
+): Promise<ProcessResult> {
     const boxUrl = game.boxscore_url!;
+
+    if (isPdf(boxUrl)) {
+        // PDF-only box scores carry no machine-readable player table.
+        logDebug(`SKIP [${game.game_id}] PDF-only box score: ${boxUrl}`);
+        return { rows: [], success: false };
+    }
+    if (isWmtBoxscore(boxUrl)) {
+        return processWmtGame(game);
+    }
+
     const attempt = opts?.attempt ?? 1;
     const waitLonger = opts?.waitLonger ?? false;
     const waitMs = opts?.waitMs ?? 1200;
@@ -232,20 +417,7 @@ async function processGame(
 
         if (res.playerStats.length > 0) {
             logDebug(`OK [${game.game_id}] Parsed ${res.playerStats.length} stats (attempt ${attempt})`);
-            const rows = res.playerStats.map(p => ({
-                game_id: game.game_id,
-                team_id: p.team_id,
-                player_name: p.player_name,
-                player_key: p.player_key,
-                jersey_number: p.jersey_number ?? null,
-                minutes: p.minutes ?? null,
-                goals: (p as any).goals ?? null,
-                assists: (p as any).assists ?? null,
-                shots: (p as any).shots ?? null,
-                shots_on_goal: toNumber(p.stats?.shots_on_goal),
-                saves: toNumber(p.stats?.saves)
-            }));
-            return { rows, success: true };
+            return { rows: toPlayerRows(game, res.playerStats), success: true };
         } else {
             const meta: string[] = [];
             if (wmtUrl) meta.push(`wmt=${wmtUrl}`);
@@ -271,6 +443,15 @@ async function main() {
         console.error(`games.csv not found at ${csvPath}`);
         process.exit(1);
     }
+
+    const teams = loadAllTeams();
+    teamNameResolver = buildTeamNameResolver(teams);
+    wmtHosts = new Set(
+        teams
+            .filter(t => t.platform_guess === 'wmt')
+            .map(t => hostOf(t.schedule_url))
+            .filter(Boolean)
+    );
 
     let games = parseGamesCsv(csvPath).filter(g => g.boxscore_url);
 
@@ -421,8 +602,18 @@ async function main() {
         'game_id', 'team_id', 'player_name', 'player_key', 'jersey_number',
         'minutes', 'goals', 'assists', 'shots', 'shots_on_goal', 'saves'
     ];
+
+    // A transient failure — a rate limit, a slow render — must not delete stats an
+    // earlier run already collected. Rows are kept per game: anything scraped this run
+    // replaces what was stored for that game, and games that yielded nothing this time
+    // keep the rows they had.
+    const carried = carryForwardMissingGames(outPath, allRows, new Set(games.map(g => g.game_id)));
+    if (carried.rows.length > 0) {
+        logDebug(`Kept ${carried.rows.length} stats from ${carried.games} previously scraped games that returned nothing this run.`);
+    }
+
     const lines = [header.join(',')];
-    allRows.forEach(r => {
+    [...allRows, ...carried.rows].forEach(r => {
         const vals = [
             r.game_id, r.team_id, r.player_name, r.player_key, r.jersey_number ?? '',
             r.minutes ?? '', r.goals ?? '', r.assists ?? '', r.shots ?? '',
@@ -441,7 +632,7 @@ async function main() {
         const failDir = path.resolve(__dirname, '../../../../data/player_stats');
         if (!fs.existsSync(failDir)) fs.mkdirSync(failDir, { recursive: true });
         const failLogPath = path.join(failDir, 'failed_boxscores.log');
-        const failLines = failedGames.map(g => `${g.game_id},${g.date},${g.home_team_name} vs ${g.away_team_name},${g.boxscore_url ?? ''}`);
+        const failLines = failedGames.map(g => `${g.game_id},${g.date},${g.home_team_name} vs ${g.away_team_name},${g.boxscore_url ?? ''},${g.boxscore_url_alt || ''}`);
         fs.writeFileSync(failLogPath, failLines.join('\n'), 'utf8');
         logDebug(`WARN ${failedGames.length} games still missing stats after retry. Logged to ${failLogPath}`);
     }
@@ -449,6 +640,38 @@ async function main() {
     status.inFlight = 0;
     renderStatus(status);
     clearInterval(statusTimer);
+}
+
+/**
+ * Rows from a previous run for games that produced nothing this time.
+ *
+ * Only games still on this run's slate are eligible. Older runs may hold rows under
+ * game ids that no longer exist — a fixture stored before team names were canonicalised
+ * keys differently — and re-appending those would double-count the same match under two
+ * ids.
+ *
+ * @returns the rows to re-append, plus how many games they came from
+ */
+function carryForwardMissingGames(
+    outPath: string,
+    freshRows: PlayerRow[],
+    inScope: Set<string>
+): { rows: any[]; games: number } {
+    if (!fs.existsSync(outPath)) return { rows: [], games: 0 };
+
+    let previous: any[];
+    try {
+        previous = parse(fs.readFileSync(outPath, 'utf8'), { columns: true, skip_empty_lines: true });
+    } catch (e: any) {
+        logDebug(`WARN Could not read existing stats at ${outPath}: ${e.message}`);
+        return { rows: [], games: 0 };
+    }
+
+    const scrapedThisRun = new Set(freshRows.map(r => r.game_id));
+    const rows = previous.filter(
+        r => r.game_id && inScope.has(r.game_id) && !scrapedThisRun.has(r.game_id)
+    );
+    return { rows, games: new Set(rows.map(r => r.game_id)).size };
 }
 
 function escapeCsv(field: string): string {

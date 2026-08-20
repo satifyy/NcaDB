@@ -38,10 +38,72 @@ const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
 const sync_1 = require("csv-parse/sync");
 const sync_2 = require("csv-stringify/sync");
+const isPdf = (url) => /\.pdf(\?|#|$)/i.test(url || '');
+/**
+ * Both schools in a fixture publish their own box score, and one of them is sometimes
+ * empty — a school's stats feed can carry no players at all, or offer only a PDF.
+ * Keeping the second URL as `boxscore_url_alt` gives the box-score stage somewhere to
+ * fall back to instead of losing the game. A parseable HTML page always takes the
+ * primary slot over a PDF.
+ */
+function mergeBoxscoreUrls(merged, from) {
+    const candidates = [merged.boxscore_url, merged.boxscore_url_alt, from.boxscore_url, from.boxscore_url_alt]
+        .map(url => (url || '').trim())
+        .filter(Boolean);
+    const unique = [];
+    for (const url of candidates) {
+        if (!unique.includes(url))
+            unique.push(url);
+    }
+    // Stable sort that lifts HTML box scores above PDFs without reordering equals.
+    const ranked = unique
+        .map((url, index) => ({ url, index }))
+        .sort((a, b) => Number(isPdf(a.url)) - Number(isPdf(b.url)) || a.index - b.index)
+        .map(entry => entry.url);
+    merged.boxscore_url = ranked[0] || '';
+    merged.boxscore_url_alt = ranked[1] || '';
+}
+/**
+ * Keeps whichever side of a duplicate pair actually has the field filled in.
+ *
+ * The two rows describe one fixture from two schools' points of view, so they often
+ * disagree on which team is listed first. Per-team fields are read through that
+ * orientation rather than by column name — otherwise a 4-0 would be copied in as 0-4.
+ */
+function mergeRows(into, from) {
+    const merged = { ...into };
+    const aligned = merged.home_team_name === from.home_team_name && merged.away_team_name === from.away_team_name;
+    const inverted = merged.home_team_name === from.away_team_name && merged.away_team_name === from.home_team_name;
+    if (merged.location_type === 'unknown' && from.location_type && from.location_type !== 'unknown') {
+        merged.location_type = from.location_type;
+    }
+    if (merged.status === 'scheduled' && from.status && from.status !== 'scheduled') {
+        merged.status = from.status;
+    }
+    for (const field of ['schedule_url', 'game_id']) {
+        if (!merged[field] && from[field])
+            merged[field] = from[field];
+    }
+    mergeBoxscoreUrls(merged, from);
+    if (aligned || inverted) {
+        // When inverted, the other row's "home" value describes our away team.
+        for (const side of ['home', 'away']) {
+            const other = inverted ? (side === 'home' ? 'away' : 'home') : side;
+            if (!merged[`${side}_score`] && from[`${other}_score`]) {
+                merged[`${side}_score`] = from[`${other}_score`];
+            }
+            if (from[`${other}_team_ranked`] === 'true') {
+                merged[`${side}_team_ranked`] = 'true';
+            }
+        }
+    }
+    return merged;
+}
 class GameStorageAdapter {
     constructor(baseDir, options) {
         this.baseDir = baseDir;
         this.verbose = options?.verbose || false;
+        this.normalizeRow = options?.normalizeRow || (row => row);
     }
     async saveGames(games, season) {
         if (games.length === 0)
@@ -55,7 +117,7 @@ class GameStorageAdapter {
             'game_id', 'date', 'home_team_name', 'away_team_name',
             'home_team_ranked', 'away_team_ranked',
             'home_score', 'away_score', 'location_type', 'status',
-            'schedule_url', 'boxscore_url', 'dedupe_key'
+            'schedule_url', 'boxscore_url', 'boxscore_url_alt', 'dedupe_key'
         ];
         const gamesMap = new Map();
         // 1. Read existing
@@ -66,9 +128,17 @@ class GameStorageAdapter {
                     columns: true,
                     skip_empty_lines: true
                 });
-                for (const record of records) {
-                    // Normalize dedupe_key just in case
-                    if (record.dedupe_key) {
+                for (const raw of records) {
+                    const record = this.normalizeRow(raw);
+                    if (!record.dedupe_key)
+                        continue;
+                    const existing = gamesMap.get(record.dedupe_key);
+                    if (existing) {
+                        // Two stored rows normalised onto the same fixture; keep the
+                        // richer of the pair rather than whichever was read last.
+                        gamesMap.set(record.dedupe_key, mergeRows(existing, record));
+                    }
+                    else {
                         gamesMap.set(record.dedupe_key, record);
                     }
                 }
@@ -80,7 +150,7 @@ class GameStorageAdapter {
         // 2. Upsert new games with smart merging
         for (const game of games) {
             // Flatten game object to match CSV structure
-            const row = {
+            const row = this.normalizeRow({
                 game_id: game.game_id,
                 date: game.date,
                 home_team_name: game.home_team_name,
@@ -93,40 +163,19 @@ class GameStorageAdapter {
                 status: game.status,
                 schedule_url: game.source_urls?.schedule_url || '',
                 boxscore_url: game.source_urls?.boxscore_url || '',
+                boxscore_url_alt: '',
                 dedupe_key: game.dedupe_key
-            };
+            });
             // Smart merge: if game already exists, update with better data
-            const existing = gamesMap.get(game.dedupe_key);
+            const existing = gamesMap.get(row.dedupe_key);
             if (existing) {
                 if (this.verbose) {
-                    console.log(`🔄 Duplicate detected: ${game.dedupe_key}`);
+                    console.log(`🔄 Duplicate detected: ${row.dedupe_key}`);
                 }
-                // Prefer known location_type over "unknown"
-                if (existing.location_type === 'unknown' && row.location_type !== 'unknown') {
-                    existing.location_type = row.location_type;
-                }
-                // Prefer non-empty scores
-                if (!existing.home_score && row.home_score) {
-                    existing.home_score = row.home_score;
-                }
-                if (!existing.away_score && row.away_score) {
-                    existing.away_score = row.away_score;
-                }
-                // Update status if we have better info
-                if (existing.status === 'scheduled' && row.status !== 'scheduled') {
-                    existing.status = row.status;
-                }
-                // Prefer non-empty URLs
-                if (!existing.boxscore_url && row.boxscore_url) {
-                    existing.boxscore_url = row.boxscore_url;
-                }
-                if (!existing.schedule_url && row.schedule_url) {
-                    existing.schedule_url = row.schedule_url;
-                }
-                gamesMap.set(game.dedupe_key, existing);
+                gamesMap.set(row.dedupe_key, mergeRows(existing, row));
             }
             else {
-                gamesMap.set(game.dedupe_key, row);
+                gamesMap.set(row.dedupe_key, row);
             }
         }
         // 3. Write back

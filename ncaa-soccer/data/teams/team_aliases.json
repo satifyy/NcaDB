@@ -2,13 +2,18 @@
     "BC": [
         "BC",
         "Boston College",
-        "Boston College Eagles"
+        "Boston College Eagles",
+        "Boston College Golden Eagles",
+        "BC Eagles"
     ],
     "CAL": [
         "Cal",
         "California",
         "California Golden Bears",
-        "University of California"
+        "University of California",
+        "Cal Bears",
+        "Golden Bears",
+        "UC Berkeley"
     ],
     "CLEMSON": [
         "Clemson",
@@ -18,71 +23,108 @@
     "DUKE": [
         "Duke",
         "Duke University",
-        "Duke Blue Devils"
+        "Duke Blue Devils",
+        "Blue Devils"
     ],
     "LOUISVILLE": [
         "Louisville",
         "U of L",
         "Louisville Cardinals",
-        "University of Louisville"
+        "University of Louisville",
+        "Cardinals"
     ],
     "NC_STATE": [
         "NC State",
         "NCSU",
         "North Carolina State",
-        "NC State Wolfpack"
+        "NC State Wolfpack",
+        "Wolfpack",
+        "N.C. State",
+        "North Carolina St.",
+        "NC St."
     ],
     "NOTRE_DAME": [
         "Notre Dame",
         "ND",
         "Notre Dame Fighting Irish",
-        "University of Notre Dame"
+        "University of Notre Dame",
+        "Fighting Irish",
+        "Irish"
     ],
     "PITT": [
         "Pitt",
         "Pittsburgh",
         "University of Pittsburgh",
-        "Pittsburgh Panthers"
+        "Pittsburgh Panthers",
+        "Panthers",
+        "Pitt Panthers"
     ],
     "SMU": [
         "SMU",
         "Southern Methodist",
         "Southern Methodist University",
-        "SMU Mustangs"
+        "SMU Mustangs",
+        "Mustangs"
     ],
     "STANFORD": [
         "Stanford",
         "Stanford Cardinal",
-        "Stanford University"
+        "Stanford University",
+        "Cardinal"
     ],
     "SYRACUSE": [
         "Syracuse",
         "Cuse",
         "Syracuse Orange",
-        "Syracuse University"
+        "Syracuse University",
+        "Orange"
     ],
     "UNC": [
         "UNC",
         "North Carolina",
         "Tar Heels",
         "North Carolina Tar Heels",
-        "University of North Carolina"
+        "University of North Carolina",
+        "UNC Chapel Hill",
+        "Carolina"
     ],
     "UVA": [
         "UVA",
         "Virginia",
         "Virginia Cavaliers",
-        "University of Virginia"
+        "University of Virginia",
+        "Cavaliers",
+        "Hoos"
     ],
     "VT": [
         "VT",
         "Virginia Tech",
         "Va Tech",
-        "Virginia Tech Hokies"
+        "Virginia Tech Hokies",
+        "Hokies",
+        "Virginia Polytechnic"
     ],
     "WAKE_FOREST": [
         "Wake Forest",
         "Wake",
-        "Wake Forest Demon Deacons"
+        "Wake Forest Demon Deacons",
+        "Demon Deacons",
+        "Wake Forest University"
+    ],
+    "GEORGIA_SOUTHERN": [
+        "Ga. Southern",
+        "Georgia Southern Eagles"
+    ],
+    "SANTA_CLARA": [
+        "SCU",
+        "Santa Clara Broncos"
+    ],
+    "SAINT_MARY_S": [
+        "Saint Mary's (CA)",
+        "St. Mary's (CA)"
+    ],
+    "ST_JOHN_S": [
+        "St. John's (NY)",
+        "Saint John's"
     ]
 }

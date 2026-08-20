@@ -19,10 +19,19 @@ __exportStar(require("./types"), exports);
 __exportStar(require("./sidearm/schedule"), exports);
 const schedule_1 = require("./sidearm/schedule");
 __exportStar(require("./sidearm/boxscore"), exports);
+__exportStar(require("./names"), exports);
+__exportStar(require("./wmt/client"), exports);
+__exportStar(require("./wmt/schedule"), exports);
+__exportStar(require("./wmt/boxscore"), exports);
+__exportStar(require("./wmt/wordpress"), exports);
+const schedule_2 = require("./wmt/schedule");
+const wordpress_1 = require("./wmt/wordpress");
 class ParserRegistry {
     constructor() {
         this.parsers = new Map();
         this.register(new schedule_1.SidearmParser());
+        this.register(new schedule_2.WmtParser());
+        this.register(new wordpress_1.WmtWordpressParser());
     }
     register(parser) {
         this.parsers.set(parser.name, parser);

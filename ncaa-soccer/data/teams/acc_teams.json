@@ -31,13 +31,14 @@
         "name_canonical": "Clemson",
         "conference": "ACC",
         "sport": "msoc",
-        "schedule_url": "https://clemsontigers.com/sports/mens-soccer/schedule/",
+        "schedule_url": "https://clemsontigers.com/sports/mens-soccer/schedule",
         "platform_guess": "wmt",
         "parser_key": "wmt_std",
         "aliases": [
             "Clemson University",
             "Clemson Tigers"
-        ]
+        ],
+        "timezone": "America/New_York"
     },
     {
         "team_id": "DUKE",
@@ -85,14 +86,15 @@
         "name_canonical": "Notre Dame",
         "conference": "ACC",
         "sport": "msoc",
-        "schedule_url": "https://fightingirish.com/sports/mens-soccer/schedule/",
+        "schedule_url": "https://fightingirish.com/sports/msoc/schedule",
         "platform_guess": "wmt",
         "parser_key": "wmt_std",
         "aliases": [
             "ND",
             "Notre Dame Fighting Irish",
             "University of Notre Dame"
-        ]
+        ],
+        "timezone": "America/New_York"
     },
     {
         "team_id": "PITT",
@@ -128,12 +130,13 @@
         "conference": "ACC",
         "sport": "msoc",
         "schedule_url": "https://gostanford.com/sports/mens-soccer/schedule",
-        "platform_guess": "sidearm",
-        "parser_key": "sidearm_std",
+        "platform_guess": "wmt",
+        "parser_key": "wmt_std",
         "aliases": [
             "Stanford Cardinal",
             "Stanford University"
-        ]
+        ],
+        "timezone": "America/Los_Angeles"
     },
     {
         "team_id": "SYRACUSE",
@@ -169,14 +172,15 @@
         "name_canonical": "Virginia",
         "conference": "ACC",
         "sport": "msoc",
-        "schedule_url": "https://virginia.prestosports.com/sports/msoc-25/schedule",
-        "platform_guess": "presto",
-        "parser_key": "presto_std",
+        "schedule_url": "https://virginiasports.com/sports/msoc/schedule",
+        "platform_guess": "wmt",
+        "parser_key": "wmt_std",
         "aliases": [
             "UVA",
             "Virginia Cavaliers",
             "University of Virginia"
-        ]
+        ],
+        "timezone": "America/New_York"
     },
     {
         "team_id": "VT",
@@ -184,13 +188,14 @@
         "conference": "ACC",
         "sport": "msoc",
         "schedule_url": "https://hokiesports.com/sports/mens-soccer/schedule",
-        "platform_guess": "sidearm",
-        "parser_key": "sidearm_std",
+        "platform_guess": "wmt",
+        "parser_key": "wmt_std",
         "aliases": [
             "VT",
             "Va Tech",
             "Virginia Tech Hokies"
-        ]
+        ],
+        "timezone": "America/New_York"
     },
     {
         "team_id": "WAKE_FOREST",

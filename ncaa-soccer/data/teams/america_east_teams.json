@@ -1,0 +1,100 @@
+[
+    {
+        "team_id": "BINGHAMTON_UNIVERSITY",
+        "name_canonical": "Binghamton University",
+        "conference": "America East",
+        "sport": "msoc",
+        "schedule_url": "https://bubearcats.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Binghamton University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 104
+    },
+    {
+        "team_id": "BRYANT_UNIVERSITY",
+        "name_canonical": "Bryant University",
+        "conference": "America East",
+        "sport": "msoc",
+        "schedule_url": "https://bryantbulldogs.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Bryant University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 132
+    },
+    {
+        "team_id": "UNIVERSITY_OF_NEW_HAMPSHIRE",
+        "name_canonical": "University of New Hampshire",
+        "conference": "America East",
+        "sport": "msoc",
+        "schedule_url": "https://unhwildcats.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of New Hampshire"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 18
+    },
+    {
+        "team_id": "NJIT",
+        "name_canonical": "NJIT",
+        "conference": "America East",
+        "sport": "msoc",
+        "schedule_url": "https://njithighlanders.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "NJIT"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 102
+    },
+    {
+        "team_id": "UMASS_LOWELL",
+        "name_canonical": "UMass Lowell",
+        "conference": "America East",
+        "sport": "msoc",
+        "schedule_url": "https://goriverhawks.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "UMass Lowell"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 20
+    },
+    {
+        "team_id": "UMBC",
+        "name_canonical": "UMBC",
+        "conference": "America East",
+        "sport": "msoc",
+        "schedule_url": "https://umbcretrievers.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "UMBC"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 130
+    },
+    {
+        "team_id": "UNIVERSITY_OF_VERMONT",
+        "name_canonical": "University of Vermont",
+        "conference": "America East",
+        "sport": "msoc",
+        "schedule_url": "https://uvmathletics.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of Vermont"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 120
+    }
+]

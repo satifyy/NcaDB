@@ -1,0 +1,128 @@
+[
+    {
+        "team_id": "UNIVERSITY_OF_DENVER",
+        "name_canonical": "University of Denver",
+        "conference": "West Coast",
+        "sport": "msoc",
+        "schedule_url": "https://denverpioneers.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of Denver"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 22
+    },
+    {
+        "team_id": "LOYOLA_MARYMOUNT_UNIVERSITY",
+        "name_canonical": "Loyola Marymount University",
+        "conference": "West Coast",
+        "sport": "msoc",
+        "schedule_url": "https://lmulions.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Loyola Marymount University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 72
+    },
+    {
+        "team_id": "UNIVERSITY_OF_THE_PACIFIC_UNITED_STATES",
+        "name_canonical": "University of the Pacific (United States)",
+        "conference": "West Coast",
+        "sport": "msoc",
+        "schedule_url": "https://pacifictigers.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of the Pacific (United States)"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 108
+    },
+    {
+        "team_id": "UNIVERSITY_OF_PORTLAND",
+        "name_canonical": "University of Portland",
+        "conference": "West Coast",
+        "sport": "msoc",
+        "schedule_url": "https://portlandpilots.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of Portland"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 92
+    },
+    {
+        "team_id": "SAINT_MARY_S_COLLEGE_OF_CALIFORNIA",
+        "name_canonical": "Saint Mary's College of California",
+        "conference": "West Coast",
+        "sport": "msoc",
+        "schedule_url": "https://smcgaels.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Saint Mary's College of California"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 18
+    },
+    {
+        "team_id": "UNIVERSITY_OF_SAN_DIEGO",
+        "name_canonical": "University of San Diego",
+        "conference": "West Coast",
+        "sport": "msoc",
+        "schedule_url": "https://usdtoreros.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of San Diego"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 154
+    },
+    {
+        "team_id": "UNIVERSITY_OF_SAN_FRANCISCO",
+        "name_canonical": "University of San Francisco",
+        "conference": "West Coast",
+        "sport": "msoc",
+        "schedule_url": "https://usfdons.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of San Francisco"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 19
+    },
+    {
+        "team_id": "SANTA_CLARA_UNIVERSITY",
+        "name_canonical": "Santa Clara University",
+        "conference": "West Coast",
+        "sport": "msoc",
+        "schedule_url": "https://santaclarabroncos.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Santa Clara University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 112
+    },
+    {
+        "team_id": "SEATTLE_UNIVERSITY",
+        "name_canonical": "Seattle University",
+        "conference": "West Coast",
+        "sport": "msoc",
+        "schedule_url": "https://goseattleu.com/sports/mens-soccer/schedule",
+        "platform_guess": "wmt",
+        "parser_key": "wmt_std",
+        "aliases": [
+            "Seattle University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 19
+    }
+]

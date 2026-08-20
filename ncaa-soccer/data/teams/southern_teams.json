@@ -1,0 +1,100 @@
+[
+    {
+        "team_id": "ETSU",
+        "name_canonical": "ETSU",
+        "conference": "Southern",
+        "sport": "msoc",
+        "schedule_url": "https://etsubucs.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "ETSU"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 120
+    },
+    {
+        "team_id": "FURMAN_UNIVERSITY",
+        "name_canonical": "Furman University",
+        "conference": "Southern",
+        "sport": "msoc",
+        "schedule_url": "https://furmanpaladins.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Furman University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 136
+    },
+    {
+        "team_id": "LIBERTY_UNIVERSITY",
+        "name_canonical": "Liberty University",
+        "conference": "Southern",
+        "sport": "msoc",
+        "schedule_url": "https://libertyflames.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Liberty University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 20
+    },
+    {
+        "team_id": "MERCER_UNIVERSITY",
+        "name_canonical": "Mercer University",
+        "conference": "Southern",
+        "sport": "msoc",
+        "schedule_url": "https://mercerbears.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Mercer University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 21
+    },
+    {
+        "team_id": "UNC_GREENSBORO",
+        "name_canonical": "UNC Greensboro",
+        "conference": "Southern",
+        "sport": "msoc",
+        "schedule_url": "https://uncgspartans.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "UNC Greensboro"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 169
+    },
+    {
+        "team_id": "VMI",
+        "name_canonical": "VMI",
+        "conference": "Southern",
+        "sport": "msoc",
+        "schedule_url": "https://vmikeydets.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "VMI"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 142
+    },
+    {
+        "team_id": "WOFFORD_COLLEGE",
+        "name_canonical": "Wofford College",
+        "conference": "Southern",
+        "sport": "msoc",
+        "schedule_url": "https://athletics.wofford.edu/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Wofford College"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 158
+    }
+]

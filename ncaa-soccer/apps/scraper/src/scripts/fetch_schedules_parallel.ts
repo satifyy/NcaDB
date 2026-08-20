@@ -1,8 +1,19 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import { chromium } from 'playwright-chromium';
-import { SidearmParser } from '@ncaa/parsers';
+import {
+    SidearmParser,
+    TeamNameResolver,
+    WmtClient,
+    WmtParser,
+    WmtWordpressParser,
+    cleanTeamName,
+    makeDedupeKey,
+    seasonNameCandidates,
+    sportSlugFromScheduleUrl
+} from '@ncaa/parsers';
 import { GameStorageAdapter } from '@ncaa/storage';
+import { buildTeamNameResolver, loadTeams, TeamConfig } from '../utils/teams';
 
 // Normalize a boxscore URL using the schedule page as base. No hardcoded team overrides.
 const resolveBoxscoreUrl = (rawUrl: string | undefined, baseUrl: string): string | undefined => {
@@ -25,13 +36,6 @@ const resolveBoxscoreUrl = (rawUrl: string | undefined, baseUrl: string): string
         return undefined;
     }
 };
-
-interface TeamConfig {
-    team_id: string;
-    name_canonical: string;
-    schedule_url: string;
-    platform_guess: string;
-}
 
 // Retry wrapper with exponential backoff
 async function retryWithBackoff<T>(
@@ -67,14 +71,122 @@ const TEAMS_JSON_PATH = inputPath
     ? path.resolve(process.cwd(), inputPath)
     : path.resolve(__dirname, '../../../../data/teams/acc_teams.json');
 
-async function processSchool(browser: any, team: TeamConfig): Promise<any[]> {
-    console.log(`[${team.name_canonical}] Starting extract from ${team.schedule_url}`);
+// Fall season to scrape, e.g. 2025 covers Aug-Dec 2025.
+const SEASON_YEAR = Number(process.argv[3]) || new Date().getFullYear();
 
-    // Only support Sidearm for now as Parser is specific
-    if (team.platform_guess !== 'sidearm') {
-        console.warn(`[${team.name_canonical}] Skipping non-sidearm site (${team.platform_guess})`);
+/**
+ * Collapses a stored row's team names onto their canonical form and rebuilds the
+ * dedupe key from them.
+ *
+ * Sidearm pages decorate opponents with poll rankings and long-form names — "#3 NC
+ * State", "#24/RV University of Virginia", "Pitt" — while the WMT API returns plain
+ * school names. Without this, one fixture is filed twice: once from each school's
+ * point of view. The ranking is preserved on the `*_ranked` columns, where the schema
+ * keeps it.
+ */
+function normalizeRow(row: Record<string, string>, resolver: TeamNameResolver): Record<string, string> {
+    const home = cleanTeamName(row.home_team_name);
+    const away = cleanTeamName(row.away_team_name);
+    const homeName = resolver.canonical(home.name);
+    const awayName = resolver.canonical(away.name);
+    if (!homeName || !awayName || !row.date) return row;
+
+    return {
+        ...row,
+        home_team_name: homeName,
+        away_team_name: awayName,
+        home_team_ranked: row.home_team_ranked === 'true' || home.ranked ? 'true' : 'false',
+        away_team_ranked: row.away_team_ranked === 'true' || away.ranked ? 'true' : 'false',
+        dedupe_key: makeDedupeKey(row.date, homeName, awayName)
+    };
+}
+
+/**
+ * Sidearm serves a past season at `/schedule/<year>`; without it the page always
+ * renders the current season, which is how 2026 fixtures previously leaked into the
+ * 2025 dataset. The current season stays on the bare URL, which is the form these
+ * sites canonicalise to.
+ */
+function sidearmScheduleUrl(scheduleUrl: string, seasonYear: number): string {
+    if (seasonYear === new Date().getFullYear()) return scheduleUrl;
+    if (/\/(19|20)\d{2}\/?$/.test(scheduleUrl)) return scheduleUrl;
+    return `${scheduleUrl.replace(/\/$/, '')}/${seasonYear}`;
+}
+
+/**
+ * WMT Digital schools (Clemson, Notre Dame, Virginia) do not render their schedule
+ * into HTML the way Sidearm does: Notre Dame builds the table client-side, Clemson
+ * omits the year from every row, and neither exposes past seasons at a fetchable URL.
+ * They all serve the same `/website-api` JSON that their own pages consume, so we
+ * read that directly and skip the browser entirely.
+ */
+async function processWmtSchool(team: TeamConfig, resolver: TeamNameResolver): Promise<any[]> {
+    const sportSlug = sportSlugFromScheduleUrl(team.schedule_url);
+    if (!sportSlug) {
+        console.warn(`[${team.name_canonical}] Cannot read sport slug from ${team.schedule_url}`);
         return [];
     }
+
+    const seasonNames = seasonNameCandidates(SEASON_YEAR);
+    const client = new WmtClient(team.schedule_url);
+    const events = await client.fetchSeasonEvents(sportSlug, seasonNames);
+
+    const games = new WmtParser().parseEvents(events, {
+        teamName: team.name_canonical,
+        baseUrl: team.schedule_url,
+        sourceUrl: team.schedule_url,
+        timeZone: team.timezone || 'America/New_York',
+        nameResolver: resolver,
+        seasonYear: SEASON_YEAR
+    });
+
+    console.log(`[${team.name_canonical}] Parsed ${games.length} games from WMT API (${SEASON_YEAR})`);
+    return games;
+}
+
+/**
+ * WMT's WordPress sites (Kentucky, South Carolina) render the whole season server-side
+ * and expose no schedule API, so a plain fetch of the season URL is all they need.
+ */
+async function processWmtWordpressSchool(team: TeamConfig, resolver: TeamNameResolver): Promise<any[]> {
+    const url = `${team.schedule_url.replace(/\/$/, '')}/${SEASON_YEAR}`;
+    const response = await fetch(url, {
+        headers: {
+            'User-Agent':
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122 Safari/537.36'
+        }
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status} for ${url}`);
+
+    const games = await new WmtWordpressParser().parseSchedule(await response.text(), {
+        teamName: team.name_canonical,
+        baseUrl: team.schedule_url,
+        sourceUrl: url,
+        nameResolver: resolver,
+        seasonYear: SEASON_YEAR,
+        timeZone: team.timezone || 'America/New_York'
+    });
+    console.log(`[${team.name_canonical}] Parsed ${games.length} games from WMT WordPress (${SEASON_YEAR})`);
+    return games;
+}
+
+async function processSchool(browser: any, team: TeamConfig, resolver: TeamNameResolver): Promise<any[]> {
+    console.log(`[${team.name_canonical}] Starting extract from ${team.schedule_url}`);
+
+    if (team.platform_guess === 'wmt') {
+        return processWmtSchool(team, resolver);
+    }
+
+    if (team.platform_guess === 'wmt_wp') {
+        return processWmtWordpressSchool(team, resolver);
+    }
+
+    if (team.platform_guess !== 'sidearm') {
+        console.warn(`[${team.name_canonical}] No parser for platform "${team.platform_guess}"`);
+        return [];
+    }
+
+    const scheduleUrl = sidearmScheduleUrl(team.schedule_url, SEASON_YEAR);
 
     const page = await browser.newPage({
         userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122 Safari/537.36',
@@ -123,7 +235,7 @@ async function processSchool(browser: any, team: TeamConfig): Promise<any[]> {
 
     try {
         const response = await retryWithBackoff(
-            () => page.goto(team.schedule_url, { 
+            () => page.goto(scheduleUrl, { 
                 waitUntil: 'domcontentloaded',
                 timeout: 30000 
             }),
@@ -311,15 +423,15 @@ async function processSchool(browser: any, team: TeamConfig): Promise<any[]> {
         const parser = new SidearmParser();
         const games = await parser.parseSchedule(html, { 
             teamName: team.name_canonical, 
-            baseUrl: team.schedule_url 
+            baseUrl: scheduleUrl 
         });
 
         // Enrich
         games.forEach((game, index) => {
             const rowKey = `row_${index}`; // Logic assumes simple row mapping matching index
             const mapped = linkButtonsBoxscoreMap.get(rowKey);
-            const mappedResolved = resolveBoxscoreUrl(mapped, team.schedule_url);
-            const parsedResolved = resolveBoxscoreUrl(game.source_urls?.boxscore_url, team.schedule_url);
+            const mappedResolved = resolveBoxscoreUrl(mapped, scheduleUrl);
+            const parsedResolved = resolveBoxscoreUrl(game.source_urls?.boxscore_url, scheduleUrl);
             const finalBox = mappedResolved || parsedResolved;
 
             if (finalBox) {
@@ -345,8 +457,9 @@ async function main() {
         console.error(`Teams JSON not found at ${TEAMS_JSON_PATH}`);
         process.exit(1);
     }
-    const teams: TeamConfig[] = JSON.parse(fs.readFileSync(TEAMS_JSON_PATH, 'utf8'));
-    console.log(`Loaded ${teams.length} teams.`);
+    const teams = loadTeams(TEAMS_JSON_PATH);
+    const resolver = buildTeamNameResolver(teams);
+    console.log(`Loaded ${teams.length} teams. Season: ${SEASON_YEAR}`);
 
     const browser = await chromium.launch({
         headless: true,
@@ -354,14 +467,14 @@ async function main() {
         timeout: 60000
     });
 
-    const allGames: any[] = [];
+    let allGames: any[] = [];
 
     // Process in batches with retry logic per team
     for (let i = 0; i < teams.length; i += CONCURRENCY) {
         const batch = teams.slice(i, i + CONCURRENCY);
         const promises = batch.map(team => 
             retryWithBackoff(
-                () => processSchool(browser, team),
+                () => processSchool(browser, team, resolver),
                 2, // max 2 retries per team
                 3000,
                 `process ${team.name_canonical}`
@@ -376,17 +489,43 @@ async function main() {
 
     await browser.close();
 
+    // A row whose opponent never resolved is a parse failure, not a fixture.
+    const placeholders = allGames.filter(g =>
+        /unknown/i.test(`${g.home_team_name} ${g.away_team_name}`)
+    );
+    if (placeholders.length > 0) {
+        console.warn(`Dropping ${placeholders.length} games with an unresolved opponent.`);
+    }
+    allGames = allGames.filter(g => !/unknown/i.test(`${g.home_team_name} ${g.away_team_name}`));
+
+    // A site that ignores our season request would otherwise write next season's
+    // fixtures into this season's file, so the year is enforced here as well.
+    const offSeason = allGames.filter(g => !String(g.date).startsWith(`${SEASON_YEAR}-`));
+    if (offSeason.length > 0) {
+        console.warn(`Dropping ${offSeason.length} games outside season ${SEASON_YEAR}.`);
+        const bySeason = new Map<string, number>();
+        offSeason.forEach(g => {
+            const y = String(g.date).slice(0, 4);
+            bySeason.set(y, (bySeason.get(y) || 0) + 1);
+        });
+        console.warn(`  by year: ${[...bySeason].map(([y, n]) => `${y}=${n}`).join(', ')}`);
+    }
+    const seasonGames = allGames.filter(g => String(g.date).startsWith(`${SEASON_YEAR}-`));
+
     // Deduplicate and Save
-    if (allGames.length > 0) {
-        const year = allGames[0].date.split('-')[0] || '2025';
+    if (seasonGames.length > 0) {
+        const year = String(SEASON_YEAR);
         const storageDir = path.resolve(__dirname, '../../../../data');
-        const storage = new GameStorageAdapter(storageDir, { verbose: true });
+        const storage = new GameStorageAdapter(storageDir, {
+            verbose: true,
+            normalizeRow: row => normalizeRow(row, resolver)
+        });
 
         // Simple client-side dedupe before saving? Storage adapter might handle it.
         // But let's be safe and dedupe by unique key if we can.
         // Actually GameStorageAdapter likely overwrites or merges.
-        await storage.saveGames(allGames, year);
-        console.log(`\n✨ Saved ${allGames.length} games to ${path.join(storageDir, 'games', year, 'games.csv')}`);
+        await storage.saveGames(seasonGames, year);
+        console.log(`\n✨ Saved ${seasonGames.length} games to ${path.join(storageDir, 'games', year, 'games.csv')}`);
     } else {
         console.log('No games found.');
     }
