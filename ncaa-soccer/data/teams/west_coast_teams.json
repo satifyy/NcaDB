@@ -1,7 +1,7 @@
 [
     {
-        "team_id": "UNIVERSITY_OF_DENVER",
-        "name_canonical": "University of Denver",
+        "team_id": "DENVER",
+        "name_canonical": "Denver",
         "conference": "West Coast",
         "sport": "msoc",
         "schedule_url": "https://denverpioneers.com/sports/mens-soccer/schedule",
@@ -14,8 +14,8 @@
         "verified_games": 22
     },
     {
-        "team_id": "LOYOLA_MARYMOUNT_UNIVERSITY",
-        "name_canonical": "Loyola Marymount University",
+        "team_id": "LOYOLA_MARYMOUNT",
+        "name_canonical": "Loyola Marymount",
         "conference": "West Coast",
         "sport": "msoc",
         "schedule_url": "https://lmulions.com/sports/mens-soccer/schedule",
@@ -28,8 +28,8 @@
         "verified_games": 72
     },
     {
-        "team_id": "UNIVERSITY_OF_THE_PACIFIC_UNITED_STATES",
-        "name_canonical": "University of the Pacific (United States)",
+        "team_id": "PACIFIC",
+        "name_canonical": "Pacific",
         "conference": "West Coast",
         "sport": "msoc",
         "schedule_url": "https://pacifictigers.com/sports/mens-soccer/schedule",
@@ -42,8 +42,8 @@
         "verified_games": 108
     },
     {
-        "team_id": "UNIVERSITY_OF_PORTLAND",
-        "name_canonical": "University of Portland",
+        "team_id": "PORTLAND",
+        "name_canonical": "Portland",
         "conference": "West Coast",
         "sport": "msoc",
         "schedule_url": "https://portlandpilots.com/sports/mens-soccer/schedule",
@@ -56,8 +56,8 @@
         "verified_games": 92
     },
     {
-        "team_id": "SAINT_MARY_S_COLLEGE_OF_CALIFORNIA",
-        "name_canonical": "Saint Mary's College of California",
+        "team_id": "SAINT_MARY_S",
+        "name_canonical": "Saint Mary's",
         "conference": "West Coast",
         "sport": "msoc",
         "schedule_url": "https://smcgaels.com/sports/mens-soccer/schedule",
@@ -70,8 +70,8 @@
         "verified_games": 18
     },
     {
-        "team_id": "UNIVERSITY_OF_SAN_DIEGO",
-        "name_canonical": "University of San Diego",
+        "team_id": "SAN_DIEGO",
+        "name_canonical": "San Diego",
         "conference": "West Coast",
         "sport": "msoc",
         "schedule_url": "https://usdtoreros.com/sports/mens-soccer/schedule",
@@ -84,8 +84,8 @@
         "verified_games": 154
     },
     {
-        "team_id": "UNIVERSITY_OF_SAN_FRANCISCO",
-        "name_canonical": "University of San Francisco",
+        "team_id": "SAN_FRANCISCO",
+        "name_canonical": "San Francisco",
         "conference": "West Coast",
         "sport": "msoc",
         "schedule_url": "https://usfdons.com/sports/mens-soccer/schedule",
@@ -98,8 +98,8 @@
         "verified_games": 19
     },
     {
-        "team_id": "SANTA_CLARA_UNIVERSITY",
-        "name_canonical": "Santa Clara University",
+        "team_id": "SANTA_CLARA",
+        "name_canonical": "Santa Clara",
         "conference": "West Coast",
         "sport": "msoc",
         "schedule_url": "https://santaclarabroncos.com/sports/mens-soccer/schedule",
@@ -112,8 +112,8 @@
         "verified_games": 112
     },
     {
-        "team_id": "SEATTLE_UNIVERSITY",
-        "name_canonical": "Seattle University",
+        "team_id": "SEATTLE",
+        "name_canonical": "Seattle",
         "conference": "West Coast",
         "sport": "msoc",
         "schedule_url": "https://goseattleu.com/sports/mens-soccer/schedule",

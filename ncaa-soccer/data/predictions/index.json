@@ -1,0 +1,188 @@
+{
+    "generated_at": "2026-09-02T23:51:29.566Z",
+    "current_season": "2026",
+    "current_week": "2026-08-31",
+    "seasons": [
+        "2016",
+        "2017",
+        "2018",
+        "2019",
+        "2021",
+        "2022",
+        "2023",
+        "2024",
+        "2025",
+        "2026"
+    ],
+    "fitted_on": [
+        "2016",
+        "2017",
+        "2018",
+        "2019",
+        "2021",
+        "2022",
+        "2023",
+        "2024"
+    ],
+    "held_out": [
+        "2025",
+        "2026"
+    ],
+    "by_season": {
+        "2016": {
+            "games": 2272,
+            "correct": 1263,
+            "accuracy": 0.5558978873239436,
+            "log_loss": 0.9347062724230655,
+            "baseline_log_loss": 0.975311920456893
+        },
+        "2017": {
+            "games": 2248,
+            "correct": 1318,
+            "accuracy": 0.5862989323843416,
+            "log_loss": 0.899263155500193,
+            "baseline_log_loss": 0.9769105877211453
+        },
+        "2018": {
+            "games": 2204,
+            "correct": 1298,
+            "accuracy": 0.588929219600726,
+            "log_loss": 0.889766306050459,
+            "baseline_log_loss": 0.9775834969059658
+        },
+        "2019": {
+            "games": 2208,
+            "correct": 1360,
+            "accuracy": 0.6159420289855072,
+            "log_loss": 0.8601951930080668,
+            "baseline_log_loss": 0.9539964482741782
+        },
+        "2021": {
+            "games": 2057,
+            "correct": 1237,
+            "accuracy": 0.6013612056392805,
+            "log_loss": 0.8717663656529732,
+            "baseline_log_loss": 0.965015213905932
+        },
+        "2022": {
+            "games": 2036,
+            "correct": 1140,
+            "accuracy": 0.5599214145383105,
+            "log_loss": 0.9389834692120382,
+            "baseline_log_loss": 1.0539482908674425
+        },
+        "2023": {
+            "games": 1983,
+            "correct": 1062,
+            "accuracy": 0.5355521936459909,
+            "log_loss": 0.9768363590059972,
+            "baseline_log_loss": 1.0559080308681683
+        },
+        "2024": {
+            "games": 1969,
+            "correct": 1074,
+            "accuracy": 0.5454545454545454,
+            "log_loss": 0.9706917660134868,
+            "baseline_log_loss": 1.0520984823350703
+        },
+        "2025": {
+            "games": 1939,
+            "correct": 1070,
+            "accuracy": 0.5518308406395049,
+            "log_loss": 0.9539041842439179,
+            "baseline_log_loss": 1.0561173858415394
+        },
+        "2026": {
+            "games": 365,
+            "correct": 195,
+            "accuracy": 0.5342465753424658,
+            "log_loss": 0.963253909972921,
+            "baseline_log_loss": 1.0320930969537376
+        }
+    },
+    "overall": {
+        "games": 19281,
+        "correct": 11017,
+        "accuracy": 0.5713915253358228,
+        "log_loss": 0.9211198788573719,
+        "baseline_log_loss": 1.0139661690870587
+    },
+    "performance": {
+        "train": {
+            "games": 16977,
+            "log_loss": 0.9133907920886586,
+            "brier": 0.5405708252386091,
+            "accuracy": 0.5774282853272074,
+            "baseline_log_loss": 1.0069942001604886
+        },
+        "test": {
+            "games": 2304,
+            "log_loss": 0.9469187947952084,
+            "brier": 0.5604112696721752,
+            "accuracy": 0.5499131944444444,
+            "baseline_log_loss": 1.052872327666211
+        },
+        "calibration": [
+            {
+                "bucket": 0.05,
+                "predictions": 330,
+                "predicted": 0.0722683371359833,
+                "observed": 0.048484848484848485
+            },
+            {
+                "bucket": 0.15,
+                "predictions": 1189,
+                "predicted": 0.15705220925419472,
+                "observed": 0.1505466778805719
+            },
+            {
+                "bucket": 0.25,
+                "predictions": 2523,
+                "predicted": 0.2447747109146541,
+                "observed": 0.25089179548156954
+            },
+            {
+                "bucket": 0.35,
+                "predictions": 815,
+                "predicted": 0.3507479114254438,
+                "observed": 0.3521472392638037
+            },
+            {
+                "bucket": 0.45,
+                "predictions": 697,
+                "predicted": 0.4488710364987134,
+                "observed": 0.44763271162123386
+            },
+            {
+                "bucket": 0.55,
+                "predictions": 578,
+                "predicted": 0.5497343684939034,
+                "observed": 0.5397923875432526
+            },
+            {
+                "bucket": 0.65,
+                "predictions": 388,
+                "predicted": 0.6466455942360861,
+                "observed": 0.6288659793814433
+            },
+            {
+                "bucket": 0.75,
+                "predictions": 233,
+                "predicted": 0.7470371579911436,
+                "observed": 0.7811158798283262
+            },
+            {
+                "bucket": 0.85,
+                "predictions": 145,
+                "predicted": 0.8378678343676474,
+                "observed": 0.8620689655172413
+            },
+            {
+                "bucket": 0.95,
+                "predictions": 14,
+                "predicted": 0.9236904788966402,
+                "observed": 1
+            }
+        ]
+    }
+}

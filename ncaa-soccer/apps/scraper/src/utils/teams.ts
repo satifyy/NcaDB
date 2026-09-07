@@ -1,10 +1,13 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { TeamNameResolver } from '@ncaa/parsers';
+import { ACC_INVENTORY, TEAM_ALIASES, TEAMS_DIR as STORAGE_TEAMS_DIR } from '@ncaa/storage';
 
 export interface TeamConfig {
     team_id: string;
     name_canonical: string;
+    /** Conference the school is filed under, in current alignment. */
+    conference?: string;
     schedule_url: string;
     platform_guess?: string;
     parser_key?: string;
@@ -13,8 +16,8 @@ export interface TeamConfig {
     timezone?: string;
 }
 
-export const DEFAULT_TEAMS_PATH = path.resolve(__dirname, '../../../../data/teams/acc_teams.json');
-export const DEFAULT_ALIASES_PATH = path.resolve(__dirname, '../../../../data/teams/team_aliases.json');
+export const DEFAULT_TEAMS_PATH = ACC_INVENTORY;
+export const DEFAULT_ALIASES_PATH = TEAM_ALIASES;
 
 export function loadTeams(teamsPath: string = DEFAULT_TEAMS_PATH): TeamConfig[] {
     if (!fs.existsSync(teamsPath)) {
@@ -23,7 +26,7 @@ export function loadTeams(teamsPath: string = DEFAULT_TEAMS_PATH): TeamConfig[] 
     return JSON.parse(fs.readFileSync(teamsPath, 'utf8'));
 }
 
-export const TEAMS_DIR = path.resolve(__dirname, '../../../../data/teams');
+export const TEAMS_DIR = STORAGE_TEAMS_DIR;
 
 /**
  * Every school across every conference inventory, de-duplicated by `team_id`.

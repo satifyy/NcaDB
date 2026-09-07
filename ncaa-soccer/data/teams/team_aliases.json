@@ -126,5 +126,91 @@
     "ST_JOHN_S": [
         "St. John's (NY)",
         "Saint John's"
+    ],
+    "LOYOLA_MARYMOUNT": [
+        "LMU"
+    ],
+    "SEATTLE": [
+        "Seattle U",
+        "SEA U"
+    ],
+    "SAN_DIEGO": [
+        "USD"
+    ],
+    "PACIFIC": [
+        "UOP"
+    ],
+    "UNC_WILMINGTON": [
+        "UNCW"
+    ],
+    "UNC_GREENSBORO": [
+        "UNCG"
+    ],
+    "KANSAS_CITY": [
+        "UMKC"
+    ],
+    "UCONN": [
+        "Connecticut"
+    ],
+    "BOSTON_UNIVERSITY": [
+        "Boston U."
+    ],
+    "CHARLESTON": [
+        "College of Charleston"
+    ],
+    "PENN": [
+        "University of Pennsylvania",
+        "UPenn"
+    ],
+    "UCF": [
+        "Central Florida"
+    ],
+    "SAN_JOSE_STATE": [
+        "San José State"
+    ],
+    "GEORGIA_STATE": [
+        "Ga St"
+    ],
+    "UMBC": [
+        "Maryland-Baltimore-County"
+    ],
+    "CAL_STATE_FULLERTON": [
+        "California State Fullerton"
+    ],
+    "UC_SANTA_BARBARA": [
+        "UCSB"
+    ],
+    "GEORGETOWN": [
+        "Hoyas"
+    ],
+    "USC_UPSTATE": [
+        "Upstate",
+        "Upstat"
+    ],
+    "ETSU": [
+        "East Tennessee State",
+        "East Tennessee State Univeristy"
+    ],
+    "FGCU": [
+        "Florida Gulf Coast"
+    ],
+    "FAU": [
+        "Florida Atlantic",
+        "Fla. Atlantic"
+    ],
+    "VCU": [
+        "Virginia Commonwealth"
+    ],
+    "VMI": [
+        "Virginia Military Institute"
+    ],
+    "FIU": [
+        "Florida International"
+    ],
+    "ARMY": [
+        "Army West Point"
+    ],
+    "GEORGE_WASHINGTON": [
+        "GWUMSOC"
     ]
 }

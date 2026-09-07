@@ -1,0 +1,70 @@
+# Guards the scheduled refresh.
+#
+# The refresh workflow commits scraped data back to this repository without anyone
+# looking at it, so the checks that would otherwise be a formality are the only thing
+# standing between a bad parser change and a season of corrupted CSVs.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_call:
+
+defaults:
+  run:
+    working-directory: ncaa-soccer
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      # `apps/dashboard/src/data` is 72 MB of JSON that both generate steps rebuild from
+      # the CSVs beside it. It is in .gitignore, but .gitignore does nothing to a file
+      # already in the index — which is how it got committed the first time. A branch
+      # that re-adds one with `git add -f`, or that reverts the .gitignore, would put the
+      # scheduled refresh back to pushing 72 MB a day. Cheaper to fail here.
+      - name: No generated dashboard data in git
+        run: |
+          tracked=$(git ls-files apps/dashboard/src/data)
+          if [ -n "$tracked" ]; then
+            echo "::error::Generated dashboard data is tracked; it is rebuilt by 'npm run generate'."
+            echo "$tracked"
+            echo 'Remove it with: git rm --cached -r apps/dashboard/src/data'
+            exit 1
+          fi
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: ncaa-soccer/package-lock.json
+
+      - run: npm ci
+
+      - name: Build workspaces
+        run: npm run build
+
+      - name: Unit tests
+        run: npx tsx --test apps/scraper/src/tests/*.test.ts
+
+      # A team inventory that fails its schema is the one input the scrapers cannot
+      # recover from, and it is edited by a script rather than by hand.
+      - name: Validate team inventories
+        run: npm run validate
+
+      # A workspace member, so the root `npm ci` above already installed its deps.
+      #
+      # Lint before build: `npm run build` regenerates the dashboard's JSON and then runs
+      # Vite over 72 MB of it, which is most of this job's minutes. A rule violation
+      # should not have to wait behind that to be reported.
+      - name: Lint dashboard
+        run: npm run lint
+        working-directory: ncaa-soccer/apps/dashboard
+
+      - name: Build dashboard
+        run: npm run build
+        working-directory: ncaa-soccer/apps/dashboard

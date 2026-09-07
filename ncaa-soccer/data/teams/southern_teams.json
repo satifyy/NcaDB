@@ -7,15 +7,13 @@
         "schedule_url": "https://etsubucs.com/sports/mens-soccer/schedule",
         "platform_guess": "sidearm",
         "parser_key": "sidearm_std",
-        "aliases": [
-            "ETSU"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 120
     },
     {
-        "team_id": "FURMAN_UNIVERSITY",
-        "name_canonical": "Furman University",
+        "team_id": "FURMAN",
+        "name_canonical": "Furman",
         "conference": "Southern",
         "sport": "msoc",
         "schedule_url": "https://furmanpaladins.com/sports/mens-soccer/schedule",
@@ -28,8 +26,8 @@
         "verified_games": 136
     },
     {
-        "team_id": "LIBERTY_UNIVERSITY",
-        "name_canonical": "Liberty University",
+        "team_id": "LIBERTY",
+        "name_canonical": "Liberty",
         "conference": "Southern",
         "sport": "msoc",
         "schedule_url": "https://libertyflames.com/sports/mens-soccer/schedule",
@@ -42,8 +40,8 @@
         "verified_games": 20
     },
     {
-        "team_id": "MERCER_UNIVERSITY",
-        "name_canonical": "Mercer University",
+        "team_id": "MERCER",
+        "name_canonical": "Mercer",
         "conference": "Southern",
         "sport": "msoc",
         "schedule_url": "https://mercerbears.com/sports/mens-soccer/schedule",
@@ -63,9 +61,7 @@
         "schedule_url": "https://uncgspartans.com/sports/mens-soccer/schedule",
         "platform_guess": "sidearm",
         "parser_key": "sidearm_std",
-        "aliases": [
-            "UNC Greensboro"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 169
     },
@@ -77,15 +73,13 @@
         "schedule_url": "https://vmikeydets.com/sports/mens-soccer/schedule",
         "platform_guess": "sidearm",
         "parser_key": "sidearm_std",
-        "aliases": [
-            "VMI"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 142
     },
     {
-        "team_id": "WOFFORD_COLLEGE",
-        "name_canonical": "Wofford College",
+        "team_id": "WOFFORD",
+        "name_canonical": "Wofford",
         "conference": "Southern",
         "sport": "msoc",
         "schedule_url": "https://athletics.wofford.edu/sports/mens-soccer/schedule",

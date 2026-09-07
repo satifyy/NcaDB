@@ -1,7 +1,7 @@
 [
     {
-        "team_id": "CAMPBELL_UNIVERSITY",
-        "name_canonical": "Campbell University",
+        "team_id": "CAMPBELL",
+        "name_canonical": "Campbell",
         "conference": "CAA",
         "sport": "msoc",
         "schedule_url": "https://gocamels.com/sports/mens-soccer/schedule",
@@ -21,15 +21,13 @@
         "schedule_url": "https://cofcsports.com/sports/mens-soccer/schedule",
         "platform_guess": "sidearm",
         "parser_key": "sidearm_std",
-        "aliases": [
-            "Charleston"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 20
     },
     {
-        "team_id": "DREXEL_UNIVERSITY",
-        "name_canonical": "Drexel University",
+        "team_id": "DREXEL",
+        "name_canonical": "Drexel",
         "conference": "CAA",
         "sport": "msoc",
         "schedule_url": "https://drexeldragons.com/sports/mens-soccer/schedule",
@@ -42,8 +40,8 @@
         "verified_games": 16
     },
     {
-        "team_id": "HOFSTRA_UNIVERSITY",
-        "name_canonical": "Hofstra University",
+        "team_id": "HOFSTRA",
+        "name_canonical": "Hofstra",
         "conference": "CAA",
         "sport": "msoc",
         "schedule_url": "https://gohofstra.com/sports/mens-soccer/schedule",
@@ -56,8 +54,8 @@
         "verified_games": 77
     },
     {
-        "team_id": "MONMOUTH_UNIVERSITY",
-        "name_canonical": "Monmouth University",
+        "team_id": "MONMOUTH",
+        "name_canonical": "Monmouth",
         "conference": "CAA",
         "sport": "msoc",
         "schedule_url": "https://monmouthhawks.com/sports/mens-soccer/schedule",
@@ -70,8 +68,8 @@
         "verified_games": 120
     },
     {
-        "team_id": "NORTHEASTERN_UNIVERSITY",
-        "name_canonical": "Northeastern University",
+        "team_id": "NORTHEASTERN",
+        "name_canonical": "Northeastern",
         "conference": "CAA",
         "sport": "msoc",
         "schedule_url": "https://nuhuskies.com/sports/mens-soccer/schedule",
@@ -84,8 +82,8 @@
         "verified_games": 78
     },
     {
-        "team_id": "STONY_BROOK_UNIVERSITY",
-        "name_canonical": "Stony Brook University",
+        "team_id": "STONY_BROOK",
+        "name_canonical": "Stony Brook",
         "conference": "CAA",
         "sport": "msoc",
         "schedule_url": "https://stonybrookathletics.com/sports/mens-soccer/schedule",
@@ -105,9 +103,7 @@
         "schedule_url": "https://uncwsports.com/sports/mens-soccer/schedule",
         "platform_guess": "sidearm",
         "parser_key": "sidearm_std",
-        "aliases": [
-            "UNC Wilmington"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 82
     },
@@ -119,9 +115,7 @@
         "schedule_url": "https://tribeathletics.com/sports/mens-soccer/schedule",
         "platform_guess": "sidearm",
         "parser_key": "sidearm_std",
-        "aliases": [
-            "William & Mary"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 114
     }

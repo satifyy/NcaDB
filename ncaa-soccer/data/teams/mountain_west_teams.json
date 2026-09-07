@@ -7,15 +7,13 @@
         "schedule_url": "https://goairforcefalcons.com/sports/mens-soccer/schedule",
         "platform_guess": "sidearm",
         "parser_key": "sidearm_std",
-        "aliases": [
-            "Air Force"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 19
     },
     {
-        "team_id": "SAN_JOSE_STATE_UNIVERSITY",
-        "name_canonical": "San Jose State University",
+        "team_id": "SAN_JOSE_STATE",
+        "name_canonical": "San Jose State",
         "conference": "Mountain West",
         "sport": "msoc",
         "schedule_url": "https://sjsuspartans.com/sports/mens-soccer/schedule",
@@ -35,9 +33,7 @@
         "schedule_url": "https://ucdavisaggies.com/sports/mens-soccer/schedule",
         "platform_guess": "sidearm",
         "parser_key": "sidearm_std",
-        "aliases": [
-            "UC Davis"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 99
     },
@@ -49,15 +45,13 @@
         "schedule_url": "https://unlvrebels.com/sports/mens-soccer/schedule",
         "platform_guess": "sidearm",
         "parser_key": "sidearm_std",
-        "aliases": [
-            "UNLV"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 83
     },
     {
-        "team_id": "UTAH_TECH_UNIVERSITY",
-        "name_canonical": "Utah Tech University",
+        "team_id": "UTAH_TECH",
+        "name_canonical": "Utah Tech",
         "conference": "Mountain West",
         "sport": "msoc",
         "schedule_url": "https://utahtechtrailblazers.com/sports/mens-soccer/schedule",
@@ -68,5 +62,19 @@
         ],
         "timezone": "America/New_York",
         "verified_games": 119
+    },
+    {
+        "team_id": "GRAND_CANYON",
+        "name_canonical": "Grand Canyon",
+        "conference": "Mountain West",
+        "sport": "msoc",
+        "schedule_url": "https://gculopes.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Grand Canyon University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 18
     }
 ]

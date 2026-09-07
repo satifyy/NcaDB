@@ -1,0 +1,756 @@
+player_key,player_name,team_id,jersey_number,games_played,minutes,goals,assists,shots,shots_on_goal,saves
+clemson:smithkimarni,"Smith, Kimarni",Clemson,9,11,849,8,3,31,19,0
+georgiastate:briggsaris,"Briggs, Aris",Georgia State,31,13,822,5,3,24,12,0
+notredame:lynnjack,"LYNN, JACK",Notre Dame,27,7,506,6,0,22,11,0
+georgiastate:fearnleymatthew,"Fearnley, Matthew",Georgia State,10,12,883,5,1,31,19,0
+clemson:barbergrayson,"Barber, Grayson",Clemson,11,11,790,2,7,29,12,0
+wakeforest:holcombkyle,"Holcomb, Kyle",Wake Forest,3,8,472,5,1,13,9,0
+wakeforest:harriscalvin,"Harris, Calvin",Wake Forest,22,8,620,4,2,24,10,0
+coastalcarolina:lagemarcelo,"Lage, Marcelo",Coastal Carolina,5,8,617,5,0,11,7,0
+pittsburgh:petkovicveljko,"PETKOVIC, VELJKO",Pittsburgh,19,6,484,4,2,11,9,0
+pittsburgh:noelvalentin,"Noel, Valentin",Pittsburgh,8,5,452,4,1,13,7,0
+coastalcarolina:jonesmarcello,"Jones, Marcello",Coastal Carolina,8,8,408,2,5,6,5,0
+georgiastate:proctorgeorge,"Proctor, George",Georgia State,16,13,972,2,4,5,4,0
+louisville:fonsecapedro,"Fonseca, Pedro",Louisville,7,8,728,3,2,15,7,0
+centralarkansas:jensensoren,"Jensen, Soren",Central Arkansas,7,7,610,3,2,18,13,0
+clemson:brightonjames,"Brighton, James",Clemson,25,10,572,4,0,19,13,0
+wakeforest:cholmachop,"Chol, Machop",Wake Forest,21,8,507,3,2,17,8,0
+georgiastate:guestjustin,"Guest, Justin",Georgia State,15,13,698,2,3,15,7,0
+clemson:seyemohamed,"Seye, Mohamed",Clemson,14,6,255,3,1,8,6,0
+clemson:fernandezsalvadorluisfelipe,"Fernandez-Salvador, Luis Felipe",Clemson,10,11,817,2,2,14,5,0
+notredame:mcfaddenaiden,"MCFADDEN, AIDEN",Notre Dame,10,8,704,1,4,14,5,0
+centralarkansas:suarezalberto,"Suarez, Alberto",Central Arkansas,4,7,560,3,0,8,5,0
+wakeforest:parenteisaiah,"Parente, Isaiah",Wake Forest,15,7,509,1,4,9,5,0
+duke:doranjack,"Doran, Jack",Duke,8,7,469,3,0,10,6,0
+louisville:amoelijah,"Amo, Elijah",Louisville,17,8,442,3,0,5,4,0
+pittsburgh:jacquessonbertin,"JACQUESSON, BERTIN",Pittsburgh,10,6,419,2,2,11,6,0
+wakeforest:wronadavid,"Wrona, David",Wake Forest,13,8,259,3,0,9,7,0
+virginiatech:labovitzjacob,"Labovitz, Jacob",Virginia Tech,18,4,188,3,0,13,5,0
+army:pereiraoscar,"Pereira, Oscar",Army,10,2,92,2,2,6,4,0
+clemson:johnsoncallum,"Johnson, Callum",Clemson,16,11,755,1,3,14,6,0
+georgiasouthern:davieadam,"Davie, Adam",Georgia Southern,10,9,752,2,1,8,4,0
+louisville:abdikadirhaji,"Abdikadir, Haji",Louisville,4,8,742,1,3,12,5,0
+georgiastate:bennettandrew,"Bennett, Andrew",Georgia State,20,13,669,2,1,15,7,0
+northcarolina:montesdeocagiovanni,"Montesdeoca, Giovanni",North Carolina,10,7,554,2,1,14,4,0
+pittsburgh:dexteralexander,"DEXTER, ALEXANDER",Pittsburgh,13,6,459,1,3,5,4,0
+duke:parianonick,"Pariano, Nick",Duke,18,8,458,1,3,5,2,0
+kentucky:mabikaaim,"Mabika, Aim?",Kentucky,6,3,270,2,1,4,2,0
+coastalcarolina:leivaesteban,"Leiva, Esteban",Coastal Carolina,9,8,249,2,1,7,5,0
+georgiastate:hendersonalex,"Henderson, Alex",Georgia State,6,13,1178,1,2,8,4,0
+georgiastate:finnieross,"Finnie, Ross",Georgia State,4,13,1024,1,2,6,3,0
+georgiastate:luquelogan,"Luque, Logan",Georgia State,23,12,804,2,0,4,2,0
+uab:buetejoseph,"Buete, Joseph",UAB,2,7,595,2,0,7,3,0
+duke:wrightdaniel,"Wright, Daniel",Duke,7,8,512,2,0,11,2,0
+northcarolina:herrerasantiago,"Herrera, Santiago",North Carolina,9,7,432,2,0,9,5,0
+georgiastate:hodgejeryn,"Hodge, Jeryn",Georgia State,27,13,429,2,0,5,3,0
+syracuse:kerrdeandre,"Kerr, Deandre",Syracuse,7,5,412,2,0,9,4,0
+notredame:giacobelloben,"Giacobello, Ben",Notre Dame,26,6,384,1,2,6,3,0
+wakeforest:hernandezomar,"Hernandez, Omar",Wake Forest,17,8,371,1,2,4,2,0
+kentucky:bjorgolfssoneythor,"BJORGOLFSSON, EYTHOR",Kentucky,9,4,299,2,0,10,4,0
+duke:oconnellstephen,"O'Connell, Stephen",Duke,2,8,293,2,0,6,4,0
+coastalcarolina:hackenbergethan,"Hackenberg, Ethan",Coastal Carolina,19,8,290,2,0,8,3,0
+kentucky:elmedkharkalil,"ELMEDKHAR, KALIL",Kentucky,21,4,268,2,0,9,5,0
+mercer:martineautrevor,"Martineau, Trevor",Mercer,9,3,204,2,0,7,4,0
+kentucky:evansdaniel,"EVANS, DANIEL",Kentucky,7,4,201,1,2,6,3,0
+louisville:lebelbryce,"LeBel, Bryce",Louisville,24,8,762,1,1,3,3,0
+louisville:samplebradley,"Sample, Bradley",Louisville,13,8,668,0,3,2,0,0
+georgiastate:carlsonsimon,"Carlson, Simon",Georgia State,12,13,622,1,1,7,4,0
+pittsburgh:waltijackson,"WALTI, JACKSON",Pittsburgh,24,6,554,1,1,1,1,0
+syracuse:norheimsondre,"Norheim, Sondre",Syracuse,3,5,504,1,1,3,2,0
+syracuse:goldharhilli,"Goldhar, Hilli",Syracuse,11,5,474,1,1,6,5,0
+pittsburgh:mirkovicfilip,"MIRKOVIC, FILIP",Pittsburgh,21,6,470,1,1,4,2,0
+coastalcarolina:couteaumael,"Couteau, Mael",Coastal Carolina,26,8,465,1,1,5,2,0
+wakeforest:swallenjake,"Swallen, Jake",Wake Forest,24,8,456,0,3,2,0,0
+syracuse:singelmannnoah,"Singelmann, Noah",Syracuse,4,5,452,1,1,5,2,0
+northcarolina:delrosariolucas,"del Rosario, Lucas",North Carolina,7,8,400,1,1,8,2,0
+coastalcarolina:pughconnor,"Pugh, Connor",Coastal Carolina,16,8,391,1,1,10,4,0
+virginiatech:stricklerkristo,"Strickler, Kristo",Virginia Tech,15,4,370,1,1,16,5,0
+louisville:camaraaboubacar,"Camara, Aboubacar",Louisville,27,8,323,1,1,2,1,0
+mercer:gaitherdylan,"Gaither, Dylan",Mercer,8,3,246,1,1,10,5,0
+southcarolina:banahanbrian,"Banahan, Brian",South Carolina,12,3,211,1,1,9,4,0
+uca:jensensoren,"Jensen, Soren",UCA,7,2,150,1,1,6,5,0
+uca:andersenkasper,"Andersen, Kasper",UCA,11,2,107,1,1,2,1,0
+navy:jacksondavid,"Jackson, David",Navy,31,1,65,1,1,3,2,0
+clemson:maloujustin,"Malou, Justin",Clemson,4,11,961,1,0,2,1,0
+northcarolina:garvanianmilo,"Garvanian, Milo",North Carolina,22,8,774,0,2,6,0,0
+duke:mcgarveylewis,"McGarvey, Lewis",Duke,4,8,750,1,0,10,4,0
+coastalcarolina:skraepkasper,"Skraep, Kasper",Coastal Carolina,6,8,743,1,0,5,2,0
+wakeforest:benalcazarnico,"Benalcazar, Nico",Wake Forest,23,8,706,1,0,3,1,0
+georgiasouthern:tambadualhaji,"Tambadu, Alhaji",Georgia Southern,14,9,631,1,0,10,4,0
+uab:loughreycale,"Loughrey, Cale",UAB,13,7,599,1,0,5,1,0
+georgiasouthern:cortesaldair,"Cortes, Aldair",Georgia Southern,15,9,599,0,2,6,1,0
+northcarolina:zattarinfillipo,"Zattarin, Fillipo",North Carolina,2,6,589,1,0,1,1,0
+notredame:pellegrinomichael,"PELLEGRINO, MICHAEL",Notre Dame,6,8,585,1,0,9,2,0
+pittsburgh:washingtonbryce,"WASHINGTON, BRYCE",Pittsburgh,4,6,545,1,0,1,1,0
+uab:robicheauxmason,"Robicheaux, Mason",UAB,15,7,536,1,0,5,2,0
+georgiasouthern:diadiegaye,"Diadie, Gaye",Georgia Southern,6,9,458,1,0,1,1,0
+ncstate:muskwekuda,"Muskwe, Kuda",NC State,9,8,451,1,0,9,5,0
+pittsburgh:loeffelsendjasper,"LOEFFELSEND, JASPER",Pittsburgh,2,5,423,0,2,2,0,0
+ncstate:brismaivy,"Brisma, Ivy",NC State,7,8,406,1,0,6,2,0
+ncstate:bautistaalex,"Bautista, Alex",NC State,19,8,391,1,0,3,1,0
+coastalcarolina:gloriosonoah,"Glorioso, Noah",Coastal Carolina,15,8,377,1,0,7,2,0
+uab:dupontgrayson,"Dupont, Grayson",UAB,24,7,376,1,0,4,1,0
+georgiastate:wilkinsmax,"Wilkins, Max",Georgia State,19,12,365,1,0,8,4,0
+kentucky:rousebailey,"ROUSE, BAILEY",Kentucky,18,4,360,1,0,2,1,0
+kentucky:screenrobert,"SCREEN, ROBERT",Kentucky,2,4,360,0,2,4,1,0
+uab:oharaaodhn,"O'Hara, Aodhán",UAB,9,7,343,1,0,5,2,0
+louisville:diaznico,"Diaz, Nico",Louisville,20,8,328,1,0,3,2,0
+virginia:uelandandreas,"Ueland, Andreas",Virginia,17,3,289,1,0,1,1,0
+virginiatech:blacklocknick,"Blacklock, Nick",Virginia Tech,17,3,269,1,0,11,4,0
+coastalcarolina:repettoclaudio,"Repetto, Claudio",Coastal Carolina,7,6,256,1,0,9,3,0
+southcarolina:gurrierikyle,"Gurrieri, Kyle",South Carolina,6,3,243,1,0,6,2,0
+northcarolina:clarkeakeim,"Clarke, Akeim",North Carolina,25,8,236,0,2,3,1,0
+centralarkansas:kubotakyosuke,"Kubota, Kyosuke",Central Arkansas,17,7,232,0,2,1,0,0
+northcarolina:waddataff,"Wadda, Taff",North Carolina,39,8,218,1,0,6,3,0
+virginia:gunnarssonaxel,"Gunnarsson, Axel",Virginia,18,3,217,1,0,3,1,0
+mercer:gideondawson,"Gideon, Dawson",Mercer,10,3,205,1,0,5,2,0
+southcarolina:frostlogan,"Frost, Logan",South Carolina,17,3,198,1,0,9,4,0
+notredame:russodaniel,"RUSSO, DANIEL",Notre Dame,16,5,193,1,0,2,1,0
+uca:gillrubynsingh,"Gill, Rubyn Singh",UCA,16,2,181,1,0,2,1,0
+centralarkansas:calzolaedoardo,"Calzola, Edoardo",Central Arkansas,3,4,180,1,0,2,2,0
+virginia:croftsnathaniel,"Crofts, Nathaniel",Virginia,10,3,158,1,0,3,2,0
+pittsburgh:mortluke,"Mort, Luke",Pittsburgh,15,5,156,1,0,4,1,0
+virginia:hortonphilip,"Horton, Philip",Virginia,9,3,156,1,0,5,3,0
+mercer:kimkevin,"Kim, Kevin",Mercer,14,3,148,0,2,3,1,0
+northcarolina:constantmatthew,"Constant, Matthew",North Carolina,6,1,90,1,0,1,1,0
+uca:kjoerholtole,"Kjoerholt, Ole",UCA,2,1,90,1,0,4,2,0
+navy:nocitamatt,"Nocita, Matt",Navy,6,1,90,1,0,2,1,0
+centralarkansas:chavezchristian,"Chavez, Christian",Central Arkansas,29,6,86,1,0,1,1,0
+kentucky:lindowbrock,"Lindow, Brock",Kentucky,15,3,86,1,0,3,1,0
+gas:cortesaldair,"Cortes, Aldair",GAS,15,1,84,1,0,1,1,0
+army:burgessjake,"Burgess, Jake",Army,13,2,80,1,0,3,3,0
+northcarolina:whitekey,"White, Key",North Carolina,13,7,68,1,0,4,2,0
+army:debruynechris,"DeBruyne, Chris",Army,18,2,50,1,0,2,2,0
+uk:viscontimason,"Visconti, Mason",UK,11,1,48,1,0,1,1,0
+canceledduetocovid19:pennyliam,"Penny, Liam",CANCELED DUE TO COVID-19,14,1,39,1,0,2,1,0
+uk:lindowbrock,"Lindow, Brock",UK,15,1,34,1,0,2,1,0
+uca:gonzalezjosecarlos,"Gonzalez, Jose Carlos",UCA,25,1,20,1,0,1,1,0
+army:team,TEAM,Army,TM,1,0,1,0,0,0,0
+clemson:asensiocharlie,"Asensio, Charlie",Clemson,15,11,1007,0,1,1,0,0
+duke:frickmatthias,"Frick, Matthias",Duke,3,8,750,0,1,2,0,0
+duke:murphyian,"Murphy, Ian",Duke,13,8,750,0,1,1,0,0
+duke:stroudpeter,"Stroud, Peter",Duke,14,8,714,0,1,8,2,0
+northcarolina:constantmatt,"Constant, Matt",North Carolina,6,7,686,0,1,2,1,0
+notredame:quintonphilip,"QUINTON, PHILIP",Notre Dame,2,7,639,0,1,2,0,0
+louisville:sanchiscarlos,"Sanchis, Carlos",Louisville,10,8,610,0,1,6,2,0
+wakeforest:suzukitakuma,"Suzuki, Takuma",Wake Forest,12,8,571,0,1,0,0,0
+pittsburgh:crivelloraphael,"CRIVELLO, RAPHAEL",Pittsburgh,3,6,554,0,1,1,0,0
+ncstate:garciapepe,"Garcia, Pepe",NC State,3,8,550,0,1,2,1,0
+pittsburgh:ordonezarturo,"ORDONEZ, ARTURO",Pittsburgh,5,6,545,0,1,5,2,0
+wakeforest:rulaholland,"Rula, Holland",Wake Forest,4,8,533,0,1,0,0,0
+georgiastate:lunacarlos,"Luna, Carlos",Georgia State,32,13,530,0,1,3,0,0
+northcarolina:jimenezjonathan,"Jimenez, Jonathan",North Carolina,16,8,505,0,1,10,4,0
+notredame:burnspaddy,"BURNS, PADDY",Notre Dame,15,8,498,0,1,2,0,0
+ncstate:sealsaj,"Seals, AJ",NC State,10,8,492,0,1,3,1,0
+centralarkansas:azconapablo,"Azcona, Pablo",Central Arkansas,5,7,481,0,1,4,0,0
+wakeforest:escribanocristian,"Escribano, Cristian",Wake Forest,19,8,478,0,1,1,1,0
+coastalcarolina:rzepeckiemile,"Rzepecki, Emile",Coastal Carolina,17,8,426,0,1,8,3,0
+duke:taylorscotty,"Taylor, Scotty",Duke,9,8,406,0,1,12,2,0
+uab:herrerasantiago,"Herrera, Santiago",UAB,25,6,370,0,1,3,0,0
+centralarkansas:morelalexsi,"Morel, Alexsi",Central Arkansas,19,7,357,0,1,4,3,0
+duke:kellyconor,"Kelly, Conor",Duke,22,8,338,0,1,2,0,0
+virginiatech:mcdowellkyle,"McDowell, Kyle",Virginia Tech,24,4,317,0,1,1,0,0
+virginiatech:bluemlerjakob,"Bluemler, Jakob",Virginia Tech,31,4,316,0,1,1,0,0
+georgiasouthern:jacksonthomas,"Jackson, Thomas",Georgia Southern,27,9,298,0,1,0,0,0
+coastalcarolina:kimurakazuki,"Kimura, Kazuki",Coastal Carolina,11,8,295,0,1,4,2,0
+kentucky:grassowluis,"GRASSOW, LUIS",Kentucky,4,4,286,0,1,3,2,0
+clemson:mcneillquinn,"McNeill, Quinn",Clemson,17,7,285,0,1,4,2,0
+pittsburgh:baileymatt,"BAILEY, MATT",Pittsburgh,20,5,270,0,1,4,0,0
+kentucky:meinzermarcel,"MEINZER, MARCEL",Kentucky,8,4,269,0,1,6,0,0
+mercer:richardskareve,"Richards, Kareve",Mercer,5,3,256,0,1,0,0,0
+syracuse:kocevskijeorgio,"Kocevski, Jeorgio",Syracuse,12,5,251,0,1,2,1,0
+virginia:byrdisaiah,"Byrd, Isaiah",Virginia,3,3,206,0,1,0,0,0
+wakeforest:forbesjahlane,"Forbes, Jahlane",Wake Forest,14,8,196,0,1,1,1,0
+georgiasouthern:mitchellsmithcj,"Mitchell-Smith, CJ",Georgia Southern,11,5,194,0,1,2,0,0
+uca:abasovicent,"Abaso, Vicent",UCA,6,2,186,0,1,0,0,0
+virginiatech:amereslandon,"Ameres, Landon",Virginia Tech,20,4,185,0,1,2,0,0
+mercer:anyafoandrew,"Anyafo, Andrew",Mercer,2,3,182,0,1,2,1,0
+uca:azconapablo,"Azcona, Pablo",UCA,5,2,153,0,1,0,0,0
+coastalcarolina:fieldingthomas,"Fielding, Thomas",Coastal Carolina,18,7,135,0,1,5,2,0
+uab:pricetyrell,"Price, Tyrell",UAB,28,7,133,0,1,2,2,0
+wakeforest:thomascolin,"Thomas, Colin",Wake Forest,26,7,131,0,1,4,2,1
+mercer:packerjrricardo,"Packer Jr., Ricardo",Mercer,3,3,123,0,1,7,3,0
+kentucky:innescolin,"INNES, COLIN",Kentucky,16,4,118,0,1,4,0,0
+virginiatech:littlechris,"Little, Chris",Virginia Tech,10,4,111,0,1,0,0,0
+virginia:gibertjoan,"Gibert, Joan",Virginia,21,1,109,0,1,1,0,0
+uca:merciedoardo,"Merci, Edoardo",UCA,18,2,100,0,1,3,3,0
+coastalcarolina:karivyochai,"Kariv, Yochai",Coastal Carolina,12,6,97,0,1,4,2,0
+uk:jonesleon,"Jones, Leon",UK,5,1,96,0,1,0,0,0
+uk:elmedkharkalil,"ElMedkhar, Kalil",UK,21,1,96,0,1,1,1,0
+centralarkansas:gillrubyn,"Gill, Rubyn",Central Arkansas,16,1,95,0,1,0,0,0
+canceledduetocovid19:smithsean,"Smith, Sean",CANCELED DUE TO COVID-19,19,1,90,0,1,0,0,0
+uca:kubotakyosuke,"Kubota, Kyosuke",UCA,17,2,90,0,1,1,0,0
+gas:davieadam,"Davie, Adam",GAS,10,1,80,0,1,0,0,0
+kentucky:mcmanusbrandon,"MCMANUS, BRANDON",Kentucky,19,4,73,0,1,1,1,0
+uca:uekuridaishi,"Uekuri, Daishi",UCA,14,1,69,0,1,1,1,0
+canceledduetocovid19:jonesluke,"Jones, Luke",CANCELED DUE TO COVID-19,18,1,63,0,1,2,0,0
+georgiastate:munozramon,"Munoz, Ramon",Georgia State,21,13,1145,0,0,4,2,0
+clemson:marksgeorge,"Marks, George",Clemson,1,11,949,0,0,0,0,26
+georgiastate:tysonpaul,"Tyson, Paul",Georgia State,1,13,940,0,0,0,0,14
+clemson:grenoskar,"Ågren, Oskar",Clemson,3,10,895,0,0,2,1,0
+clemson:mayakaphilip,"Mayaka, Philip",Clemson,20,10,891,0,0,11,2,0
+clemson:martinjohn,"Martin, John",Clemson,13,11,868,0,0,0,0,0
+northcarolina:smiralec,"Smir, Alec",North Carolina,1,8,776,0,0,0,0,21
+coastalcarolina:saunderstor,"Saunders, Tor",Coastal Carolina,1,8,755,0,0,0,0,13
+coastalcarolina:itopoulosnicholas,"Itopoulos, Nicholas",Coastal Carolina,4,8,755,0,0,1,0,0
+ncstate:pedregosapablo,"Pedregosa, Pablo",NC State,2,8,749,0,0,6,2,0
+ncstate:krapfleon,"Krapf, Leon",NC State,1,8,747,0,0,0,0,24
+louisville:contelamine,"Conte, Lamine",Louisville,3,8,742,0,0,0,0,0
+duke:lopezantino,"Lopez, Antino",Duke,5,8,740,0,0,5,3,0
+ncstate:smithjamie,"Smith, Jamie",NC State,5,8,735,0,0,0,0,0
+notredame:mclaughlinkeagan,"MCLAUGHLIN, KEAGAN",Notre Dame,1,8,729,0,0,0,0,24
+notredame:omarmohamed,"OMAR, MOHAMED",Notre Dame,29,8,722,0,0,2,1,0
+georgiasouthern:philpjack,"Philp, Jack",Georgia Southern,25,9,709,0,0,2,1,0
+duke:pulisicwill,"Pulisic, Will",Duke,1,8,705,0,0,0,0,16
+coastalcarolina:kemblejason,"Kemble, Jason",Coastal Carolina,14,8,692,0,0,1,0,0
+wakeforest:tubbsgarrison,"Tubbs, Garrison",Wake Forest,32,8,681,0,0,3,1,0
+ncstate:asomanigeorge,"Asomani, George",NC State,14,8,679,0,0,5,0,0
+louisville:portmanwilliam,"Portman, William",Louisville,2,8,674,0,0,0,0,0
+wakeforest:pannenbergandrew,"Pannenberg, Andrew",Wake Forest,0,8,659,0,0,0,0,21
+louisville:gelnovatchjake,"Gelnovatch, Jake",Louisville,31,8,652,0,0,0,0,24
+notredame:meyertownsend,"MEYER, TOWNSEND",Notre Dame,18,8,634,0,0,0,0,0
+georgiasouthern:ferreiraaidan,"Ferreira, Aidan",Georgia Southern,33,8,634,0,0,0,0,0
+georgiasouthern:prentisscody,"Prentiss, Cody",Georgia Southern,5,9,629,0,0,0,0,0
+uab:krasniqikrenar,"Krasniqi, Krenar",UAB,17,7,625,0,0,2,1,0
+northcarolina:schelstim,"Schels, Tim",North Carolina,28,8,588,0,0,3,0,0
+georgiasouthern:luomajeremiah,"Luoma, Jeremiah",Georgia Southern,18,9,585,0,0,8,3,0
+uab:whiteheadcaelan,"Whitehead, Caelan",UAB,30,7,584,0,0,0,0,29
+centralarkansas:lauferrowan,"Laufer, Rowan",Central Arkansas,23,7,570,0,0,1,1,0
+georgiastate:hiltonjonesjack,"Hilton-Jones, Jack",Georgia State,8,11,565,0,0,2,0,0
+duke:daleyamir,"Daley, Amir",Duke,26,8,558,0,0,2,0,0
+coastalcarolina:riveraandres,"Rivera, Andres",Coastal Carolina,23,8,557,0,0,7,2,0
+georgiasouthern:flowerslee,"Flowers, Lee",Georgia Southern,2,9,556,0,0,2,1,0
+pittsburgh:campuzanonico,"CAMPUZANO, NICO",Pittsburgh,0,6,554,0,0,0,0,21
+notredame:radivojsamatthew,"RADIVOJSA, MATTHEW",Notre Dame,8,8,552,0,0,11,3,0
+ncstate:sweeneybrad,"Sweeney, Brad",NC State,8,8,546,0,0,2,1,0
+louisville:fasteenjack,"Fasteen, Jack",Louisville,8,8,533,0,0,0,0,0
+northcarolina:pickeringjoe,"Pickering, Joe",North Carolina,4,8,527,0,0,7,3,0
+ncstate:palacinpau,"Palacin, Pau",NC State,11,8,527,0,0,8,3,0
+georgiasouthern:allardycesam,"Allardyce, Sam",Georgia Southern,4,8,521,0,0,1,1,0
+notredame:farrellysenan,"FARRELLY, SENAN",Notre Dame,17,7,505,0,0,5,1,0
+northcarolina:salasmark,"Salas, Mark",North Carolina,27,7,505,0,0,1,0,0
+syracuse:salimabdi,"Salim, Abdi",Syracuse,17,5,504,0,0,3,2,0
+syracuse:grunokyle,"Gruno, Kyle",Syracuse,14,5,503,0,0,0,0,0
+notredame:colemanpatrick,"COLEMAN, PATRICK",Notre Dame,13,8,498,0,0,6,4,0
+syracuse:triantafillousimon,"Triantafillou, Simon",Syracuse,8,5,497,0,0,0,0,0
+notredame:abualnadimohammad,"ABUALNADI, MOHAMMAD",Notre Dame,5,7,486,0,0,1,0,0
+coastalcarolina:harmondz,"Harmon, DZ",Coastal Carolina,20,8,484,0,0,8,1,0
+georgiasouthern:baigyusuf,"Baig, Yusuf",Georgia Southern,24,9,469,0,0,0,0,0
+centralarkansas:kimishimakatsuyoshi,"Kimishima, Katsuyoshi",Central Arkansas,8,7,468,0,0,11,7,0
+ncstate:fosteraidan,"Foster, Aidan",NC State,22,8,452,0,0,2,1,0
+uab:travisowen,"Travis, Owen",UAB,23,7,440,0,0,2,0,0
+uab:stockleybrooks,"Stockley, Brooks",UAB,26,7,439,0,0,5,1,0
+uab:richardsonsumner,"Richardson, Sumner",UAB,11,6,431,0,0,0,0,0
+centralarkansas:kjoerholtole,"Kjoerholt, Ole",Central Arkansas,2,6,429,0,0,4,4,0
+louisville:elverothemil,"Elveroth, Emil",Louisville,9,8,428,0,0,7,3,0
+georgiastate:riosmatthew,"Rios, Matthew",Georgia State,3,11,410,0,0,2,0,0
+uab:thorvaldsenteodor,"Thorvaldsen, Teodor",UAB,8,7,402,0,0,2,2,0
+centralarkansas:merciedoardo,"Merci, Edoardo",Central Arkansas,18,7,400,0,0,3,1,0
+georgiastate:dawesclay,"Dawes, Clay",Georgia State,5,10,397,0,0,3,2,0
+northcarolina:olofssonvictor,"Olofsson, Victor",North Carolina,14,8,396,0,0,1,0,0
+centralarkansas:abasovicent,"Abaso, Vicent",Central Arkansas,6,7,383,0,0,0,0,0
+virginiatech:swaneveldmathijs,"Swaneveld, Mathijs",Virginia Tech,1,4,383,0,0,0,0,6
+virginiatech:hauglisivert,"Haugli, Sivert",Virginia Tech,3,4,383,0,0,0,0,0
+virginiatech:kinyuamayola,"Kinyua, Mayola",Virginia Tech,8,4,383,0,0,3,0,0
+virginiatech:pereiradaniel,"Pereira, Daniel",Virginia Tech,9,4,372,0,0,15,8,0
+centralarkansas:gillrubynsingh,"Gill, Rubyn Singh",Central Arkansas,16,4,362,0,0,4,3,0
+georgiasouthern:blaengssonjokull,"Blaengsson, Jokull",Georgia Southern,1,8,360,0,0,0,0,14
+centralarkansas:uekuridaishi,"Uekuri, Daishi",Central Arkansas,14,7,347,0,0,5,1,0
+centralarkansas:andersenkasper,"Andersen, Kasper",Central Arkansas,11,7,344,0,0,5,1,0
+syracuse:busquetsmanel,"Busquets, Manel",Syracuse,9,5,343,0,0,9,5,0
+syracuse:archimedeluther,"Archimede, Luther",Syracuse,19,4,342,0,0,12,5,0
+centralarkansas:thomssonsebastian,"Thomsson, Sebastian",Central Arkansas,1,4,340,0,0,0,0,0
+syracuse:fulcarjulio,"Fulcar, Julio",Syracuse,6,5,334,0,0,1,0,0
+virginiatech:durstnathan,"Durst, Nathan",Virginia Tech,19,4,329,0,0,2,1,0
+georgiasouthern:perezmiguel,"Perez, Miguel",Georgia Southern,19,9,326,0,0,2,1,0
+centralarkansas:schawlzach,"Schawl, Zach",Central Arkansas,21,5,320,0,0,0,0,0
+centralarkansas:knutsonbradyn,"Knutson, Bradyn",Central Arkansas,20,6,313,0,0,1,0,0
+georgiastate:pereyrazavalavictor,"Pereyra-Zavala, Victor",Georgia State,29,10,309,0,0,3,2,0
+northcarolina:rosealex,"Rose, Alex",North Carolina,21,8,307,0,0,2,0,0
+ncstate:norrisdavid,"Norris, David",NC State,4,8,307,0,0,0,0,0
+syracuse:mieschchristian,"Miesch, Christian",Syracuse,25,5,304,0,0,0,0,6
+ncstate:segevtal,"Segev, Tal",NC State,18,8,303,0,0,6,2,0
+ncstate:crossparker,"Cross, Parker",NC State,12,8,300,0,0,1,0,0
+uab:stlouisnathaniel,"St. Louis, Nathaniel",UAB,7,7,297,0,0,4,1,0
+duke:macrinicolas,"Macri, Nicolas",Duke,11,8,297,0,0,4,1,0
+virginia:halseybret,"Halsey, Bret",Virginia,8,3,289,0,0,1,0,0
+virginia:donasiyanoirakoze,"Donasiyano, Irakoze",Virginia,11,3,289,0,0,1,0,0
+georgiasouthern:eduardobomfimjose,"Eduardo Bomfim, Jose",Georgia Southern,35,5,280,0,0,0,0,9
+kentucky:jonesleon,"JONES, LEON",Kentucky,5,4,278,0,0,2,0,0
+mercer:derosejr,"DeRose, JR",Mercer,1,3,270,0,0,0,0,1
+mercer:harrisonjoshua,"Harrison, Joshua",Mercer,18,3,270,0,0,2,2,0
+mercer:jacksonbryant,"Jackson, Bryant",Mercer,21,3,270,0,0,3,0,0
+southcarolina:soumahsekou,"Soumah, Sekou",South Carolina,5,3,270,0,0,0,0,0
+georgiastate:rankenburggunther,"Rankenburg, Gunther",Georgia State,33,8,270,0,0,0,0,6
+mercer:toledojrleo,"Toledo Jr., Leo",Mercer,7,3,269,0,0,8,2,0
+clemson:gomezalvaro,"Gomez, Alvaro",Clemson,18,6,263,0,0,5,1,0
+kentucky:maurizenzo,"MAURIZ, ENZO",Kentucky,17,4,250,0,0,2,1,0
+syracuse:sinclairamferny,"Sinclair, Amferny",Syracuse,5,5,248,0,0,1,1,0
+southcarolina:hitzemanlogan,"Hitzeman, Logan",South Carolina,13,3,246,0,0,1,0,0
+georgiasouthern:winterschase,"Winters, Chase",Georgia Southern,17,9,244,0,0,0,0,0
+virginia:gerbigoliver,"Gerbig, Oliver",Virginia,5,3,244,0,0,1,0,0
+ncstate:edwardskendall,"Edwards, Kendall",NC State,6,8,243,0,0,1,0,0
+georgiasouthern:mustaficomar,"Mustafic, Omar",Georgia Southern,16,9,239,0,0,1,0,0
+southcarolina:barteldylan,"Bartel, Dylan",South Carolina,4,3,237,0,0,2,2,0
+mercer:wanzernick,"Wanzer, Nick",Mercer,16,3,232,0,0,0,0,0
+mercer:endalenatnael,"Endale, Natnael",Mercer,23,3,232,0,0,2,0,0
+northcarolina:bouveryjacques,"Bouvery, Jacques",North Carolina,37,8,229,0,0,4,0,0
+duke:gararssonkristfer,"Garðarsson, Kristófer",Duke,10,7,228,0,0,2,1,0
+kentucky:troutmanryan,"Troutman, Ryan",Kentucky,30,3,225,0,0,0,0,4
+southcarolina:oconnorjake,"O'Connor, Jake",South Carolina,3,3,223,0,0,0,0,0
+ncstate:hernandezalex,"Hernandez, Alex",NC State,13,7,213,0,0,3,0,0
+clemson:reidisaiah,"Reid, Isaiah",Clemson,27,9,211,0,0,6,1,0
+northcarolina:sinclairjonathan,"Sinclair, Jonathan",North Carolina,19,8,208,0,0,2,0,0
+clemson:matlashewskichris,"Matlashewski, Chris",Clemson,19,6,205,0,0,7,3,0
+wakeforest:mccurleykyle,"McCurley, Kyle",Wake Forest,20,8,203,0,0,0,0,0
+syracuse:shealyrussell,"Shealy, Russell",Syracuse,1,4,200,0,0,0,0,12
+virginia:shutlercolin,"Shutler, Colin",Virginia,1,3,199,0,0,0,0,14
+southcarolina:wudonovan,"Wu, Donovan",South Carolina,14,3,198,0,0,0,0,0
+uab:linaresmayno,"Linares, Mayno",UAB,12,7,196,0,0,2,0,0
+kentucky:viscontimason,"VISCONTI, MASON",Kentucky,11,4,188,0,0,6,1,0
+northcarolina:zattarinfilippo,"Zattarin, Filippo",North Carolina,2,2,187,0,0,0,0,0
+louisville:nocusayden,"Nocus, Ayden",Louisville,21,8,187,0,0,5,2,0
+uca:thomssonsebastian,"Thomsson, Sebastian",UCA,1,2,186,0,0,0,0,0
+uca:suarezalberto,"Suarez, Alberto",UCA,4,2,186,0,0,1,1,0
+uca:lauferrowan,"Laufer, Rowan",UCA,23,2,186,0,0,0,0,0
+georgiasouthern:bomfimjoseeduardo,"Bomfim, Jose Eduardo",Georgia Southern,35,4,180,0,0,0,0,8
+merchantmarineacademy:abramehrhorn,Abram Ehrhorn,Merchant Marine Academy,21,2,180,0,0,1,0,0
+merchantmarineacademy:coleblake,Cole Blake,Merchant Marine Academy,22,2,178,0,0,0,0,0
+notredame:mayerreese,"MAYER, REESE",Notre Dame,3,6,177,0,0,0,0,0
+wakeforest:kijimahosei,"Kijima, Hosei",Wake Forest,16,7,175,0,0,0,0,0
+virginiatech:doverkahlil,"Dover, Kahlil",Virginia Tech,14,4,175,0,0,5,2,0
+virginia:ogudugukevin,"Ogudugu, Kevin",Virginia,12,3,171,0,0,2,0,0
+southcarolina:nagylorenzo,"Nagy, Lorenzo",South Carolina,19,3,169,0,0,0,0,0
+louisville:danquaheric,"Danquah, Eric",Louisville,14,8,167,0,0,2,0,0
+kentucky:bandyjohnmichael,"BANDY, JOHN MICHAEL",Kentucky,3,4,164,0,0,0,0,0
+merchantmarineacademy:ryanhaines,Ryan Haines,Merchant Marine Academy,18,2,164,0,0,0,0,0
+virginiatech:lennoncamron,"Lennon, Camron",Virginia Tech,21,3,164,0,0,4,2,0
+southcarolina:clementpeter,"Clement, Peter",South Carolina,26,3,159,0,0,2,1,0
+army:suppiahjacob,"Suppiah, Jacob",Army,0,2,156,0,0,0,0,0
+army:atkinsonnick,"Atkinson, Nick",Army,3,2,156,0,0,4,1,0
+merchantmarineacademy:zachlysakowski,Zach Lysakowski,Merchant Marine Academy,14,2,152,0,0,2,0,0
+army:doyleluke,"Doyle, Luke",Army,5,2,152,0,0,0,0,0
+army:whitemaneric,"Whiteman, Eric",Army,22,2,150,0,0,1,0,0
+coastalcarolina:haleslucas,"Hales, Lucas",Coastal Carolina,21,8,148,0,0,0,0,0
+merchantmarineacademy:michaelmelton,Michael Melton,Merchant Marine Academy,4,2,146,0,0,0,0,0
+virginia:bergholdnick,"Berghold, Nick",Virginia,19,3,143,0,0,2,1,0
+coastalcarolina:christensengabriel,"Christensen, Gabriel",Coastal Carolina,10,8,143,0,0,5,1,0
+clemson:parrishbrandon,"Parrish, Brandon",Clemson,29,7,142,0,0,2,1,0
+army:takakichristian,"Takaki, Christian",Army,12,2,141,0,0,2,2,0
+merchantmarineacademy:hudsonmagee,Hudson Magee,Merchant Marine Academy,6,2,140,0,0,0,0,0
+merchantmarineacademy:miguelmillan,Miguel Millan,Merchant Marine Academy,8,2,137,0,0,1,0,0
+kentucky:facusseenrique,"FACUSSE, ENRIQUE",Kentucky,1,4,135,0,0,0,0,3
+southcarolina:bauerjustin,"Bauer, Justin",South Carolina,1,2,135,0,0,0,0,9
+wakeforest:oliverchase,"Oliver, Chase",Wake Forest,34,7,135,0,0,5,2,0
+uab:deleonshane,"DeLeon, Shane",UAB,10,6,134,0,0,5,2,0
+merchantmarineacademy:lukesturtz,Luke Sturtz,Merchant Marine Academy,23,2,134,0,0,0,0,0
+centralarkansas:porsamasood,"Porsa, Masood",Central Arkansas,12,4,133,0,0,1,0,0
+army:kimcolman,"Kim, Colman",Army,8,2,133,0,0,1,1,0
+army:schweickertbradley,"Schweickert, Bradley",Army,6,2,130,0,0,1,0,0
+southcarolina:guldenjared,"Gulden, Jared",South Carolina,8,2,125,0,0,0,0,0
+clemson:montanaenrique,"Montana, Enrique",Clemson,12,5,125,0,0,0,0,0
+wakeforest:searsoscar,"Sears, Oscar",Wake Forest,10,8,124,0,0,1,0,0
+centralarkansas:leonivan,"Leon, Ivan",Central Arkansas,15,2,123,0,0,0,0,0
+army:epitimesam,"Epitime, Sam",Army,20,2,120,0,0,5,1,0
+ncstate:chinasheldon,"China, Sheldon",NC State,20,8,119,0,0,0,0,0
+pittsburgh:amranianass,"Amrani, Anass",Pittsburgh,6,5,114,0,0,0,0,0
+merchantmarineacademy:davidkelly,David Kelly,Merchant Marine Academy,10,2,113,0,0,1,0,0
+virginiatech:weberandrew,"Weber, Andrew",Virginia Tech,12,3,113,0,0,0,0,0
+uab:bentondj,"Benton, DJ",UAB,14,7,111,0,0,0,0,0
+army:hicksonjoey,"Hickson, Joey",Army,15,2,109,0,0,4,1,0
+virginia:kesslerreed,"Kessler, Reed",Virginia,4,2,109,0,0,0,0,0
+virginia:pattonspencer,"Patton, Spencer",Virginia,7,2,106,0,0,2,2,0
+southcarolina:twishimeinnocent,"Twishime, Innocent",South Carolina,7,3,104,0,0,1,1,0
+army:mcstayjustin,"McStay, Justin",Army,19,2,104,0,0,4,2,0
+army:warrencooper,"Warren, Cooper",Army,14,2,100,0,0,3,0,0
+louisville:hickeyjack,"Hickey, Jack",Louisville,18,8,97,0,0,0,0,0
+clemson:erkensben,"Erkens, Ben",Clemson,2,3,97,0,0,0,0,0
+uk:screenrobert,"Screen, Robert",UK,2,1,96,0,0,0,0,0
+uk:grassowluis,"Grassow, Luis",UK,4,1,96,0,0,0,0,0
+uk:mabikaaim,"Mabika, Aim?",UK,6,1,96,0,0,2,0,0
+uk:bjorgolfssoneythor,"Bjorgolfsson, Eythor",UK,9,1,96,0,0,1,0,0
+uk:rousebailey,"Rouse, Bailey",UK,18,1,96,0,0,1,0,0
+uk:troutmanryan,"Troutman, Ryan",UK,30,1,96,0,0,0,0,0
+uab:rodriguezguillermo,"Rodriguez, Guillermo",UAB,4,6,92,0,0,0,0,0
+southcarolina:kopayjustin,"Kopay, Justin",South Carolina,2,3,91,0,0,0,0,0
+georgiasouthern:doolinglawson,"Dooling, Lawson",Georgia Southern,21,8,91,0,0,0,0,0
+howard:keillerliam,"Keiller, Liam",Howard,0,1,90,0,0,0,0,0
+howard:campbelllucas,"Campbell, Lucas",Howard,6,1,90,0,0,0,0,0
+howard:jamescorey,"James, Corey",Howard,7,1,90,0,0,0,0,0
+howard:mimsjustin,"Mims, Justin",Howard,14,1,90,0,0,0,0,0
+howard:lloydmarshall,"Lloyd, Marshall",Howard,15,1,90,0,0,0,0,0
+howard:sharrieffkhari,"Sharrieff, Khari",Howard,20,1,90,0,0,0,0,0
+howard:wimberlykamran,"Wimberly, Kamran",Howard,23,1,90,0,0,0,0,0
+howard:perkinslouis,"Perkins, Louis",Howard,24,1,90,0,0,0,0,0
+canceledduetocovid19:widrickeric,"Widrick, Eric",CANCELED DUE TO COVID-19,1,1,90,0,0,0,0,0
+canceledduetocovid19:monathrichard,"Monath, Richard",CANCELED DUE TO COVID-19,2,1,90,0,0,10,3,0
+canceledduetocovid19:chattenluke,"Chatten, Luke",CANCELED DUE TO COVID-19,4,1,90,0,0,0,0,0
+canceledduetocovid19:floresedwin,"Flores, Edwin",CANCELED DUE TO COVID-19,29,1,90,0,0,1,1,0
+kentucky:mabikaaime,"MABIKA, AIME",Kentucky,6,1,90,0,0,1,0,0
+southcarolina:bilichukryan,"Bilichuk, Ryan",South Carolina,25,2,90,0,0,0,0,3
+duke:clementssintayehu,"Clements, Sintayehu",Duke,19,8,90,0,0,2,2,0
+clemson:russellstirling,"Russell, Stirling",Clemson,24,6,90,0,0,0,0,0
+virginia:randoalex,"Rando, Alex",Virginia,0,2,90,0,0,0,0,4
+virginia:verleyjeremy,"Verley, Jeremy",Virginia,6,3,90,0,0,0,0,0
+gas:blaengssonjokull,"Blaengsson, Jokull",GAS,1,1,90,0,0,0,0,0
+gas:allardycesam,"Allardyce, Sam",GAS,4,1,90,0,0,0,0,0
+gas:prentisscody,"Prentiss, Cody",GAS,5,1,90,0,0,0,0,0
+navy:bramblettian,"Bramblett, Ian",Navy,30,1,90,0,0,0,0,2
+navy:wagnerjd,"Wagner, JD",Navy,2,1,90,0,0,0,0,0
+navy:adewoletoni,"Adewole, Toni",Navy,3,1,90,0,0,1,0,0
+navy:millardwyatt,"Millard, Wyatt",Navy,5,1,90,0,0,0,0,0
+navy:collinstyler,"Collins, Tyler",Navy,24,1,90,0,0,0,0,0
+virginia:fuertesjoangibert,"Fuertes, Joan Gibert",Virginia,21,2,90,0,0,3,1,0
+howard:clarkebryson,"Clarke, Bryson",Howard,5,1,87,0,0,0,0,0
+canceledduetocovid19:schroederjan,"Schroeder, Jan",CANCELED DUE TO COVID-19,3,1,86,0,0,1,1,0
+georgiastate:millerbellandrew,"Miller-Bell, Andrew",Georgia State,18,9,86,0,0,1,0,0
+navy:coelhocristian,"Coelho, Cristian",Navy,12,1,86,0,0,1,0,0
+howard:kabandaniil,"Kaban, Daniil",Howard,33,1,85,0,0,3,0,0
+uca:bendiksenmathias,"Bendiksen, Mathias",UCA,10,1,85,0,0,0,0,0
+ncstate:moralesjose,"Morales, Jose",NC State,25,3,84,0,0,0,0,0
+northcarolina:sanchezaldair,"Sanchez, Aldair",North Carolina,32,7,83,0,0,0,0,0
+uk:meinzermarcel,"Meinzer, Marcel",UK,8,1,83,0,0,1,0,0
+navy:bentleybayne,"Bentley, Bayne",Navy,17,1,83,0,0,0,0,0
+georgiastate:faryarsalar,"Faryar, Salar",Georgia State,7,9,82,0,0,0,0,0
+centralarkansas:gonzalezjosecarlos,"Gonzalez, Jose Carlos",Central Arkansas,25,5,81,0,0,5,3,0
+southcarolina:krausechristian,"Krause, Christian",South Carolina,9,3,79,0,0,3,0,0
+southcarolina:matthewsjordan,"Matthews, Jordan",South Carolina,11,3,79,0,0,0,0,0
+navy:williamsjacob,"Williams, Jacob",Navy,10,1,79,0,0,1,0,0
+canceledduetocovid19:arguetagerman,"Argueta, German",CANCELED DUE TO COVID-19,8,1,78,0,0,6,1,0
+notredame:lynchmichael,"LYNCH, MICHAEL",Notre Dame,14,5,77,0,0,1,0,0
+wakeforest:carrkoby,"Carr, Koby",Wake Forest,2,7,77,0,0,1,0,0
+merchantmarineacademy:chasemiller,Chase Miller,Merchant Marine Academy,1,2,77,0,0,0,0,8
+gas:ferreiraaidan,"Ferreira, Aidan",GAS,26,1,76,0,0,0,0,0
+louisville:pinznrafael,"Pinzón, Rafael",Louisville,6,8,75,0,0,2,0,0
+merchantmarineacademy:parkerwest,Parker West,Merchant Marine Academy,19,2,75,0,0,0,0,0
+virginia:ignaciokaya,"Ignacio, Kaya",Virginia,13,2,75,0,0,0,0,0
+virginiatech:stenzelkyle,"Stenzel, Kyle",Virginia Tech,4,4,74,0,0,2,1,0
+georgiasouthern:smithcj,"Smith, C.J.",Georgia Southern,11,4,73,0,0,1,1,0
+gas:diadiegaye,"Diadie, Gaye",GAS,6,1,73,0,0,0,0,0
+uab:leaguewillsey,"League, Willsey",UAB,19,7,72,0,0,0,0,0
+merchantmarineacademy:connordamare,Connor Damare,Merchant Marine Academy,9,2,72,0,0,0,0,0
+uca:calzolaedoardo,"Calzola, Edoardo",UCA,3,1,72,0,0,0,0,0
+duke:ramirezmiguel,"Ramirez, Miguel",Duke,25,8,71,0,0,0,0,0
+clemson:fishermax,"Fisher, Max",Clemson,0,2,71,0,0,0,0,1
+georgiasouthern:redmondjrjason,"Redmond Jr., Jason",Georgia Southern,13,8,70,0,0,0,0,0
+syracuse:colemanjack,"Coleman, Jack",Syracuse,27,5,69,0,0,1,1,0
+clemson:sullivandylan,"Sullivan, Dylan",Clemson,6,5,68,0,0,0,0,0
+gas:jacksonthomas,"Jackson, Thomas",GAS,27,1,68,0,0,0,0,0
+merchantmarineacademy:ashtoncarey,Ashton Carey,Merchant Marine Academy,00,2,67,0,0,0,0,4
+merchantmarineacademy:jackdavis,Jack Davis,Merchant Marine Academy,15,2,67,0,0,0,0,0
+uk:innescolin,"Innes, Colin",UK,16,1,66,0,0,2,1,0
+uab:corebrandon,"Core, Brandon",UAB,3,7,64,0,0,0,0,0
+canceledduetocovid19:kershneremmett,"Kershner, Emmett",CANCELED DUE TO COVID-19,17,1,63,0,0,2,0,0
+gas:tambadualhaji,"Tambadu, Alhaji",GAS,14,1,63,0,0,1,1,0
+gas:mustaficomar,"Mustafic, Omar",GAS,16,1,60,0,0,0,0,0
+louisville:howardwilliam,"Howard, William",Louisville,28,8,58,0,0,0,0,4
+merchantmarineacademy:joeclark,Joe Clark,Merchant Marine Academy,11,2,58,0,0,0,0,0
+gas:philpjack,"Philp, Jack",GAS,25,1,58,0,0,0,0,0
+canceledduetocovid19:fieldbeckett,"Field, Beckett",CANCELED DUE TO COVID-19,26,1,57,0,0,4,0,0
+louisville:falsonesebastian,"Falsone, Sebastian",Louisville,29,8,57,0,0,0,0,0
+notredame:sheatyler,"Shea, Tyler",Notre Dame,9,4,57,0,0,0,0,0
+virginia:caiporafael,"Caipo, Rafael",Virginia,22,2,57,0,0,0,0,0
+howard:simmonszach,"Simmons, Zach",Howard,17,1,56,0,0,0,0,0
+uab:alleyjake,"Alley, Jake",UAB,0,6,56,0,0,0,0,2
+army:sikazweatef,"Sikazwe, Atef",Army,7,2,56,0,0,2,2,0
+virginia:afonsoleo,"Afonso, Leo",Virginia,16,3,55,0,0,2,0,0
+navy:westnicko,"West, Nicko",Navy,21,1,55,0,0,1,1,0
+virginiatech:dasilvajrwelnilton,"Da Silva Jr., Welnilton",Virginia Tech,5,3,54,0,0,0,0,0
+virginiatech:starrdaniel,"Starr, Daniel",Virginia Tech,11,3,54,0,0,3,1,0
+louisville:chaveroosmar,"Chavero, Osmar",Louisville,1,8,53,0,0,0,0,2
+army:clementdrew,"Clement, Drew",Army,21,2,53,0,0,2,0,0
+uk:evansdaniel,"Evans, Daniel",UK,7,1,52,0,0,2,0,0
+uca:morelalexsi,"Morel, Alexsi",UCA,19,2,51,0,0,1,1,0
+gas:luomajeremiah,"Luoma, Jeremiah",GAS,18,1,50,0,0,0,0,0
+gas:flowerslee,"Flowers, Lee",GAS,2,1,50,0,0,0,0,0
+pittsburgh:peperakluke,"PEPERAK, LUKE",Pittsburgh,25,6,48,0,0,1,1,0
+uca:kimishimakatsuyoshi,"Kimishima, Katsuyoshi",UCA,8,1,48,0,0,0,0,0
+army:flynnmatt,"Flynn, Matt",Army,26,2,47,0,0,0,0,0
+canceledduetocovid19:richardsjoe,"Richards, Joe",CANCELED DUE TO COVID-19,22,1,46,0,0,2,1,0
+northcarolina:thomasriley,"Thomas, Riley",North Carolina,15,6,46,0,0,0,0,0
+southcarolina:bradynick,"Brady, Nick",South Carolina,0,2,45,0,0,0,0,0
+georgiasouthern:bealchris,"Beal, Chris",Georgia Southern,29,8,45,0,0,0,0,0
+duke:harmsjt,"Harms, JT",Duke,23,7,45,0,0,0,0,1
+wakeforest:mcnallycole,"McNally, Cole",Wake Forest,31,6,45,0,0,0,0,1
+canceledduetocovid19:jeffreysfreddy,"Jeffreys, Freddy",CANCELED DUE TO COVID-19,10,1,44,0,0,2,2,0
+uab:ricebrooks,"Rice, Brooks",UAB,5,6,44,0,0,0,0,0
+northcarolina:henrymalik,"Henry, Malik",North Carolina,31,7,43,0,0,0,0,0
+duke:gardarssonkristofer,"Gardarsson, Kristofer",Duke,10,1,43,0,0,1,1,0
+georgiasouthern:gharbikareem,"Gharbi, Kareem",Georgia Southern,20,8,42,0,0,0,0,0
+merchantmarineacademy:liamcashmore,Liam Cashmore,Merchant Marine Academy,7,2,41,0,0,1,0,0
+uab:whiteblake,"White, Blake",UAB,10,1,40,0,0,0,0,0
+uca:knutsonbradyn,"Knutson, Bradyn",UCA,20,2,39,0,0,0,0,0
+kentucky:holstadclay,"HOLSTAD, CLAY",Kentucky,12,4,38,0,0,1,0,0
+army:hoffmanndaniel,"Hoffmann, Daniel",Army,27,2,38,0,0,0,0,0
+notredame:obrienethan,"O'BRIEN, ETHAN",Notre Dame,7,4,37,0,0,0,0,0
+southcarolina:halloranandrew,"Halloran, Andrew",South Carolina,18,3,37,0,0,0,0,0
+navy:kalliebaba,"Kallie, Baba",Navy,99,1,35,0,0,0,0,0
+merchantmarineacademy:jaysonruelas,Jayson Ruelas,Merchant Marine Academy,20,2,34,0,0,0,0,0
+canceledduetocovid19:jacksonjayden,"Jackson, Jayden",CANCELED DUE TO COVID-19,5,1,33,0,0,1,0,0
+notredame:roenneckesimon,"ROENNECKE, SIMON",Notre Dame,11,4,33,0,0,0,0,0
+merchantmarineacademy:hunterwest,Hunter West,Merchant Marine Academy,12,2,33,0,0,0,0,0
+syracuse:betzstephen,"Betz, Stephen",Syracuse,21,4,33,0,0,0,0,0
+coastalcarolina:romeroluis,"Romero, Luis",Coastal Carolina,25,7,33,0,0,0,0,0
+mercer:longologan,"Longo, Logan",Mercer,4,2,32,0,0,0,0,0
+uca:chavezchristian,"Chavez, Christian",UCA,29,1,32,0,0,0,0,0
+pittsburgh:laraluis,"Lara, Luis",Pittsburgh,7,4,32,0,0,1,0,0
+army:schwartzmanalec,"Schwartzman, Alec",Army,24,2,30,0,0,0,0,0
+howard:chicasaxel,"Chicas, Axel",Howard,8,1,29,0,0,0,0,0
+wakeforest:mcmasterjustin,"McMaster, Justin",Wake Forest,11,6,29,0,0,1,1,0
+navy:manriqueernando,"Manrique, Ernando",Navy,4,1,29,0,0,0,0,0
+centralarkansas:pricedylan,"Price, Dylan",Central Arkansas,31,1,28,0,0,0,0,0
+wakeforest:amponsahprince,"Amponsah, Prince",Wake Forest,27,6,28,0,0,0,0,0
+canceledduetocovid19:flaskagerfrederik,"Flaskager, Frederik",CANCELED DUE TO COVID-19,9,1,27,0,0,0,0,0
+virginia:happikamseucabrel,"Happi Kamseu, Cabrel",Virginia,20,3,27,0,0,0,0,0
+uab:straitandrew,"Strait, Andrew",UAB,21,7,26,0,0,0,0,0
+northcarolina:bawaerrnest,"Bawa, Errnest",North Carolina,20,5,26,0,0,0,0,0
+georgiastate:bahralex,"Bahr, Alex",Georgia State,2,7,25,0,0,1,0,0
+duke:kerrcameron,"Kerr, Cameron",Duke,6,8,24,0,0,0,0,0
+army:eatonjack,"Eaton, Jack",Army,4,2,24,0,0,0,0,0
+army:shehatahamza,"Shehata, Hamza",Army,25,2,24,0,0,1,0,0
+georgiasouthern:smithalex,"Smith, Alex",Georgia Southern,30,8,23,0,0,0,0,0
+merchantmarineacademy:mattjohnson,Matt Johnson,Merchant Marine Academy,30,2,23,0,0,0,0,0
+syracuse:holbrookcamden,"Holbrook, Camden",Syracuse,18,3,23,0,0,1,0,0
+ncstate:millerjared,"Miller, Jared",NC State,17,7,22,0,0,0,0,0
+merchantmarineacademy:carsonbushnell,Carson Bushnell,Merchant Marine Academy,34,2,22,0,0,0,0,2
+uca:porsamasood,"Porsa, Masood",UCA,12,1,22,0,0,0,0,0
+centralarkansas:caicedoalejandro,"Caicedo, Alejandro",Central Arkansas,30,2,20,0,0,0,0,0
+northcarolina:alejandreaxel,"Alejandre, Axel",North Carolina,26,6,19,0,0,0,0,0
+gas:perezmiguel,"Perez, Miguel",GAS,19,1,18,0,0,0,0,0
+navy:parissidney,"Paris, Sidney",Navy,7,1,18,0,0,0,0,0
+uk:maurizenzo,"Mauriz, Enzo",UK,17,1,17,0,0,0,0,0
+southcarolina:mallionspencer,"Mallion, Spencer",South Carolina,16,3,16,0,0,1,1,0
+mercer:gonzalezangel,"Gonzalez, Angel",Mercer,13,2,16,0,0,0,0,0
+wakeforest:petersdominic,"Peters, Dominic",Wake Forest,30,6,16,0,0,0,0,0
+wakeforest:mooretyrrell,"Moore, Tyrrell",Wake Forest,28,6,16,0,0,0,0,0
+merchantmarineacademy:brandoncordova,Brandon Cordova,Merchant Marine Academy,5,2,16,0,0,0,0,0
+army:taylorjosh,"Taylor, Josh",Army,1,2,16,0,0,0,0,0
+uca:leonivan,"Leon, Ivan",UCA,15,1,15,0,0,0,0,0
+gas:winterschase,"Winters, Chase",GAS,17,1,15,0,0,0,0,0
+gas:degenreece,"Degen, Reece",GAS,22,1,15,0,0,0,0,0
+louisville:schmeiderrc,"Schmeider, RC",Louisville,15,8,14,0,0,0,0,0
+merchantmarineacademy:jackremark,Jack Remark,Merchant Marine Academy,17,2,14,0,0,0,0,0
+virginia:andersonjules,"Anderson, Jules",Virginia,15,3,14,0,0,0,0,0
+southcarolina:leagueparker,"League, Parker",South Carolina,22,1,13,0,0,0,0,0
+northcarolina:hinojosajulian,"Hinojosa, Julian",North Carolina,5,5,13,0,0,0,0,0
+northcarolina:charlesjameson,"Charles, Jameson",North Carolina,8,5,13,0,0,0,0,0
+ncstate:elliswindham,"Ellis, Windham",NC State,30,7,13,0,0,0,0,1
+northcarolina:mooresam,"Moore, Sam",North Carolina,35,5,12,0,0,0,0,0
+northcarolina:knoxroman,"Knox, Roman",North Carolina,38,5,12,0,0,0,0,0
+wakeforest:valtoswilliam,"Valtos, William",Wake Forest,25,6,12,0,0,0,0,0
+clemson:barronjake,"Barron, Jake",Clemson,26,2,12,0,0,0,0,0
+syracuse:ekponetim,"Ekpone, Tim",Syracuse,2,4,12,0,0,0,0,0
+northcarolina:bakayokoyaya,"Bakayoko, Yaya",North Carolina,29,5,11,0,0,0,0,0
+ncstate:radcyrus,"Rad, Cyrus",NC State,24,7,11,0,0,0,0,0
+mercer:illemichael,"Ille, Michael",Mercer,26,2,11,0,0,0,0,0
+pittsburgh:senasito,"Sena, Sito",Pittsburgh,14,3,11,0,0,1,0,0
+georgiasouthern:degenreece,"Degen, Reece",Georgia Southern,22,8,10,0,0,0,0,0
+gas:doolinglawson,"Dooling, Lawson",GAS,21,1,10,0,0,0,0,0
+pittsburgh:shigakisoshun,"Shigaki, Soshun",Pittsburgh,18,3,9,0,0,0,0,0
+pittsburgh:hardinganthony,"Harding, Anthony",Pittsburgh,27,3,9,0,0,0,0,0
+howard:hislopluka,"Hislop, Luka",Howard,21,1,8,0,0,0,0,0
+uab:flathauheath,"Flathau, Heath",UAB,32,6,8,0,0,0,0,0
+merchantmarineacademy:bendavis,Ben Davis,Merchant Marine Academy,16,2,8,0,0,0,0,0
+merchantmarineacademy:declanbyrne,Declan Byrne,Merchant Marine Academy,28,2,8,0,0,0,0,0
+army:nawoichykgrant,"Nawoichyk, Grant",Army,00,2,8,0,0,0,0,0
+army:mackenzietyler,"Mackenzie, Tyler",Army,29,2,8,0,0,0,0,0
+uab:khayatdiego,"Khayat, Diego",UAB,20,7,7,0,0,0,0,0
+howard:sharpxavier,"Sharp, Xavier",Howard,18,1,5,0,0,0,0,0
+merchantmarineacademy:josephmaraska,Joseph Maraska,Merchant Marine Academy,13,2,5,0,0,0,0,0
+canceledduetocovid19:kellycolin,"Kelly, Colin",CANCELED DUE TO COVID-19,21,1,4,0,0,0,0,0
+notredame:silverbryan,"SILVER, BRYAN",Notre Dame,12,3,4,0,0,0,0,0
+mercer:agbajesalam,"Agbaje, Salam",Mercer,27,2,4,0,0,0,0,0
+duke:iharasanta,"Ihara, Santa",Duke,17,7,4,0,0,0,0,0
+wakeforest:scrivnersebastian,"Scrivner, Sebastian",Wake Forest,33,6,4,0,0,0,0,0
+army:hebardmorgan,"Hebard, Morgan",Army,30,2,4,0,0,0,0,0
+uca:pricedylan,"Price, Dylan",UCA,31,1,4,0,0,0,0,0
+clemson:hallenbergerjosh,"Hallenberger, Josh",Clemson,23,1,3,0,0,0,0,0
+northcarolina:fishercameron,"Fisher, Cameron",North Carolina,17,6,2,0,0,0,0,0
+kentucky:coxcase,"Cox, Case",Kentucky,20,3,2,0,0,0,0,0
+syracuse:clappkenny,"Clapp, Kenny",Syracuse,24,4,1,0,0,0,0,0
+centralarkansas:aranzazujoshua,"Aranzazu, Joshua",Central Arkansas,24,1,0,0,0,0,0,0
+centralarkansas:bendiksenmathias,"Bendiksen, Mathias",Central Arkansas,10,1,0,0,0,0,0,0
+centralarkansas:busaevilya,"Busaev, Ilya",Central Arkansas,13,1,0,0,0,0,0,0
+centralarkansas:gonzalezjose,"Gonzalez, Jose",Central Arkansas,25,1,0,0,0,0,0,0
+centralarkansas:clarkedandre,"Clarke, D'Andre",Central Arkansas,26,1,0,0,0,0,0,0
+centralarkansas:carraherconner,"Carraher, Conner",Central Arkansas,28,1,0,0,0,0,0,0
+centralarkansas:jonesryan,"Jones, Ryan",Central Arkansas,32,1,0,0,0,0,0,0
+centralarkansas:hillnick,"Hill, Nick",Central Arkansas,33,1,0,0,0,0,0,0
+uab:leesam,"Lee, Sam",UAB,1,6,0,0,0,0,0,0
+uab:tormanseth,"Torman, Seth",UAB,34,6,0,0,0,0,0,0
+uab:somohanomarcos,"Somohano, Marcos",UAB,6,6,0,0,0,0,0,0
+uab:watsondonovan,"Watson, Donovan",UAB,16,6,0,0,0,0,0,0
+uab:gameroethan,"Gamero, Ethan",UAB,18,6,0,0,0,0,0,0
+uab:geedillon,"Gee, Dillon",UAB,27,6,0,0,0,0,0,0
+uab:tsengtzuchen,"Tseng, TzuChen",UAB,31,6,0,0,0,0,0,0
+southcarolina:cosseathan,"Cosse, Athan",South Carolina,10,1,0,0,0,0,0,0
+southcarolina:robymark,"Roby, Mark",South Carolina,15,1,0,0,0,0,0,0
+southcarolina:wiebuschseth,"Wiebusch, Seth",South Carolina,20,1,0,0,0,0,0,0
+southcarolina:corningjosh,"Corning, Josh",South Carolina,21,1,0,0,0,0,0,0
+southcarolina:beboutelijah,"Bebout, Elijah",South Carolina,23,1,0,0,0,0,0,0
+southcarolina:rosenbaumandrew,"Rosenbaum, Andrew",South Carolina,24,1,0,0,0,0,0,0
+southcarolina:gilestavien,"Giles, Tavien",South Carolina,30,1,0,0,0,0,0,0
+georgiasouthern:boringmaverick,"Boring, Maverick",Georgia Southern,0,8,0,0,0,0,0,0
+georgiasouthern:brownsai,"Brown, Sai",Georgia Southern,34,8,0,0,0,0,0,0
+georgiasouthern:harriszay,"Harris, Zay",Georgia Southern,3,8,0,0,0,0,0,0
+georgiasouthern:locklearjake,"Locklear, Jake",Georgia Southern,12,8,0,0,0,0,0,0
+georgiasouthern:vandenbosschereda,"Vanden-Bossche, Reda",Georgia Southern,32,8,0,0,0,0,0,0
+northcarolina:lopezantonio,"Lopez, Antonio",North Carolina,11,5,0,0,0,0,0,0
+northcarolina:philpotjp,"Philpot, J.P.",North Carolina,12,5,0,0,0,0,0,0
+northcarolina:jonessam,"Jones, Sam",North Carolina,18,5,0,0,0,0,0,0
+northcarolina:bawaernest,"Bawa, Ernest",North Carolina,20,2,0,0,0,0,0,0
+northcarolina:saborioperezmarco,"Saborio-Perez, Marco",North Carolina,24,4,0,0,0,0,0,0
+northcarolina:schickjake,"Schick, Jake",North Carolina,30,5,0,0,0,0,0,0
+northcarolina:kesselgarrett,"Kessel, Garrett",North Carolina,33,5,0,0,0,0,0,0
+northcarolina:alqaqahmad,"Al-Qaq, Ahmad",North Carolina,34,5,0,0,0,0,0,0
+ncstate:perrietyler,"Perrie, Tyler",NC State,00,7,0,0,0,0,0,0
+ncstate:meroladavid,"Merola, David",NC State,26,7,0,0,0,0,0,0
+ncstate:cottonemarco,"Cottone, Marco",NC State,15,7,0,0,0,0,0,0
+ncstate:orozcojames,"Orozco, James",NC State,23,7,0,0,0,0,0,0
+ncstate:brosedeclan,"Brose, Declan",NC State,27,7,0,0,0,0,0,0
+ncstate:oconnorbailey,"O'Connor, Bailey",NC State,28,7,0,0,0,0,0,0
+kentucky:walkereric,"Walker, Eric",Kentucky,24,3,0,0,0,0,0,0
+kentucky:wilsonjansen,"Wilson, Jansen",Kentucky,10,3,0,0,0,0,0,0
+kentucky:wendellben,"Wendell, Ben",Kentucky,22,3,0,0,0,0,0,0
+kentucky:bigbyjalen,"Bigby, Jalen",Kentucky,23,3,0,0,0,0,0,0
+kentucky:wagnerwilliam,"Wagner, William",Kentucky,25,3,0,0,0,0,0,0
+kentucky:ericksonandrew,"Erickson, Andrew",Kentucky,26,3,0,0,0,0,0,0
+kentucky:damgeben,"Damge, Ben",Kentucky,27,3,0,0,0,0,0,0
+kentucky:asensiotrey,"Asensio, Trey",Kentucky,29,3,0,0,0,0,0,0
+duke:reismichael,"Reis, Michael",Duke,0,7,0,0,0,0,0,0
+duke:hamilleliot,"Hamill, Eliot",Duke,00,7,0,0,0,0,0,0
+duke:wolfmatthew,"Wolf, Matthew",Duke,30,7,0,0,0,0,0,0
+duke:verrattikrew,"Verratti, Krew",Duke,15,7,0,0,0,0,0,0
+duke:heetderkskees,"Heetderks, Kees",Duke,16,7,0,0,0,0,0,0
+duke:velaadrian,"Vela, Adrian",Duke,20,7,0,0,0,0,0,0
+duke:aguilardaniel,"Aguilar, Daniel",Duke,21,7,0,0,0,0,0,0
+duke:sloveralex,"Slover, Alex",Duke,24,7,0,0,0,0,0,0
+mercer:zulaufbrant,"Zulauf, Brant",Mercer,0,1,0,0,0,0,0,0
+mercer:mcmullintrevor,"McMullin, Trevor",Mercer,00,1,0,0,0,0,0,0
+mercer:iakovidisgeorge,"Iakovidis, George",Mercer,22,1,0,0,0,0,0,0
+mercer:jabangousman,"Jabang, Ousman",Mercer,6,1,0,0,0,0,0,0
+mercer:ndueseudomjason,"Nduese-udom, Jason",Mercer,11,1,0,0,0,0,0,0
+mercer:dattiloaddison,"Dattilo, Addison",Mercer,15,1,0,0,0,0,0,0
+mercer:rehakjake,"Rehak, Jake",Mercer,19,1,0,0,0,0,0,0
+mercer:coxheadliam,"Coxhead, Liam",Mercer,20,1,0,0,0,0,0,0
+mercer:reynadalton,"Reyna, Dalton",Mercer,24,1,0,0,0,0,0,0
+mercer:khaliliankian,"Khalilian, Kian",Mercer,25,1,0,0,0,0,0,0
+mercer:agbajebaba,"Agbaje, Baba",Mercer,28,1,0,0,0,0,0,0
+louisville:bamacoumba,"Ba, Macoumba",Louisville,11,8,0,0,0,0,0,0
+wakeforest:deshieldsmichael,"DeShields, Michael",Wake Forest,5,6,0,0,0,0,0,0
+wakeforest:zarrisaristotle,"Zarris, Aristotle",Wake Forest,7,6,0,0,0,0,0,0
+merchantmarineacademy:danielmurphy,Daniel Murphy,Merchant Marine Academy,2,2,0,0,0,0,0,0
+merchantmarineacademy:mitchellstreett,Mitchell Streett,Merchant Marine Academy,24,2,0,0,0,0,0,0
+merchantmarineacademy:benjaminwarren,Benjamin Warren,Merchant Marine Academy,25,2,0,0,0,0,0,0
+merchantmarineacademy:noahlumpkin,Noah Lumpkin,Merchant Marine Academy,26,2,0,0,0,0,0,0
+merchantmarineacademy:josiahjorden,Josiah Jorden,Merchant Marine Academy,27,2,0,0,0,0,0,0
+merchantmarineacademy:alexsabri,Alex Sabri,Merchant Marine Academy,29,2,0,0,0,0,0,0
+army:browndanthony,"Brown, D'Anthony",Army,2,2,0,0,0,0,0,0
+army:rasizzisal,"Rasizzi, Sal",Army,9,2,0,0,0,0,0,0
+army:kowalewskicarter,"Kowalewski, Carter",Army,11,2,0,0,0,0,0,0
+army:belongmelic,"Belong, Melic",Army,16,2,0,0,0,0,0,0
+army:poncyjohn,"Poncy, John",Army,17,2,0,0,0,0,0,0
+army:iyoriobheeromose,"Iyoriobhe, Eromose",Army,23,2,0,0,0,0,0,0
+army:leesean,"Lee, Sean",Army,28,2,0,0,0,0,0,0
+georgiastate:bowencooper,"Bowen, Cooper",Georgia State,30,7,0,0,0,0,0,0
+georgiastate:jumeautristan,"Jumeau, Tristan",Georgia State,11,7,0,0,0,0,0,0
+georgiastate:morrisdylan,"Morris, Dylan",Georgia State,14,7,0,0,0,0,0,0
+georgiastate:stephensonmarley,"Stephenson, Marley",Georgia State,17,7,0,0,0,0,0,0
+georgiastate:wakabayashisora,"Wakabayashi, Sora",Georgia State,26,7,0,0,0,0,0,0
+uab:balthazarzach,"Balthazar, Zach",UAB,33,4,0,0,0,0,0,0
+northcarolina:saboriomarco,"Saborio, Marco",North Carolina,24,1,0,0,0,0,0,0
+notredame:deslongchampsthomas,"Deslongchamps, Thomas",Notre Dame,0,2,0,0,0,0,0,0
+notredame:guinanesam,"Guinane, Sam",Notre Dame,30,2,0,0,0,0,0,0
+notredame:dowdbryan,"Dowd, Bryan",Notre Dame,31,2,0,0,0,0,0,0
+notredame:hillaaron,"Hill, Aaron",Notre Dame,4,2,0,0,0,0,0,0
+notredame:mclaughlinmatthew,"McLaughlin, Matthew",Notre Dame,21,2,0,0,0,0,0,0
+notredame:bujouvespj,"Bujouves, PJ",Notre Dame,22,2,0,0,0,0,0,0
+notredame:salvinoalex,"Salvino, Alex",Notre Dame,23,2,0,0,0,0,0,0
+notredame:huberjacob,"Huber, Jacob",Notre Dame,24,2,0,0,0,0,0,0
+notredame:dedrickzach,"Dedrick, Zach",Notre Dame,25,2,0,0,0,0,0,0
+ncstate:moralesjrjose,"Morales Jr., Jose",NC State,25,4,0,0,0,0,0,0
+syracuse:quevedoandres,"Quevedo, Andres",Syracuse,0,4,0,0,0,0,0,0
+syracuse:viegasjrroque,"Viegas Jr., Roque",Syracuse,10,3,0,0,0,0,0,0
+syracuse:steinernikolas,"Steiner, Nikolas",Syracuse,13,4,0,0,0,0,0,0
+syracuse:ozisikmerjan,"Ozisik, Merjan",Syracuse,15,4,0,0,0,0,0,0
+syracuse:mcgrawlogan,"McGraw, Logan",Syracuse,16,4,0,0,0,0,0,0
+syracuse:kentmax,"Kent, Max",Syracuse,20,4,0,0,0,0,0,0
+syracuse:mcdonalddylan,"McDonald, Dylan",Syracuse,22,4,0,0,0,0,0,0
+syracuse:glennjackson,"Glenn, Jackson",Syracuse,23,4,0,0,0,0,0,0
+syracuse:shawtony,"Shaw, Tony",Syracuse,26,4,0,0,0,0,0,0
+pittsburgh:steinbachalexander,"Steinbach, Alexander",Pittsburgh,1,3,0,0,0,0,0,0
+pittsburgh:ammannarie,"Ammann, Arie",Pittsburgh,32,3,0,0,0,0,0,0
+pittsburgh:kizzaedward,"Kizza, Edward",Pittsburgh,9,3,0,0,0,0,0,0
+pittsburgh:almeidarodrigo,"Almeida, Rodrigo",Pittsburgh,11,3,0,0,0,0,0,0
+pittsburgh:clagettebrandon,"Clagette, Brandon",Pittsburgh,12,3,0,0,0,0,0,0
+pittsburgh:matuszewskilucas,"Matuszewski, Lucas",Pittsburgh,16,3,0,0,0,0,0,0
+pittsburgh:spicerlouis,"Spicer, Louis",Pittsburgh,17,3,0,0,0,0,0,0
+pittsburgh:serpasebastian,"Serpa, Sebastian",Pittsburgh,22,3,0,0,0,0,0,0
+pittsburgh:belonvinicius,"Belon, Vinicius",Pittsburgh,23,3,0,0,0,0,0,0
+pittsburgh:reiterdominic,"Reiter, Dominic",Pittsburgh,26,3,0,0,0,0,0,0
+pittsburgh:strickernathan,"Stricker, Nathan",Pittsburgh,28,3,0,0,0,0,0,0
+virginia:brownholden,"Brown, Holden",Virginia,99,2,0,0,0,0,0,0
+virginia:noverreben,"Noverr, Eben",Virginia,2,2,0,0,0,0,0,0
+virginia:warbrickmatthew,"Warbrick, Matthew",Virginia,23,2,0,0,0,0,0,0
+virginia:scheipechris,"Scheipe, Chris",Virginia,24,2,0,0,0,0,0,0
+virginia:schuchartwilliam,"Schuchart, William",Virginia,25,2,0,0,0,0,0,0
+virginia:grantben,"Grant, Ben",Virginia,26,2,0,0,0,0,0,0
+virginia:bradleybeau,"Bradley, Beau",Virginia,27,2,0,0,0,0,0,0
+virginia:aguilarjulian,"Aguilar, Julian",Virginia,28,2,0,0,0,0,0,0
+virginia:evanslouis,"Evans, Louis",Virginia,29,2,0,0,0,0,0,0
+unknown:1,1,Unknown,0,1,0,0,0,1,0,0
+unknown:0,0,Unknown,0,2,0,0,0,0,0,0
+unknown:christiankraus1assistedbyandrewhalloranspencermallion,"Christian Kraus (1)
+Assisted by: Andrew  Halloran, Spencer Mallion",Unknown,,1,0,0,0,0,0,0
+unknown:southcarolina,South Carolina,Unknown,81:43,1,0,0,0,0,0,0
+coastalcarolina:arnoldpete,"Arnold, Pete",Coastal Carolina,29,6,0,0,0,0,0,0
+coastalcarolina:ladoben,"Lado, Ben",Coastal Carolina,30,6,0,0,0,0,0,0
+coastalcarolina:segoriajacob,"Segoria, Jacob",Coastal Carolina,31,6,0,0,0,0,0,0
+coastalcarolina:butterworthhenry,"Butterworth, Henry",Coastal Carolina,32,6,0,0,0,0,0,0
+coastalcarolina:langlucian,"Lang, Lucian",Coastal Carolina,2,6,0,0,0,0,0,0
+coastalcarolina:mclawsmatt,"McLaws, Matt",Coastal Carolina,3,6,0,0,0,0,0,0
+coastalcarolina:kainduben,"Kaindu, Ben",Coastal Carolina,13,6,0,0,0,0,0,0
+coastalcarolina:sanchezadriel,"Sanchez, Adriel",Coastal Carolina,22,6,0,0,0,0,0,0
+coastalcarolina:cabanisstaylor,"Cabaniss, Taylor",Coastal Carolina,24,6,0,0,0,0,0,0
+coastalcarolina:bruckenben,"Brucken, Ben",Coastal Carolina,27,6,0,0,0,0,0,0
+coastalcarolina:silvanochristian,"Silvano, Christian",Coastal Carolina,28,6,0,0,0,0,0,0
+syracuse:viegasroque,"Viegas, Roque",Syracuse,10,1,0,0,0,0,0,0
+syracuse:mcdonnellmatt,"McDonnell, Matt",Syracuse,18,1,0,0,0,0,0,0
+navy:pearsonthomas,"Pearson, Thomas",Navy,0,1,0,0,0,0,0,0
+navy:sigmannick,"Sigman, Nick",Navy,1,1,0,0,0,0,0,0
+navy:fahningtyler,"Fahning, Tyler",Navy,18,1,0,0,0,0,0,0
+navy:aoyamajason,"Aoyama, Jason",Navy,8,1,0,0,0,0,0,0
+navy:alexjoe,"Alex, Joe",Navy,11,1,0,0,0,0,0,0
+navy:oharaluke,"O'Hara, Luke",Navy,13,1,0,0,0,0,0,0
+navy:davisluke,"Davis, Luke",Navy,14,1,0,0,0,0,0,0
+navy:krielsam,"Kriel, Sam",Navy,15,1,0,0,0,0,0,0
+navy:armstrongcollin,"Armstrong, Collin",Navy,16,1,0,0,0,0,0,0
+navy:hilemankevin,"Hileman, Kevin",Navy,19,1,0,0,0,0,0,0
+navy:gustafsonphillip,"Gustafson, Phillip",Navy,20,1,0,0,0,0,0,0
+navy:gregoryandrew,"Gregory, Andrew",Navy,23,1,0,0,0,0,0,0
+navy:wagnerzach,"Wagner, Zach",Navy,25,1,0,0,0,0,0,0
+navy:huynhben,"Huynh, Ben",Navy,26,1,0,0,0,0,0,0
+navy:granadosjake,"Granados, Jake",Navy,27,1,0,0,0,0,0,0
+navy:teuschlryan,"Teuschl, Ryan",Navy,28,1,0,0,0,0,0,0
+navy:thornetait,"Thorne, Tait",Navy,32,1,0,0,0,0,0,0
+virginiatech:jordanhydeconnor,"Jordan-Hyde, Connor",Virginia Tech,0,2,0,0,0,0,0,0
+virginiatech:deariejack,"Dearie, Jack",Virginia Tech,2,2,0,0,0,0,0,0
+virginiatech:joicecamron,"Joice, Camron",Virginia Tech,6,2,0,0,0,0,0,0
+virginiatech:kilamaoryem,"Kilama, Oryem",Virginia Tech,7,2,0,0,0,0,0,0
+virginiatech:eythorssonbirkir,"Eythorsson, Birkir",Virginia Tech,16,2,0,0,0,0,0,0
+virginiatech:mcclendonmason,"McClendon, Mason",Virginia Tech,22,2,0,0,0,0,0,0
+virginiatech:pascarellajp,"Pascarella, J.P.",Virginia Tech,23,2,0,0,0,0,0,0
+virginiatech:zambettimatt,"Zambetti, Matt",Virginia Tech,25,2,0,0,0,0,0,0
+virginiatech:nicolachris,"Nicola, Chris",Virginia Tech,26,2,0,0,0,0,0,0
+virginiatech:kickbushhayden,"Kickbush, Hayden",Virginia Tech,27,2,0,0,0,0,0,0
+virginiatech:bubbzane,"Bubb, Zane",Virginia Tech,28,2,0,0,0,0,0,0
+virginiatech:adjeteyalexander,"Adjetey, Alexander",Virginia Tech,30,2,0,0,0,0,0,0
+unknown:2,2,Unknown,3,1,0,0,0,5,0,0
+unknown:christiankraus1,Christian Kraus (1),Unknown,,1,0,0,0,0,0,0
+unknown:athancosse1assistedbyspencermallion,"Athan Cosse (1)
+Assisted by: Spencer Mallion",Unknown,South Carolina,1,0,0,0,0,0,0
+unknown:loganfrost1,Logan  Frost (1),Unknown,South Carolina,1,0,0,0,0,0,0
+unknown:brianbanahan1assistedbyloganfrost,"Brian Banahan (1)
+Assisted by: Logan  Frost",Unknown,South Carolina,1,0,0,0,0,0,0
+unknown:spencermallion1,Spencer Mallion  (1),Unknown,South Carolina,1,0,0,0,0,0,0
+georgiasouthern:pavelnoah,"Pavel, Noah",Georgia Southern,31,2,0,0,0,0,0,0

@@ -1,7 +1,7 @@
 [
     {
-        "team_id": "CALIFORNIA_BAPTIST_UNIVERSITY",
-        "name_canonical": "California Baptist University",
+        "team_id": "CALIFORNIA_BAPTIST",
+        "name_canonical": "California Baptist",
         "conference": "Pac-12",
         "sport": "msoc",
         "schedule_url": "https://cbulancers.com/sports/mens-soccer/schedule",
@@ -21,15 +21,13 @@
         "schedule_url": "https://gopoly.com/sports/mens-soccer/schedule",
         "platform_guess": "sidearm",
         "parser_key": "sidearm_std",
-        "aliases": [
-            "Cal Poly"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 22
     },
     {
-        "team_id": "GONZAGA_UNIVERSITY",
-        "name_canonical": "Gonzaga University",
+        "team_id": "GONZAGA",
+        "name_canonical": "Gonzaga",
         "conference": "Pac-12",
         "sport": "msoc",
         "schedule_url": "https://gozags.com/sports/mens-soccer/schedule",
@@ -42,8 +40,8 @@
         "verified_games": 16
     },
     {
-        "team_id": "OREGON_STATE_UNIVERSITY",
-        "name_canonical": "Oregon State University",
+        "team_id": "OREGON_STATE",
+        "name_canonical": "Oregon State",
         "conference": "Pac-12",
         "sport": "msoc",
         "schedule_url": "https://osubeavers.com/sports/mens-soccer/schedule",
@@ -56,8 +54,8 @@
         "verified_games": 17
     },
     {
-        "team_id": "SAN_DIEGO_STATE_UNIVERSITY",
-        "name_canonical": "San Diego State University",
+        "team_id": "SAN_DIEGO_STATE",
+        "name_canonical": "San Diego State",
         "conference": "Pac-12",
         "sport": "msoc",
         "schedule_url": "https://goaztecs.com/sports/mens-soccer/schedule",
@@ -77,9 +75,7 @@
         "schedule_url": "https://gohighlanders.com/sports/mens-soccer/schedule",
         "platform_guess": "sidearm",
         "parser_key": "sidearm_std",
-        "aliases": [
-            "UC Riverside"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 19
     },
@@ -91,9 +87,7 @@
         "schedule_url": "https://ucsdtritons.com/sports/mens-soccer/schedule",
         "platform_guess": "sidearm",
         "parser_key": "sidearm_std",
-        "aliases": [
-            "UC San Diego"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 115
     }

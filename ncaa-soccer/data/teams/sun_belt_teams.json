@@ -1,7 +1,7 @@
 [
     {
-        "team_id": "COASTAL_CAROLINA_UNIVERSITY",
-        "name_canonical": "Coastal Carolina University",
+        "team_id": "COASTAL_CAROLINA",
+        "name_canonical": "Coastal Carolina",
         "conference": "Sun Belt",
         "sport": "msoc",
         "schedule_url": "https://goccusports.com/sports/mens-soccer/schedule",
@@ -14,8 +14,8 @@
         "verified_games": 15
     },
     {
-        "team_id": "GEORGIA_SOUTHERN_UNIVERSITY",
-        "name_canonical": "Georgia Southern University",
+        "team_id": "GEORGIA_SOUTHERN",
+        "name_canonical": "Georgia Southern",
         "conference": "Sun Belt",
         "sport": "msoc",
         "schedule_url": "https://gseagles.com/sports/mens-soccer/schedule",
@@ -28,8 +28,8 @@
         "verified_games": 21
     },
     {
-        "team_id": "GEORGIA_STATE_UNIVERSITY",
-        "name_canonical": "Georgia State University",
+        "team_id": "GEORGIA_STATE",
+        "name_canonical": "Georgia State",
         "conference": "Sun Belt",
         "sport": "msoc",
         "schedule_url": "https://georgiastatesports.com/sports/mens-soccer/schedule",
@@ -42,8 +42,8 @@
         "verified_games": 115
     },
     {
-        "team_id": "JAMES_MADISON_UNIVERSITY",
-        "name_canonical": "James Madison University",
+        "team_id": "JAMES_MADISON",
+        "name_canonical": "James Madison",
         "conference": "Sun Belt",
         "sport": "msoc",
         "schedule_url": "https://jmusports.com/sports/mens-soccer/schedule",
@@ -56,8 +56,8 @@
         "verified_games": 16
     },
     {
-        "team_id": "UNIVERSITY_OF_KENTUCKY",
-        "name_canonical": "University of Kentucky",
+        "team_id": "KENTUCKY",
+        "name_canonical": "Kentucky",
         "conference": "Sun Belt",
         "sport": "msoc",
         "schedule_url": "https://ukathletics.com/sports/msoc/schedule",
@@ -70,8 +70,8 @@
         "verified_games": 21
     },
     {
-        "team_id": "MARSHALL_UNIVERSITY",
-        "name_canonical": "Marshall University",
+        "team_id": "MARSHALL",
+        "name_canonical": "Marshall",
         "conference": "Sun Belt",
         "sport": "msoc",
         "schedule_url": "https://herdzone.com/sports/mens-soccer/schedule",
@@ -84,8 +84,8 @@
         "verified_games": 24
     },
     {
-        "team_id": "OLD_DOMINION_UNIVERSITY",
-        "name_canonical": "Old Dominion University",
+        "team_id": "OLD_DOMINION",
+        "name_canonical": "Old Dominion",
         "conference": "Sun Belt",
         "sport": "msoc",
         "schedule_url": "https://odusports.com/sports/mens-soccer/schedule",
@@ -98,8 +98,8 @@
         "verified_games": 20
     },
     {
-        "team_id": "UNIVERSITY_OF_SOUTH_CAROLINA",
-        "name_canonical": "University of South Carolina",
+        "team_id": "SOUTH_CAROLINA",
+        "name_canonical": "South Carolina",
         "conference": "Sun Belt",
         "sport": "msoc",
         "schedule_url": "https://gamecocksonline.com/sports/msoc/schedule",
@@ -119,15 +119,13 @@
         "schedule_url": "https://ucfknights.com/sports/mens-soccer/schedule",
         "platform_guess": "wmt",
         "parser_key": "wmt_std",
-        "aliases": [
-            "UCF"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 23
     },
     {
-        "team_id": "WEST_VIRGINIA_UNIVERSITY",
-        "name_canonical": "West Virginia University",
+        "team_id": "WEST_VIRGINIA",
+        "name_canonical": "West Virginia",
         "conference": "Sun Belt",
         "sport": "msoc",
         "schedule_url": "https://wvusports.com/sports/mens-soccer/schedule",

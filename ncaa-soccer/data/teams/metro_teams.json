@@ -1,7 +1,7 @@
 [
     {
-        "team_id": "CANISIUS_UNIVERSITY",
-        "name_canonical": "Canisius University",
+        "team_id": "CANISIUS",
+        "name_canonical": "Canisius",
         "conference": "Metro",
         "sport": "msoc",
         "schedule_url": "https://gogriffs.com/sports/mens-soccer/schedule",
@@ -14,8 +14,8 @@
         "verified_games": 82
     },
     {
-        "team_id": "FAIRFIELD_UNIVERSITY",
-        "name_canonical": "Fairfield University",
+        "team_id": "FAIRFIELD",
+        "name_canonical": "Fairfield",
         "conference": "Metro",
         "sport": "msoc",
         "schedule_url": "https://fairfieldstags.com/sports/mens-soccer/schedule",
@@ -28,8 +28,8 @@
         "verified_games": 106
     },
     {
-        "team_id": "IONA_UNIVERSITY",
-        "name_canonical": "Iona University",
+        "team_id": "IONA",
+        "name_canonical": "Iona",
         "conference": "Metro",
         "sport": "msoc",
         "schedule_url": "https://ionagaels.com/sports/mens-soccer/schedule",
@@ -42,8 +42,8 @@
         "verified_games": 112
     },
     {
-        "team_id": "MANHATTAN_UNIVERSITY",
-        "name_canonical": "Manhattan University",
+        "team_id": "MANHATTAN",
+        "name_canonical": "Manhattan",
         "conference": "Metro",
         "sport": "msoc",
         "schedule_url": "https://gojaspers.com/sports/mens-soccer/schedule",
@@ -56,8 +56,8 @@
         "verified_games": 84
     },
     {
-        "team_id": "MARIST_UNIVERSITY",
-        "name_canonical": "Marist University",
+        "team_id": "MARIST",
+        "name_canonical": "Marist",
         "conference": "Metro",
         "sport": "msoc",
         "schedule_url": "https://goredfoxes.com/sports/mens-soccer/schedule",
@@ -77,15 +77,13 @@
         "schedule_url": "https://merrimackathletics.com/sports/mens-soccer/schedule",
         "platform_guess": "sidearm",
         "parser_key": "sidearm_std",
-        "aliases": [
-            "Merrimack College"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 100
     },
     {
-        "team_id": "MOUNT_ST_MARY_S_UNIVERSITY",
-        "name_canonical": "Mount St. Mary's University",
+        "team_id": "MOUNT_ST_MARY_S",
+        "name_canonical": "Mount St. Mary's",
         "conference": "Metro",
         "sport": "msoc",
         "schedule_url": "https://mountathletics.com/sports/mens-soccer/schedule",
@@ -98,8 +96,8 @@
         "verified_games": 51
     },
     {
-        "team_id": "QUINNIPIAC_UNIVERSITY",
-        "name_canonical": "Quinnipiac University",
+        "team_id": "QUINNIPIAC",
+        "name_canonical": "Quinnipiac",
         "conference": "Metro",
         "sport": "msoc",
         "schedule_url": "https://gobobcats.com/sports/mens-soccer/schedule",
@@ -119,15 +117,13 @@
         "schedule_url": "https://gobroncs.com/sports/mens-soccer/schedule",
         "platform_guess": "sidearm",
         "parser_key": "sidearm_std",
-        "aliases": [
-            "Rider University"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 102
     },
     {
-        "team_id": "SACRED_HEART_UNIVERSITY",
-        "name_canonical": "Sacred Heart University",
+        "team_id": "SACRED_HEART",
+        "name_canonical": "Sacred Heart",
         "conference": "Metro",
         "sport": "msoc",
         "schedule_url": "https://sacredheartpioneers.com/sports/mens-soccer/schedule",
@@ -140,8 +136,8 @@
         "verified_games": 18
     },
     {
-        "team_id": "SAINT_PETER_S_UNIVERSITY",
-        "name_canonical": "Saint Peter's University",
+        "team_id": "SAINT_PETER_S",
+        "name_canonical": "Saint Peter's",
         "conference": "Metro",
         "sport": "msoc",
         "schedule_url": "https://saintpeterspeacocks.com/sports/mens-soccer/schedule",
@@ -154,8 +150,8 @@
         "verified_games": 64
     },
     {
-        "team_id": "SIENA_UNIVERSITY_NEW_YORK",
-        "name_canonical": "Siena University (New York)",
+        "team_id": "SIENA",
+        "name_canonical": "Siena",
         "conference": "Metro",
         "sport": "msoc",
         "schedule_url": "https://sienasaints.com/sports/mens-soccer/schedule",
@@ -166,5 +162,19 @@
         ],
         "timezone": "America/New_York",
         "verified_games": 134
+    },
+    {
+        "team_id": "NIAGARA",
+        "name_canonical": "Niagara",
+        "conference": "Metro",
+        "sport": "msoc",
+        "schedule_url": "https://purpleeagles.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Niagara University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 16
     }
 ]

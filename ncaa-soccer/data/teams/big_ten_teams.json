@@ -7,9 +7,7 @@
         "schedule_url": "https://iuhoosiers.com/sports/mens-soccer/schedule",
         "platform_guess": "sidearm",
         "parser_key": "sidearm_std",
-        "aliases": [
-            "Indiana"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 19
     },
@@ -21,15 +19,13 @@
         "schedule_url": "https://umterps.com/sports/mens-soccer/schedule",
         "platform_guess": "sidearm",
         "parser_key": "sidearm_std",
-        "aliases": [
-            "Maryland"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 20
     },
     {
-        "team_id": "UNIVERSITY_OF_MICHIGAN",
-        "name_canonical": "University of Michigan",
+        "team_id": "MICHIGAN",
+        "name_canonical": "Michigan",
         "conference": "Big Ten",
         "sport": "msoc",
         "schedule_url": "https://mgoblue.com/sports/mens-soccer/schedule",
@@ -42,8 +38,8 @@
         "verified_games": 23
     },
     {
-        "team_id": "MICHIGAN_STATE_UNIVERSITY",
-        "name_canonical": "Michigan State University",
+        "team_id": "MICHIGAN_STATE",
+        "name_canonical": "Michigan State",
         "conference": "Big Ten",
         "sport": "msoc",
         "schedule_url": "https://msuspartans.com/sports/mens-soccer/schedule",
@@ -56,8 +52,8 @@
         "verified_games": 18
     },
     {
-        "team_id": "NORTHWESTERN_UNIVERSITY",
-        "name_canonical": "Northwestern University",
+        "team_id": "NORTHWESTERN",
+        "name_canonical": "Northwestern",
         "conference": "Big Ten",
         "sport": "msoc",
         "schedule_url": "https://nusports.com/sports/mens-soccer/schedule",
@@ -70,8 +66,8 @@
         "verified_games": 19
     },
     {
-        "team_id": "OHIO_STATE_UNIVERSITY",
-        "name_canonical": "Ohio State University",
+        "team_id": "OHIO_STATE",
+        "name_canonical": "Ohio State",
         "conference": "Big Ten",
         "sport": "msoc",
         "schedule_url": "https://ohiostatebuckeyes.com/sports/mens-soccer/schedule",
@@ -91,9 +87,7 @@
         "schedule_url": "https://gopsusports.com/sports/mens-soccer/schedule",
         "platform_guess": "wmt",
         "parser_key": "wmt_std",
-        "aliases": [
-            "Penn State"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 25
     },
@@ -105,9 +99,7 @@
         "schedule_url": "https://scarletknights.com/sports/mens-soccer/schedule",
         "platform_guess": "sidearm",
         "parser_key": "sidearm_std",
-        "aliases": [
-            "Rutgers"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 19
     },
@@ -119,15 +111,13 @@
         "schedule_url": "https://uclabruins.com/sports/mens-soccer/schedule",
         "platform_guess": "wmt",
         "parser_key": "wmt_std",
-        "aliases": [
-            "UCLA"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 22
     },
     {
-        "team_id": "UNIVERSITY_OF_WASHINGTON",
-        "name_canonical": "University of Washington",
+        "team_id": "WASHINGTON",
+        "name_canonical": "Washington",
         "conference": "Big Ten",
         "sport": "msoc",
         "schedule_url": "https://gohuskies.com/sports/mens-soccer/schedule",
@@ -147,9 +137,7 @@
         "schedule_url": "https://uwbadgers.com/sports/mens-soccer/schedule",
         "platform_guess": "sidearm",
         "parser_key": "sidearm_std",
-        "aliases": [
-            "Wisconsin"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 20
     }

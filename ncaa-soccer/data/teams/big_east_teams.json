@@ -1,7 +1,7 @@
 [
     {
-        "team_id": "UNIVERSITY_OF_AKRON",
-        "name_canonical": "University of Akron",
+        "team_id": "AKRON",
+        "name_canonical": "Akron",
         "conference": "Big East",
         "sport": "msoc",
         "schedule_url": "https://gozips.com/sports/mens-soccer/schedule",
@@ -14,8 +14,8 @@
         "verified_games": 24
     },
     {
-        "team_id": "BUTLER_UNIVERSITY",
-        "name_canonical": "Butler University",
+        "team_id": "BUTLER",
+        "name_canonical": "Butler",
         "conference": "Big East",
         "sport": "msoc",
         "schedule_url": "https://butlersports.com/sports/mens-soccer/schedule",
@@ -28,8 +28,8 @@
         "verified_games": 147
     },
     {
-        "team_id": "CREIGHTON_UNIVERSITY",
-        "name_canonical": "Creighton University",
+        "team_id": "CREIGHTON",
+        "name_canonical": "Creighton",
         "conference": "Big East",
         "sport": "msoc",
         "schedule_url": "https://gocreighton.com/sports/mens-soccer/schedule",
@@ -42,8 +42,8 @@
         "verified_games": 16
     },
     {
-        "team_id": "DEPAUL_UNIVERSITY",
-        "name_canonical": "DePaul University",
+        "team_id": "DEPAUL",
+        "name_canonical": "DePaul",
         "conference": "Big East",
         "sport": "msoc",
         "schedule_url": "https://depaulbluedemons.com/sports/mens-soccer/schedule",
@@ -56,8 +56,8 @@
         "verified_games": 19
     },
     {
-        "team_id": "GEORGETOWN_UNIVERSITY",
-        "name_canonical": "Georgetown University",
+        "team_id": "GEORGETOWN",
+        "name_canonical": "Georgetown",
         "conference": "Big East",
         "sport": "msoc",
         "schedule_url": "https://guhoyas.com/sports/mens-soccer/schedule",
@@ -70,8 +70,8 @@
         "verified_games": 134
     },
     {
-        "team_id": "MARQUETTE_UNIVERSITY",
-        "name_canonical": "Marquette University",
+        "team_id": "MARQUETTE",
+        "name_canonical": "Marquette",
         "conference": "Big East",
         "sport": "msoc",
         "schedule_url": "https://gomarquette.com/sports/mens-soccer/schedule",
@@ -84,8 +84,8 @@
         "verified_games": 16
     },
     {
-        "team_id": "PROVIDENCE_COLLEGE",
-        "name_canonical": "Providence College",
+        "team_id": "PROVIDENCE",
+        "name_canonical": "Providence",
         "conference": "Big East",
         "sport": "msoc",
         "schedule_url": "https://friars.com/sports/mens-soccer/schedule",
@@ -98,8 +98,8 @@
         "verified_games": 16
     },
     {
-        "team_id": "ST_JOHN_S_UNIVERSITY_NEW_YORK_CITY",
-        "name_canonical": "St. John's University (New York City)",
+        "team_id": "ST_JOHN_S",
+        "name_canonical": "St. John's",
         "conference": "Big East",
         "sport": "msoc",
         "schedule_url": "https://redstormsports.com/sports/mens-soccer/schedule",
@@ -112,8 +112,8 @@
         "verified_games": 19
     },
     {
-        "team_id": "SETON_HALL_UNIVERSITY",
-        "name_canonical": "Seton Hall University",
+        "team_id": "SETON_HALL",
+        "name_canonical": "Seton Hall",
         "conference": "Big East",
         "sport": "msoc",
         "schedule_url": "https://shupirates.com/sports/mens-soccer/schedule",
@@ -133,15 +133,13 @@
         "schedule_url": "https://uconnhuskies.com/sports/mens-soccer/schedule",
         "platform_guess": "sidearm",
         "parser_key": "sidearm_std",
-        "aliases": [
-            "UConn"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 21
     },
     {
-        "team_id": "VILLANOVA_UNIVERSITY",
-        "name_canonical": "Villanova University",
+        "team_id": "VILLANOVA",
+        "name_canonical": "Villanova",
         "conference": "Big East",
         "sport": "msoc",
         "schedule_url": "https://villanova.com/sports/mens-soccer/schedule",
@@ -154,8 +152,8 @@
         "verified_games": 110
     },
     {
-        "team_id": "XAVIER_UNIVERSITY",
-        "name_canonical": "Xavier University",
+        "team_id": "XAVIER",
+        "name_canonical": "Xavier",
         "conference": "Big East",
         "sport": "msoc",
         "schedule_url": "https://goxavier.com/sports/mens-soccer/schedule",

@@ -1,20 +1,22 @@
 {
-  "name": "ncaa-soccer-monorepo",
-  "version": "0.0.0",
-  "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
-  "scripts": {
-    "build": "tsc -b",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "devDependencies": {
-    "@types/node": "^25.0.3",
-    "typescript": "^5.0.0"
-  },
-  "dependencies": {
-    "cheerio": "^1.1.2"
-  }
+    "name": "ncaa-soccer-monorepo",
+    "version": "0.0.0",
+    "private": true,
+    "workspaces": [
+        "apps/*",
+        "packages/*"
+    ],
+    "scripts": {
+        "build": "tsc -b",
+        "test": "npm run build && tsx --test apps/scraper/src/tests/*.test.ts",
+        "validate": "tsx apps/scraper/src/validate_inventory.ts"
+    },
+    "devDependencies": {
+        "@types/node": "^25.0.3",
+        "tsx": "^4.23.13",
+        "typescript": "^5.0.0"
+    },
+    "dependencies": {
+        "cheerio": "^1.1.2"
+    }
 }

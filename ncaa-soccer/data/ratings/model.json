@@ -1,0 +1,128 @@
+{
+    "generated_at": "2026-09-02T23:50:39.669Z",
+    "fitted_on": [
+        "2016",
+        "2017",
+        "2018",
+        "2019",
+        "2021",
+        "2022",
+        "2023",
+        "2024"
+    ],
+    "held_out": [
+        "2025",
+        "2026"
+    ],
+    "elo": {
+        "k": 62.67911489296156,
+        "homeAdvantage": 56.26042487660715,
+        "carryover": 0.9767936867444889,
+        "marginDamping": 4.587231945469436,
+        "initial": 1500,
+        "initialUnrated": 1262.6410827143482,
+        "returningWeight": 150
+    },
+    "outcome": {
+        "beta": 0.00445159018488932,
+        "drawBand": {
+            "overtime": 0.2965544962969582,
+            "no-overtime": 0.5326545211329482
+        }
+    },
+    "goals": {
+        "base": 0.20580046917643685,
+        "slope": 0.6439425853272018,
+        "home": 0.19274740424806996
+    },
+    "returning_production_weight": 150,
+    "returning_production_effect": {
+        "weight": 150,
+        "with": {
+            "train": 0.9133907920886586,
+            "test": 0.9469187947952084
+        },
+        "without": {
+            "train": 0.9152548139332095,
+            "test": 0.9537174644899085
+        }
+    },
+    "performance": {
+        "train": {
+            "games": 16977,
+            "log_loss": 0.9133907920886586,
+            "brier": 0.5405708252386091,
+            "accuracy": 0.5774282853272074,
+            "baseline_log_loss": 1.0069942001604886
+        },
+        "test": {
+            "games": 2304,
+            "log_loss": 0.9469187947952084,
+            "brier": 0.5604112696721752,
+            "accuracy": 0.5499131944444444,
+            "baseline_log_loss": 1.052872327666211
+        },
+        "calibration": [
+            {
+                "bucket": 0.05,
+                "predictions": 330,
+                "predicted": 0.0722683371359833,
+                "observed": 0.048484848484848485
+            },
+            {
+                "bucket": 0.15,
+                "predictions": 1189,
+                "predicted": 0.15705220925419472,
+                "observed": 0.1505466778805719
+            },
+            {
+                "bucket": 0.25,
+                "predictions": 2523,
+                "predicted": 0.2447747109146541,
+                "observed": 0.25089179548156954
+            },
+            {
+                "bucket": 0.35,
+                "predictions": 815,
+                "predicted": 0.3507479114254438,
+                "observed": 0.3521472392638037
+            },
+            {
+                "bucket": 0.45,
+                "predictions": 697,
+                "predicted": 0.4488710364987134,
+                "observed": 0.44763271162123386
+            },
+            {
+                "bucket": 0.55,
+                "predictions": 578,
+                "predicted": 0.5497343684939034,
+                "observed": 0.5397923875432526
+            },
+            {
+                "bucket": 0.65,
+                "predictions": 388,
+                "predicted": 0.6466455942360861,
+                "observed": 0.6288659793814433
+            },
+            {
+                "bucket": 0.75,
+                "predictions": 233,
+                "predicted": 0.7470371579911436,
+                "observed": 0.7811158798283262
+            },
+            {
+                "bucket": 0.85,
+                "predictions": 145,
+                "predicted": 0.8378678343676474,
+                "observed": 0.8620689655172413
+            },
+            {
+                "bucket": 0.95,
+                "predictions": 14,
+                "predicted": 0.9236904788966402,
+                "observed": 1
+            }
+        ]
+    }
+}

@@ -1,6 +1,6 @@
 [
     {
-        "team_id": "BC",
+        "team_id": "BOSTON_COLLEGE",
         "name_canonical": "Boston College",
         "conference": "ACC",
         "sport": "msoc",
@@ -13,7 +13,7 @@
         ]
     },
     {
-        "team_id": "CAL",
+        "team_id": "CALIFORNIA",
         "name_canonical": "California",
         "conference": "ACC",
         "sport": "msoc",
@@ -97,7 +97,7 @@
         "timezone": "America/New_York"
     },
     {
-        "team_id": "PITT",
+        "team_id": "PITTSBURGH",
         "name_canonical": "Pittsburgh",
         "conference": "ACC",
         "sport": "msoc",
@@ -153,7 +153,7 @@
         ]
     },
     {
-        "team_id": "UNC",
+        "team_id": "NORTH_CAROLINA",
         "name_canonical": "North Carolina",
         "conference": "ACC",
         "sport": "msoc",
@@ -168,7 +168,7 @@
         ]
     },
     {
-        "team_id": "UVA",
+        "team_id": "VIRGINIA",
         "name_canonical": "Virginia",
         "conference": "ACC",
         "sport": "msoc",
@@ -183,7 +183,7 @@
         "timezone": "America/New_York"
     },
     {
-        "team_id": "VT",
+        "team_id": "VIRGINIA_TECH",
         "name_canonical": "Virginia Tech",
         "conference": "ACC",
         "sport": "msoc",

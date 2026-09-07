@@ -7,15 +7,13 @@
         "schedule_url": "https://belmontbruins.com/sports/mens-soccer/schedule",
         "platform_guess": "sidearm",
         "parser_key": "sidearm_std",
-        "aliases": [
-            "Belmont University"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 144
     },
     {
-        "team_id": "DRAKE_UNIVERSITY",
-        "name_canonical": "Drake University",
+        "team_id": "DRAKE",
+        "name_canonical": "Drake",
         "conference": "Missouri Valley",
         "sport": "msoc",
         "schedule_url": "https://godrakebulldogs.com/sports/mens-soccer/schedule",
@@ -35,9 +33,7 @@
         "schedule_url": "https://gopurpleaces.com/sports/mens-soccer/schedule",
         "platform_guess": "sidearm",
         "parser_key": "sidearm_std",
-        "aliases": [
-            "University of Evansville"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 103
     },
@@ -49,15 +45,13 @@
         "schedule_url": "https://uicflames.com/sports/mens-soccer/schedule",
         "platform_guess": "sidearm",
         "parser_key": "sidearm_std",
-        "aliases": [
-            "UIC"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 80
     },
     {
-        "team_id": "WESTERN_MICHIGAN_UNIVERSITY",
-        "name_canonical": "Western Michigan University",
+        "team_id": "WESTERN_MICHIGAN",
+        "name_canonical": "Western Michigan",
         "conference": "Missouri Valley",
         "sport": "msoc",
         "schedule_url": "https://wmubroncos.com/sports/mens-soccer/schedule",

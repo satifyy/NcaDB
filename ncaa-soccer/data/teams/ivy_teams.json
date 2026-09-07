@@ -1,7 +1,7 @@
 [
     {
-        "team_id": "BROWN_UNIVERSITY",
-        "name_canonical": "Brown University",
+        "team_id": "BROWN",
+        "name_canonical": "Brown",
         "conference": "Ivy",
         "sport": "msoc",
         "schedule_url": "https://brownbears.com/sports/mens-soccer/schedule",
@@ -21,15 +21,13 @@
         "schedule_url": "https://gocolumbialions.com/sports/mens-soccer/schedule",
         "platform_guess": "sidearm",
         "parser_key": "sidearm_std",
-        "aliases": [
-            "Columbia University"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 15
     },
     {
-        "team_id": "CORNELL_UNIVERSITY",
-        "name_canonical": "Cornell University",
+        "team_id": "CORNELL",
+        "name_canonical": "Cornell",
         "conference": "Ivy",
         "sport": "msoc",
         "schedule_url": "https://cornellbigred.com/sports/mens-soccer/schedule",
@@ -49,15 +47,13 @@
         "schedule_url": "https://dartmouthsports.com/sports/mens-soccer/schedule",
         "platform_guess": "sidearm",
         "parser_key": "sidearm_std",
-        "aliases": [
-            "Dartmouth College"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 16
     },
     {
-        "team_id": "HARVARD_UNIVERSITY",
-        "name_canonical": "Harvard University",
+        "team_id": "HARVARD",
+        "name_canonical": "Harvard",
         "conference": "Ivy",
         "sport": "msoc",
         "schedule_url": "https://gocrimson.com/sports/mens-soccer/schedule",
@@ -70,8 +66,8 @@
         "verified_games": 145
     },
     {
-        "team_id": "PRINCETON_UNIVERSITY",
-        "name_canonical": "Princeton University",
+        "team_id": "PRINCETON",
+        "name_canonical": "Princeton",
         "conference": "Ivy",
         "sport": "msoc",
         "schedule_url": "https://goprincetontigers.com/sports/mens-soccer/schedule",
@@ -91,15 +87,13 @@
         "schedule_url": "https://pennathletics.com/sports/mens-soccer/schedule",
         "platform_guess": "sidearm",
         "parser_key": "sidearm_std",
-        "aliases": [
-            "Penn"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 173
     },
     {
-        "team_id": "YALE_UNIVERSITY",
-        "name_canonical": "Yale University",
+        "team_id": "YALE",
+        "name_canonical": "Yale",
         "conference": "Ivy",
         "sport": "msoc",
         "schedule_url": "https://yalebulldogs.com/sports/mens-soccer/schedule",

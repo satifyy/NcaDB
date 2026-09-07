@@ -1,16 +1,26 @@
-// @ts-nocheck
 import * as fs from 'fs';
 import * as path from 'path';
 import { SidearmBoxScoreParser, TeamNameResolver, WmtBoxScoreParser } from '@ncaa/parsers';
 import { buildTeamNameResolver, loadAllTeams } from '../utils/teams';
 const { chromium } = require('playwright-chromium');
-import { parse } from 'csv-parse/sync';
+import {
+    DEBUG_BOXSCORE_LOG,
+    FAILED_BOXSCORES_LOG,
+    GameCsvRow,
+    PlayerStatCsvRow,
+    RAW_DIR,
+    playerStatsCsv,
+    readAll,
+    streamRows
+} from '@ncaa/storage';
 
 interface GameRow {
     game_id: string;
     date: string;
     home_team_name: string;
     away_team_name: string;
+    /** `final`, `scheduled`, `canceled`, `postponed`. Only a final has a box score. */
+    status: string;
     boxscore_url?: string;
     /** The other school's box score for the same fixture, when the two differ. */
     boxscore_url_alt?: string;
@@ -34,12 +44,22 @@ interface PlayerRow {
 interface ProcessResult {
     rows: PlayerRow[];
     success: boolean;
+    /**
+     * Why this game yielded nothing, when that was the correct outcome rather than a
+     * failure to be retried.
+     *
+     * A PDF-only box score is not a page that failed to load; it is a source with no
+     * machine-readable table in it, and no number of retries will change that. Counting
+     * the two together produced a failure log where twenty-one deliberate skips sat
+     * beside five real problems with nothing to tell them apart.
+     */
+    skipped?: string;
 }
 
 // Configuration
 const BATCH_SIZE = 120; // Restart browser after this many games to free memory
 const CONCURRENCY = 8; // Number of parallel tabs (safer; raise cautiously if stable)
-const DEBUG_LOG_PATH = path.resolve(process.cwd(), 'data/player_stats/debug_boxscore.log');
+const DEBUG_LOG_PATH = DEBUG_BOXSCORE_LOG;
 const VIEWPORT = { width: 1280, height: 720 };
 
 /**
@@ -82,8 +102,21 @@ function slugify(value: string): string {
  * label the resolver cannot place is assigned to whichever of the two teams is still
  * unclaimed. Only a label that resolves to a team in this game is trusted outright,
  * which keeps a stray "Unknown" from stealing the wrong side.
+ *
+ * That generosity has a limit. It is right for a label the resolver cannot place — "VIL",
+ * "USD", an empty string — because the only candidates left are the two teams that
+ * played. It is wrong for a label that resolves to a *different school*, because that
+ * means the page is not this fixture at all. William & Mary's site serves the Longwood
+ * box score at the URL filed against their Georgetown game, and taking the fallback at
+ * face value would have credited Longwood's players to Georgetown.
+ *
+ * `foreign` names any such label, and the caller discards the page rather than
+ * attributing another game's players to this one.
  */
-function resolveTeamLabels(game: GameRow, labels: string[]): Map<string, string> {
+function resolveTeamLabels(
+    game: GameRow,
+    labels: string[]
+): { assignment: Map<string, string>; foreign: string[] } {
     const canonical = (name: string) =>
         teamNameResolver ? teamNameResolver.canonical(name) : name;
     const sides = [canonical(game.home_team_name), canonical(game.away_team_name)];
@@ -120,7 +153,16 @@ function resolveTeamLabels(game: GameRow, labels: string[]): Map<string, string>
         // rather than guessing.
         for (const label of unassigned) assignment.set(label, canonical(label));
     }
-    return assignment;
+
+    // A label the resolver recognises as a school, which is not one of the two that
+    // played, means this page belongs to another fixture.
+    const known = (name: string) => (teamNameResolver ? teamNameResolver.lookup(name) : null);
+    const foreign = unassigned.filter(label => {
+        const resolved = known(label);
+        return resolved !== null && !sides.includes(resolved);
+    });
+
+    return { assignment, foreign };
 }
 
 /**
@@ -144,11 +186,18 @@ function affinity(label: string, team: string): number {
     return 0;
 }
 
-/** Canonicalises `team_id` and rebuilds `player_key`, which embeds it. */
-function toPlayerRows(game: GameRow, parsed: any[]): PlayerRow[] {
+/**
+ * Canonicalises `team_id` and rebuilds `player_key`, which embeds it.
+ *
+ * Returns nothing when the page names a school that did not play in this fixture — see
+ * {@link resolveTeamLabels}. Losing one game's stats is recoverable; filing another
+ * game's players under it is not.
+ */
+function toPlayerRows(game: GameRow, parsed: any[]): { rows: PlayerRow[]; foreign: string[] } {
     const labels = [...new Set(parsed.map(p => String(p.team_id ?? '')))];
-    const teamFor = resolveTeamLabels(game, labels);
-    return parsed.map(p => {
+    const { assignment: teamFor, foreign } = resolveTeamLabels(game, labels);
+    if (foreign.length > 0) return { rows: [], foreign };
+    const rows = parsed.map(p => {
         const teamId = teamFor.get(String(p.team_id ?? '')) || String(p.team_id ?? '');
         return {
             game_id: game.game_id,
@@ -164,6 +213,7 @@ function toPlayerRows(game: GameRow, parsed: any[]): PlayerRow[] {
             saves: toNumber(p.stats?.saves)
         };
     });
+    return { rows, foreign };
 }
 
 async function processWmtGame(game: GameRow): Promise<ProcessResult> {
@@ -173,35 +223,43 @@ async function processWmtGame(game: GameRow): Promise<ProcessResult> {
             logDebug(`WARN [${game.game_id}] WMT stats feed returned no players for ${game.boxscore_url}`);
             return { rows: [], success: false };
         }
+        const built = toPlayerRows(game, res.playerStats);
+        if (built.foreign.length > 0) {
+            logDebug(
+                `SKIP [${game.game_id}] WMT feed is another fixture; it names ` +
+                    `${built.foreign.join(', ')}, who did not play in this game.`
+            );
+            return { rows: [], success: false, skipped: `page is another fixture (${built.foreign.join(', ')})` };
+        }
         logDebug(`OK [${game.game_id}] Parsed ${res.playerStats.length} stats from WMT stats feed`);
-        return { rows: toPlayerRows(game, res.playerStats), success: true };
+        return { rows: built.rows, success: true };
     } catch (e: any) {
         logDebug(`ERR [${game.game_id}] WMT stats feed failed: ${e.message}`);
         return { rows: [], success: false };
     }
 }
 
+/**
+ * Reads `games.csv`.
+ *
+ * Through a real CSV parser rather than `split(',')`, because school names contain
+ * commas: "University of Maryland, Baltimore County" shifted every field after it by one,
+ * so that fixture arrived with its date in the team column, `2026-10-30 vs UMBC` for a
+ * name and the bare domain for a box-score URL. One mangled row per season is easy to
+ * miss and impossible to fetch.
+ */
 function parseGamesCsv(csvPath: string): GameRow[] {
-    const text = fs.readFileSync(csvPath, 'utf8');
-    const lines = text.trim().split(/\r?\n/);
-    if (lines.length === 0) return [];
-    const header = lines[0].split(',');
-    const idx = (name: string) => header.indexOf(name);
-    const games: GameRow[] = [];
-    for (let i = 1; i < lines.length; i++) {
-        const parts = lines[i].split(',');
-        const row: GameRow = {
-            game_id: parts[idx('game_id')] || '',
-            date: parts[idx('date')] || '',
-            home_team_name: parts[idx('home_team_name')] || '',
-            away_team_name: parts[idx('away_team_name')] || '',
-            boxscore_url: parts[idx('boxscore_url')] || '',
-            boxscore_url_alt: idx('boxscore_url_alt') >= 0 ? parts[idx('boxscore_url_alt')] || '' : '',
-            dedupe_key: parts[idx('dedupe_key')] || ''
-        };
-        games.push(row);
-    }
-    return games;
+    const rows = readAll<GameCsvRow>(csvPath, { relaxColumnCount: true });
+    return rows.map(row => ({
+        game_id: row.game_id || '',
+        date: row.date || '',
+        home_team_name: row.home_team_name || '',
+        away_team_name: row.away_team_name || '',
+        status: row.status || '',
+        boxscore_url: row.boxscore_url || '',
+        boxscore_url_alt: row.boxscore_url_alt || '',
+        dedupe_key: row.dedupe_key || ''
+    }));
 }
 
 function ensureDebugLogDir() {
@@ -300,9 +358,12 @@ async function processGameOnce(
     const boxUrl = game.boxscore_url!;
 
     if (isPdf(boxUrl)) {
-        // PDF-only box scores carry no machine-readable player table.
+        // PDF-only box scores carry no machine-readable player table. Virginia publishes
+        // nothing else, so this is every one of their fixtures — a standing property of
+        // the source, not a fault. Where the opponent's school posts an HTML box score
+        // the fixture is still covered through `boxscore_url_alt`.
         logDebug(`SKIP [${game.game_id}] PDF-only box score: ${boxUrl}`);
-        return { rows: [], success: false };
+        return { rows: [], success: false, skipped: 'pdf-only source' };
     }
     if (isWmtBoxscore(boxUrl)) {
         return processWmtGame(game);
@@ -416,8 +477,20 @@ async function processGameOnce(
         await page.close(); // Critical: close page immediately
 
         if (res.playerStats.length > 0) {
+            const built = toPlayerRows(game, res.playerStats);
+            if (built.foreign.length > 0) {
+                logDebug(
+                    `SKIP [${game.game_id}] ${boxUrl} is another fixture; it names ` +
+                        `${built.foreign.join(', ')}, who did not play in this game.`
+                );
+                return {
+                    rows: [],
+                    success: false,
+                    skipped: `page is another fixture (${built.foreign.join(', ')})`
+                };
+            }
             logDebug(`OK [${game.game_id}] Parsed ${res.playerStats.length} stats (attempt ${attempt})`);
-            return { rows: toPlayerRows(game, res.playerStats), success: true };
+            return { rows: built.rows, success: true };
         } else {
             const meta: string[] = [];
             if (wmtUrl) meta.push(`wmt=${wmtUrl}`);
@@ -435,8 +508,23 @@ async function processGameOnce(
 
 async function main() {
     const startTotal = Date.now();
-    const [, , gamesCsv = 'data/games/2025/games.csv', limitArg] = process.argv;
+    const args = process.argv.slice(2);
+    const flags = new Set(args.filter(a => a.startsWith('--')));
+    const positional = args.filter(a => !a.startsWith('--'));
+    const [gamesCsv = 'data/games/2025/games.csv', limitArg] = positional;
     const limit = limitArg ? Number(limitArg) : undefined;
+
+    /**
+     * Skip games whose box score is already on disk and settled.
+     *
+     * A daily refresh otherwise re-fetches every game of the season to learn about the
+     * two that were played yesterday — an hour of scraping, every day, against sites
+     * that have no reason to serve it. Recently played games are still re-fetched, since
+     * a box score published minutes after a final whistle is routinely corrected after.
+     */
+    const newOnly = flags.has('--new-only');
+    const recheckAt = args.indexOf('--recheck-days');
+    const recheckDays = recheckAt === -1 ? 3 : Number(args[recheckAt + 1]) || 3;
     const csvPath = path.resolve(process.cwd(), gamesCsv);
 
     if (!fs.existsSync(csvPath)) {
@@ -453,7 +541,23 @@ async function main() {
             .filter(Boolean)
     );
 
-    let games = parseGamesCsv(csvPath).filter(g => g.boxscore_url);
+    const withUrl = parseGamesCsv(csvPath).filter(g => g.boxscore_url);
+
+    /**
+     * Only games that have been played.
+     *
+     * Schools publish a box-score link the moment a fixture is on the calendar, and for
+     * some of them the link is generated from the date rather than from anything that
+     * exists — Virginia's schedule carries `VA121326.PDF` for a national final in
+     * December that has not been drawn, let alone played. Fetching those costs a request
+     * each, returns nothing every time because there is nothing there, and files the
+     * result as a failure: eighty-five of 2026's fixtures, on every single run.
+     */
+    let games = withUrl.filter(g => g.status === 'final');
+    const unplayed = withUrl.length - games.length;
+    if (unplayed > 0) {
+        console.log(`Skipping ${unplayed} fixture(s) with a box-score link but no result yet.`);
+    }
 
     // --- DEDUPLICATION LOGIC ---
     // Rule: Teams are only allowed one game per day.
@@ -483,6 +587,48 @@ async function main() {
     games = uniqueGames;
     // ---------------------------
 
+    // A box-score URL that several fixtures point at cannot be the box score of any one
+    // of them. Some schools publish a single stale link on every row — Winthrop hands out
+    // `boxscore.aspx?id=23965` for its whole season — and scraping it once per fixture
+    // credits that one game's players with the same goals four or five times over, in
+    // every season. Which fixture it really belongs to is not knowable from the page, so
+    // the whole ambiguous group is dropped rather than attributed to a guess.
+    const byBoxscore = new Map<string, GameRow[]>();
+    for (const game of games) {
+        const url = (game.boxscore_url || '').trim();
+        if (!url) continue;
+        byBoxscore.set(url, [...(byBoxscore.get(url) || []), game]);
+    }
+    const ambiguous = new Set<string>();
+    for (const [url, claimants] of byBoxscore) {
+        if (claimants.length < 2) continue;
+        claimants.forEach(g => ambiguous.add(g.game_id));
+        logDebug(`AMBIGUOUS ${claimants.length} games share ${url}; dropping all of them.`);
+    }
+    if (ambiguous.size > 0) {
+        console.warn(
+            `Dropping ${ambiguous.size} games whose box-score URL is shared with another fixture.`
+        );
+        games = games.filter(g => !ambiguous.has(g.game_id));
+    }
+
+    // The season's full game set, fixed before any narrowing below. Carry-forward reads
+    // it to decide which stored rows still belong to this season; narrowing it would
+    // make every game this run chose not to re-scrape look like one that had left the
+    // dataset, and delete its stats.
+    const seasonScope = new Set(games.map(g => g.game_id));
+    const seasonYear = games[0]?.date?.split('-')[0] || String(new Date().getFullYear());
+
+    if (newOnly) {
+        const settled = await settledGames(seasonYear, games, recheckDays);
+        const before = games.length;
+        games = games.filter(g => !settled.has(g.game_id));
+        console.log(
+            `Incremental: ${games.length} of ${before} games need box scores ` +
+                `(${before - games.length} already stored and older than ${recheckDays} days).`
+        );
+    }
+
     if (limit && !isNaN(limit)) {
         games = games.slice(0, limit);
     }
@@ -494,12 +640,14 @@ async function main() {
         });
     }
 
-    const rawDir = path.resolve(__dirname, '../../../../data/raw');
+    const rawDir = RAW_DIR;
     if (!fs.existsSync(rawDir)) fs.mkdirSync(rawDir, { recursive: true });
 
     const boxParser = new SidearmBoxScoreParser();
     const allRows: PlayerRow[] = [];
     const failedGames: GameRow[] = [];
+    /** Games that correctly yielded nothing, and why — not retried, not failures. */
+    const skippedGames = new Map<string, { game: GameRow; reason: string }>();
     const status: StatusState = {
         total: games.length,
         success: 0,
@@ -526,39 +674,27 @@ async function main() {
             ]
         });
 
-        const batchFailures: GameRow[] = [];
+        // Closed in `finally`: a throw inside a batch used to leave chromium and this
+        // process alive. Locally that is a stray process; on a scheduled runner a run
+        // that never exits makes the scheduler skip every run after it.
+        try {
+            const batchFailures: GameRow[] = [];
 
-        // specific concurrency logic
-        // We will execute 'CONCURRENCY' promises at a time from the batch
-        for (let j = 0; j < batch.length; j += CONCURRENCY) {
-            const chunk = batch.slice(j, j + CONCURRENCY);
-            status.inFlight = chunk.length;
-            const promises = chunk.map(game => processGame(browser, game, rawDir, boxParser));
-            const results = await Promise.all(promises);
-            results.forEach((res, idx) => {
-                allRows.push(...res.rows);
-                if (!res.success) {
-                    batchFailures.push(chunk[idx]);
-                    status.failed += 1;
-                } else {
-                    status.success += 1;
-                }
-            });
-            status.inFlight = 0;
-        }
-
-        if (batchFailures.length > 0) {
-            logDebug(`Retrying ${batchFailures.length} games with longer waits...`);
-            const secondFailures: GameRow[] = [];
-            for (let j = 0; j < batchFailures.length; j += CONCURRENCY) {
-                const retryChunk = batchFailures.slice(j, j + CONCURRENCY);
-                status.inFlight = retryChunk.length;
-                const retryPromises = retryChunk.map(game => processGame(browser, game, rawDir, boxParser, { attempt: 2, waitLonger: true }));
-                const retryResults = await Promise.all(retryPromises);
-                retryResults.forEach((res, idx) => {
+            // specific concurrency logic
+            // We will execute 'CONCURRENCY' promises at a time from the batch
+            for (let j = 0; j < batch.length; j += CONCURRENCY) {
+                const chunk = batch.slice(j, j + CONCURRENCY);
+                status.inFlight = chunk.length;
+                const promises = chunk.map(game => processGame(browser, game, rawDir, boxParser));
+                const results = await Promise.all(promises);
+                results.forEach((res, idx) => {
                     allRows.push(...res.rows);
-                    if (!res.success) {
-                        secondFailures.push(retryChunk[idx]);
+                    if (res.skipped) {
+                        // Nothing to retry: the source has no player table to give.
+                        skippedGames.set(chunk[idx].game_id, { game: chunk[idx], reason: res.skipped });
+                    } else if (!res.success) {
+                        batchFailures.push(chunk[idx]);
+                        status.failed += 1;
                     } else {
                         status.success += 1;
                     }
@@ -566,37 +702,71 @@ async function main() {
                 status.inFlight = 0;
             }
 
-            // Third retry with extra waits for the remaining failures
-            if (secondFailures.length > 0) {
-                logDebug(`Retrying ${secondFailures.length} games with extra-long waits...`);
-                for (let j = 0; j < secondFailures.length; j += CONCURRENCY) {
-                    const retryChunk = secondFailures.slice(j, j + CONCURRENCY);
+            if (batchFailures.length > 0) {
+                logDebug(`Retrying ${batchFailures.length} games with longer waits...`);
+                const secondFailures: GameRow[] = [];
+                for (let j = 0; j < batchFailures.length; j += CONCURRENCY) {
+                    const retryChunk = batchFailures.slice(j, j + CONCURRENCY);
                     status.inFlight = retryChunk.length;
-                    const retryPromises = retryChunk.map(game => processGame(browser, game, rawDir, boxParser, { attempt: 3, waitLonger: true, waitMs: 3000, scrollWaitMs: 2000 }));
+                    const retryPromises = retryChunk.map(game => processGame(browser, game, rawDir, boxParser, { attempt: 2, waitLonger: true }));
                     const retryResults = await Promise.all(retryPromises);
                     retryResults.forEach((res, idx) => {
                         allRows.push(...res.rows);
-                        if (!res.success) {
-                            failedGames.push(retryChunk[idx]);
-                            status.failed += 1;
+                        if (res.skipped) {
+                            skippedGames.set(retryChunk[idx].game_id, {
+                                game: retryChunk[idx],
+                                reason: res.skipped
+                            });
+                        } else if (!res.success) {
+                            secondFailures.push(retryChunk[idx]);
                         } else {
                             status.success += 1;
                         }
                     });
                     status.inFlight = 0;
                 }
-            }
-        }
 
-        await browser.close();
+                // Third retry with extra waits for the remaining failures
+                if (secondFailures.length > 0) {
+                    logDebug(`Retrying ${secondFailures.length} games with extra-long waits...`);
+                    for (let j = 0; j < secondFailures.length; j += CONCURRENCY) {
+                        const retryChunk = secondFailures.slice(j, j + CONCURRENCY);
+                        status.inFlight = retryChunk.length;
+                        const retryPromises = retryChunk.map(game => processGame(browser, game, rawDir, boxParser, { attempt: 3, waitLonger: true, waitMs: 3000, scrollWaitMs: 2000 }));
+                        const retryResults = await Promise.all(retryPromises);
+                        retryResults.forEach((res, idx) => {
+                            allRows.push(...res.rows);
+                            if (res.skipped) {
+                                skippedGames.set(retryChunk[idx].game_id, {
+                                    game: retryChunk[idx],
+                                    reason: res.skipped
+                                });
+                            } else if (!res.success) {
+                                failedGames.push(retryChunk[idx]);
+                                status.failed += 1;
+                            } else {
+                                status.success += 1;
+                            }
+                        });
+                        status.inFlight = 0;
+                    }
+                }
+            }
+
+        } finally {
+            await browser.close();
+        }
         logDebug(`Batch ${Math.floor(i / BATCH_SIZE) + 1} complete. Memory cleared.`);
     }
 
     // Write Output
-    const year = games[0]?.date?.split('-')[0] || '2025';
-    const statsDir = path.resolve(__dirname, '../../../../data/player_stats', year);
-    if (!fs.existsSync(statsDir)) fs.mkdirSync(statsDir, { recursive: true });
-    const outPath = path.join(statsDir, 'player_stats.csv');
+    const year = seasonYear;
+    // Resolved through `@ncaa/storage` like every other reader and writer — and like
+    // `carryForwardMissingGames` below, which already did. While this line built its own
+    // path from `__dirname`, the two disagreed the moment `NCAA_REPO_ROOT` was set: the
+    // run carried rows forward from one tree and wrote the result into another.
+    const outPath = playerStatsCsv(year);
+    fs.mkdirSync(path.dirname(outPath), { recursive: true });
 
     const header = [
         'game_id', 'team_id', 'player_name', 'player_key', 'jersey_number',
@@ -607,7 +777,7 @@ async function main() {
     // earlier run already collected. Rows are kept per game: anything scraped this run
     // replaces what was stored for that game, and games that yielded nothing this time
     // keep the rows they had.
-    const carried = carryForwardMissingGames(outPath, allRows, new Set(games.map(g => g.game_id)));
+    const carried = await carryForwardMissingGames(outPath, allRows, seasonScope);
     if (carried.rows.length > 0) {
         logDebug(`Kept ${carried.rows.length} stats from ${carried.games} previously scraped games that returned nothing this run.`);
     }
@@ -628,14 +798,50 @@ async function main() {
     logDebug(`DONE! Processed ${games.length} games in ${duration.toFixed(1)}s`);
     logDebug(`Stats written to ${outPath}`);
 
-    if (failedGames.length > 0) {
-        const failDir = path.resolve(__dirname, '../../../../data/player_stats');
+    // The log carries a reason, and skips are separated from failures. Without both, a
+    // run that skipped twenty-one PDFs and failed five pages produced twenty-six
+    // identical-looking lines, and the five worth acting on were indistinguishable.
+    const failLogPath = FAILED_BOXSCORES_LOG;
+    const failDir = path.dirname(failLogPath);
+    const logged = [
+        ...failedGames.map(game => ({ game, reason: 'no player table after 3 attempts' })),
+        ...[...skippedGames.values()]
+    ];
+
+    if (logged.length > 0) {
         if (!fs.existsSync(failDir)) fs.mkdirSync(failDir, { recursive: true });
-        const failLogPath = path.join(failDir, 'failed_boxscores.log');
-        const failLines = failedGames.map(g => `${g.game_id},${g.date},${g.home_team_name} vs ${g.away_team_name},${g.boxscore_url ?? ''},${g.boxscore_url_alt || ''}`);
-        fs.writeFileSync(failLogPath, failLines.join('\n'), 'utf8');
-        logDebug(`WARN ${failedGames.length} games still missing stats after retry. Logged to ${failLogPath}`);
+        const header = 'game_id,date,fixture,reason,boxscore_url,boxscore_url_alt';
+        const lines = logged.map(({ game, reason }) =>
+            [
+                game.game_id,
+                game.date,
+                `${game.home_team_name} vs ${game.away_team_name}`,
+                reason,
+                game.boxscore_url ?? '',
+                game.boxscore_url_alt || ''
+            ]
+                .map(value => escapeCsv(String(value)))
+                .join(',')
+        );
+        fs.writeFileSync(failLogPath, [header, ...lines].join('\n'), 'utf8');
+    } else if (fs.existsSync(failLogPath)) {
+        // A clean run leaves no log behind, so a stale one from last week cannot be read
+        // as this run's result.
+        fs.unlinkSync(failLogPath);
     }
+
+    const byReason = new Map<string, number>();
+    for (const { reason } of logged) byReason.set(reason, (byReason.get(reason) ?? 0) + 1);
+    if (failedGames.length > 0) {
+        console.warn(`${failedGames.length} game(s) still missing stats after retry.`);
+    }
+    if (skippedGames.size > 0) {
+        console.log(`${skippedGames.size} game(s) skipped for reasons no retry would fix.`);
+    }
+    for (const [reason, count] of [...byReason].sort((a, b) => b[1] - a[1])) {
+        console.log(`   ${String(count).padStart(4)}  ${reason}`);
+    }
+    if (logged.length > 0) console.log(`   detail -> ${failLogPath}`);
 
     status.inFlight = 0;
     renderStatus(status);
@@ -652,25 +858,28 @@ async function main() {
  *
  * @returns the rows to re-append, plus how many games they came from
  */
-function carryForwardMissingGames(
+async function carryForwardMissingGames(
     outPath: string,
     freshRows: PlayerRow[],
     inScope: Set<string>
-): { rows: any[]; games: number } {
+): Promise<{ rows: PlayerStatCsvRow[]; games: number }> {
     if (!fs.existsSync(outPath)) return { rows: [], games: 0 };
 
-    let previous: any[];
+    const scrapedThisRun = new Set(freshRows.map(r => r.game_id));
+    const rows: PlayerStatCsvRow[] = [];
+    // Streamed: only the rows actually being carried forward are kept, rather than the
+    // whole stored season plus the subset of it.
     try {
-        previous = parse(fs.readFileSync(outPath, 'utf8'), { columns: true, skip_empty_lines: true });
+        for await (const row of streamRows<PlayerStatCsvRow>(outPath)) {
+            if (row.game_id && inScope.has(row.game_id) && !scrapedThisRun.has(row.game_id)) {
+                rows.push(row);
+            }
+        }
     } catch (e: any) {
         logDebug(`WARN Could not read existing stats at ${outPath}: ${e.message}`);
         return { rows: [], games: 0 };
     }
 
-    const scrapedThisRun = new Set(freshRows.map(r => r.game_id));
-    const rows = previous.filter(
-        r => r.game_id && inScope.has(r.game_id) && !scrapedThisRun.has(r.game_id)
-    );
     return { rows, games: new Set(rows.map(r => r.game_id)).size };
 }
 
@@ -688,6 +897,47 @@ function toNumber(val: any): number | null {
     return isNaN(num) ? null : num;
 }
 
+/**
+ * Games whose stats are already stored and old enough to be final.
+ *
+ * "Old enough" matters: a box score read minutes after full time is often incomplete,
+ * and the school corrects it over the following days, so a recently played game is
+ * re-fetched even though rows for it exist.
+ */
+async function settledGames(
+    season: string,
+    games: GameRow[],
+    recheckDays: number
+): Promise<Set<string>> {
+    const outPath = playerStatsCsv(season);
+    if (!fs.existsSync(outPath)) return new Set();
+
+    // Streamed: this only ever needed the set of stored game ids, never the rows.
+    const settled = new Set<string>();
+    try {
+        for await (const row of streamRows<PlayerStatCsvRow>(outPath)) {
+            if (row.game_id) settled.add(row.game_id);
+        }
+    } catch {
+        // Unreadable stats mean nothing is known to be stored, so nothing is skipped.
+        return new Set();
+    }
+
+    const cutoff = new Date(Date.now() - recheckDays * 86400000).toISOString().slice(0, 10);
+    for (const game of games) {
+        if (game.date >= cutoff) settled.delete(game.game_id);
+    }
+    return settled;
+}
+
+/**
+ * A crashed run has to be visible to whatever invoked it.
+ *
+ * Logging the error and exiting 0 makes a scrape that fetched nothing indistinguishable
+ * from one that worked, which a scheduled run reports as a success and a pipeline stage
+ * treats as reason to continue on to the next step.
+ */
 main().catch(err => {
     console.error('Fatal error:', err);
+    process.exit(1);
 });

@@ -1,7 +1,7 @@
 [
     {
-        "team_id": "UNIVERSITY_OF_DELAWARE",
-        "name_canonical": "University of Delaware",
+        "team_id": "DELAWARE",
+        "name_canonical": "Delaware",
         "conference": "Summit",
         "sport": "msoc",
         "schedule_url": "https://bluehens.com/sports/mens-soccer/schedule",
@@ -21,9 +21,7 @@
         "schedule_url": "https://kcroos.com/sports/mens-soccer/schedule",
         "platform_guess": "sidearm",
         "parser_key": "sidearm_std",
-        "aliases": [
-            "Kansas City"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 24
     },
@@ -35,15 +33,13 @@
         "schedule_url": "https://omavs.com/sports/mens-soccer/schedule",
         "platform_guess": "sidearm",
         "parser_key": "sidearm_std",
-        "aliases": [
-            "Omaha"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 70
     },
     {
-        "team_id": "ORAL_ROBERTS_UNIVERSITY",
-        "name_canonical": "Oral Roberts University",
+        "team_id": "ORAL_ROBERTS",
+        "name_canonical": "Oral Roberts",
         "conference": "Summit",
         "sport": "msoc",
         "schedule_url": "https://oruathletics.com/sports/mens-soccer/schedule",
@@ -56,8 +52,8 @@
         "verified_games": 106
     },
     {
-        "team_id": "UNIVERSITY_OF_ST_THOMAS_MINNESOTA",
-        "name_canonical": "University of St. Thomas (Minnesota)",
+        "team_id": "ST_THOMAS",
+        "name_canonical": "St. Thomas",
         "conference": "Summit",
         "sport": "msoc",
         "schedule_url": "https://tommiesports.com/sports/msoc/schedule",
@@ -77,9 +73,7 @@
         "schedule_url": "https://umassathletics.com/sports/mens-soccer/schedule",
         "platform_guess": "sidearm",
         "parser_key": "sidearm_std",
-        "aliases": [
-            "UMass"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 17
     }

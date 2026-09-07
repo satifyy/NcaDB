@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { Fetcher } from '../utils/fetcher';
 import { SidearmParser } from '@ncaa/parsers';
-import { GameStorageAdapter } from '@ncaa/storage';
+import { DATA_DIR, GameStorageAdapter, RAW_DIR, gamesCsv } from '@ncaa/storage';
 
 async function main() {
     const [, , url, teamName = 'Unknown Team', alias = 'schedule'] = process.argv;
@@ -12,7 +12,7 @@ async function main() {
     }
 
     const fetcher = new Fetcher({
-        rawDir: path.resolve(__dirname, '../../../../data/raw'),
+        rawDir: RAW_DIR,
         delayMs: 0
     });
 
@@ -30,10 +30,9 @@ async function main() {
 
     if (games.length > 0) {
         const year = games[0].date.split('-')[0];
-        const storageDir = path.resolve(__dirname, '../../../../data');
-        const storage = new GameStorageAdapter(storageDir);
+        const storage = new GameStorageAdapter(DATA_DIR);
         await storage.saveGames(games, year);
-        console.log(`Saved games to ${path.join(storageDir, 'games', year, 'games.csv')}`);
+        console.log(`Saved games to ${gamesCsv(year)}`);
     }
 }
 

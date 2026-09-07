@@ -7,15 +7,13 @@
         "schedule_url": "https://davidsonwildcats.com/sports/mens-soccer/schedule",
         "platform_guess": "sidearm",
         "parser_key": "sidearm_std",
-        "aliases": [
-            "Davidson College"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 19
     },
     {
-        "team_id": "UNIVERSITY_OF_DAYTON",
-        "name_canonical": "University of Dayton",
+        "team_id": "DAYTON",
+        "name_canonical": "Dayton",
         "conference": "Atlantic 10",
         "sport": "msoc",
         "schedule_url": "https://daytonflyers.com/sports/mens-soccer/schedule",
@@ -28,8 +26,8 @@
         "verified_games": 157
     },
     {
-        "team_id": "DUQUESNE_UNIVERSITY",
-        "name_canonical": "Duquesne University",
+        "team_id": "DUQUESNE",
+        "name_canonical": "Duquesne",
         "conference": "Atlantic 10",
         "sport": "msoc",
         "schedule_url": "https://goduquesne.com/sports/mens-soccer/schedule",
@@ -42,8 +40,8 @@
         "verified_games": 96
     },
     {
-        "team_id": "FORDHAM_UNIVERSITY",
-        "name_canonical": "Fordham University",
+        "team_id": "FORDHAM",
+        "name_canonical": "Fordham",
         "conference": "Atlantic 10",
         "sport": "msoc",
         "schedule_url": "https://fordhamsports.com/sports/mens-soccer/schedule",
@@ -56,8 +54,8 @@
         "verified_games": 114
     },
     {
-        "team_id": "GEORGE_MASON_UNIVERSITY",
-        "name_canonical": "George Mason University",
+        "team_id": "GEORGE_MASON",
+        "name_canonical": "George Mason",
         "conference": "Atlantic 10",
         "sport": "msoc",
         "schedule_url": "https://gomason.com/sports/mens-soccer/schedule",
@@ -70,8 +68,8 @@
         "verified_games": 19
     },
     {
-        "team_id": "GEORGE_WASHINGTON_UNIVERSITY",
-        "name_canonical": "George Washington University",
+        "team_id": "GEORGE_WASHINGTON",
+        "name_canonical": "George Washington",
         "conference": "Atlantic 10",
         "sport": "msoc",
         "schedule_url": "https://gwsports.com/sports/mens-soccer/schedule",
@@ -84,8 +82,8 @@
         "verified_games": 20
     },
     {
-        "team_id": "LA_SALLE_UNIVERSITY",
-        "name_canonical": "La Salle University",
+        "team_id": "LA_SALLE",
+        "name_canonical": "La Salle",
         "conference": "Atlantic 10",
         "sport": "msoc",
         "schedule_url": "https://goexplorers.com/sports/mens-soccer/schedule",
@@ -98,8 +96,8 @@
         "verified_games": 102
     },
     {
-        "team_id": "LOYOLA_UNIVERSITY_CHICAGO",
-        "name_canonical": "Loyola University Chicago",
+        "team_id": "LOYOLA_CHICAGO",
+        "name_canonical": "Loyola Chicago",
         "conference": "Atlantic 10",
         "sport": "msoc",
         "schedule_url": "https://loyolaramblers.com/sports/mens-soccer/schedule",
@@ -112,8 +110,8 @@
         "verified_games": 102
     },
     {
-        "team_id": "UNIVERSITY_OF_RHODE_ISLAND",
-        "name_canonical": "University of Rhode Island",
+        "team_id": "RHODE_ISLAND",
+        "name_canonical": "Rhode Island",
         "conference": "Atlantic 10",
         "sport": "msoc",
         "schedule_url": "https://gorhody.com/sports/mens-soccer/schedule",
@@ -126,8 +124,8 @@
         "verified_games": 89
     },
     {
-        "team_id": "ST_BONAVENTURE_UNIVERSITY",
-        "name_canonical": "St. Bonaventure University",
+        "team_id": "ST_BONAVENTURE",
+        "name_canonical": "St. Bonaventure",
         "conference": "Atlantic 10",
         "sport": "msoc",
         "schedule_url": "https://gobonnies.com/sports/mens-soccer/schedule",
@@ -140,8 +138,8 @@
         "verified_games": 100
     },
     {
-        "team_id": "SAINT_JOSEPH_S_UNIVERSITY",
-        "name_canonical": "Saint Joseph's University",
+        "team_id": "SAINT_JOSEPH_S",
+        "name_canonical": "Saint Joseph's",
         "conference": "Atlantic 10",
         "sport": "msoc",
         "schedule_url": "https://sjuhawks.com/sports/mens-soccer/schedule",
@@ -154,8 +152,8 @@
         "verified_games": 108
     },
     {
-        "team_id": "SAINT_LOUIS_UNIVERSITY_UNITED_STATES",
-        "name_canonical": "Saint Louis University (United States)",
+        "team_id": "SAINT_LOUIS",
+        "name_canonical": "Saint Louis",
         "conference": "Atlantic 10",
         "sport": "msoc",
         "schedule_url": "https://slubillikens.com/sports/mens-soccer/schedule",
@@ -175,9 +173,7 @@
         "schedule_url": "https://vcuathletics.com/sports/mens-soccer/schedule",
         "platform_guess": "sidearm",
         "parser_key": "sidearm_std",
-        "aliases": [
-            "VCU"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 126
     }

@@ -2,8 +2,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { Game } from '@ncaa/shared';
-import { parse } from 'csv-parse/sync';
-import { stringify } from 'csv-stringify/sync';
+import { readAll } from './csv/read';
+import { writeRows } from './csv/write';
 
 /** A CSV row as stored on disk. */
 type GameRow = Record<string, string>;
@@ -71,6 +71,12 @@ function mergeRows(into: GameRow, from: GameRow): GameRow {
     for (const field of ['schedule_url', 'game_id']) {
         if (!merged[field] && from[field]) merged[field] = from[field];
     }
+    // `regular` is what a row says when its source hung no marker on the fixture, so it
+    // loses to any other value: one school calling the game an exhibition is a claim,
+    // and the other school not mentioning it is not a counter-claim.
+    if ((!merged.game_type || merged.game_type === 'regular') && from.game_type && from.game_type !== 'regular') {
+        merged.game_type = from.game_type;
+    }
     mergeBoxscoreUrls(merged, from);
 
     if (aligned || inverted) {
@@ -112,7 +118,8 @@ export class GameStorageAdapter {
             'game_id', 'date', 'home_team_name', 'away_team_name',
             'home_team_ranked', 'away_team_ranked',
             'home_score', 'away_score', 'location_type', 'status',
-            'schedule_url', 'boxscore_url', 'boxscore_url_alt', 'dedupe_key'
+            'schedule_url', 'boxscore_url', 'boxscore_url_alt', 'dedupe_key',
+            'game_type'
         ];
 
         const gamesMap = new Map<string, any>();
@@ -120,13 +127,7 @@ export class GameStorageAdapter {
         // 1. Read existing
         if (fs.existsSync(filePath)) {
             try {
-                const fileContent = fs.readFileSync(filePath, 'utf-8');
-                const records: any[] = parse(fileContent, {
-                    columns: true,
-                    skip_empty_lines: true
-                });
-
-                for (const raw of records) {
+                for (const raw of readAll<GameRow>(filePath)) {
                     const record = this.normalizeRow(raw);
                     if (!record.dedupe_key) continue;
                     const existing = gamesMap.get(record.dedupe_key);
@@ -160,7 +161,8 @@ export class GameStorageAdapter {
                 schedule_url: game.source_urls?.schedule_url || '',
                 boxscore_url: game.source_urls?.boxscore_url || '',
                 boxscore_url_alt: '',
-                dedupe_key: game.dedupe_key
+                dedupe_key: game.dedupe_key,
+                game_type: game.game_type || ''
             });
 
             // Smart merge: if game already exists, update with better data
@@ -181,12 +183,7 @@ export class GameStorageAdapter {
         // ensure sorting by date
         allGames.sort((a, b) => a.date.localeCompare(b.date));
 
-        const output = stringify(allGames, {
-            header: true,
-            columns: headers
-        });
-
-        fs.writeFileSync(filePath, output);
+        writeRows(filePath, allGames, headers);
         console.log(`Saved ${games.length} games (merged with existing) to ${filePath}`);
     }
 }

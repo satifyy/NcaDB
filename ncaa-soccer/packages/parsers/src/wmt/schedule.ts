@@ -212,6 +212,10 @@ export class WmtParser implements Parser {
                 home_score: homeScore,
                 away_score: awayScore,
                 location_type: locationType,
+                // WMT is the only source that states this rather than writing it into the
+                // opponent name, so it is set here: no amount of reading the stored row
+                // back afterwards would recover a flag that was never spelled out in text.
+                game_type: isExhibition ? 'exhibition' : undefined,
                 status: mapStatus(event),
                 source_urls: {
                     schedule_url: options?.sourceUrl || options?.baseUrl,

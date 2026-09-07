@@ -7,9 +7,7 @@
         "schedule_url": "https://fullertontitans.com/sports/mens-soccer/schedule",
         "platform_guess": "sidearm",
         "parser_key": "sidearm_std",
-        "aliases": [
-            "Cal State Fullerton"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 115
     },
@@ -21,9 +19,7 @@
         "schedule_url": "https://hornetsports.com/sports/mens-soccer/schedule",
         "platform_guess": "sidearm",
         "parser_key": "sidearm_std",
-        "aliases": [
-            "Sacramento State"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 118
     },
@@ -35,9 +31,7 @@
         "schedule_url": "https://ucirvinesports.com/sports/mens-soccer/schedule",
         "platform_guess": "sidearm",
         "parser_key": "sidearm_std",
-        "aliases": [
-            "UC Irvine"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 21
     },
@@ -49,15 +43,13 @@
         "schedule_url": "https://ucsbgauchos.com/sports/mens-soccer/schedule",
         "platform_guess": "sidearm",
         "parser_key": "sidearm_std",
-        "aliases": [
-            "UC Santa Barbara"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 168
     },
     {
-        "team_id": "UTAH_VALLEY_UNIVERSITY",
-        "name_canonical": "Utah Valley University",
+        "team_id": "UTAH_VALLEY",
+        "name_canonical": "Utah Valley",
         "conference": "Big West",
         "sport": "msoc",
         "schedule_url": "https://wolverinegreen.com/sports/mens-soccer/schedule",

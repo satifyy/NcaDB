@@ -5,7 +5,7 @@ import {
     PlayerStat,
     TeamResolver
 } from '@ncaa/shared';
-import * as path from 'path';
+import { ACC_INVENTORY, TEAMS_DIR, TEAM_ALIASES } from '@ncaa/storage';
 
 console.log("Starting scraper integration check...");
 
@@ -59,9 +59,9 @@ try {
 // We'll try to locate data relative to this file or root.
 // Assuming run from root via 'node apps/scraper/dist/index.js' or similar.
 // data is at data/teams/
-const dataPath = path.resolve(__dirname, '../../../data/teams');
-const teamsPath = path.join(dataPath, 'acc_teams.json');
-const aliasesPath = path.join(dataPath, 'team_aliases.json');
+const dataPath = TEAMS_DIR;
+const teamsPath = ACC_INVENTORY;
+const aliasesPath = TEAM_ALIASES;
 
 console.log(`Loading teams from ${teamsPath}...`);
 const resolver = new TeamResolver(teamsPath, aliasesPath);

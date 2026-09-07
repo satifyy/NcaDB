@@ -1,7 +1,7 @@
 [
     {
-        "team_id": "GARDNER_WEBB_UNIVERSITY",
-        "name_canonical": "Gardner–Webb University",
+        "team_id": "GARDNER_WEBB",
+        "name_canonical": "Gardner-Webb",
         "conference": "Big South",
         "sport": "msoc",
         "schedule_url": "https://gwusports.com/sports/mens-soccer/schedule",
@@ -14,8 +14,8 @@
         "verified_games": 21
     },
     {
-        "team_id": "HIGH_POINT_UNIVERSITY",
-        "name_canonical": "High Point University",
+        "team_id": "HIGH_POINT",
+        "name_canonical": "High Point",
         "conference": "Big South",
         "sport": "msoc",
         "schedule_url": "https://highpointpanthers.com/sports/mens-soccer/schedule",
@@ -28,8 +28,8 @@
         "verified_games": 87
     },
     {
-        "team_id": "LONGWOOD_UNIVERSITY",
-        "name_canonical": "Longwood University",
+        "team_id": "LONGWOOD",
+        "name_canonical": "Longwood",
         "conference": "Big South",
         "sport": "msoc",
         "schedule_url": "https://longwoodlancers.com/sports/mens-soccer/schedule",
@@ -42,8 +42,8 @@
         "verified_games": 134
     },
     {
-        "team_id": "PRESBYTERIAN_COLLEGE",
-        "name_canonical": "Presbyterian College",
+        "team_id": "PRESBYTERIAN",
+        "name_canonical": "Presbyterian",
         "conference": "Big South",
         "sport": "msoc",
         "schedule_url": "https://gobluehose.com/sports/mens-soccer/schedule",
@@ -56,8 +56,8 @@
         "verified_games": 166
     },
     {
-        "team_id": "RADFORD_UNIVERSITY",
-        "name_canonical": "Radford University",
+        "team_id": "RADFORD",
+        "name_canonical": "Radford",
         "conference": "Big South",
         "sport": "msoc",
         "schedule_url": "https://radfordathletics.com/sports/mens-soccer/schedule",
@@ -77,9 +77,7 @@
         "schedule_url": "https://uncabulldogs.com/sports/mens-soccer/schedule",
         "platform_guess": "sidearm",
         "parser_key": "sidearm_std",
-        "aliases": [
-            "UNC Asheville"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 19
     },
@@ -91,15 +89,13 @@
         "schedule_url": "https://upstatespartans.com/sports/mens-soccer/schedule",
         "platform_guess": "sidearm",
         "parser_key": "sidearm_std",
-        "aliases": [
-            "USC Upstate"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 21
     },
     {
-        "team_id": "WINTHROP_UNIVERSITY",
-        "name_canonical": "Winthrop University",
+        "team_id": "WINTHROP",
+        "name_canonical": "Winthrop",
         "conference": "Big South",
         "sport": "msoc",
         "schedule_url": "https://winthropeagles.com/sports/mens-soccer/schedule",

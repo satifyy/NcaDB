@@ -1,7 +1,7 @@
 [
     {
-        "team_id": "CHICAGO_STATE_UNIVERSITY",
-        "name_canonical": "Chicago State University",
+        "team_id": "CHICAGO_STATE",
+        "name_canonical": "Chicago State",
         "conference": "NEC",
         "sport": "msoc",
         "schedule_url": "https://gocsucougars.com/sports/mens-soccer/schedule",
@@ -14,8 +14,8 @@
         "verified_games": 73
     },
     {
-        "team_id": "HOWARD_UNIVERSITY",
-        "name_canonical": "Howard University",
+        "team_id": "HOWARD",
+        "name_canonical": "Howard",
         "conference": "NEC",
         "sport": "msoc",
         "schedule_url": "https://hubison.com/sports/mens-soccer/schedule",
@@ -35,15 +35,13 @@
         "schedule_url": "https://lemoynedolphins.com/sports/mens-soccer/schedule",
         "platform_guess": "sidearm",
         "parser_key": "sidearm_std",
-        "aliases": [
-            "Le Moyne College"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 89
     },
     {
-        "team_id": "MERCYHURST_UNIVERSITY",
-        "name_canonical": "Mercyhurst University",
+        "team_id": "MERCYHURST",
+        "name_canonical": "Mercyhurst",
         "conference": "NEC",
         "sport": "msoc",
         "schedule_url": "https://hurstathletics.com/sports/mens-soccer/schedule",
@@ -56,8 +54,8 @@
         "verified_games": 102
     },
     {
-        "team_id": "UNIVERSITY_OF_NEW_HAVEN",
-        "name_canonical": "University of New Haven",
+        "team_id": "NEW_HAVEN",
+        "name_canonical": "New Haven",
         "conference": "NEC",
         "sport": "msoc",
         "schedule_url": "https://newhavenchargers.com/sports/mens-soccer/schedule",
@@ -77,9 +75,7 @@
         "schedule_url": "https://stonehillskyhawks.com/sports/mens-soccer/schedule",
         "platform_guess": "sidearm",
         "parser_key": "sidearm_std",
-        "aliases": [
-            "Stonehill College"
-        ],
+        "aliases": [],
         "timezone": "America/New_York",
         "verified_games": 108
     }

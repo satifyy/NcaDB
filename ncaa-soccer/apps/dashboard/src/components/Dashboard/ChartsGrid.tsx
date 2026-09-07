@@ -9,8 +9,27 @@ import {
     PointElement,
     LineElement
 } from 'chart.js';
+import type { TooltipItem } from 'chart.js';
 import { Bar, Scatter } from 'react-chartjs-2';
 import type { PlayerStat } from '../../types';
+
+/**
+ * A point on the efficiency scatter.
+ *
+ * Chart.js types a datum as `unknown` — it has no way to know what a dataset carries —
+ * so the two callbacks below have to name the shape they put there. Reaching through
+ * `any` instead is what let `ctx.raw.rate` survive a rename of `rate` and render the
+ * tooltip as "undefined%".
+ */
+interface EfficiencyPoint {
+    /** Shots taken. */
+    x: number;
+    /** Goals scored. */
+    y: number;
+    player_name: string;
+    /** Conversion percentage, already rounded for display. */
+    rate: string;
+}
 
 ChartJS.register(
     CategoryScale,
@@ -75,10 +94,10 @@ export function ChartsGrid({ data }: ChartsGridProps) {
     // 2. Efficiency (Scatter)
     const efficiencyPoints = data
         .filter(p => p.shots >= 5)
-        .map(p => ({
+        .map((p): EfficiencyPoint => ({
             x: p.shots,
             y: p.goals,
-            name: p.player_name,
+            player_name: p.player_name,
             rate: (p.goals / p.shots * 100).toFixed(1)
         }));
 
@@ -86,10 +105,12 @@ export function ChartsGrid({ data }: ChartsGridProps) {
         datasets: [{
             label: 'Player',
             data: efficiencyPoints,
-            backgroundColor: (ctx: any) => {
-                const rate = ctx.raw?.y / ctx.raw?.x;
-                return rate > 0.2 ? successColor : accentColor;
-            },
+            // One colour per point rather than a callback: a scatter dataset is a line
+            // dataset underneath, so Chart.js types its scriptable colour against the
+            // wrong chart type and the callback form will not compile.
+            backgroundColor: efficiencyPoints.map(point =>
+                point.y / point.x > 0.2 ? successColor : accentColor
+            ),
             pointRadius: 6,
             pointHoverRadius: 8
         }]
@@ -102,7 +123,10 @@ export function ChartsGrid({ data }: ChartsGridProps) {
             tooltip: {
                 ...commonOptions.plugins.tooltip,
                 callbacks: {
-                    label: (ctx: any) => `${ctx.raw.name}: ${ctx.raw.y}G / ${ctx.raw.x}S (${ctx.raw.rate}%)`
+                    label: (ctx: TooltipItem<'scatter'>) => {
+                        const point = ctx.raw as EfficiencyPoint;
+                        return `${point.player_name}: ${point.y}G / ${point.x}S (${point.rate}%)`;
+                    }
                 }
             }
         },

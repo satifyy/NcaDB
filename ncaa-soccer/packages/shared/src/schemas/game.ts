@@ -12,6 +12,12 @@ export const GameSchema = z.object({
     home_score: z.number().nullable(),
     away_score: z.number().nullable(),
     location_type: z.enum(["home", "away", "neutral", "unknown"]),
+    /**
+     * What kind of fixture this is, where the source said so. Optional because rows
+     * written before the column existed do not carry it, and because only a parser that
+     * sees the site's own wording can set it — see `@ncaa/parsers`'s `classifyGameType`.
+     */
+    game_type: z.enum(["exhibition", "ncaa_tournament", "conference_tournament", "regular"]).optional(),
     status: z.enum(["final", "scheduled", "canceled", "postponed", "unknown"]),
     source_urls: z.object({
         schedule_url: z.string().optional(),

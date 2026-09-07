@@ -24,7 +24,17 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { cleanTeamName, WmtClient, seasonNameCandidates, sportSlugFromScheduleUrl } from '@ncaa/parsers';
+import { TEAMS_DIR } from '@ncaa/storage';
 import { loadTeams, TeamConfig } from '../utils/teams';
+import { countSidearmCards, countWordpressRows } from '../utils/season_probe';
+import {
+    SchoolIndex,
+    matchKeys,
+    mergeAliases,
+    pickCanonicalName,
+    sameSchool,
+    teamId
+} from '../utils/school_names';
 
 const USER_AGENT =
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122 Safari/537.36';
@@ -37,40 +47,6 @@ const CONCURRENCY = 12;
 
 const SOCIAL_OR_VENDOR =
     /twitter|facebook|instagram|youtube|tiktok|ticketmaster|seatgeek|evenue|espn|sidearm|shopify|x\.com|google|apple|paciolan|learfield|hostedstats|statbroadcast|wmt\.|prestosports/i;
-
-function slug(value: string): string {
-    return value.toLowerCase().replace(/[^a-z0-9]/g, '');
-}
-
-/**
- * Keys a school name can be recognised by, so "St. John's (NY)" harvested off one site
- * matches "St. John's" in a roster.
- *
- * "State" is never stripped: doing so collapses Michigan and Michigan State onto the
- * same key, and whichever is seen first then claims the other's athletics domain.
- */
-function matchKeys(name: string): string[] {
-    let base = cleanTeamName(name).name.toLowerCase();
-    base = base.replace(/&/g, ' and ');
-    base = base.replace(/\bst\.?\s*$/i, 'state');       // trailing "St." means State
-    base = base.replace(/\bst\.?\s+(?=[a-z])/i, 'saint '); // leading "St." means Saint
-    base = base.replace(/\s*\([^)]*\)\s*$/, '');        // "(United States)" disambiguators
-
-    const keys = new Set<string>([slug(base)]);
-    // Rosters give formal institution names ("University of the Pacific",
-    // "Saint Mary's College of California"); athletics sites use the short form.
-    const stripped = base
-        .replace(/^the\s+/, '')
-        .replace(/^university\s+(?:of\s+the|of|at|in)\s+/, '')
-        .replace(/\s+(?:university|college)\s+of\s+.+$/, '')
-        .replace(/[,]\s+.+$/, '')
-        .trim();
-    keys.add(slug(stripped));
-    keys.add(slug(stripped.replace(/\s+(university|college)$/, '')));
-    keys.add(slug(base.replace(/\b(university|college)\b/g, '')));
-    keys.delete('');
-    return [...keys];
-}
 
 async function get(url: string, timeoutMs = 20000): Promise<{ ok: boolean; status: number; body: string }> {
     const controller = new AbortController();
@@ -90,9 +66,21 @@ async function get(url: string, timeoutMs = 20000): Promise<{ ok: boolean; statu
     }
 }
 
-/** School name -> athletics hostname, read off the opponents on a schedule page. */
-function harvestFromHtml(html: string, ownHost: string): Map<string, string> {
-    const found = new Map<string, string>();
+/**
+ * An athletics site found for a school, with the spelling that site used for it.
+ *
+ * The name matters as much as the host: rosters spell schools formally, athletics sites
+ * spell them the way every scraped row will, and the inventory has to agree with the
+ * rows.
+ */
+interface Harvest {
+    host: string;
+    name: string;
+}
+
+/** School name -> athletics site, read off the opponents on a schedule page. */
+function harvestFromHtml(html: string, ownHost: string): Map<string, Harvest> {
+    const found = new Map<string, Harvest>();
     const anchor = /<a[^>]+href="(https?:\/\/[^"]+)"[^>]*title="([^"]{2,60})"/g;
     let match: RegExpExecArray | null;
     while ((match = anchor.exec(html))) {
@@ -107,29 +95,45 @@ function harvestFromHtml(html: string, ownHost: string): Map<string, string> {
         const name = cleanTeamName(rawTitle.replace(/&#39;/g, "'").replace(/&amp;/g, '&')).name;
         if (!name) continue;
         for (const key of matchKeys(name)) {
-            if (!found.has(key)) found.set(key, host);
+            if (!found.has(key)) found.set(key, { host, name });
         }
     }
     return found;
 }
 
+/**
+ * The athletics site harvested for a school, if one of its keys found a match.
+ *
+ * The harvested name is checked against the school rather than trusted outright: the
+ * map is keyed by match key, and the loose key `boston` is shared by Boston College and
+ * Boston University, so a bare lookup would hand one school the other's site and scrape
+ * the wrong program under its name.
+ */
+function lookupDomain(domains: Map<string, Harvest>, school: string): Harvest | undefined {
+    for (const key of matchKeys(school)) {
+        const harvest = domains.get(key);
+        if (harvest && sameSchool(harvest.name, school)) return harvest;
+    }
+    return undefined;
+}
+
 /** Adds every pair from `from` that `into` does not already know. */
-function absorb(into: Map<string, string>, from: Map<string, string>): number {
+function absorb(into: Map<string, Harvest>, from: Map<string, Harvest>): number {
     let added = 0;
-    for (const [key, host] of from) {
+    for (const [key, harvest] of from) {
         if (!into.has(key)) {
-            into.set(key, host);
+            into.set(key, harvest);
             added++;
         }
     }
     return added;
 }
 
-async function harvestFromTeam(team: TeamConfig, season: number): Promise<Map<string, string>> {
+async function harvestFromTeam(team: TeamConfig, season: number): Promise<Map<string, Harvest>> {
     const ownHost = new URL(team.schedule_url).hostname.replace(/^www\./, '');
 
     if (team.platform_guess === 'wmt') {
-        const found = new Map<string, string>();
+        const found = new Map<string, Harvest>();
         try {
             const sportSlug = sportSlugFromScheduleUrl(team.schedule_url);
             if (!sportSlug) return found;
@@ -144,7 +148,7 @@ async function harvestFromTeam(team: TeamConfig, season: number): Promise<Map<st
                 try {
                     const host = new URL(url).hostname.replace(/^www\./, '');
                     if (host && host !== ownHost && !SOCIAL_OR_VENDOR.test(host)) {
-                        for (const key of matchKeys(name)) if (!found.has(key)) found.set(key, host);
+                        for (const key of matchKeys(name)) if (!found.has(key)) found.set(key, { host, name });
                     }
                 } catch {
                     /* malformed opponent URL */
@@ -200,17 +204,13 @@ async function probeDomain(
         const title = (body.match(/<title>([^<]*)/) || ['', ''])[1];
 
         // WMT's WordPress product, in either of the themes schools use for it.
-        const wpRows = body.match(/class="[^"]*\bschedule-item\b[^"]*"|class="[^"]*\bschedule-table_row\b[^"]*"/g);
-        if (body.includes('wmt-bulk-schedule-api') || (wpRows && wpRows.length > 3)) {
-            return { schedule_url: scheduleUrl, platform: 'wmt_wp', games: wpRows ? wpRows.length : 0 };
+        const wpRows = countWordpressRows(body);
+        if (body.includes('wmt-bulk-schedule-api') || wpRows > 3) {
+            return { schedule_url: scheduleUrl, platform: 'wmt_wp', games: wpRows };
         }
 
         if (/soccer/i.test(title) && !/404/.test(title)) {
-            // Count rendered game cards, not the class names that also appear in CSS.
-            const games = (
-                body.match(/data-test-id="s-game-card-standard__root"|<li[^>]+class="[^"]*sidearm-schedule-game\b/g) || []
-            ).length;
-            return { schedule_url: scheduleUrl, platform: 'sidearm', games };
+            return { schedule_url: scheduleUrl, platform: 'sidearm', games: countSidearmCards(body) };
         }
     }
     return null;
@@ -229,15 +229,15 @@ async function mapLimit<T, R>(items: T[], limit: number, worker: (item: T) => Pr
     return results;
 }
 
-function teamId(name: string): string {
-    return name
-        .toUpperCase()
-        .replace(/[^A-Z0-9]+/g, '_')
-        .replace(/^_+|_+$/g, '');
-}
-
 /** Union of every conference inventory, for running the whole dataset in one pass. */
-const COMBINED_FILE = 'p5_msoc_teams.json';
+const COMBINED_FILE = 'd1_msoc_teams.json';
+
+/**
+ * Union files, which are outputs rather than inventories and must never be read back in
+ * as one. `p5_msoc_teams.json` is the name this file had while the dataset was five
+ * conferences; it is kept here so a stale copy on disk is still excluded.
+ */
+const LEGACY_COMBINED_FILES = new Set([COMBINED_FILE, 'p5_msoc_teams.json']);
 
 function conferenceFile(conference: string): string {
     return `${conference.toLowerCase().replace(/[^a-z0-9]+/g, '_')}_teams.json`;
@@ -250,33 +250,44 @@ async function main(): Promise<void> {
         process.exit(1);
     }
     const season = Number(seasonArg) || new Date().getFullYear();
-    const teamsDir = path.resolve(__dirname, '../../../../data/teams');
+    const teamsDir = TEAMS_DIR;
     const outDir = outDirArg ? path.resolve(process.cwd(), outDirArg) : teamsDir;
     const rosters: Record<string, string[]> = JSON.parse(
         fs.readFileSync(path.resolve(process.cwd(), rostersArg), 'utf8')
     );
 
     // Seed the domain map from every inventory we already have.
-    const domains = new Map<string, string>();
+    const domains = new Map<string, Harvest>();
     const seeds: TeamConfig[] = [];
     for (const file of fs.readdirSync(teamsDir).filter(f => f.endsWith('_teams.json'))) {
+        // Union files are outputs, not inventories. Seeding from one would let a stale
+        // union re-establish a name a conference file has since had repaired.
+        if (file === 'test_teams.json' || LEGACY_COMBINED_FILES.has(file)) continue;
         try {
             for (const team of loadTeams(path.join(teamsDir, file))) {
                 if (!team.schedule_url) continue;
                 seeds.push(team);
                 const host = new URL(team.schedule_url).hostname.replace(/^www\./, '');
-                for (const key of matchKeys(team.name_canonical)) domains.set(key, host);
+                for (const key of matchKeys(team.name_canonical)) {
+                    domains.set(key, { host, name: team.name_canonical });
+                }
             }
         } catch {
             /* not a teams inventory */
         }
     }
+
+    // What earlier runs already decided a school is called, reachable from any spelling
+    // it answers to. Keyed across every conference, not just the one being discovered,
+    // so a school that changed conference keeps its established name and id.
+    const established = new SchoolIndex<TeamConfig>();
+    seeds.forEach(team => established.add(team));
     console.log(`Seeded ${domains.size} name keys from ${seeds.length} known teams.`);
 
     const wanted = Object.entries(rosters);
     const written: DiscoveredTeam[] = [];
     const unresolved = () =>
-        wanted.flatMap(([, schools]) => schools).filter(s => !matchKeys(s).some(k => domains.has(k)));
+        wanted.flatMap(([, schools]) => schools).filter(school => !lookupDomain(domains, school));
 
     // Harvest, then re-harvest from whatever that resolved, until nothing new appears.
     let frontier = seeds;
@@ -291,11 +302,11 @@ async function main(): Promise<void> {
         // schedules name opponents the seed conference never played.
         const candidates = wanted
             .flatMap(([, schools]) => schools)
-            .map(school => ({ school, host: matchKeys(school).map(key => domains.get(key)).find(Boolean) }))
-            .filter(c => c.host && !seeds.some(seed => seed.schedule_url.includes(c.host!)));
+            .map(school => ({ school, found: lookupDomain(domains, school) }))
+            .filter(c => c.found && !seeds.some(seed => seed.schedule_url.includes(c.found!.host)));
         const probed = await mapLimit(candidates, CONCURRENCY, async c => ({
             school: c.school,
-            probe: await probeDomain(c.host!, c.school, season)
+            probe: await probeDomain(c.found!.host, c.school, season)
         }));
         frontier = probed
             .filter(p => p.probe)
@@ -312,33 +323,46 @@ async function main(): Promise<void> {
         const failures: string[] = [];
 
         const resolved = await mapLimit(schools, CONCURRENCY, async school => {
-            const host = matchKeys(school).map(key => domains.get(key)).find(Boolean);
-            if (!host) return { school, host: null, probe: null };
-            return { school, host, probe: await probeDomain(host, school, season) };
+            const found = lookupDomain(domains, school);
+            if (!found) return { school, found: null, probe: null };
+            return { school, found, probe: await probeDomain(found.host, school, season) };
         });
 
-        for (const { school, host, probe } of resolved) {
-            if (!host) {
+        for (const { school, found, probe } of resolved) {
+            if (!found) {
                 failures.push(`${school} (no athletics domain found)`);
                 continue;
             }
             if (!probe) {
-                failures.push(`${school} (${host}: no men's soccer schedule)`);
+                failures.push(`${school} (${found.host}: no men's soccer schedule)`);
                 continue;
             }
-            discovered.push({
-                team_id: teamId(school),
-                name_canonical: school,
+
+            // A school the inventory already holds keeps its name and id, whatever the
+            // roster calls it — otherwise "Duke University" mints DUKE_UNIVERSITY beside
+            // the DUKE that every 2025 row was scraped under.
+            const prior = established.find(school);
+            const nameCanonical = pickCanonicalName(school, found.name, prior?.name_canonical);
+            const id = prior?.team_id || teamId(nameCanonical);
+            const entry: DiscoveredTeam = {
+                team_id: id,
+                name_canonical: nameCanonical,
                 conference,
                 sport: 'msoc',
                 schedule_url: probe.schedule_url,
                 platform_guess: probe.platform,
                 parser_key: `${probe.platform === 'sidearm' ? 'sidearm' : probe.platform}_std`,
-                aliases: [school],
-                timezone: 'America/New_York',
+                aliases: mergeAliases(nameCanonical, [school, found.name, ...(prior?.aliases || [])]),
+                timezone: prior?.timezone || 'America/New_York',
                 verified_games: probe.games
-            });
-            console.log(`  ${school} -> ${probe.schedule_url} [${probe.platform}] ${probe.games} events`);
+            };
+            discovered.push(entry);
+            // Later conferences in this same run must see the decision too, or a school
+            // listed twice across rosters is named one way here and another way there.
+            established.add(entry);
+
+            const renamed = nameCanonical === school ? '' : ` (roster: ${school})`;
+            console.log(`  ${nameCanonical}${renamed} -> ${probe.schedule_url} [${probe.platform}] ${probe.games} events`);
         }
 
         // Never drop a school a previous run resolved: a transient fetch failure or a
@@ -362,40 +386,47 @@ async function main(): Promise<void> {
     console.log(`\nCombined inventory: ${combined.length} teams -> ${combinedPath}`);
 }
 
-/** This run's results, plus any school an earlier run resolved that this one did not. */
+/**
+ * This run's results, plus any school an earlier run resolved that this one did not.
+ *
+ * Schools are matched by name identity rather than `team_id`. Keying on the id alone let
+ * one school enter the inventory twice: the hand-written entry files Duke as `DUKE`, a
+ * roster spelling of "Duke University" mints `DUKE_UNIVERSITY`, and the merge kept both.
+ */
 function mergeWithExisting(outPath: string, discovered: DiscoveredTeam[]): DiscoveredTeam[] {
     if (!fs.existsSync(outPath)) return discovered;
-    const byId = new Map(discovered.map(team => [team.team_id, team]));
+    const merged = new SchoolIndex<DiscoveredTeam>();
+    discovered.forEach(team => merged.add(team));
     try {
         for (const team of JSON.parse(fs.readFileSync(outPath, 'utf8')) as DiscoveredTeam[]) {
-            if (team?.team_id && team.schedule_url && !byId.has(team.team_id)) byId.set(team.team_id, team);
+            if (team?.team_id && team.schedule_url) merged.add(team);
         }
     } catch {
         /* unreadable previous inventory; this run's results stand alone */
     }
-    return [...byId.values()];
+    return merged.all();
 }
 
 /**
- * Every conference inventory on disk, de-duplicated by `team_id`.
+ * Every conference inventory on disk, de-duplicated by name identity.
  *
  * Reads the sibling files rather than only this run's output, so discovering one
- * conference does not drop the others from the combined inventory.
+ * conference does not drop the others from the combined inventory. De-duplicating by
+ * identity rather than `team_id` matters most here: the union is what a whole-dataset
+ * run is pointed at, so a school listed twice is a school scraped twice.
  */
 function mergeInventories(dir: string, justWritten: DiscoveredTeam[]): TeamConfig[] {
-    const byId = new Map<string, TeamConfig>();
-    for (const team of justWritten) byId.set(team.team_id, team);
-    for (const file of fs.readdirSync(dir)) {
-        if (!file.endsWith('_teams.json') || file === COMBINED_FILE || file === 'test_teams.json') continue;
+    const merged = new SchoolIndex<TeamConfig>();
+    justWritten.forEach(team => merged.add(team));
+    for (const file of fs.readdirSync(dir).sort()) {
+        if (!file.endsWith('_teams.json') || LEGACY_COMBINED_FILES.has(file) || file === 'test_teams.json') continue;
         try {
-            for (const team of loadTeams(path.join(dir, file))) {
-                if (!byId.has(team.team_id)) byId.set(team.team_id, team);
-            }
+            loadTeams(path.join(dir, file)).forEach(team => merged.add(team));
         } catch {
             /* not an inventory */
         }
     }
-    return [...byId.values()];
+    return merged.all();
 }
 
 main().catch(err => {

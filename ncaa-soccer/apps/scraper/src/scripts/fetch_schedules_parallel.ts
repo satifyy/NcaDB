@@ -7,12 +7,13 @@ import {
     WmtClient,
     WmtParser,
     WmtWordpressParser,
+    classifyGameType,
     cleanTeamName,
     makeDedupeKey,
     seasonNameCandidates,
     sportSlugFromScheduleUrl
 } from '@ncaa/parsers';
-import { GameStorageAdapter } from '@ncaa/storage';
+import { ACC_INVENTORY, DATA_DIR, GameStorageAdapter, gamesCsv } from '@ncaa/storage';
 import { buildTeamNameResolver, loadTeams, TeamConfig } from '../utils/teams';
 
 // Normalize a boxscore URL using the schedule page as base. No hardcoded team overrides.
@@ -69,7 +70,7 @@ const VIEWPORT = { width: 1280, height: 720 };
 const inputPath = process.argv[2];
 const TEAMS_JSON_PATH = inputPath
     ? path.resolve(process.cwd(), inputPath)
-    : path.resolve(__dirname, '../../../../data/teams/acc_teams.json');
+    : ACC_INVENTORY;
 
 // Fall season to scrape, e.g. 2025 covers Aug-Dec 2025.
 const SEASON_YEAR = Number(process.argv[3]) || new Date().getFullYear();
@@ -83,16 +84,26 @@ const SEASON_YEAR = Number(process.argv[3]) || new Date().getFullYear();
  * school names. Without this, one fixture is filed twice: once from each school's
  * point of view. The ranking is preserved on the `*_ranked` columns, where the schema
  * keeps it.
+ *
+ * The fixture kind is read here, before the names are replaced, because this function is
+ * where it used to be lost: "Marist (Exhibition)" becomes "Marist" on the way past, and
+ * nothing downstream could tell afterwards that the game had been a friendly. Rows
+ * already on disk go through this too, so a stored row keeps whatever kind it was written
+ * with — a re-scrape may only ever add a marker, never erase one.
  */
 function normalizeRow(row: Record<string, string>, resolver: TeamNameResolver): Record<string, string> {
     const home = cleanTeamName(row.home_team_name);
     const away = cleanTeamName(row.away_team_name);
+    const stored = row.game_type;
+    const derived = classifyGameType(row).type;
+    const gameType = stored && stored !== 'regular' ? stored : derived;
     const homeName = resolver.canonical(home.name);
     const awayName = resolver.canonical(away.name);
-    if (!homeName || !awayName || !row.date) return row;
+    if (!homeName || !awayName || !row.date) return { ...row, game_type: gameType };
 
     return {
         ...row,
+        game_type: gameType,
         home_team_name: homeName,
         away_team_name: awayName,
         home_team_ranked: row.home_team_ranked === 'true' || home.ranked ? 'true' : 'false',
@@ -469,25 +480,31 @@ async function main() {
 
     let allGames: any[] = [];
 
-    // Process in batches with retry logic per team
-    for (let i = 0; i < teams.length; i += CONCURRENCY) {
-        const batch = teams.slice(i, i + CONCURRENCY);
-        const promises = batch.map(team => 
-            retryWithBackoff(
-                () => processSchool(browser, team, resolver),
-                2, // max 2 retries per team
-                3000,
-                `process ${team.name_canonical}`
-            ).catch(err => {
-                console.error(`[${team.name_canonical}] Failed after retries: ${err.message}`);
-                return []; // Return empty array on complete failure
-            })
-        );
-        const results = await Promise.all(promises);
-        results.forEach(g => allGames.push(...g));
+    // Closed in `finally` rather than after the loop. A throw anywhere in the scrape
+    // used to leave chromium — and so this process — alive. Locally that is a stray
+    // process; on a scheduled runner it is worse, because a run that never exits makes
+    // the scheduler skip every run after it.
+    try {
+        // Process in batches with retry logic per team
+        for (let i = 0; i < teams.length; i += CONCURRENCY) {
+            const batch = teams.slice(i, i + CONCURRENCY);
+            const promises = batch.map(team =>
+                retryWithBackoff(
+                    () => processSchool(browser, team, resolver),
+                    2, // max 2 retries per team
+                    3000,
+                    `process ${team.name_canonical}`
+                ).catch(err => {
+                    console.error(`[${team.name_canonical}] Failed after retries: ${err.message}`);
+                    return []; // Return empty array on complete failure
+                })
+            );
+            const results = await Promise.all(promises);
+            results.forEach(g => allGames.push(...g));
+        }
+    } finally {
+        await browser.close();
     }
-
-    await browser.close();
 
     // A row whose opponent never resolved is a parse failure, not a fixture.
     const placeholders = allGames.filter(g =>
@@ -515,8 +532,7 @@ async function main() {
     // Deduplicate and Save
     if (seasonGames.length > 0) {
         const year = String(SEASON_YEAR);
-        const storageDir = path.resolve(__dirname, '../../../../data');
-        const storage = new GameStorageAdapter(storageDir, {
+        const storage = new GameStorageAdapter(DATA_DIR, {
             verbose: true,
             normalizeRow: row => normalizeRow(row, resolver)
         });
@@ -525,7 +541,7 @@ async function main() {
         // But let's be safe and dedupe by unique key if we can.
         // Actually GameStorageAdapter likely overwrites or merges.
         await storage.saveGames(seasonGames, year);
-        console.log(`\n✨ Saved ${seasonGames.length} games to ${path.join(storageDir, 'games', year, 'games.csv')}`);
+        console.log(`\n✨ Saved ${seasonGames.length} games to ${gamesCsv(year)}`);
     } else {
         console.log('No games found.');
     }
@@ -534,4 +550,14 @@ async function main() {
     console.log(`Total time: ${duration.toFixed(1)}s`);
 }
 
-main().catch(console.error);
+/**
+ * A crashed run has to be visible to whatever invoked it.
+ *
+ * Logging the error and exiting 0 makes a scrape that fetched nothing indistinguishable
+ * from one that worked, which a scheduled run reports as a success and a pipeline stage
+ * treats as reason to continue on to the next step.
+ */
+main().catch(err => {
+    console.error('Fatal error:', err);
+    process.exit(1);
+});

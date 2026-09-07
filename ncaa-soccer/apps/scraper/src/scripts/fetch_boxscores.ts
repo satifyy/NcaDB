@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { SidearmParser, SidearmBoxScoreParser } from '@ncaa/parsers';
+import { RAW_DIR, playerStatsCsv } from '@ncaa/storage';
 import { Fetcher } from '../utils/fetcher';
 
 interface PlayerRow {
@@ -26,7 +27,7 @@ async function main() {
     }
 
     const fetcher = new Fetcher({
-        rawDir: path.resolve(__dirname, '../../../../data/raw'),
+        rawDir: RAW_DIR,
         delayMs: 0
     });
 
@@ -73,9 +74,8 @@ async function main() {
     }
 
     const year = games[0]?.date?.split('-')[0] || 'unknown';
-    const statsDir = path.resolve(__dirname, '../../../../data/player_stats', year);
-    fs.mkdirSync(statsDir, { recursive: true });
-    const csvPath = path.join(statsDir, 'player_stats.csv');
+    const csvPath = playerStatsCsv(year);
+    fs.mkdirSync(path.dirname(csvPath), { recursive: true });
 
     const header = [
         'game_id', 'team_id', 'player_name', 'player_key', 'jersey_number',
