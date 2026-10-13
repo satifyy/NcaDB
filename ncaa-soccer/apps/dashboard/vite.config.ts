@@ -20,7 +20,7 @@ export default defineConfig({
     // Local development against a local API (`npm run api` at the repo root). In
     // production the site calls VITE_API_BASE_URL directly and this is not used.
     proxy: {
-      '/api': process.env.VITE_DEV_API_PROXY || 'http://localhost:3001',
+      '/api': { target: process.env.VITE_DEV_API_PROXY || 'http://localhost:3001', changeOrigin: true },
     },
     watch: {
       // The repo commonly sits on a bind mount (WSL2, Docker), where inotify events do

@@ -1,5 +1,32 @@
 # NCAA Soccer Scraper Monorepo (Deep Guide)
 
+## Production platform
+
+The scrapers below now feed a production service: a nightly Railway cron worker runs
+them, validates the output and upserts it into PostgreSQL; a read-only API serves it;
+the dashboard on Vercel reads only the API.
+
+| | |
+| --- | --- |
+| Architecture | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) |
+| Schema, identity rules, backups | [docs/DATABASE.md](docs/DATABASE.md) |
+| Railway, Vercel, CI/CD, cost | [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) |
+| Every operational command | [docs/OPERATIONS.md](docs/OPERATIONS.md) |
+
+```bash
+npm ci
+npm run worker -- migrate                                   # DATABASE_URL must be set
+npm run worker -- backfill --seasons 2016-2026 --from-csv . # load the committed CSVs
+npm run api                                                 # http://localhost:3001
+cd apps/dashboard && npm run dev                            # proxies /api to :3001
+npm test                    # unit tests
+TEST_DATABASE_URL=postgres://... npm run test:db            # Postgres-backed tests
+```
+
+The sections below describe the scraping pipeline itself, which runs unchanged inside
+the worker.
+
+
 This repository is a TypeScript/Node monorepo that scrapes NCAA men’s soccer schedules and box scores, normalizes them into shared schemas, saves them to CSV, and provides a modern React dashboard for analyitcs.
 
 ## Quick start
