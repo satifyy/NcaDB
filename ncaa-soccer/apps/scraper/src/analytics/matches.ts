@@ -92,7 +92,7 @@ const SEASON_STARTS = '-08-01';
  * Semifinals") has the decoration stripped by `cleanTeamName` before it reaches here,
  * leaving only the school to test.
  */
-const NOT_A_TEAM = new RegExp(
+export const NOT_A_TEAM = new RegExp(
     [
         String.raw`\svs\.?\s`,
         String.raw`^\s*(?:tba|tbd|alumni|bye|open)\b`,

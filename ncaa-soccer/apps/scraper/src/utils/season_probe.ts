@@ -7,10 +7,7 @@
  * the same per-platform reading of a page, so it lives here rather than in either.
  */
 
-import { WmtClient, seasonNameCandidates, sportSlugFromScheduleUrl } from '@ncaa/parsers';
-
-const USER_AGENT =
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122 Safari/537.36';
+import { SCRAPER_USER_AGENT as USER_AGENT, WmtClient, seasonNameCandidates, sportSlugFromScheduleUrl } from '@ncaa/parsers';
 
 export interface Fetched {
     ok: boolean;

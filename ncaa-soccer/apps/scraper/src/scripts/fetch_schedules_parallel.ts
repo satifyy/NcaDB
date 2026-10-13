@@ -11,7 +11,9 @@ import {
     cleanTeamName,
     makeDedupeKey,
     seasonNameCandidates,
-    sportSlugFromScheduleUrl
+    sportSlugFromScheduleUrl,
+    SCRAPER_USER_AGENT,
+    envNumber
 } from '@ncaa/parsers';
 import { ACC_INVENTORY, DATA_DIR, GameStorageAdapter, gamesCsv } from '@ncaa/storage';
 import { buildTeamNameResolver, loadTeams, TeamConfig } from '../utils/teams';
@@ -65,7 +67,8 @@ async function retryWithBackoff<T>(
 }
 
 // Configuration
-const CONCURRENCY = 10; // Increased for faster processing
+// Schools fetched at once. SCRAPER_CONCURRENCY lowers it for a server run.
+const CONCURRENCY = Math.max(1, envNumber('SCRAPER_CONCURRENCY', 10));
 const VIEWPORT = { width: 1280, height: 720 };
 const inputPath = process.argv[2];
 const TEAMS_JSON_PATH = inputPath
@@ -163,8 +166,7 @@ async function processWmtWordpressSchool(team: TeamConfig, resolver: TeamNameRes
     const url = `${team.schedule_url.replace(/\/$/, '')}/${SEASON_YEAR}`;
     const response = await fetch(url, {
         headers: {
-            'User-Agent':
-                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122 Safari/537.36'
+            'User-Agent': SCRAPER_USER_AGENT
         }
     });
     if (!response.ok) throw new Error(`HTTP ${response.status} for ${url}`);
@@ -200,7 +202,7 @@ async function processSchool(browser: any, team: TeamConfig, resolver: TeamNameR
     const scheduleUrl = sidearmScheduleUrl(team.schedule_url, SEASON_YEAR);
 
     const page = await browser.newPage({
-        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122 Safari/537.36',
+        userAgent: SCRAPER_USER_AGENT,
         viewport: VIEWPORT
     });
     

@@ -9,7 +9,10 @@
     "scripts": {
         "build": "tsc -b",
         "test": "npm run build && tsx --test apps/scraper/src/tests/*.test.ts",
-        "validate": "tsx apps/scraper/src/validate_inventory.ts"
+        "validate": "tsx apps/scraper/src/validate_inventory.ts",
+        "worker": "tsx apps/worker/src/cli.ts",
+        "api": "tsx apps/api/src/server.ts",
+        "typecheck": "tsc -b && tsc -p apps/worker && tsc -p apps/api"
     },
     "devDependencies": {
         "@types/node": "^25.0.3",

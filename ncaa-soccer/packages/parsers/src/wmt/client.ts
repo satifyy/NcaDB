@@ -52,8 +52,7 @@ export interface WmtScheduleEvent {
     wmt_stats2_iframe_url?: string | null;
 }
 
-const USER_AGENT =
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122 Safari/537.36';
+import { SCRAPER_USER_AGENT as USER_AGENT, envNumber } from '../politeness';
 
 export interface WmtClientOptions {
     fetchImpl?: typeof fetch;
@@ -80,7 +79,7 @@ export class WmtClient {
         this.origin = new URL(siteUrl).origin;
         this.fetchImpl = options.fetchImpl || fetch;
         this.timeoutMs = options.timeoutMs ?? 30000;
-        this.retries = options.retries ?? 3;
+        this.retries = options.retries ?? envNumber('SCRAPER_MAX_RETRIES', 3);
     }
 
     getOrigin(): string {

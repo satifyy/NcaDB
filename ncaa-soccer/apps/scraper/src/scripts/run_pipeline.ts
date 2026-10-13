@@ -28,6 +28,8 @@
  *   --force                Re-run stages already recorded complete.
  *   --incremental          Fetch only box scores that are missing or recent. This is
  *                          what a daily in-season refresh wants; a backfill does not.
+ *   --recheck-days <n>     With --incremental, how far back a stored box score is still
+ *                          re-fetched for corrections (default 3).
  *   --no-preflight         Skip the season-availability check.
  *   --max-drop <percent>   How much of a season's rows a stage may lose against what is
  *                          already on disk before it counts as failed (default 3).
@@ -52,7 +54,9 @@ import {
 // scripts have to be found where they actually live either way.
 const REPO_ROOT = path.resolve(__dirname, '../../../..');
 const SCRIPTS = path.join(REPO_ROOT, 'apps/scraper/src/scripts');
-const STATE_PATH = path.join(REPO_ROOT, 'data/pipeline_state.json');
+// Progress is data, so it follows `NCAA_REPO_ROOT` with the CSVs it describes: a run
+// pointed at a scratch tree must not mark stages done in the checkout's state file.
+const STATE_PATH = path.join(DATA_ROOT, 'data/pipeline_state.json');
 const DEFAULT_TEAMS = 'data/teams/d1_msoc_teams.json';
 
 /**
@@ -102,8 +106,11 @@ const STAGES: Stage[] = [
         describe: 'fetch box scores into data/player_stats/<season>/player_stats.csv',
         command: (season, options) => [
             path.join(SCRIPTS, 'fetch_boxscores_from_csv.ts'),
-            `data/games/${season}/games.csv`,
-            ...(options.incremental ? ['--new-only'] : [])
+            // Absolute, through `@ncaa/storage`: the stage runs from the code checkout,
+            // which is not where the data lives when `NCAA_REPO_ROOT` points elsewhere.
+            gamesCsv(String(season)),
+            ...(options.incremental ? ['--new-only'] : []),
+            ...(options.recheckDays !== undefined ? ['--recheck-days', String(options.recheckDays)] : [])
         ],
         output: season => playerStatsCsv(String(season))
     },
@@ -261,6 +268,8 @@ interface Options {
     dryRun: boolean;
     /** Fetch only box scores that are missing or still likely to change. */
     incremental: boolean;
+    /** With `incremental`, how many days back a stored box score is still re-fetched. */
+    recheckDays?: number;
     /** Fail a stage whose output CSV shrinks by more than this many percent. */
     maxDropPct: number;
     /** Whether to apply that check at all. */
@@ -307,9 +316,16 @@ function parseArgs(argv: string[]): Options {
         throw new UsageError(`Bad --max-drop: ${drop}. Give a percentage between 0 and 100.`);
     }
 
+    const recheck = value('--recheck-days');
+    const recheckDays = recheck === undefined ? undefined : Number(recheck);
+    if (recheckDays !== undefined && (!Number.isInteger(recheckDays) || recheckDays < 0)) {
+        throw new UsageError(`Bad --recheck-days: ${recheck}. Give a whole number of days.`);
+    }
+
     return {
         seasons,
         teams: value('--teams') || DEFAULT_TEAMS,
+        recheckDays,
         stages,
         force: argv.includes('--force'),
         preflight: !argv.includes('--no-preflight'),
@@ -434,7 +450,7 @@ async function main(): Promise<void> {
     // opening on 2020 while 2026 is being played. Asking the disk rather than this run's
     // state also means `--only dashboard` works on a fresh checkout, where nothing has
     // been recorded but the CSVs are right there.
-    const statsDir = path.join(REPO_ROOT, 'data/player_stats');
+    const statsDir = path.join(DATA_ROOT, 'data/player_stats');
     const aggregated = (fs.existsSync(statsDir) ? fs.readdirSync(statsDir) : [])
         .filter(name => /^\d{4}$/.test(name))
         .filter(name => fs.existsSync(path.join(statsDir, name, 'aggregated_player_stats.csv')))

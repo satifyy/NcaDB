@@ -1,6 +1,7 @@
 import { PlayerStat } from '@ncaa/shared';
 import { ParseResult, ParserOptions } from '../types';
 import { TeamNameResolver } from '../names';
+import { SCRAPER_USER_AGENT as USER_AGENT } from '../politeness';
 
 /**
  * Box scores on WMT Digital sites are an iframe onto `wmt.games`, whose own DOM is
@@ -10,8 +11,6 @@ import { TeamNameResolver } from '../names';
  */
 
 const STATS_API_ORIGIN = 'https://api.wmt.games';
-const USER_AGENT =
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122 Safari/537.36';
 
 export interface WmtStatsCompetitor {
     teamId?: number;

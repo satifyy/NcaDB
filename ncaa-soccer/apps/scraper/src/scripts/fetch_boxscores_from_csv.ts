@@ -1,6 +1,14 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { SidearmBoxScoreParser, TeamNameResolver, WmtBoxScoreParser } from '@ncaa/parsers';
+import {
+    HostThrottle,
+    SCRAPER_USER_AGENT,
+    SidearmBoxScoreParser,
+    TeamNameResolver,
+    WmtBoxScoreParser,
+    envNumber,
+    interleaveByHost
+} from '@ncaa/parsers';
 import { buildTeamNameResolver, loadAllTeams } from '../utils/teams';
 const { chromium } = require('playwright-chromium');
 import {
@@ -58,7 +66,10 @@ interface ProcessResult {
 
 // Configuration
 const BATCH_SIZE = 120; // Restart browser after this many games to free memory
-const CONCURRENCY = 8; // Number of parallel tabs (safer; raise cautiously if stable)
+// Parallel tabs. SCRAPER_CONCURRENCY lowers it for a server run; 8 is the laptop default.
+const CONCURRENCY = Math.max(1, envNumber('SCRAPER_CONCURRENCY', 8));
+/** Honours the `Crawl-delay` Sidearm sites publish; see `@ncaa/parsers`'s politeness. */
+const throttle = new HostThrottle();
 const DEBUG_LOG_PATH = DEBUG_BOXSCORE_LOG;
 const VIEWPORT = { width: 1280, height: 720 };
 
@@ -83,6 +94,12 @@ function hostOf(url: string): string {
 function isWmtBoxscore(url: string): boolean {
     const host = hostOf(url);
     return host === 'wmt.games' || wmtHosts.has(host);
+}
+
+/** WMT box scores are read from the stats feed, so that is the host being contacted. */
+function throttleTarget(url: string | undefined): string {
+    if (!url) return '';
+    return isWmtBoxscore(url) ? 'https://api.wmt.games/' : url;
 }
 
 function isPdf(url: string): boolean {
@@ -331,10 +348,12 @@ async function processGame(
     boxParser: SidearmBoxScoreParser,
     opts?: { attempt?: number; waitLonger?: boolean; waitMs?: number; scrollWaitMs?: number }
 ): Promise<ProcessResult> {
+    await throttle.wait(throttleTarget(game.boxscore_url));
     const primary = await processGameOnce(browser, game, rawDir, boxParser, opts);
     if (primary.success || !game.boxscore_url_alt) return primary;
 
     logDebug(`FALLBACK [${game.game_id}] Primary box score empty, trying ${game.boxscore_url_alt}`);
+    await throttle.wait(throttleTarget(game.boxscore_url_alt));
     const fallback = await processGameOnce(
         browser,
         { ...game, boxscore_url: game.boxscore_url_alt, boxscore_url_alt: '' },
@@ -398,7 +417,7 @@ async function processGameOnce(
 
     try {
         page = await browser.newPage({
-            userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122 Safari/537.36',
+            userAgent: SCRAPER_USER_AGENT,
             viewport: VIEWPORT
         });
 
@@ -632,6 +651,9 @@ async function main() {
     if (limit && !isNaN(limit)) {
         games = games.slice(0, limit);
     }
+    // Neighbouring games from one school would otherwise share a parallel chunk and hit
+    // that school's site together; spread them so the per-host throttle rarely waits.
+    games = interleaveByHost(games, g => throttleTarget(g.boxscore_url));
     logDebug(`Loading ${games.length} games to process... (Removed ${removedDuplicates.length} duplicates of existing team-dates)`);
     if (removedDuplicates.length > 0) {
         logDebug('Duplicate removals:');
