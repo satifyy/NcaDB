@@ -28,11 +28,15 @@ update() { # service_id input_json
     --raw-var "s=$1" --raw-var "e=$env_id" --var "i=$(jq -c . <<<"$2")" >/dev/null
 }
 
+# Watch patterns are listed both relative to the root directory and to the repo root:
+# with a root directory set, the repo-root form alone matched nothing and pushes did not
+# redeploy.
+
 # API: always on, health-checked, migrates before each deploy is switched in.
 update "$api_id" '{
   "rootDirectory": "ncaa-soccer",
   "dockerfilePath": "Dockerfile.api",
-  "watchPatterns": ["ncaa-soccer/packages/**", "ncaa-soccer/apps/api/**", "ncaa-soccer/apps/worker/**", "ncaa-soccer/package-lock.json", "ncaa-soccer/Dockerfile.api"],
+  "watchPatterns": ["packages/**", "ncaa-soccer/packages/**", "apps/api/**", "ncaa-soccer/apps/api/**", "apps/worker/**", "ncaa-soccer/apps/worker/**", "package-lock.json", "ncaa-soccer/package-lock.json", "Dockerfile.api", "ncaa-soccer/Dockerfile.api"],
   "preDeployCommand": ["npx tsx apps/worker/src/cli.ts migrate"],
   "startCommand": "npx tsx apps/api/src/server.ts",
   "healthcheckPath": "/health",
@@ -48,7 +52,7 @@ update "$api_id" '{
 update "$worker_id" '{
   "rootDirectory": "ncaa-soccer",
   "dockerfilePath": "Dockerfile.worker",
-  "watchPatterns": ["ncaa-soccer/packages/**", "ncaa-soccer/apps/scraper/**", "ncaa-soccer/apps/worker/**", "ncaa-soccer/data/teams/**", "ncaa-soccer/package-lock.json", "ncaa-soccer/Dockerfile.worker"],
+  "watchPatterns": ["packages/**", "ncaa-soccer/packages/**", "apps/scraper/**", "ncaa-soccer/apps/scraper/**", "apps/worker/**", "ncaa-soccer/apps/worker/**", "data/teams/**", "ncaa-soccer/data/teams/**", "package-lock.json", "ncaa-soccer/package-lock.json", "Dockerfile.worker", "ncaa-soccer/Dockerfile.worker"],
   "startCommand": "npx tsx apps/worker/src/cli.ts nightly --cron",
   "cronSchedule": "0 8,9 * * *",
   "restartPolicyType": "NEVER"
