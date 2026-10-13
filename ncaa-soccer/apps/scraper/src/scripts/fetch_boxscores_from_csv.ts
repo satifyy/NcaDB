@@ -529,7 +529,10 @@ async function main() {
     const startTotal = Date.now();
     const args = process.argv.slice(2);
     const flags = new Set(args.filter(a => a.startsWith('--')));
-    const positional = args.filter(a => !a.startsWith('--'));
+    // A flag's value is not a positional argument: `--recheck-days 7` read as positional
+    // made "7" the game limit, so an incremental run fetched seven box scores and stopped.
+    const VALUE_FLAGS = new Set(['--recheck-days']);
+    const positional = args.filter((a, i) => !a.startsWith('--') && !VALUE_FLAGS.has(args[i - 1]));
     const [gamesCsv = 'data/games/2025/games.csv', limitArg] = positional;
     const limit = limitArg ? Number(limitArg) : undefined;
 

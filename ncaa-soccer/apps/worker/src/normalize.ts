@@ -65,6 +65,11 @@ const STATUSES: GameStatus[] = ['scheduled', 'live', 'final', 'postponed', 'canc
 const LOCATIONS: LocationType[] = ['home', 'away', 'neutral', 'unknown'];
 const GAME_TYPES: GameType[] = ['exhibition', 'ncaa_tournament', 'conference_tournament', 'regular'];
 
+/** Tomorrow's date (UTC), so a game finished late tonight in the Pacific still counts. */
+function tomorrow(): string {
+    return new Date(Date.now() + 86_400_000).toISOString().slice(0, 10);
+}
+
 export interface Inventory {
     teams: TeamConfig[];
     index: SchoolIndex<TeamConfig>;
@@ -233,6 +238,12 @@ export function normalizeGames(
         }
         let homeScore = count(row.home_score);
         let awayScore = count(row.away_score);
+        // A result for a game that has not happened yet is a site error (usually a
+        // mis-parsed date). It is kept, but not as a result anyone should count.
+        if (status === 'final' && row.date > tomorrow()) {
+            issues.add('final_in_future', 'Fixtures marked final but dated in the future (stored as unknown)', sample);
+            status = 'unknown';
+        }
         if (status === 'final' && (homeScore === null || awayScore === null)) {
             issues.add('final_without_score', 'Fixtures marked final without both scores (stored as unknown)', sample);
             status = 'unknown';

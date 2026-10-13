@@ -106,6 +106,15 @@ test('schedule rows: bracket placeholders, bad dates and unscored finals are han
     assert.deepEqual(codes, ['date_outside_season', 'final_without_score', 'invalid_date', 'not_a_team', 'placeholder_date']);
 });
 
+test('a result dated in the future is kept but not counted as a result', () => {
+    const season = new Date().getUTCFullYear() + 1;
+    const issues = new IssueLog();
+    const [g] = normalizeGames([gameRow({ date: `${season}-10-01` })], season, new TeamResolver(inventory()), issues);
+    assert.equal(g.status, 'unknown');
+    assert.equal(g.homeScore, 1);
+    assert.deepEqual(issues.list().map(i => i.code), ['final_in_future']);
+});
+
 test('names resolve through the inventory: aliases and decorations land on one team', () => {
     const resolver = new TeamResolver(inventory());
     assert.equal(resolver.resolve('#12 NC State')?.slug, 'nc-state');
