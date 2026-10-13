@@ -105,8 +105,14 @@ export interface Freshness {
 
 export async function freshness(pool: Pool): Promise<Freshness> {
     const [sync, game, run] = await Promise.all([
+        // The nightly run is what keeps data current, so once one has succeeded it is the
+        // measure: a backfill of old seasons must not make a broken nightly look fresh.
+        // Before the first nightly, the newest season load stands in.
         pool.query(
-            `SELECT max(last_success_at) AS at FROM data_sync_state WHERE scope LIKE 'season:%'`
+            `SELECT COALESCE(
+                 (SELECT last_success_at FROM data_sync_state WHERE scope = 'nightly'),
+                 (SELECT max(last_success_at) FROM data_sync_state WHERE scope LIKE 'season:%')
+             ) AS at`
         ),
         pool.query(`SELECT max(game_date)::text AS d FROM games WHERE status = 'final'`),
         pool.query(
