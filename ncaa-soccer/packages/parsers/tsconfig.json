@@ -11,5 +11,9 @@
     ],
     "include": [
         "src/**/*"
+    ],
+    // Recorded HTTP responses, not sources. See src/__fixtures__/README.md.
+    "exclude": [
+        "src/__fixtures__"
     ]
 }

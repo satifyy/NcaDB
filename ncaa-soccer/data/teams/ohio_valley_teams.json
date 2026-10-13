@@ -1,0 +1,82 @@
+[
+    {
+        "team_id": "EASTERN_ILLINOIS",
+        "name_canonical": "Eastern Illinois",
+        "conference": "Ohio Valley",
+        "sport": "msoc",
+        "schedule_url": "https://eiupanthers.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Eastern Illinois University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 98
+    },
+    {
+        "team_id": "HOUSTON_CHRISTIAN",
+        "name_canonical": "Houston Christian",
+        "conference": "Ohio Valley",
+        "sport": "msoc",
+        "schedule_url": "https://hcuhuskies.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Houston Christian University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 138
+    },
+    {
+        "team_id": "LINDENWOOD",
+        "name_canonical": "Lindenwood",
+        "conference": "Ohio Valley",
+        "sport": "msoc",
+        "schedule_url": "https://lindenwoodlions.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Lindenwood University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 132
+    },
+    {
+        "team_id": "UNIVERSITY_OF_SOUTHERN_INDIANA",
+        "name_canonical": "University of Southern Indiana",
+        "conference": "Ohio Valley",
+        "sport": "msoc",
+        "schedule_url": "https://gousieagles.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 128
+    },
+    {
+        "team_id": "WESTERN_ILLINOIS",
+        "name_canonical": "Western Illinois",
+        "conference": "Ohio Valley",
+        "sport": "msoc",
+        "schedule_url": "https://goleathernecks.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Western Illinois University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 123
+    },
+    {
+        "team_id": "UTRGV",
+        "name_canonical": "UTRGV",
+        "conference": "Ohio Valley",
+        "sport": "msoc",
+        "schedule_url": "https://goutrgv.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 19
+    }
+]

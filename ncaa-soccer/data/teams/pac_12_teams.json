@@ -1,0 +1,94 @@
+[
+    {
+        "team_id": "CALIFORNIA_BAPTIST",
+        "name_canonical": "California Baptist",
+        "conference": "Pac-12",
+        "sport": "msoc",
+        "schedule_url": "https://cbulancers.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "California Baptist University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 18
+    },
+    {
+        "team_id": "CAL_POLY",
+        "name_canonical": "Cal Poly",
+        "conference": "Pac-12",
+        "sport": "msoc",
+        "schedule_url": "https://gopoly.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 22
+    },
+    {
+        "team_id": "GONZAGA",
+        "name_canonical": "Gonzaga",
+        "conference": "Pac-12",
+        "sport": "msoc",
+        "schedule_url": "https://gozags.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Gonzaga University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 16
+    },
+    {
+        "team_id": "OREGON_STATE",
+        "name_canonical": "Oregon State",
+        "conference": "Pac-12",
+        "sport": "msoc",
+        "schedule_url": "https://osubeavers.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Oregon State University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 17
+    },
+    {
+        "team_id": "SAN_DIEGO_STATE",
+        "name_canonical": "San Diego State",
+        "conference": "Pac-12",
+        "sport": "msoc",
+        "schedule_url": "https://goaztecs.com/sports/mens-soccer/schedule",
+        "platform_guess": "wmt",
+        "parser_key": "wmt_std",
+        "aliases": [
+            "San Diego State University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 20
+    },
+    {
+        "team_id": "UC_RIVERSIDE",
+        "name_canonical": "UC Riverside",
+        "conference": "Pac-12",
+        "sport": "msoc",
+        "schedule_url": "https://gohighlanders.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 19
+    },
+    {
+        "team_id": "UC_SAN_DIEGO",
+        "name_canonical": "UC San Diego",
+        "conference": "Pac-12",
+        "sport": "msoc",
+        "schedule_url": "https://ucsdtritons.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 115
+    }
+]

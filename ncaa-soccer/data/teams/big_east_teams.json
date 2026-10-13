@@ -1,0 +1,168 @@
+[
+    {
+        "team_id": "AKRON",
+        "name_canonical": "Akron",
+        "conference": "Big East",
+        "sport": "msoc",
+        "schedule_url": "https://gozips.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of Akron"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 24
+    },
+    {
+        "team_id": "BUTLER",
+        "name_canonical": "Butler",
+        "conference": "Big East",
+        "sport": "msoc",
+        "schedule_url": "https://butlersports.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Butler University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 147
+    },
+    {
+        "team_id": "CREIGHTON",
+        "name_canonical": "Creighton",
+        "conference": "Big East",
+        "sport": "msoc",
+        "schedule_url": "https://gocreighton.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Creighton University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 16
+    },
+    {
+        "team_id": "DEPAUL",
+        "name_canonical": "DePaul",
+        "conference": "Big East",
+        "sport": "msoc",
+        "schedule_url": "https://depaulbluedemons.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "DePaul University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 19
+    },
+    {
+        "team_id": "GEORGETOWN",
+        "name_canonical": "Georgetown",
+        "conference": "Big East",
+        "sport": "msoc",
+        "schedule_url": "https://guhoyas.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Georgetown University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 134
+    },
+    {
+        "team_id": "MARQUETTE",
+        "name_canonical": "Marquette",
+        "conference": "Big East",
+        "sport": "msoc",
+        "schedule_url": "https://gomarquette.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Marquette University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 16
+    },
+    {
+        "team_id": "PROVIDENCE",
+        "name_canonical": "Providence",
+        "conference": "Big East",
+        "sport": "msoc",
+        "schedule_url": "https://friars.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Providence College"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 16
+    },
+    {
+        "team_id": "ST_JOHN_S",
+        "name_canonical": "St. John's",
+        "conference": "Big East",
+        "sport": "msoc",
+        "schedule_url": "https://redstormsports.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "St. John's University (New York City)"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 19
+    },
+    {
+        "team_id": "SETON_HALL",
+        "name_canonical": "Seton Hall",
+        "conference": "Big East",
+        "sport": "msoc",
+        "schedule_url": "https://shupirates.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Seton Hall University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 19
+    },
+    {
+        "team_id": "UCONN",
+        "name_canonical": "UConn",
+        "conference": "Big East",
+        "sport": "msoc",
+        "schedule_url": "https://uconnhuskies.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 21
+    },
+    {
+        "team_id": "VILLANOVA",
+        "name_canonical": "Villanova",
+        "conference": "Big East",
+        "sport": "msoc",
+        "schedule_url": "https://villanova.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Villanova University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 110
+    },
+    {
+        "team_id": "XAVIER",
+        "name_canonical": "Xavier",
+        "conference": "Big East",
+        "sport": "msoc",
+        "schedule_url": "https://goxavier.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Xavier University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 22
+    }
+]

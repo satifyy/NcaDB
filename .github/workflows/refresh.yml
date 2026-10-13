@@ -1,0 +1,122 @@
+# Keeps the current season up to date without anyone running anything.
+#
+# In season the pipeline is worth running daily: schedules gain results, and box scores
+# appear for games played the night before. It runs incrementally — only box scores that
+# are missing or recent enough to still be corrected — so a daily run costs minutes
+# rather than the hour a full re-fetch of the season would take.
+#
+# Backfilling past seasons is deliberately not on a schedule. It is hours of scraping
+# whose output should be looked at before it lands, so it is run by hand:
+#   npx tsx apps/scraper/src/scripts/run_pipeline.ts --seasons 2021-2024
+name: Refresh season data
+
+on:
+  schedule:
+    # 09:00 UTC daily, August through December — early morning in the US, so the
+    # previous evening's games have final box scores by the time this runs.
+    - cron: '0 9 * 8-12 *'
+  workflow_dispatch:
+    inputs:
+      season:
+        description: 'Season to refresh (default: current year)'
+        required: false
+        type: string
+      full:
+        description: 'Re-fetch every box score instead of only new ones'
+        required: false
+        default: false
+        type: boolean
+
+# A second run starting while the first is mid-scrape would have both writing the same
+# CSVs and racing to commit them.
+concurrency:
+  group: refresh-season-data
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+defaults:
+  run:
+    working-directory: ncaa-soccer
+
+jobs:
+  checks:
+    uses: ./.github/workflows/ci.yml
+
+  refresh:
+    needs: checks
+    runs-on: ubuntu-latest
+    outputs:
+      # Whether anything actually changed, so a quiet day does not redeploy the same site.
+      changed: ${{ steps.commit.outputs.changed }}
+    # The box-score stage is the long pole. Incremental runs finish in minutes, but a
+    # manual --full run re-fetches the season and needs room.
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: ncaa-soccer/package-lock.json
+
+      - run: npm ci
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run pipeline
+        run: |
+          npx tsx apps/scraper/src/scripts/run_pipeline.ts \
+            --season "${SEASON:-$(date -u +%Y)}" \
+            --force \
+            ${INCREMENTAL}
+        env:
+          SEASON: ${{ inputs.season }}
+          # --force re-runs the stages regardless of what the last run recorded, since a
+          # refresh means "do it again", not "resume where it stopped".
+          INCREMENTAL: ${{ inputs.full && ' ' || '--incremental' }}
+
+      # Reached only when the pipeline exited 0. A stage that fails — including one that
+      # exits 0 but lost more rows than run_pipeline's row guard allows — exits the step
+      # non-zero, which skips this one and leaves the job red, so a partial scrape is
+      # discarded with the runner rather than committed and reported as a success.
+      - name: Commit refreshed data
+        id: commit
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          # Scoped to `data`: the dashboard's JSON is regenerated at deploy time and must
+          # not be committed, and nothing else in the tree is the pipeline's to change.
+          git add data
+          if git diff --cached --quiet; then
+            echo 'No data changed.'
+            echo 'changed=false' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git commit -m "chore(data): refresh season data $(date -u +%Y-%m-%d)"
+          git push
+          echo 'changed=true' >> "$GITHUB_OUTPUT"
+
+      # Which stages ran, how long they took, and how many rows each output gained or
+      # lost. On a red run this is the first thing to read: it names the stage that
+      # failed and, for a row-guard failure, the size of the drop that tripped it. The
+      # file is gitignored, so this is the only place it is visible.
+      - name: Pipeline state
+        if: always()
+        run: cat data/pipeline_state.json || true
+
+
+  # A push made with GITHUB_TOKEN does not trigger `on: push`, so the deploy workflow
+  # has to be called rather than left to notice the commit above. Skipped when the
+  # refresh failed (`needs`) and when it changed nothing (`if`).
+  publish:
+    needs: refresh
+    if: needs.refresh.outputs.changed == 'true'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/deploy.yml

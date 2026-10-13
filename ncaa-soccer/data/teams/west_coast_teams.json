@@ -1,0 +1,128 @@
+[
+    {
+        "team_id": "DENVER",
+        "name_canonical": "Denver",
+        "conference": "West Coast",
+        "sport": "msoc",
+        "schedule_url": "https://denverpioneers.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of Denver"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 22
+    },
+    {
+        "team_id": "LOYOLA_MARYMOUNT",
+        "name_canonical": "Loyola Marymount",
+        "conference": "West Coast",
+        "sport": "msoc",
+        "schedule_url": "https://lmulions.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Loyola Marymount University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 72
+    },
+    {
+        "team_id": "PACIFIC",
+        "name_canonical": "Pacific",
+        "conference": "West Coast",
+        "sport": "msoc",
+        "schedule_url": "https://pacifictigers.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of the Pacific (United States)"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 108
+    },
+    {
+        "team_id": "PORTLAND",
+        "name_canonical": "Portland",
+        "conference": "West Coast",
+        "sport": "msoc",
+        "schedule_url": "https://portlandpilots.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of Portland"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 92
+    },
+    {
+        "team_id": "SAINT_MARY_S",
+        "name_canonical": "Saint Mary's",
+        "conference": "West Coast",
+        "sport": "msoc",
+        "schedule_url": "https://smcgaels.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Saint Mary's College of California"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 18
+    },
+    {
+        "team_id": "SAN_DIEGO",
+        "name_canonical": "San Diego",
+        "conference": "West Coast",
+        "sport": "msoc",
+        "schedule_url": "https://usdtoreros.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of San Diego"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 154
+    },
+    {
+        "team_id": "SAN_FRANCISCO",
+        "name_canonical": "San Francisco",
+        "conference": "West Coast",
+        "sport": "msoc",
+        "schedule_url": "https://usfdons.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of San Francisco"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 19
+    },
+    {
+        "team_id": "SANTA_CLARA",
+        "name_canonical": "Santa Clara",
+        "conference": "West Coast",
+        "sport": "msoc",
+        "schedule_url": "https://santaclarabroncos.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Santa Clara University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 112
+    },
+    {
+        "team_id": "SEATTLE",
+        "name_canonical": "Seattle",
+        "conference": "West Coast",
+        "sport": "msoc",
+        "schedule_url": "https://goseattleu.com/sports/mens-soccer/schedule",
+        "platform_guess": "wmt",
+        "parser_key": "wmt_std",
+        "aliases": [
+            "Seattle University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 19
+    }
+]

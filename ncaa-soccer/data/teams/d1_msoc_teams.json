@@ -1,0 +1,2643 @@
+[
+    {
+        "team_id": "BOSTON_COLLEGE",
+        "name_canonical": "Boston College",
+        "conference": "ACC",
+        "sport": "msoc",
+        "schedule_url": "https://bceagles.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "BC",
+            "Boston College Eagles"
+        ]
+    },
+    {
+        "team_id": "CALIFORNIA",
+        "name_canonical": "California",
+        "conference": "ACC",
+        "sport": "msoc",
+        "schedule_url": "https://calbears.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Cal",
+            "California Golden Bears",
+            "University of California"
+        ]
+    },
+    {
+        "team_id": "CLEMSON",
+        "name_canonical": "Clemson",
+        "conference": "ACC",
+        "sport": "msoc",
+        "schedule_url": "https://clemsontigers.com/sports/mens-soccer/schedule",
+        "platform_guess": "wmt",
+        "parser_key": "wmt_std",
+        "aliases": [
+            "Clemson University",
+            "Clemson Tigers"
+        ],
+        "timezone": "America/New_York"
+    },
+    {
+        "team_id": "DUKE",
+        "name_canonical": "Duke",
+        "conference": "ACC",
+        "sport": "msoc",
+        "schedule_url": "https://goduke.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Duke University",
+            "Duke Blue Devils"
+        ]
+    },
+    {
+        "team_id": "LOUISVILLE",
+        "name_canonical": "Louisville",
+        "conference": "ACC",
+        "sport": "msoc",
+        "schedule_url": "https://gocards.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "U of L",
+            "Louisville Cardinals",
+            "University of Louisville"
+        ]
+    },
+    {
+        "team_id": "NC_STATE",
+        "name_canonical": "NC State",
+        "conference": "ACC",
+        "sport": "msoc",
+        "schedule_url": "https://gopack.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "NCSU",
+            "North Carolina State",
+            "NC State Wolfpack"
+        ]
+    },
+    {
+        "team_id": "NOTRE_DAME",
+        "name_canonical": "Notre Dame",
+        "conference": "ACC",
+        "sport": "msoc",
+        "schedule_url": "https://fightingirish.com/sports/msoc/schedule",
+        "platform_guess": "wmt",
+        "parser_key": "wmt_std",
+        "aliases": [
+            "ND",
+            "Notre Dame Fighting Irish",
+            "University of Notre Dame"
+        ],
+        "timezone": "America/New_York"
+    },
+    {
+        "team_id": "PITTSBURGH",
+        "name_canonical": "Pittsburgh",
+        "conference": "ACC",
+        "sport": "msoc",
+        "schedule_url": "https://pittsburghpanthers.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Pitt",
+            "University of Pittsburgh",
+            "Pittsburgh Panthers"
+        ]
+    },
+    {
+        "team_id": "SMU",
+        "name_canonical": "SMU",
+        "conference": "ACC",
+        "sport": "msoc",
+        "schedule_url": "https://smumustangs.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Southern Methodist",
+            "Southern Methodist University",
+            "SMU Mustangs"
+        ]
+    },
+    {
+        "team_id": "STANFORD",
+        "name_canonical": "Stanford",
+        "conference": "ACC",
+        "sport": "msoc",
+        "schedule_url": "https://gostanford.com/sports/mens-soccer/schedule",
+        "platform_guess": "wmt",
+        "parser_key": "wmt_std",
+        "aliases": [
+            "Stanford Cardinal",
+            "Stanford University"
+        ],
+        "timezone": "America/Los_Angeles"
+    },
+    {
+        "team_id": "SYRACUSE",
+        "name_canonical": "Syracuse",
+        "conference": "ACC",
+        "sport": "msoc",
+        "schedule_url": "https://cuse.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Cuse",
+            "Syracuse Orange",
+            "Syracuse University"
+        ]
+    },
+    {
+        "team_id": "NORTH_CAROLINA",
+        "name_canonical": "North Carolina",
+        "conference": "ACC",
+        "sport": "msoc",
+        "schedule_url": "https://goheels.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "UNC",
+            "Tar Heels",
+            "North Carolina Tar Heels",
+            "University of North Carolina"
+        ]
+    },
+    {
+        "team_id": "VIRGINIA",
+        "name_canonical": "Virginia",
+        "conference": "ACC",
+        "sport": "msoc",
+        "schedule_url": "https://virginiasports.com/sports/msoc/schedule",
+        "platform_guess": "wmt",
+        "parser_key": "wmt_std",
+        "aliases": [
+            "UVA",
+            "Virginia Cavaliers",
+            "University of Virginia"
+        ],
+        "timezone": "America/New_York"
+    },
+    {
+        "team_id": "VIRGINIA_TECH",
+        "name_canonical": "Virginia Tech",
+        "conference": "ACC",
+        "sport": "msoc",
+        "schedule_url": "https://hokiesports.com/sports/mens-soccer/schedule",
+        "platform_guess": "wmt",
+        "parser_key": "wmt_std",
+        "aliases": [
+            "VT",
+            "Va Tech",
+            "Virginia Tech Hokies"
+        ],
+        "timezone": "America/New_York"
+    },
+    {
+        "team_id": "WAKE_FOREST",
+        "name_canonical": "Wake Forest",
+        "conference": "ACC",
+        "sport": "msoc",
+        "schedule_url": "https://godeacs.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Wake",
+            "Wake Forest Demon Deacons"
+        ]
+    },
+    {
+        "team_id": "BINGHAMTON",
+        "name_canonical": "Binghamton",
+        "conference": "America East",
+        "sport": "msoc",
+        "schedule_url": "https://bubearcats.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Binghamton University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 104
+    },
+    {
+        "team_id": "BRYANT",
+        "name_canonical": "Bryant",
+        "conference": "America East",
+        "sport": "msoc",
+        "schedule_url": "https://bryantbulldogs.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Bryant University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 132
+    },
+    {
+        "team_id": "NEW_HAMPSHIRE",
+        "name_canonical": "New Hampshire",
+        "conference": "America East",
+        "sport": "msoc",
+        "schedule_url": "https://unhwildcats.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of New Hampshire"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 18
+    },
+    {
+        "team_id": "NJIT",
+        "name_canonical": "NJIT",
+        "conference": "America East",
+        "sport": "msoc",
+        "schedule_url": "https://njithighlanders.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 102
+    },
+    {
+        "team_id": "UMASS_LOWELL",
+        "name_canonical": "UMass Lowell",
+        "conference": "America East",
+        "sport": "msoc",
+        "schedule_url": "https://goriverhawks.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 20
+    },
+    {
+        "team_id": "UMBC",
+        "name_canonical": "UMBC",
+        "conference": "America East",
+        "sport": "msoc",
+        "schedule_url": "https://umbcretrievers.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 130
+    },
+    {
+        "team_id": "VERMONT",
+        "name_canonical": "Vermont",
+        "conference": "America East",
+        "sport": "msoc",
+        "schedule_url": "https://uvmathletics.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of Vermont"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 120
+    },
+    {
+        "team_id": "CHARLOTTE",
+        "name_canonical": "Charlotte",
+        "conference": "American",
+        "sport": "msoc",
+        "schedule_url": "https://charlotte49ers.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 18
+    },
+    {
+        "team_id": "FAU",
+        "name_canonical": "FAU",
+        "conference": "American",
+        "sport": "msoc",
+        "schedule_url": "https://fausports.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 19
+    },
+    {
+        "team_id": "FIU",
+        "name_canonical": "FIU",
+        "conference": "American",
+        "sport": "msoc",
+        "schedule_url": "https://fiusports.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 160
+    },
+    {
+        "team_id": "MEMPHIS",
+        "name_canonical": "Memphis",
+        "conference": "American",
+        "sport": "msoc",
+        "schedule_url": "https://gotigersgo.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of Memphis"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 15
+    },
+    {
+        "team_id": "MISSOURI_STATE",
+        "name_canonical": "Missouri State",
+        "conference": "American",
+        "sport": "msoc",
+        "schedule_url": "https://missouristatebears.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Missouri State University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 20
+    },
+    {
+        "team_id": "SOUTH_FLORIDA",
+        "name_canonical": "South Florida",
+        "conference": "American",
+        "sport": "msoc",
+        "schedule_url": "https://gousfbulls.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of South Florida"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 20
+    },
+    {
+        "team_id": "TEMPLE_UNIVERSITY",
+        "name_canonical": "Temple University",
+        "conference": "American",
+        "sport": "msoc",
+        "schedule_url": "https://owlsports.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 16
+    },
+    {
+        "team_id": "TULSA",
+        "name_canonical": "Tulsa",
+        "conference": "American",
+        "sport": "msoc",
+        "schedule_url": "https://tulsahurricane.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of Tulsa"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 20
+    },
+    {
+        "team_id": "UAB",
+        "name_canonical": "UAB",
+        "conference": "American",
+        "sport": "msoc",
+        "schedule_url": "https://uabsports.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 19
+    },
+    {
+        "team_id": "BELLARMINE",
+        "name_canonical": "Bellarmine",
+        "conference": "ASUN",
+        "sport": "msoc",
+        "schedule_url": "https://athletics.bellarmine.edu/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Bellarmine University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 123
+    },
+    {
+        "team_id": "CENTRAL_ARKANSAS",
+        "name_canonical": "Central Arkansas",
+        "conference": "ASUN",
+        "sport": "msoc",
+        "schedule_url": "https://ucasports.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of Central Arkansas"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 105
+    },
+    {
+        "team_id": "FGCU",
+        "name_canonical": "FGCU",
+        "conference": "ASUN",
+        "sport": "msoc",
+        "schedule_url": "https://fgcuathletics.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 75
+    },
+    {
+        "team_id": "JACKSONVILLE",
+        "name_canonical": "Jacksonville",
+        "conference": "ASUN",
+        "sport": "msoc",
+        "schedule_url": "https://judolphins.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Jacksonville University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 96
+    },
+    {
+        "team_id": "LIPSCOMB",
+        "name_canonical": "Lipscomb",
+        "conference": "ASUN",
+        "sport": "msoc",
+        "schedule_url": "https://lipscombsports.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Lipscomb University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 19
+    },
+    {
+        "team_id": "NORTH_FLORIDA",
+        "name_canonical": "North Florida",
+        "conference": "ASUN",
+        "sport": "msoc",
+        "schedule_url": "https://unfospreys.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of North Florida"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 20
+    },
+    {
+        "team_id": "QUEENS",
+        "name_canonical": "Queens",
+        "conference": "ASUN",
+        "sport": "msoc",
+        "schedule_url": "https://queensathletics.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Queens University of Charlotte"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 125
+    },
+    {
+        "team_id": "STETSON",
+        "name_canonical": "Stetson",
+        "conference": "ASUN",
+        "sport": "msoc",
+        "schedule_url": "https://gohatters.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Stetson University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 122
+    },
+    {
+        "team_id": "DAVIDSON_COLLEGE",
+        "name_canonical": "Davidson College",
+        "conference": "Atlantic 10",
+        "sport": "msoc",
+        "schedule_url": "https://davidsonwildcats.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 19
+    },
+    {
+        "team_id": "DAYTON",
+        "name_canonical": "Dayton",
+        "conference": "Atlantic 10",
+        "sport": "msoc",
+        "schedule_url": "https://daytonflyers.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of Dayton"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 157
+    },
+    {
+        "team_id": "DUQUESNE",
+        "name_canonical": "Duquesne",
+        "conference": "Atlantic 10",
+        "sport": "msoc",
+        "schedule_url": "https://goduquesne.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Duquesne University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 96
+    },
+    {
+        "team_id": "FORDHAM",
+        "name_canonical": "Fordham",
+        "conference": "Atlantic 10",
+        "sport": "msoc",
+        "schedule_url": "https://fordhamsports.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Fordham University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 114
+    },
+    {
+        "team_id": "GEORGE_MASON",
+        "name_canonical": "George Mason",
+        "conference": "Atlantic 10",
+        "sport": "msoc",
+        "schedule_url": "https://gomason.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "George Mason University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 19
+    },
+    {
+        "team_id": "GEORGE_WASHINGTON",
+        "name_canonical": "George Washington",
+        "conference": "Atlantic 10",
+        "sport": "msoc",
+        "schedule_url": "https://gwsports.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "George Washington University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 20
+    },
+    {
+        "team_id": "LA_SALLE",
+        "name_canonical": "La Salle",
+        "conference": "Atlantic 10",
+        "sport": "msoc",
+        "schedule_url": "https://goexplorers.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "La Salle University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 102
+    },
+    {
+        "team_id": "LOYOLA_CHICAGO",
+        "name_canonical": "Loyola Chicago",
+        "conference": "Atlantic 10",
+        "sport": "msoc",
+        "schedule_url": "https://loyolaramblers.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Loyola University Chicago"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 102
+    },
+    {
+        "team_id": "RHODE_ISLAND",
+        "name_canonical": "Rhode Island",
+        "conference": "Atlantic 10",
+        "sport": "msoc",
+        "schedule_url": "https://gorhody.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of Rhode Island"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 89
+    },
+    {
+        "team_id": "ST_BONAVENTURE",
+        "name_canonical": "St. Bonaventure",
+        "conference": "Atlantic 10",
+        "sport": "msoc",
+        "schedule_url": "https://gobonnies.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "St. Bonaventure University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 100
+    },
+    {
+        "team_id": "SAINT_JOSEPH_S",
+        "name_canonical": "Saint Joseph's",
+        "conference": "Atlantic 10",
+        "sport": "msoc",
+        "schedule_url": "https://sjuhawks.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Saint Joseph's University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 108
+    },
+    {
+        "team_id": "SAINT_LOUIS",
+        "name_canonical": "Saint Louis",
+        "conference": "Atlantic 10",
+        "sport": "msoc",
+        "schedule_url": "https://slubillikens.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Saint Louis University (United States)"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 152
+    },
+    {
+        "team_id": "VCU",
+        "name_canonical": "VCU",
+        "conference": "Atlantic 10",
+        "sport": "msoc",
+        "schedule_url": "https://vcuathletics.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 126
+    },
+    {
+        "team_id": "AKRON",
+        "name_canonical": "Akron",
+        "conference": "Big East",
+        "sport": "msoc",
+        "schedule_url": "https://gozips.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of Akron"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 24
+    },
+    {
+        "team_id": "BUTLER",
+        "name_canonical": "Butler",
+        "conference": "Big East",
+        "sport": "msoc",
+        "schedule_url": "https://butlersports.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Butler University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 147
+    },
+    {
+        "team_id": "CREIGHTON",
+        "name_canonical": "Creighton",
+        "conference": "Big East",
+        "sport": "msoc",
+        "schedule_url": "https://gocreighton.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Creighton University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 16
+    },
+    {
+        "team_id": "DEPAUL",
+        "name_canonical": "DePaul",
+        "conference": "Big East",
+        "sport": "msoc",
+        "schedule_url": "https://depaulbluedemons.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "DePaul University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 19
+    },
+    {
+        "team_id": "GEORGETOWN",
+        "name_canonical": "Georgetown",
+        "conference": "Big East",
+        "sport": "msoc",
+        "schedule_url": "https://guhoyas.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Georgetown University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 134
+    },
+    {
+        "team_id": "MARQUETTE",
+        "name_canonical": "Marquette",
+        "conference": "Big East",
+        "sport": "msoc",
+        "schedule_url": "https://gomarquette.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Marquette University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 16
+    },
+    {
+        "team_id": "PROVIDENCE",
+        "name_canonical": "Providence",
+        "conference": "Big East",
+        "sport": "msoc",
+        "schedule_url": "https://friars.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Providence College"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 16
+    },
+    {
+        "team_id": "ST_JOHN_S",
+        "name_canonical": "St. John's",
+        "conference": "Big East",
+        "sport": "msoc",
+        "schedule_url": "https://redstormsports.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "St. John's University (New York City)"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 19
+    },
+    {
+        "team_id": "SETON_HALL",
+        "name_canonical": "Seton Hall",
+        "conference": "Big East",
+        "sport": "msoc",
+        "schedule_url": "https://shupirates.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Seton Hall University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 19
+    },
+    {
+        "team_id": "UCONN",
+        "name_canonical": "UConn",
+        "conference": "Big East",
+        "sport": "msoc",
+        "schedule_url": "https://uconnhuskies.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 21
+    },
+    {
+        "team_id": "VILLANOVA",
+        "name_canonical": "Villanova",
+        "conference": "Big East",
+        "sport": "msoc",
+        "schedule_url": "https://villanova.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Villanova University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 110
+    },
+    {
+        "team_id": "XAVIER",
+        "name_canonical": "Xavier",
+        "conference": "Big East",
+        "sport": "msoc",
+        "schedule_url": "https://goxavier.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Xavier University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 22
+    },
+    {
+        "team_id": "GARDNER_WEBB",
+        "name_canonical": "Gardner-Webb",
+        "conference": "Big South",
+        "sport": "msoc",
+        "schedule_url": "https://gwusports.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Gardner–Webb University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 21
+    },
+    {
+        "team_id": "HIGH_POINT",
+        "name_canonical": "High Point",
+        "conference": "Big South",
+        "sport": "msoc",
+        "schedule_url": "https://highpointpanthers.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "High Point University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 87
+    },
+    {
+        "team_id": "LONGWOOD",
+        "name_canonical": "Longwood",
+        "conference": "Big South",
+        "sport": "msoc",
+        "schedule_url": "https://longwoodlancers.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Longwood University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 134
+    },
+    {
+        "team_id": "PRESBYTERIAN",
+        "name_canonical": "Presbyterian",
+        "conference": "Big South",
+        "sport": "msoc",
+        "schedule_url": "https://gobluehose.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Presbyterian College"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 166
+    },
+    {
+        "team_id": "RADFORD",
+        "name_canonical": "Radford",
+        "conference": "Big South",
+        "sport": "msoc",
+        "schedule_url": "https://radfordathletics.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Radford University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 20
+    },
+    {
+        "team_id": "UNC_ASHEVILLE",
+        "name_canonical": "UNC Asheville",
+        "conference": "Big South",
+        "sport": "msoc",
+        "schedule_url": "https://uncabulldogs.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 19
+    },
+    {
+        "team_id": "USC_UPSTATE",
+        "name_canonical": "USC Upstate",
+        "conference": "Big South",
+        "sport": "msoc",
+        "schedule_url": "https://upstatespartans.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 21
+    },
+    {
+        "team_id": "WINTHROP",
+        "name_canonical": "Winthrop",
+        "conference": "Big South",
+        "sport": "msoc",
+        "schedule_url": "https://winthropeagles.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Winthrop University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 112
+    },
+    {
+        "team_id": "INDIANA",
+        "name_canonical": "Indiana",
+        "conference": "Big Ten",
+        "sport": "msoc",
+        "schedule_url": "https://iuhoosiers.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 19
+    },
+    {
+        "team_id": "MARYLAND",
+        "name_canonical": "Maryland",
+        "conference": "Big Ten",
+        "sport": "msoc",
+        "schedule_url": "https://umterps.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 20
+    },
+    {
+        "team_id": "MICHIGAN",
+        "name_canonical": "Michigan",
+        "conference": "Big Ten",
+        "sport": "msoc",
+        "schedule_url": "https://mgoblue.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of Michigan"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 23
+    },
+    {
+        "team_id": "MICHIGAN_STATE",
+        "name_canonical": "Michigan State",
+        "conference": "Big Ten",
+        "sport": "msoc",
+        "schedule_url": "https://msuspartans.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Michigan State University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 18
+    },
+    {
+        "team_id": "NORTHWESTERN",
+        "name_canonical": "Northwestern",
+        "conference": "Big Ten",
+        "sport": "msoc",
+        "schedule_url": "https://nusports.com/sports/mens-soccer/schedule",
+        "platform_guess": "wmt",
+        "parser_key": "wmt_std",
+        "aliases": [
+            "Northwestern University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 19
+    },
+    {
+        "team_id": "OHIO_STATE",
+        "name_canonical": "Ohio State",
+        "conference": "Big Ten",
+        "sport": "msoc",
+        "schedule_url": "https://ohiostatebuckeyes.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Ohio State University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 20
+    },
+    {
+        "team_id": "PENN_STATE",
+        "name_canonical": "Penn State",
+        "conference": "Big Ten",
+        "sport": "msoc",
+        "schedule_url": "https://gopsusports.com/sports/mens-soccer/schedule",
+        "platform_guess": "wmt",
+        "parser_key": "wmt_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 25
+    },
+    {
+        "team_id": "RUTGERS",
+        "name_canonical": "Rutgers",
+        "conference": "Big Ten",
+        "sport": "msoc",
+        "schedule_url": "https://scarletknights.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 19
+    },
+    {
+        "team_id": "UCLA",
+        "name_canonical": "UCLA",
+        "conference": "Big Ten",
+        "sport": "msoc",
+        "schedule_url": "https://uclabruins.com/sports/mens-soccer/schedule",
+        "platform_guess": "wmt",
+        "parser_key": "wmt_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 22
+    },
+    {
+        "team_id": "WASHINGTON",
+        "name_canonical": "Washington",
+        "conference": "Big Ten",
+        "sport": "msoc",
+        "schedule_url": "https://gohuskies.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of Washington"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 24
+    },
+    {
+        "team_id": "WISCONSIN",
+        "name_canonical": "Wisconsin",
+        "conference": "Big Ten",
+        "sport": "msoc",
+        "schedule_url": "https://uwbadgers.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 20
+    },
+    {
+        "team_id": "CAL_STATE_FULLERTON",
+        "name_canonical": "Cal State Fullerton",
+        "conference": "Big West",
+        "sport": "msoc",
+        "schedule_url": "https://fullertontitans.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 115
+    },
+    {
+        "team_id": "SACRAMENTO_STATE",
+        "name_canonical": "Sacramento State",
+        "conference": "Big West",
+        "sport": "msoc",
+        "schedule_url": "https://hornetsports.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 118
+    },
+    {
+        "team_id": "UC_IRVINE",
+        "name_canonical": "UC Irvine",
+        "conference": "Big West",
+        "sport": "msoc",
+        "schedule_url": "https://ucirvinesports.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 21
+    },
+    {
+        "team_id": "UC_SANTA_BARBARA",
+        "name_canonical": "UC Santa Barbara",
+        "conference": "Big West",
+        "sport": "msoc",
+        "schedule_url": "https://ucsbgauchos.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 168
+    },
+    {
+        "team_id": "UTAH_VALLEY",
+        "name_canonical": "Utah Valley",
+        "conference": "Big West",
+        "sport": "msoc",
+        "schedule_url": "https://wolverinegreen.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Utah Valley University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 63
+    },
+    {
+        "team_id": "CAMPBELL",
+        "name_canonical": "Campbell",
+        "conference": "CAA",
+        "sport": "msoc",
+        "schedule_url": "https://gocamels.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Campbell University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 104
+    },
+    {
+        "team_id": "CHARLESTON",
+        "name_canonical": "Charleston",
+        "conference": "CAA",
+        "sport": "msoc",
+        "schedule_url": "https://cofcsports.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 20
+    },
+    {
+        "team_id": "DREXEL",
+        "name_canonical": "Drexel",
+        "conference": "CAA",
+        "sport": "msoc",
+        "schedule_url": "https://drexeldragons.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Drexel University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 16
+    },
+    {
+        "team_id": "HOFSTRA",
+        "name_canonical": "Hofstra",
+        "conference": "CAA",
+        "sport": "msoc",
+        "schedule_url": "https://gohofstra.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Hofstra University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 77
+    },
+    {
+        "team_id": "MONMOUTH",
+        "name_canonical": "Monmouth",
+        "conference": "CAA",
+        "sport": "msoc",
+        "schedule_url": "https://monmouthhawks.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Monmouth University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 120
+    },
+    {
+        "team_id": "NORTHEASTERN",
+        "name_canonical": "Northeastern",
+        "conference": "CAA",
+        "sport": "msoc",
+        "schedule_url": "https://nuhuskies.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Northeastern University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 78
+    },
+    {
+        "team_id": "STONY_BROOK",
+        "name_canonical": "Stony Brook",
+        "conference": "CAA",
+        "sport": "msoc",
+        "schedule_url": "https://stonybrookathletics.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Stony Brook University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 118
+    },
+    {
+        "team_id": "UNC_WILMINGTON",
+        "name_canonical": "UNC Wilmington",
+        "conference": "CAA",
+        "sport": "msoc",
+        "schedule_url": "https://uncwsports.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 82
+    },
+    {
+        "team_id": "WILLIAM_MARY",
+        "name_canonical": "William & Mary",
+        "conference": "CAA",
+        "sport": "msoc",
+        "schedule_url": "https://tribeathletics.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 114
+    },
+    {
+        "team_id": "CLEVELAND_STATE",
+        "name_canonical": "Cleveland State",
+        "conference": "Horizon",
+        "sport": "msoc",
+        "schedule_url": "https://csuvikings.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Cleveland State University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 114
+    },
+    {
+        "team_id": "DETROIT_MERCY",
+        "name_canonical": "Detroit Mercy",
+        "conference": "Horizon",
+        "sport": "msoc",
+        "schedule_url": "https://detroittitans.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of Detroit Mercy"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 64
+    },
+    {
+        "team_id": "IU_INDY",
+        "name_canonical": "IU Indy",
+        "conference": "Horizon",
+        "sport": "msoc",
+        "schedule_url": "https://iuindyjags.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 166
+    },
+    {
+        "team_id": "MILWAUKEE",
+        "name_canonical": "Milwaukee",
+        "conference": "Horizon",
+        "sport": "msoc",
+        "schedule_url": "https://mkepanthers.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 158
+    },
+    {
+        "team_id": "NORTHERN_KENTUCKY",
+        "name_canonical": "Northern Kentucky",
+        "conference": "Horizon",
+        "sport": "msoc",
+        "schedule_url": "https://nkunorse.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Northern Kentucky University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 105
+    },
+    {
+        "team_id": "OAKLAND",
+        "name_canonical": "Oakland",
+        "conference": "Horizon",
+        "sport": "msoc",
+        "schedule_url": "https://goldengrizzlies.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Oakland University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 123
+    },
+    {
+        "team_id": "PURDUE_FORT_WAYNE",
+        "name_canonical": "Purdue Fort Wayne",
+        "conference": "Horizon",
+        "sport": "msoc",
+        "schedule_url": "https://gomastodons.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 20
+    },
+    {
+        "team_id": "ROBERT_MORRIS",
+        "name_canonical": "Robert Morris",
+        "conference": "Horizon",
+        "sport": "msoc",
+        "schedule_url": "https://rmucolonials.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Robert Morris University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 77
+    },
+    {
+        "team_id": "WRIGHT_STATE",
+        "name_canonical": "Wright State",
+        "conference": "Horizon",
+        "sport": "msoc",
+        "schedule_url": "https://wsuraiders.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Wright State University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 18
+    },
+    {
+        "team_id": "BROWN",
+        "name_canonical": "Brown",
+        "conference": "Ivy",
+        "sport": "msoc",
+        "schedule_url": "https://brownbears.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Brown University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 15
+    },
+    {
+        "team_id": "COLUMBIA_UNIVERSITY",
+        "name_canonical": "Columbia University",
+        "conference": "Ivy",
+        "sport": "msoc",
+        "schedule_url": "https://gocolumbialions.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 15
+    },
+    {
+        "team_id": "CORNELL",
+        "name_canonical": "Cornell",
+        "conference": "Ivy",
+        "sport": "msoc",
+        "schedule_url": "https://cornellbigred.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Cornell University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 157
+    },
+    {
+        "team_id": "DARTMOUTH_COLLEGE",
+        "name_canonical": "Dartmouth College",
+        "conference": "Ivy",
+        "sport": "msoc",
+        "schedule_url": "https://dartmouthsports.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 16
+    },
+    {
+        "team_id": "HARVARD",
+        "name_canonical": "Harvard",
+        "conference": "Ivy",
+        "sport": "msoc",
+        "schedule_url": "https://gocrimson.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Harvard University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 145
+    },
+    {
+        "team_id": "PRINCETON",
+        "name_canonical": "Princeton",
+        "conference": "Ivy",
+        "sport": "msoc",
+        "schedule_url": "https://goprincetontigers.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Princeton University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 19
+    },
+    {
+        "team_id": "PENN",
+        "name_canonical": "Penn",
+        "conference": "Ivy",
+        "sport": "msoc",
+        "schedule_url": "https://pennathletics.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 173
+    },
+    {
+        "team_id": "YALE",
+        "name_canonical": "Yale",
+        "conference": "Ivy",
+        "sport": "msoc",
+        "schedule_url": "https://yalebulldogs.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Yale University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 90
+    },
+    {
+        "team_id": "CANISIUS",
+        "name_canonical": "Canisius",
+        "conference": "Metro",
+        "sport": "msoc",
+        "schedule_url": "https://gogriffs.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Canisius University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 82
+    },
+    {
+        "team_id": "FAIRFIELD",
+        "name_canonical": "Fairfield",
+        "conference": "Metro",
+        "sport": "msoc",
+        "schedule_url": "https://fairfieldstags.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Fairfield University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 106
+    },
+    {
+        "team_id": "IONA",
+        "name_canonical": "Iona",
+        "conference": "Metro",
+        "sport": "msoc",
+        "schedule_url": "https://ionagaels.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Iona University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 112
+    },
+    {
+        "team_id": "MANHATTAN",
+        "name_canonical": "Manhattan",
+        "conference": "Metro",
+        "sport": "msoc",
+        "schedule_url": "https://gojaspers.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Manhattan University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 84
+    },
+    {
+        "team_id": "MARIST",
+        "name_canonical": "Marist",
+        "conference": "Metro",
+        "sport": "msoc",
+        "schedule_url": "https://goredfoxes.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Marist University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 114
+    },
+    {
+        "team_id": "MERRIMACK_COLLEGE",
+        "name_canonical": "Merrimack College",
+        "conference": "Metro",
+        "sport": "msoc",
+        "schedule_url": "https://merrimackathletics.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 100
+    },
+    {
+        "team_id": "MOUNT_ST_MARY_S",
+        "name_canonical": "Mount St. Mary's",
+        "conference": "Metro",
+        "sport": "msoc",
+        "schedule_url": "https://mountathletics.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Mount St. Mary's University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 51
+    },
+    {
+        "team_id": "QUINNIPIAC",
+        "name_canonical": "Quinnipiac",
+        "conference": "Metro",
+        "sport": "msoc",
+        "schedule_url": "https://gobobcats.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Quinnipiac University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 18
+    },
+    {
+        "team_id": "RIDER_UNIVERSITY",
+        "name_canonical": "Rider University",
+        "conference": "Metro",
+        "sport": "msoc",
+        "schedule_url": "https://gobroncs.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 102
+    },
+    {
+        "team_id": "SACRED_HEART",
+        "name_canonical": "Sacred Heart",
+        "conference": "Metro",
+        "sport": "msoc",
+        "schedule_url": "https://sacredheartpioneers.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Sacred Heart University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 18
+    },
+    {
+        "team_id": "SAINT_PETER_S",
+        "name_canonical": "Saint Peter's",
+        "conference": "Metro",
+        "sport": "msoc",
+        "schedule_url": "https://saintpeterspeacocks.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Saint Peter's University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 64
+    },
+    {
+        "team_id": "SIENA",
+        "name_canonical": "Siena",
+        "conference": "Metro",
+        "sport": "msoc",
+        "schedule_url": "https://sienasaints.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Siena University (New York)"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 134
+    },
+    {
+        "team_id": "NIAGARA",
+        "name_canonical": "Niagara",
+        "conference": "Metro",
+        "sport": "msoc",
+        "schedule_url": "https://purpleeagles.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Niagara University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 16
+    },
+    {
+        "team_id": "BELMONT_UNIVERSITY",
+        "name_canonical": "Belmont University",
+        "conference": "Missouri Valley",
+        "sport": "msoc",
+        "schedule_url": "https://belmontbruins.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 144
+    },
+    {
+        "team_id": "DRAKE",
+        "name_canonical": "Drake",
+        "conference": "Missouri Valley",
+        "sport": "msoc",
+        "schedule_url": "https://godrakebulldogs.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Drake University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 110
+    },
+    {
+        "team_id": "UNIVERSITY_OF_EVANSVILLE",
+        "name_canonical": "University of Evansville",
+        "conference": "Missouri Valley",
+        "sport": "msoc",
+        "schedule_url": "https://gopurpleaces.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 103
+    },
+    {
+        "team_id": "UIC",
+        "name_canonical": "UIC",
+        "conference": "Missouri Valley",
+        "sport": "msoc",
+        "schedule_url": "https://uicflames.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 80
+    },
+    {
+        "team_id": "WESTERN_MICHIGAN",
+        "name_canonical": "Western Michigan",
+        "conference": "Missouri Valley",
+        "sport": "msoc",
+        "schedule_url": "https://wmubroncos.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Western Michigan University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 84
+    },
+    {
+        "team_id": "AIR_FORCE",
+        "name_canonical": "Air Force",
+        "conference": "Mountain West",
+        "sport": "msoc",
+        "schedule_url": "https://goairforcefalcons.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 19
+    },
+    {
+        "team_id": "SAN_JOSE_STATE",
+        "name_canonical": "San Jose State",
+        "conference": "Mountain West",
+        "sport": "msoc",
+        "schedule_url": "https://sjsuspartans.com/sports/mens-soccer/schedule",
+        "platform_guess": "wmt",
+        "parser_key": "wmt_std",
+        "aliases": [
+            "San Jose State University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 20
+    },
+    {
+        "team_id": "UC_DAVIS",
+        "name_canonical": "UC Davis",
+        "conference": "Mountain West",
+        "sport": "msoc",
+        "schedule_url": "https://ucdavisaggies.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 99
+    },
+    {
+        "team_id": "UNLV",
+        "name_canonical": "UNLV",
+        "conference": "Mountain West",
+        "sport": "msoc",
+        "schedule_url": "https://unlvrebels.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 83
+    },
+    {
+        "team_id": "UTAH_TECH",
+        "name_canonical": "Utah Tech",
+        "conference": "Mountain West",
+        "sport": "msoc",
+        "schedule_url": "https://utahtechtrailblazers.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Utah Tech University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 119
+    },
+    {
+        "team_id": "GRAND_CANYON",
+        "name_canonical": "Grand Canyon",
+        "conference": "Mountain West",
+        "sport": "msoc",
+        "schedule_url": "https://gculopes.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Grand Canyon University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 18
+    },
+    {
+        "team_id": "CHICAGO_STATE",
+        "name_canonical": "Chicago State",
+        "conference": "NEC",
+        "sport": "msoc",
+        "schedule_url": "https://gocsucougars.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Chicago State University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 73
+    },
+    {
+        "team_id": "HOWARD",
+        "name_canonical": "Howard",
+        "conference": "NEC",
+        "sport": "msoc",
+        "schedule_url": "https://hubison.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Howard University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 122
+    },
+    {
+        "team_id": "LE_MOYNE_COLLEGE",
+        "name_canonical": "Le Moyne College",
+        "conference": "NEC",
+        "sport": "msoc",
+        "schedule_url": "https://lemoynedolphins.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 89
+    },
+    {
+        "team_id": "MERCYHURST",
+        "name_canonical": "Mercyhurst",
+        "conference": "NEC",
+        "sport": "msoc",
+        "schedule_url": "https://hurstathletics.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Mercyhurst University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 102
+    },
+    {
+        "team_id": "NEW_HAVEN",
+        "name_canonical": "New Haven",
+        "conference": "NEC",
+        "sport": "msoc",
+        "schedule_url": "https://newhavenchargers.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of New Haven"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 94
+    },
+    {
+        "team_id": "STONEHILL_COLLEGE",
+        "name_canonical": "Stonehill College",
+        "conference": "NEC",
+        "sport": "msoc",
+        "schedule_url": "https://stonehillskyhawks.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 108
+    },
+    {
+        "team_id": "EASTERN_ILLINOIS",
+        "name_canonical": "Eastern Illinois",
+        "conference": "Ohio Valley",
+        "sport": "msoc",
+        "schedule_url": "https://eiupanthers.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Eastern Illinois University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 98
+    },
+    {
+        "team_id": "HOUSTON_CHRISTIAN",
+        "name_canonical": "Houston Christian",
+        "conference": "Ohio Valley",
+        "sport": "msoc",
+        "schedule_url": "https://hcuhuskies.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Houston Christian University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 138
+    },
+    {
+        "team_id": "LINDENWOOD",
+        "name_canonical": "Lindenwood",
+        "conference": "Ohio Valley",
+        "sport": "msoc",
+        "schedule_url": "https://lindenwoodlions.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Lindenwood University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 132
+    },
+    {
+        "team_id": "UNIVERSITY_OF_SOUTHERN_INDIANA",
+        "name_canonical": "University of Southern Indiana",
+        "conference": "Ohio Valley",
+        "sport": "msoc",
+        "schedule_url": "https://gousieagles.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 128
+    },
+    {
+        "team_id": "WESTERN_ILLINOIS",
+        "name_canonical": "Western Illinois",
+        "conference": "Ohio Valley",
+        "sport": "msoc",
+        "schedule_url": "https://goleathernecks.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Western Illinois University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 123
+    },
+    {
+        "team_id": "UTRGV",
+        "name_canonical": "UTRGV",
+        "conference": "Ohio Valley",
+        "sport": "msoc",
+        "schedule_url": "https://goutrgv.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 19
+    },
+    {
+        "team_id": "CALIFORNIA_BAPTIST",
+        "name_canonical": "California Baptist",
+        "conference": "Pac-12",
+        "sport": "msoc",
+        "schedule_url": "https://cbulancers.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "California Baptist University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 18
+    },
+    {
+        "team_id": "CAL_POLY",
+        "name_canonical": "Cal Poly",
+        "conference": "Pac-12",
+        "sport": "msoc",
+        "schedule_url": "https://gopoly.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 22
+    },
+    {
+        "team_id": "GONZAGA",
+        "name_canonical": "Gonzaga",
+        "conference": "Pac-12",
+        "sport": "msoc",
+        "schedule_url": "https://gozags.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Gonzaga University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 16
+    },
+    {
+        "team_id": "OREGON_STATE",
+        "name_canonical": "Oregon State",
+        "conference": "Pac-12",
+        "sport": "msoc",
+        "schedule_url": "https://osubeavers.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Oregon State University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 17
+    },
+    {
+        "team_id": "SAN_DIEGO_STATE",
+        "name_canonical": "San Diego State",
+        "conference": "Pac-12",
+        "sport": "msoc",
+        "schedule_url": "https://goaztecs.com/sports/mens-soccer/schedule",
+        "platform_guess": "wmt",
+        "parser_key": "wmt_std",
+        "aliases": [
+            "San Diego State University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 20
+    },
+    {
+        "team_id": "UC_RIVERSIDE",
+        "name_canonical": "UC Riverside",
+        "conference": "Pac-12",
+        "sport": "msoc",
+        "schedule_url": "https://gohighlanders.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 19
+    },
+    {
+        "team_id": "UC_SAN_DIEGO",
+        "name_canonical": "UC San Diego",
+        "conference": "Pac-12",
+        "sport": "msoc",
+        "schedule_url": "https://ucsdtritons.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 115
+    },
+    {
+        "team_id": "AMERICAN",
+        "name_canonical": "American",
+        "conference": "Patriot",
+        "sport": "msoc",
+        "schedule_url": "https://aueagles.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "American University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 108
+    },
+    {
+        "team_id": "ARMY",
+        "name_canonical": "Army",
+        "conference": "Patriot",
+        "sport": "msoc",
+        "schedule_url": "https://goarmywestpoint.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 20
+    },
+    {
+        "team_id": "BOSTON_UNIVERSITY",
+        "name_canonical": "Boston University",
+        "conference": "Patriot",
+        "sport": "msoc",
+        "schedule_url": "https://goterriers.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 20
+    },
+    {
+        "team_id": "BUCKNELL",
+        "name_canonical": "Bucknell",
+        "conference": "Patriot",
+        "sport": "msoc",
+        "schedule_url": "https://bucknellbison.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Bucknell University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 19
+    },
+    {
+        "team_id": "LAFAYETTE",
+        "name_canonical": "Lafayette",
+        "conference": "Patriot",
+        "sport": "msoc",
+        "schedule_url": "https://goleopards.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Lafayette College"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 138
+    },
+    {
+        "team_id": "LEHIGH",
+        "name_canonical": "Lehigh",
+        "conference": "Patriot",
+        "sport": "msoc",
+        "schedule_url": "https://lehighsports.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Lehigh University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 20
+    },
+    {
+        "team_id": "LOYOLA_UNIVERSITY_MARYLAND",
+        "name_canonical": "Loyola University Maryland",
+        "conference": "Patriot",
+        "sport": "msoc",
+        "schedule_url": "https://loyolagreyhounds.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 68
+    },
+    {
+        "team_id": "NAVY",
+        "name_canonical": "Navy",
+        "conference": "Patriot",
+        "sport": "msoc",
+        "schedule_url": "https://navysports.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 100
+    },
+    {
+        "team_id": "ETSU",
+        "name_canonical": "ETSU",
+        "conference": "Southern",
+        "sport": "msoc",
+        "schedule_url": "https://etsubucs.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 120
+    },
+    {
+        "team_id": "FURMAN",
+        "name_canonical": "Furman",
+        "conference": "Southern",
+        "sport": "msoc",
+        "schedule_url": "https://furmanpaladins.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Furman University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 136
+    },
+    {
+        "team_id": "LIBERTY",
+        "name_canonical": "Liberty",
+        "conference": "Southern",
+        "sport": "msoc",
+        "schedule_url": "https://libertyflames.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Liberty University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 20
+    },
+    {
+        "team_id": "MERCER",
+        "name_canonical": "Mercer",
+        "conference": "Southern",
+        "sport": "msoc",
+        "schedule_url": "https://mercerbears.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Mercer University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 21
+    },
+    {
+        "team_id": "UNC_GREENSBORO",
+        "name_canonical": "UNC Greensboro",
+        "conference": "Southern",
+        "sport": "msoc",
+        "schedule_url": "https://uncgspartans.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 169
+    },
+    {
+        "team_id": "VMI",
+        "name_canonical": "VMI",
+        "conference": "Southern",
+        "sport": "msoc",
+        "schedule_url": "https://vmikeydets.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 142
+    },
+    {
+        "team_id": "WOFFORD",
+        "name_canonical": "Wofford",
+        "conference": "Southern",
+        "sport": "msoc",
+        "schedule_url": "https://athletics.wofford.edu/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Wofford College"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 158
+    },
+    {
+        "team_id": "DELAWARE",
+        "name_canonical": "Delaware",
+        "conference": "Summit",
+        "sport": "msoc",
+        "schedule_url": "https://bluehens.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of Delaware"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 17
+    },
+    {
+        "team_id": "KANSAS_CITY",
+        "name_canonical": "Kansas City",
+        "conference": "Summit",
+        "sport": "msoc",
+        "schedule_url": "https://kcroos.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 24
+    },
+    {
+        "team_id": "OMAHA",
+        "name_canonical": "Omaha",
+        "conference": "Summit",
+        "sport": "msoc",
+        "schedule_url": "https://omavs.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 70
+    },
+    {
+        "team_id": "ORAL_ROBERTS",
+        "name_canonical": "Oral Roberts",
+        "conference": "Summit",
+        "sport": "msoc",
+        "schedule_url": "https://oruathletics.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Oral Roberts University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 106
+    },
+    {
+        "team_id": "ST_THOMAS",
+        "name_canonical": "St. Thomas",
+        "conference": "Summit",
+        "sport": "msoc",
+        "schedule_url": "https://tommiesports.com/sports/msoc/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of St. Thomas (Minnesota)"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 17
+    },
+    {
+        "team_id": "UMASS",
+        "name_canonical": "UMass",
+        "conference": "Summit",
+        "sport": "msoc",
+        "schedule_url": "https://umassathletics.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 17
+    },
+    {
+        "team_id": "COASTAL_CAROLINA",
+        "name_canonical": "Coastal Carolina",
+        "conference": "Sun Belt",
+        "sport": "msoc",
+        "schedule_url": "https://goccusports.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Coastal Carolina University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 15
+    },
+    {
+        "team_id": "GEORGIA_SOUTHERN",
+        "name_canonical": "Georgia Southern",
+        "conference": "Sun Belt",
+        "sport": "msoc",
+        "schedule_url": "https://gseagles.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Georgia Southern University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 21
+    },
+    {
+        "team_id": "GEORGIA_STATE",
+        "name_canonical": "Georgia State",
+        "conference": "Sun Belt",
+        "sport": "msoc",
+        "schedule_url": "https://georgiastatesports.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Georgia State University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 115
+    },
+    {
+        "team_id": "JAMES_MADISON",
+        "name_canonical": "James Madison",
+        "conference": "Sun Belt",
+        "sport": "msoc",
+        "schedule_url": "https://jmusports.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "James Madison University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 16
+    },
+    {
+        "team_id": "KENTUCKY",
+        "name_canonical": "Kentucky",
+        "conference": "Sun Belt",
+        "sport": "msoc",
+        "schedule_url": "https://ukathletics.com/sports/msoc/schedule",
+        "platform_guess": "wmt_wp",
+        "parser_key": "wmt_wp_std",
+        "aliases": [
+            "University of Kentucky"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 21
+    },
+    {
+        "team_id": "MARSHALL",
+        "name_canonical": "Marshall",
+        "conference": "Sun Belt",
+        "sport": "msoc",
+        "schedule_url": "https://herdzone.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Marshall University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 24
+    },
+    {
+        "team_id": "OLD_DOMINION",
+        "name_canonical": "Old Dominion",
+        "conference": "Sun Belt",
+        "sport": "msoc",
+        "schedule_url": "https://odusports.com/sports/mens-soccer/schedule",
+        "platform_guess": "wmt",
+        "parser_key": "wmt_std",
+        "aliases": [
+            "Old Dominion University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 20
+    },
+    {
+        "team_id": "SOUTH_CAROLINA",
+        "name_canonical": "South Carolina",
+        "conference": "Sun Belt",
+        "sport": "msoc",
+        "schedule_url": "https://gamecocksonline.com/sports/msoc/schedule",
+        "platform_guess": "wmt_wp",
+        "parser_key": "wmt_wp_std",
+        "aliases": [
+            "University of South Carolina"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 20
+    },
+    {
+        "team_id": "UCF",
+        "name_canonical": "UCF",
+        "conference": "Sun Belt",
+        "sport": "msoc",
+        "schedule_url": "https://ucfknights.com/sports/mens-soccer/schedule",
+        "platform_guess": "wmt",
+        "parser_key": "wmt_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 23
+    },
+    {
+        "team_id": "WEST_VIRGINIA",
+        "name_canonical": "West Virginia",
+        "conference": "Sun Belt",
+        "sport": "msoc",
+        "schedule_url": "https://wvusports.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "West Virginia University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 24
+    },
+    {
+        "team_id": "DENVER",
+        "name_canonical": "Denver",
+        "conference": "West Coast",
+        "sport": "msoc",
+        "schedule_url": "https://denverpioneers.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of Denver"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 22
+    },
+    {
+        "team_id": "LOYOLA_MARYMOUNT",
+        "name_canonical": "Loyola Marymount",
+        "conference": "West Coast",
+        "sport": "msoc",
+        "schedule_url": "https://lmulions.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Loyola Marymount University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 72
+    },
+    {
+        "team_id": "PACIFIC",
+        "name_canonical": "Pacific",
+        "conference": "West Coast",
+        "sport": "msoc",
+        "schedule_url": "https://pacifictigers.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of the Pacific (United States)"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 108
+    },
+    {
+        "team_id": "PORTLAND",
+        "name_canonical": "Portland",
+        "conference": "West Coast",
+        "sport": "msoc",
+        "schedule_url": "https://portlandpilots.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of Portland"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 92
+    },
+    {
+        "team_id": "SAINT_MARY_S",
+        "name_canonical": "Saint Mary's",
+        "conference": "West Coast",
+        "sport": "msoc",
+        "schedule_url": "https://smcgaels.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Saint Mary's College of California"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 18
+    },
+    {
+        "team_id": "SAN_DIEGO",
+        "name_canonical": "San Diego",
+        "conference": "West Coast",
+        "sport": "msoc",
+        "schedule_url": "https://usdtoreros.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of San Diego"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 154
+    },
+    {
+        "team_id": "SAN_FRANCISCO",
+        "name_canonical": "San Francisco",
+        "conference": "West Coast",
+        "sport": "msoc",
+        "schedule_url": "https://usfdons.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of San Francisco"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 19
+    },
+    {
+        "team_id": "SANTA_CLARA",
+        "name_canonical": "Santa Clara",
+        "conference": "West Coast",
+        "sport": "msoc",
+        "schedule_url": "https://santaclarabroncos.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Santa Clara University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 112
+    },
+    {
+        "team_id": "SEATTLE",
+        "name_canonical": "Seattle",
+        "conference": "West Coast",
+        "sport": "msoc",
+        "schedule_url": "https://goseattleu.com/sports/mens-soccer/schedule",
+        "platform_guess": "wmt",
+        "parser_key": "wmt_std",
+        "aliases": [
+            "Seattle University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 19
+    }
+]

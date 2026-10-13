@@ -1,0 +1,83 @@
+# Publishes the dashboard, so the pipeline ends somewhere other than a laptop.
+#
+# The site is static and its data is already in this repository, so there is nothing to
+# host: the build reads the CSVs in `data/`, regenerates the JSON the dashboard imports,
+# and the result is uploaded straight to GitHub Pages. Nothing is stored between runs —
+# a deploy is always a full rebuild from the committed CSVs, which is what makes it safe
+# to run after every refresh.
+#
+# One manual step, once: Settings -> Pages -> Source: "GitHub Actions". Without it the
+# deploy job fails with "Get Pages site failed" and the build above it still passes.
+name: Deploy dashboard
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ncaa-soccer/apps/dashboard/**'
+      - 'ncaa-soccer/apps/scraper/src/scripts/generate_dashboard_*.ts'
+      - 'ncaa-soccer/packages/**'
+      - 'ncaa-soccer/data/**'
+      - '.github/workflows/deploy.yml'
+  # Called by refresh.yml once new data is committed. A push made with GITHUB_TOKEN does
+  # not start another workflow, so the trigger above never fires for a refresh commit and
+  # the site would sit on yesterday's data forever.
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deploy at a time, and never cancel one that is already publishing — a half-uploaded
+# site is worse than a stale one. Runs queued behind the current deploy collapse to the
+# newest, which is the right answer when they all rebuild from the same committed data.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: ncaa-soccer/package-lock.json
+
+      - name: Install
+        run: npm ci
+        working-directory: ncaa-soccer
+
+      # Tells us the URL and, more usefully, the path prefix the site will live under.
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      # `npm run build` here is generate -> tsc -> vite build: the dashboard's JSON is
+      # rebuilt from the committed CSVs rather than read from the repository, which is
+      # why that JSON is gitignored.
+      - name: Build dashboard
+        run: npm run build
+        working-directory: ncaa-soccer/apps/dashboard
+        env:
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ncaa-soccer/apps/dashboard/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
