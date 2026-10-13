@@ -1,13 +1,15 @@
 /**
  * The rating, forecast and impact data, and the types the views read it through.
  *
- * Everything here is written by `generate_dashboard_analytics.ts`. The index is imported
- * eagerly because the navigation, the season control and the coverage notice are all
- * built from it; the per-season files are an order of magnitude larger and are fetched
- * only when a season is actually selected.
+ * Everything here is written by `generate_dashboard_analytics.ts`, which the ingestion
+ * worker runs nightly against the database and stores for the API to serve. The index
+ * is fetched once at startup because the navigation, the season control and the
+ * coverage notice are all built from it; the per-season files are an order of
+ * magnitude larger and are fetched only when a season is actually selected.
  */
 
-import index from './data/analytics/index.json';
+import { artifact, ApiRequestError } from './api';
+import type { Manifest } from './types';
 
 export interface CoverageSeason {
     season: string;
@@ -195,22 +197,45 @@ export interface EloTimeline {
     teams: { team: string; points: [string, number][] }[];
 }
 
-export const ANALYTICS = index as AnalyticsIndex;
+/**
+ * The analytics index and the season-stats manifest, set once by {@link bootstrapData}
+ * before any view renders. Live bindings: every importer sees the loaded values.
+ */
+export let ANALYTICS: AnalyticsIndex = undefined as unknown as AnalyticsIndex;
+export let MANIFEST: Manifest = undefined as unknown as Manifest;
+/** Seasons with predictions, newest first — how every season control is ordered. */
+export let SEASONS_NEWEST_FIRST: string[] = [];
 
 /**
- * The large files, resolved but not fetched.
+ * Loads the two small index files the analytics views are built from.
  *
- * Each of these is around a megabyte per season, so they are behind `import.meta.glob`'s
- * lazy loaders and Vite splits them into their own chunks. A reader who only ever opens
- * the rankings never downloads a season of predictions.
+ * Resolves false rather than throwing when they are not there yet — a fresh deployment
+ * before its first analytics run — so the database-backed views still work.
  */
-const predictionFiles = import.meta.glob<{ default: SeasonPredictions }>('./data/analytics/predictions/*.json');
-const impactFiles = import.meta.glob<{ default: { season: string; players: ImpactPlayer[] } }>(
-    './data/analytics/impact/*.json'
-);
-const ratingsFile = () => import('./data/analytics/ratings.json');
-const timelineFile = () => import('./data/analytics/elo_timeline.json');
-const standoutsFile = () => import('./data/analytics/standouts.json');
+export async function bootstrapData(): Promise<boolean> {
+    try {
+        const [index, manifest] = await Promise.all([
+            artifact<AnalyticsIndex>('analytics/index.json'),
+            artifact<Manifest>('manifest.json')
+        ]);
+        ANALYTICS = index;
+        MANIFEST = manifest;
+        SEASONS_NEWEST_FIRST = [...index.seasons].sort((a, b) => b.localeCompare(a));
+        return true;
+    } catch (err) {
+        if (err instanceof ApiRequestError && err.status === 404) return false;
+        throw err;
+    }
+}
+
+/**
+ * The large files, fetched only when a view asks for them. Each is around a megabyte per
+ * season; a reader who only ever opens the rankings never downloads a season of
+ * predictions.
+ */
+const ratingsFile = () => artifact<{ teams: TeamRating[] }>('analytics/ratings.json');
+const timelineFile = () => artifact<EloTimeline>('analytics/elo_timeline.json');
+const standoutsFile = () => artifact<{ weeks: Standout[] }>('analytics/standouts.json');
 
 /** Resolves once per file and caches, so switching back to a view is instant. */
 function cached<T>(load: () => Promise<T>): () => Promise<T> {
@@ -218,42 +243,36 @@ function cached<T>(load: () => Promise<T>): () => Promise<T> {
     return () => (pending ??= load());
 }
 
-export const loadRatings = cached(async (): Promise<TeamRating[]> => {
-    const module = await ratingsFile();
-    return (module.default as { teams: TeamRating[] }).teams;
-});
+export const loadRatings = cached(async (): Promise<TeamRating[]> => (await ratingsFile()).teams);
 
-export const loadTimeline = cached(async (): Promise<EloTimeline> => {
-    const module = await timelineFile();
-    // The JSON's tuples widen to `(string | number)[]` on import, which no assertion
-    // narrows directly; the shape is guaranteed by the generator that wrote it.
-    return module.default as unknown as EloTimeline;
-});
+export const loadTimeline = cached(timelineFile);
 
-export const loadStandouts = cached(async (): Promise<Standout[]> => {
-    const module = await standoutsFile();
-    return (module.default as { weeks: Standout[] }).weeks;
-});
+export const loadStandouts = cached(async (): Promise<Standout[]> => (await standoutsFile()).weeks);
 
-const perSeason = <T>(files: Record<string, () => Promise<{ default: T }>>, folder: string) => {
+/** A per-season file, or null when that season has none (it was excluded, or not built). */
+const perSeason = <T>(folder: string) => {
     const memo = new Map<string, Promise<T | null>>();
     return (season: string): Promise<T | null> => {
         const existing = memo.get(season);
         if (existing) return existing;
-        const loader = files[`./data/analytics/${folder}/${season}.json`];
-        const pending = loader ? loader().then(module => module.default) : Promise.resolve(null);
+        const pending = artifact<T>(`${folder}/${season}.json`).catch(err => {
+            memo.delete(season); // a network failure may be retried; a 404 is just "no file"
+            if (err instanceof ApiRequestError && err.status === 404) return null;
+            throw err;
+        });
         memo.set(season, pending);
         return pending;
     };
 };
 
-export const loadPredictions = perSeason<SeasonPredictions>(predictionFiles, 'predictions');
-const loadImpactFile = perSeason<{ season: string; players: ImpactPlayer[] }>(impactFiles, 'impact');
+export const loadPredictions = perSeason<SeasonPredictions>('analytics/predictions');
+const loadImpactFile = perSeason<{ season: string; players: ImpactPlayer[] }>('analytics/impact');
+
+/** One season of the season-stats table (`seasons/<year>.json`, or `all-time`). */
+export const loadSeasonFile = perSeason<import('./types').SeasonFile>('seasons');
 
 export async function loadImpact(season: string): Promise<ImpactPlayer[]> {
     const file = await loadImpactFile(season);
     return file?.players ?? [];
 }
 
-/** Seasons with predictions, newest first — how every season control is ordered. */
-export const SEASONS_NEWEST_FIRST = [...ANALYTICS.seasons].sort((a, b) => b.localeCompare(a));

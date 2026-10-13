@@ -31,3 +31,23 @@ export function signed(value: number): string {
 export function count(value: number): string {
     return value.toLocaleString();
 }
+
+/** `null` → an em dash. A box score that did not record a stat did not record zero. */
+export function num(value: number | null | undefined): string {
+    return value === null || value === undefined ? '—' : value.toLocaleString();
+}
+
+export const STATUS_LABEL: Record<string, string> = {
+    final: 'Final',
+    scheduled: 'Scheduled',
+    postponed: 'Postponed',
+    canceled: 'Canceled',
+    live: 'Live',
+    unknown: 'Unknown'
+};
+
+export const BOXSCORE_LABEL: Record<string, string> = {
+    complete: 'Both teams',
+    partial: 'One team',
+    none: 'None'
+};

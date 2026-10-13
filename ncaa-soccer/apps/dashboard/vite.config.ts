@@ -17,6 +17,11 @@ export default defineConfig({
   base,
   plugins: [react()],
   server: {
+    // Local development against a local API (`npm run api` at the repo root). In
+    // production the site calls VITE_API_BASE_URL directly and this is not used.
+    proxy: {
+      '/api': process.env.VITE_DEV_API_PROXY || 'http://localhost:3001',
+    },
     watch: {
       // The repo commonly sits on a bind mount (WSL2, Docker), where inotify events do
       // not cross the boundary: Vite keeps serving the module it first transformed and

@@ -6,7 +6,11 @@
  * for the advisory lock it holds for the length of a run.
  */
 
-import { Pool, PoolClient, PoolConfig } from 'pg';
+import { Pool, PoolClient, PoolConfig, types } from 'pg';
+
+// bigint ids come back as strings by default. Every id here is far below 2^53, and the
+// API's clients expect numbers.
+types.setTypeParser(types.builtins.INT8, value => Number(value));
 
 export interface DatabaseOptions {
     connectionString?: string;

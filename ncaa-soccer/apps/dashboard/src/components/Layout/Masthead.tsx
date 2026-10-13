@@ -1,5 +1,7 @@
 import { Search, Activity } from 'lucide-react';
 import type { ChangeEvent } from 'react';
+import { useApi } from '../../api';
+import { href } from '../../route';
 import { VIEWS } from '../../views';
 import type { ViewId } from '../../views';
 
@@ -10,7 +12,12 @@ interface MastheadProps {
     onSearch: (term: string) => void;
     /** What the search box narrows on this view, so the placeholder is never a lie. */
     searchPlaceholder: string;
-    generatedAt: string;
+    /** On pages the search does not apply to, the box is disabled rather than ignored. */
+    searchDisabled?: boolean;
+}
+
+interface Freshness {
+    freshness: { last_successful_sync: string | null; hours_since_sync: number | null };
 }
 
 /**
@@ -20,11 +27,15 @@ interface MastheadProps {
  * thing everywhere — narrow what is on screen to a name — and moving it per view would
  * make a reader hunt for it after every tab change.
  */
-export function Masthead({ view, onView, searchTerm, onSearch, searchPlaceholder, generatedAt }: MastheadProps) {
-    const built = new Date(generatedAt);
-    const builtLabel = Number.isNaN(built.getTime())
-        ? null
-        : built.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+export function Masthead({ view, onView, searchTerm, onSearch, searchPlaceholder, searchDisabled }: MastheadProps) {
+    // When the database last synced, from the API, so the page says how current it is.
+    const status = useApi<Freshness>('/api/v1/data-status');
+    const synced = status.data?.freshness.last_successful_sync;
+    const hours = status.data?.freshness.hours_since_sync ?? null;
+    const syncedLabel = synced
+        ? new Date(synced).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
+        : null;
+    const stale = hours !== null && hours > 36;
 
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => onSearch(event.target.value);
 
@@ -39,7 +50,15 @@ export function Masthead({ view, onView, searchTerm, onSearch, searchPlaceholder
                         <span className="brand-name">College Soccer Lab</span>
                         <br />
                         <span className="brand-sub">
-                            NCAA Division I men’s soccer{builtLabel ? ` · built ${builtLabel}` : ''}
+                            NCAA Division I men’s soccer
+                            {syncedLabel && (
+                                <>
+                                    {' · '}
+                                    <a href={href('status')} className={stale ? 'sync-label is-stale' : 'sync-label'}>
+                                        {stale ? 'stale — ' : ''}synced {syncedLabel}
+                                    </a>
+                                </>
+                            )}
                         </span>
                     </span>
                 </div>
@@ -66,6 +85,7 @@ export function Masthead({ view, onView, searchTerm, onSearch, searchPlaceholder
                             onChange={handleChange}
                             placeholder={searchPlaceholder}
                             aria-label={searchPlaceholder}
+                            disabled={searchDisabled}
                         />
                     </div>
                 </div>

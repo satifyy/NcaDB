@@ -730,24 +730,28 @@ export async function loadSeason(pool: Pool, batch: SeasonBatch): Promise<LoadRe
         );
         const sides = new Map(gameTeams.map(g => [Number(g.id), [g.home_team_id, g.away_team_id]]));
 
-        const { ids: playerIds, inserted: playersInserted } = await upsertPlayers(client, sport, batch.stats, teamIds);
-
-        const statRows = new Map<string, StatRow>();
+        // Rows are matched to their game first, so a rejected row never creates a player.
         const unknownGame: PlayerStatRecord[] = [];
         const ambiguousGame: PlayerStatRecord[] = [];
-        const wrongSide: PlayerStatRecord[] = [];
-        let duplicates = 0;
+        const accepted: { record: PlayerStatRecord; gameId: number }[] = [];
         for (const s of batch.stats) {
             const candidates = bySourceId.get(s.sourceGameId);
-            if (!candidates) {
-                unknownGame.push(s);
-                continue;
-            }
-            if (candidates.length > 1) {
-                ambiguousGame.push(s);
-                continue;
-            }
-            const gameId = candidates[0];
+            if (!candidates) unknownGame.push(s);
+            else if (candidates.length > 1) ambiguousGame.push(s);
+            else accepted.push({ record: s, gameId: candidates[0] });
+        }
+
+        const { ids: playerIds, inserted: playersInserted } = await upsertPlayers(
+            client,
+            sport,
+            accepted.map(a => a.record),
+            teamIds
+        );
+
+        const statRows = new Map<string, StatRow>();
+        const wrongSide: PlayerStatRecord[] = [];
+        let duplicates = 0;
+        for (const { record: s, gameId } of accepted) {
             const teamId = teamIds.get(s.teamSlug)!;
             const playerId = playerIds.get(s.identityKey)!;
             if (!sides.get(gameId)?.includes(teamId)) wrongSide.push(s);

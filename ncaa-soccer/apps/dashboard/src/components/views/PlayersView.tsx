@@ -4,21 +4,11 @@ import { KPIGrid } from '../Dashboard/KPIGrid';
 import { ChartsGrid } from '../Dashboard/ChartsGrid';
 import { PlayerTable } from '../Dashboard/PlayerTable';
 import { MoversPanel } from '../Dashboard/MoversPanel';
-import manifest from '../../data/manifest.json';
-import type { Manifest, PlayerStat, SeasonFile } from '../../types';
+import { loadSeasonFile, MANIFEST } from '../../analytics';
+import type { PlayerStat, SeasonFile } from '../../types';
 import { Notice } from '../ui';
 import { percent } from '../../format';
 
-/**
- * One module per season, resolved but not fetched.
- *
- * A season is around 2 MB of JSON. Importing them all to display one would make every
- * reader wait on seasons they did not ask for, so Vite is asked for lazy loaders and
- * splits each season into its own chunk.
- */
-const seasonModules = import.meta.glob<{ default: SeasonFile }>('../../data/seasons/*.json');
-
-const INDEX = manifest as Manifest;
 
 /**
  * The schools and conferences a row belongs to.
@@ -40,7 +30,7 @@ interface Props {
 
 /** Raw season totals: the counting stats, unadjusted, as the box scores recorded them. */
 export function PlayersView({ searchTerm, onSearch }: Props) {
-    const [season, setSeason] = useState(INDEX.default_season);
+    const [season, setSeason] = useState(MANIFEST.default_season);
     const [conference, setConference] = useState('all');
     const [team, setTeam] = useState('all');
 
@@ -65,28 +55,17 @@ export function PlayersView({ searchTerm, onSearch }: Props) {
             if (current) setLoaded({ season, ...value });
         };
 
-        const loader = seasonModules[`../../data/seasons/${season}.json`];
-        if (!loader) {
-            // Resolved rather than reported straight away: writing state from an effect
-            // body renders twice for no gain.
-            Promise.resolve().then(() =>
-                settle({ players: [], meta: null, error: `No data file for the ${season} season.` })
-            );
-            return () => {
-                current = false;
-            };
-        }
-
-        loader()
-            .then(module =>
-                settle({
-                    players: module.default.players,
-                    meta: {
-                        movers_mode: module.default.movers_mode,
-                        compared_to: module.default.compared_to
-                    },
-                    error: null
-                })
+        loadSeasonFile(season)
+            .then(file =>
+                settle(
+                    file
+                        ? {
+                              players: file.players,
+                              meta: { movers_mode: file.movers_mode, compared_to: file.compared_to },
+                              error: null
+                          }
+                        : { players: [], meta: null, error: `No data file for the ${season} season.` }
+                )
             )
             .catch(() => settle({ players: [], meta: null, error: `Could not load the ${season} season.` }));
 
@@ -147,7 +126,7 @@ export function PlayersView({ searchTerm, onSearch }: Props) {
 
     const filtered = conference !== 'all' || team !== 'all' || searchTerm.trim() !== '';
     const isAllTime = season === 'all-time';
-    const excluded = INDEX.excluded_seasons ?? [];
+    const excluded = MANIFEST.excluded_seasons ?? [];
 
     return (
         <>
@@ -180,7 +159,7 @@ export function PlayersView({ searchTerm, onSearch }: Props) {
             )}
 
             <FilterBar
-                seasons={INDEX.seasons}
+                seasons={MANIFEST.seasons}
                 season={season}
                 onSeasonChange={setSeason}
                 conferences={conferences}

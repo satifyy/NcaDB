@@ -5,8 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "generate": "tsx ../scraper/src/scripts/generate_dashboard_data.ts && tsx ../scraper/src/scripts/generate_dashboard_analytics.ts",
-    "build": "npm run generate && tsc -b && vite build",
+    "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },

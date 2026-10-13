@@ -1,3 +1,8 @@
+# LEGACY: superseded by the Railway ingestion worker (apps/worker), which refreshes the
+# database nightly. This workflow scrapes into the committed CSVs instead, and is kept
+# only as a manual way to refresh those files. It no longer runs on a schedule: running
+# both would scrape every school's site twice a night.
+#
 # Keeps the current season up to date without anyone running anything.
 #
 # In season the pipeline is worth running daily: schedules gain results, and box scores
@@ -11,10 +16,6 @@
 name: Refresh season data
 
 on:
-  schedule:
-    # 09:00 UTC daily, August through December — early morning in the US, so the
-    # previous evening's games have final box scores by the time this runs.
-    - cron: '0 9 * 8-12 *'
   workflow_dispatch:
     inputs:
       season:
@@ -107,16 +108,3 @@ jobs:
       - name: Pipeline state
         if: always()
         run: cat data/pipeline_state.json || true
-
-
-  # A push made with GITHUB_TOKEN does not trigger `on: push`, so the deploy workflow
-  # has to be called rather than left to notice the commit above. Skipped when the
-  # refresh failed (`needs`) and when it changed nothing (`if`).
-  publish:
-    needs: refresh
-    if: needs.refresh.outputs.changed == 'true'
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-    uses: ./.github/workflows/deploy.yml

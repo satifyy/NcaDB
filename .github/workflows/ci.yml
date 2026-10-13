@@ -1,8 +1,6 @@
-# Guards the scheduled refresh.
-#
-# The refresh workflow commits scraped data back to this repository without anyone
-# looking at it, so the checks that would otherwise be a formality are the only thing
-# standing between a bad parser change and a season of corrupted CSVs.
+# Runs on every pull request and on main. Nothing here deploys: Railway (API, worker)
+# and Vercel (dashboard) deploy from main through their GitHub integrations, and only
+# after this workflow is green if branch protection requires it (see docs/DEPLOYMENT.md).
 name: CI
 
 on:
@@ -18,22 +16,30 @@ defaults:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: ncadb_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/ncadb_test
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
     steps:
       - uses: actions/checkout@v4
 
-      # `apps/dashboard/src/data` is 72 MB of JSON that both generate steps rebuild from
-      # the CSVs beside it. It is in .gitignore, but .gitignore does nothing to a file
-      # already in the index — which is how it got committed the first time. A branch
-      # that re-adds one with `git add -f`, or that reverts the .gitignore, would put the
-      # scheduled refresh back to pushing 72 MB a day. Cheaper to fail here.
+      # `apps/dashboard/src/data` used to be 72 MB of generated JSON committed by hand.
+      # The dashboard now reads it from the API; it must never come back into git.
       - name: No generated dashboard data in git
         run: |
           tracked=$(git ls-files apps/dashboard/src/data)
           if [ -n "$tracked" ]; then
-            echo "::error::Generated dashboard data is tracked; it is rebuilt by 'npm run generate'."
+            echo "::error::Generated dashboard data is tracked."
             echo "$tracked"
-            echo 'Remove it with: git rm --cached -r apps/dashboard/src/data'
             exit 1
           fi
 
@@ -45,22 +51,20 @@ jobs:
 
       - run: npm ci
 
-      - name: Build workspaces
-        run: npm run build
+      - name: Typecheck (packages, scraper, worker, API)
+        run: npm run typecheck
 
       - name: Unit tests
-        run: npx tsx --test apps/scraper/src/tests/*.test.ts
+        run: npm test
 
-      # A team inventory that fails its schema is the one input the scrapers cannot
-      # recover from, and it is edited by a script rather than by hand.
+      # Migrations applied from scratch, then loader, API and worker CLI against a real
+      # Postgres: idempotency, corrections, rollback, locking, failure and retry.
+      - name: Database, API and worker tests
+        run: npm run test:db
+
       - name: Validate team inventories
         run: npm run validate
 
-      # A workspace member, so the root `npm ci` above already installed its deps.
-      #
-      # Lint before build: `npm run build` regenerates the dashboard's JSON and then runs
-      # Vite over 72 MB of it, which is most of this job's minutes. A rule violation
-      # should not have to wait behind that to be reported.
       - name: Lint dashboard
         run: npm run lint
         working-directory: ncaa-soccer/apps/dashboard
@@ -68,3 +72,16 @@ jobs:
       - name: Build dashboard
         run: npm run build
         working-directory: ncaa-soccer/apps/dashboard
+        env:
+          VITE_API_BASE_URL: https://api.example.invalid
+
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Scan for committed secrets
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

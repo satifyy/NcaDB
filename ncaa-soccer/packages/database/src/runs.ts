@@ -20,7 +20,17 @@ export const INGESTION_LOCK_KEY = 7_340_211;
  * mid-run can never leave a stale lock behind — the next run simply acquires it.
  */
 export class IngestionLock {
-    private constructor(private client: PoolClient) {}
+    /** Set when the lock's connection died; the lock is gone with it. */
+    lost = false;
+
+    private constructor(private client: PoolClient) {
+        // A checked-out client reports a dropped connection as an 'error' event, and an
+        // unhandled one would crash the run. The lock is released by Postgres either way.
+        client.on('error', err => {
+            this.lost = true;
+            console.error(JSON.stringify({ level: 'error', msg: 'ingestion lock connection lost', error: err.message }));
+        });
+    }
 
     static async tryAcquire(pool: Pool): Promise<IngestionLock | null> {
         const client = await pool.connect();
@@ -39,9 +49,10 @@ export class IngestionLock {
 
     async release(): Promise<void> {
         try {
-            await this.client.query('SELECT pg_advisory_unlock($1)', [INGESTION_LOCK_KEY]);
+            if (!this.lost) await this.client.query('SELECT pg_advisory_unlock($1)', [INGESTION_LOCK_KEY]);
         } finally {
-            this.client.release();
+            // A dead connection must not go back into the pool.
+            this.client.release(this.lost);
         }
     }
 }

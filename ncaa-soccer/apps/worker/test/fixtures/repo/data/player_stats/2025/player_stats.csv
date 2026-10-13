@@ -1,0 +1,9 @@
+game_id,team_id,player_name,player_key,jersey_number,minutes,goals,assists,shots,shots_on_goal,saves
+sidearm-2025-09-05-Duke-Clemson,Duke,"Scorer, Ana",duke:scorerana,9,90,2,0,4,3,0
+sidearm-2025-09-05-Duke-Clemson,Duke,"Keeper, Bo",duke:keeperbo,1,90,0,0,0,0,5
+sidearm-2025-09-05-Duke-Clemson,CU,"Striker, Cy",cu:strikercy,10,90,1,0,3,2,0
+sidearm-2025-09-05-Duke-Clemson,CU,"Gloves, Di",cu:glovesdi,0,90,0,0,0,0,
+sidearm-2025-09-12-Indiana-Duke,Indiana,"Hoosier, Ed",indiana:hoosiered,7,90,0,0,2,1,0
+sidearm-2025-09-12-Indiana-Duke,Duke,"Scorer, Ana",duke:scorerana,9,88,0,0,1,0,0
+sidearm-2025-09-12-Indiana-Duke,Duke,Player,duke:player,##,0,0,0,0,0,0
+sidearm-2025-09-12-Indiana-Duke,Unknown,"Mystery, Max",unknown:mysterymax,4,10,0,0,0,0,0
