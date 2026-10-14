@@ -12,7 +12,22 @@
     <title>College Soccer Lab — NCAA Division I men's soccer</title>
   </head>
   <body>
-    <div id="root"></div>
+    <!--
+      Shown until the app mounts, so the page is never empty. If the script cannot load
+      or run (blocked, offline, an extension), the second line appears after a few
+      seconds via CSS alone: no inline script, so it works under the site's CSP.
+    -->
+    <div id="root">
+      <div class="boot" role="status">
+        <p class="boot-title">College Soccer Lab</p>
+        <p>Loading NCAA Division I men’s soccer data…</p>
+        <p class="boot-slow">
+          Still loading? Reload the page. If this persists, a browser extension or network
+          filter may be blocking the site’s scripts.
+        </p>
+        <noscript><p>This site needs JavaScript to show its data.</p></noscript>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

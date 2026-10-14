@@ -1,0 +1,33 @@
+# Loads the live site in a browser on a schedule, so a blank or broken deploy is noticed
+# without anyone visiting it. Read-only: no secrets, no writes.
+name: Production smoke
+
+on:
+  schedule:
+    - cron: '23 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: ncaa-soccer
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: ncaa-soccer/package-lock.json
+      - run: npm ci
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+      - run: npx playwright install --with-deps chromium
+      - name: Smoke test https://satifyy.com/ncadb/
+        run: npm run smoke -- --url https://satifyy.com/ncadb/
+        working-directory: ncaa-soccer/apps/dashboard

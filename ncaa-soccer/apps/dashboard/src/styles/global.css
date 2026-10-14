@@ -1159,3 +1159,42 @@ body {
         margin-bottom: var(--space-2);
     }
 }
+
+.boot-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+}
+
+.boot p {
+    max-width: 46ch;
+    padding: 0 var(--space-4);
+    text-align: center;
+}
+
+/* Hidden at first; revealed after 8 s only if the app never replaced the boot screen. */
+.boot-slow {
+    opacity: 0;
+    font-size: 0.875rem;
+    color: var(--color-warning);
+    animation: boot-reveal 0s linear 8s forwards;
+}
+
+@keyframes boot-reveal {
+    to {
+        opacity: 1;
+    }
+}
+
+.view-error {
+    display: grid;
+    gap: var(--space-3);
+    justify-items: center;
+    margin-top: var(--space-8);
+    padding: var(--space-8) var(--space-4);
+    text-align: center;
+    color: var(--color-text-secondary);
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+}
