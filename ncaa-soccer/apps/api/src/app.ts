@@ -20,8 +20,17 @@ import { teamRoutes } from './routes/teams';
 export async function buildApp(pool: Pool, config: ApiConfig, options: { logger?: boolean } = {}): Promise<FastifyInstance> {
     const app = Fastify({
         logger: options.logger === false ? false : { level: process.env.LOG_LEVEL || 'info' },
-        // Railway terminates TLS at its edge proxy; the client address is in X-Forwarded-For.
+        // Railway terminates TLS at its edge proxy, which overwrites X-Forwarded-For with the
+        // real client address (verified: a spoofed header does not change the rate-limit
+        // key), so the forwarded address can be trusted.
         trustProxy: true,
+        // The API takes no request bodies; anything larger than this is not a real client.
+        bodyLimit: 1024,
+        connectionTimeout: 30_000,
+        requestTimeout: 30_000,
+        keepAliveTimeout: 65_000,
+        // During a deploy's shutdown, refuse new requests cleanly instead of hanging them.
+        return503OnClosing: true,
         ajv: { customOptions: { coerceTypes: true, removeAdditional: true, useDefaults: true } }
     });
 
@@ -51,7 +60,24 @@ export async function buildApp(pool: Pool, config: ApiConfig, options: { logger?
     await app.register(rateLimit, {
         max: config.rateLimitPerMinute,
         timeWindow: '1 minute',
-        allowList: (req: { url: string }) => req.url === '/health'
+        allowList: (req: { url: string }) => req.url === '/health',
+        onExceeded: req => {
+            req.log.warn({ event: 'security.rate_limited', ip: req.ip, path: req.routeOptions?.url ?? req.url }, 'rate limit exceeded');
+        }
+    });
+
+    // Headers for a JSON API: nothing it returns should ever be rendered, framed, sniffed
+    // or loaded as a script, and HTTPS is the only way to reach it.
+    app.addHook('onSend', async (_request, reply, payload) => {
+        reply.header('Content-Security-Policy', "default-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'");
+        reply.header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+        reply.header('X-Content-Type-Options', 'nosniff');
+        reply.header('X-Frame-Options', 'DENY');
+        reply.header('Referrer-Policy', 'no-referrer');
+        reply.header('Cross-Origin-Resource-Policy', 'cross-origin');
+        reply.header('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
+        reply.removeHeader('X-Powered-By');
+        return payload;
     });
 
     app.setErrorHandler((error: FastifyError | ApiError, request, reply) => {

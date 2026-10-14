@@ -5,6 +5,7 @@ import { SidearmParser } from './sidearm/schedule';
 export * from './sidearm/boxscore';
 export * from './names';
 export * from './politeness';
+export * from './url_guard';
 export * from './game_type';
 export * from './wmt/client';
 export * from './wmt/schedule';

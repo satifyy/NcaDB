@@ -17,6 +17,8 @@ export interface DatabaseOptions {
     max?: number;
     /** Application name shown in pg_stat_activity, so a stuck query names its owner. */
     applicationName?: string;
+    /** Per-statement limit; overrides DATABASE_STATEMENT_TIMEOUT_MS. */
+    statementTimeoutMs?: number;
 }
 
 /** Strips the password from a connection string, for logs. */
@@ -46,7 +48,11 @@ export function poolConfig(options: DatabaseOptions = {}): PoolConfig {
         idleTimeoutMillis: 30_000,
         connectionTimeoutMillis: 10_000,
         // A runaway query should fail, not hold a connection until the platform kills it.
-        statement_timeout: Number(process.env.DATABASE_STATEMENT_TIMEOUT_MS || 120_000),
+        // Only when asked for: otherwise the role's own default applies (ncadb_api 5s,
+        // ncadb_worker 10min — see migration 002), which a pool-wide value would override.
+        statement_timeout:
+            options.statementTimeoutMs ??
+            (process.env.DATABASE_STATEMENT_TIMEOUT_MS ? Number(process.env.DATABASE_STATEMENT_TIMEOUT_MS) : undefined),
         application_name: options.applicationName ?? 'ncadb'
     };
 }

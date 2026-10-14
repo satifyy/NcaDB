@@ -4,7 +4,12 @@ import { loadConfig } from './config';
 
 async function main() {
     const config = loadConfig();
-    const pool = createPool({ max: Number(process.env.DATABASE_POOL_MAX || 10), applicationName: 'ncadb-api' });
+    // Public read traffic: no query may run long enough to tie up the database.
+    const pool = createPool({
+        max: Number(process.env.DATABASE_POOL_MAX || 10),
+        applicationName: 'ncadb-api',
+        statementTimeoutMs: Number(process.env.DATABASE_STATEMENT_TIMEOUT_MS || 5_000)
+    });
     await waitForDatabase(pool);
     const app = await buildApp(pool, config);
 

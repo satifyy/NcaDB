@@ -201,7 +201,7 @@ export async function ingestSeason(ctx: RunContext, plan: SeasonPlan): Promise<S
 export async function loadFromWorkDir(
     ctx: RunContext,
     season: number,
-    options: { complete: boolean; includeStats: boolean; root?: string }
+    options: { complete: boolean; includeStats: boolean; root?: string; allowMassDelete?: boolean }
 ): Promise<LoadResult | undefined> {
     const root = options.root ?? ctx.config.workDir;
     return task(ctx, 'load', season, { complete: options.complete, include_stats: options.includeStats }, async taskId => {
@@ -211,7 +211,7 @@ export async function loadFromWorkDir(
         }
         const inventory = loadInventory(teamsDir(root));
         const { batch, issues } = buildSeasonBatch(season, games, options.includeStats ? stats : [], inventory, options.complete);
-        const result = await loadSeason(ctx.pool, batch);
+        const result = await loadSeason(ctx.pool, { ...batch, allowMassDelete: options.allowMassDelete });
         const allIssues = [...issues, ...result.issues];
         await recordIssues(ctx.pool, ctx.runId, taskId, season, allIssues);
         result.issues = allIssues;

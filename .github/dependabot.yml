@@ -1,0 +1,19 @@
+# Weekly dependency update proposals. Each arrives as a pull request and goes through CI
+# like any other change; nothing is merged automatically.
+#
+# The Playwright base image in Dockerfile.worker is deliberately not here: it must move
+# in lockstep with playwright-chromium in package-lock.json, so bump both by hand.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /ncaa-soccer
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      minor-and-patch:
+        update-types: [minor, patch]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

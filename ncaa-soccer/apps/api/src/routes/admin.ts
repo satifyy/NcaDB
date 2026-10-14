@@ -21,13 +21,26 @@ function tokensMatch(given: string, expected: string): boolean {
 export async function adminRoutes(app: FastifyInstance, opts: { pool: Pool; token: string }) {
     const { pool, token } = opts;
 
+    // Every admin route: tighter rate limit, hidden from the public OpenAPI document.
+    app.addHook('onRoute', routeOptions => {
+        routeOptions.config = { ...(routeOptions.config as object), rateLimit: { max: 30, timeWindow: '1 minute' } };
+        routeOptions.schema = { ...routeOptions.schema, hide: true };
+    });
+
     app.addHook('onRequest', async (request, reply) => {
         reply.header('Cache-Control', 'no-store');
         const header = request.headers.authorization ?? '';
         const given = header.startsWith('Bearer ') ? header.slice(7) : '';
         if (!given || !tokensMatch(given, token)) {
+            // Logged as a security event, distinguishable from ingestion noise; the
+            // presented value never is.
+            request.log.warn(
+                { event: 'security.admin_auth_failed', ip: request.ip, path: request.url, presented: given ? 'wrong token' : 'none' },
+                'admin authentication failed'
+            );
             throw new ApiError(401, 'unauthorized', 'A valid admin token is required');
         }
+        request.log.info({ event: 'security.admin_access', ip: request.ip, path: request.url }, 'admin access');
     });
 
     app.get<{ Querystring: Page & { kind?: string; status?: string } }>(

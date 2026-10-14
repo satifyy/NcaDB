@@ -52,7 +52,8 @@ export interface WmtScheduleEvent {
     wmt_stats2_iframe_url?: string | null;
 }
 
-import { SCRAPER_USER_AGENT as USER_AGENT, envNumber } from '../politeness';
+import { envNumber } from '../politeness';
+import { safeFetch } from '../url_guard';
 
 export interface WmtClientOptions {
     fetchImpl?: typeof fetch;
@@ -71,6 +72,8 @@ export class WmtHttpError extends Error {
 export class WmtClient {
     private readonly origin: string;
     private readonly fetchImpl: typeof fetch;
+    /** A test fetch against fixtures: the URL policy still applies, DNS is not consulted. */
+    private readonly fixtureFetch: boolean;
     private readonly timeoutMs: number;
     private readonly retries: number;
 
@@ -78,6 +81,7 @@ export class WmtClient {
     constructor(siteUrl: string, options: WmtClientOptions = {}) {
         this.origin = new URL(siteUrl).origin;
         this.fetchImpl = options.fetchImpl || fetch;
+        this.fixtureFetch = options.fetchImpl !== undefined;
         this.timeoutMs = options.timeoutMs ?? 30000;
         this.retries = options.retries ?? envNumber('SCRAPER_MAX_RETRIES', 3);
     }
@@ -97,14 +101,18 @@ export class WmtClient {
             const controller = new AbortController();
             const timer = setTimeout(() => controller.abort(), this.timeoutMs);
             try {
-                const response = await this.fetchImpl(url.toString(), {
-                    headers: { 'User-Agent': USER_AGENT, Accept: 'application/json' },
-                    signal: controller.signal
+                // Vetted (no internal hosts, redirects re-checked) and size-capped: the
+                // origin is from the inventory, but what it redirects to is not ours.
+                const response = await safeFetch(url.toString(), {
+                    headers: { Accept: 'application/json' },
+                    signal: controller.signal,
+                    fetchImpl: this.fetchImpl,
+                    skipDnsCheck: this.fixtureFetch
                 });
                 if (!response.ok) {
                     throw new WmtHttpError(`HTTP ${response.status} for ${url}`, response.status, url.toString());
                 }
-                return (await response.json()) as T;
+                return JSON.parse(response.text) as T;
             } catch (error) {
                 lastError = error as Error;
                 // 4xx means the resource is genuinely absent; only retry transport/5xx faults.

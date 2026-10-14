@@ -7,7 +7,11 @@ import {
     TeamNameResolver,
     WmtBoxScoreParser,
     envNumber,
-    interleaveByHost
+    interleaveByHost,
+    sourceAllowlist,
+    vetSourceUrl,
+    isInternalRequest,
+    CHROMIUM_NETWORK_GUARD_ARGS
 } from '@ncaa/parsers';
 import { buildTeamNameResolver, loadAllTeams } from '../utils/teams';
 const { chromium } = require('playwright-chromium');
@@ -82,6 +86,8 @@ const VIEWPORT = { width: 1280, height: 720 };
 const wmtBoxParser = new WmtBoxScoreParser();
 let wmtHosts = new Set<string>();
 let teamNameResolver: TeamNameResolver | undefined;
+/** Domains a box-score link may point at: the schools' own, plus shared stats hosts. */
+let allowedSources = new Set<string>();
 
 function hostOf(url: string): string {
     try {
@@ -348,6 +354,15 @@ async function processGame(
     boxParser: SidearmBoxScoreParser,
     opts?: { attempt?: number; waitLonger?: boolean; waitMs?: number; scrollWaitMs?: number }
 ): Promise<ProcessResult> {
+    // Links come from third-party pages; vet before the browser or a fetch touches them.
+    const verdict = await vetSourceUrl(game.boxscore_url || '', allowedSources);
+    if (!verdict.ok) {
+        logDebug(`BLOCKED [${game.game_id}] ${game.boxscore_url}: ${verdict.reason}`);
+        return { rows: [], success: false, skipped: `blocked URL (${verdict.reason})` };
+    }
+    if (game.boxscore_url_alt && !(await vetSourceUrl(game.boxscore_url_alt, allowedSources)).ok) {
+        game = { ...game, boxscore_url_alt: '' };
+    }
     await throttle.wait(throttleTarget(game.boxscore_url));
     const primary = await processGameOnce(browser, game, rawDir, boxParser, opts);
     if (primary.success || !game.boxscore_url_alt) return primary;
@@ -426,6 +441,7 @@ async function processGameOnce(
             const req = route.request();
             const type = req.resourceType();
             const url = req.url();
+            if (isInternalRequest(url)) return route.abort();
             const isHeavy = type === 'image' || type === 'media' || type === 'font';
             const isAnalytics = /google-analytics|gtag|segment|facebook|doubleclick|scorestream|snapchat|quantserve|googletagmanager|adservice|adzerk/i.test(url);
             if (isHeavy || isAnalytics) {
@@ -556,6 +572,7 @@ async function main() {
 
     const teams = loadAllTeams();
     teamNameResolver = buildTeamNameResolver(teams);
+    allowedSources = sourceAllowlist(teams.map(t => t.schedule_url));
     wmtHosts = new Set(
         teams
             .filter(t => t.platform_guess === 'wmt')
@@ -695,7 +712,8 @@ async function main() {
                 '--disable-dev-shm-usage',
                 '--no-sandbox',
                 '--disable-features=IsolateOrigins,site-per-process',
-                '--disable-blink-features=AutomationControlled'
+                '--disable-blink-features=AutomationControlled',
+                ...CHROMIUM_NETWORK_GUARD_ARGS
             ]
         });
 

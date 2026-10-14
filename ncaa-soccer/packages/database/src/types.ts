@@ -88,6 +88,8 @@ export interface SeasonBatch {
      * removes anything it does not mention.
      */
     complete: boolean;
+    /** Lets a complete batch delete more than the mass-deletion guard allows. */
+    allowMassDelete?: boolean;
 }
 
 export interface EntityCounts {

@@ -13,7 +13,10 @@ import {
     seasonNameCandidates,
     sportSlugFromScheduleUrl,
     SCRAPER_USER_AGENT,
-    envNumber
+    envNumber,
+    safeFetch,
+    isInternalRequest,
+    CHROMIUM_NETWORK_GUARD_ARGS
 } from '@ncaa/parsers';
 import { ACC_INVENTORY, DATA_DIR, GameStorageAdapter, gamesCsv } from '@ncaa/storage';
 import { buildTeamNameResolver, loadTeams, TeamConfig } from '../utils/teams';
@@ -164,14 +167,10 @@ async function processWmtSchool(team: TeamConfig, resolver: TeamNameResolver): P
  */
 async function processWmtWordpressSchool(team: TeamConfig, resolver: TeamNameResolver): Promise<any[]> {
     const url = `${team.schedule_url.replace(/\/$/, '')}/${SEASON_YEAR}`;
-    const response = await fetch(url, {
-        headers: {
-            'User-Agent': SCRAPER_USER_AGENT
-        }
-    });
+    const response = await safeFetch(url);
     if (!response.ok) throw new Error(`HTTP ${response.status} for ${url}`);
 
-    const games = await new WmtWordpressParser().parseSchedule(await response.text(), {
+    const games = await new WmtWordpressParser().parseSchedule(response.text, {
         teamName: team.name_canonical,
         baseUrl: team.schedule_url,
         sourceUrl: url,
@@ -209,7 +208,8 @@ async function processSchool(browser: any, team: TeamConfig, resolver: TeamNameR
     // Block images and CSS for faster loading
     await page.route('**/*', (route: any) => {
         const resourceType = route.request().resourceType();
-        if (['image', 'stylesheet', 'font', 'media'].includes(resourceType)) {
+        // A page's own sub-requests must not reach the private network either.
+        if (isInternalRequest(route.request().url()) || ['image', 'stylesheet', 'font', 'media'].includes(resourceType)) {
             route.abort();
         } else {
             route.continue();
@@ -476,7 +476,7 @@ async function main() {
 
     const browser = await chromium.launch({
         headless: true,
-        args: ['--disable-dev-shm-usage', '--no-sandbox'],
+        args: ['--disable-dev-shm-usage', '--no-sandbox', ...CHROMIUM_NETWORK_GUARD_ARGS],
         timeout: 60000
     });
 

@@ -17,7 +17,9 @@ export class ApiError extends Error {
 export const notFound = (what: string) => new ApiError(404, 'not_found', `${what} not found`);
 
 export const paginationQuery = {
-    page: { type: 'integer', minimum: 1, maximum: 10000, default: 1 },
+    // Deep offsets make Postgres walk and discard rows; 500 pages of 100 is the whole dataset
+    // for any real filter, and the bound keeps a crawler from paging into expensive scans.
+    page: { type: 'integer', minimum: 1, maximum: 500, default: 1 },
     page_size: { type: 'integer', minimum: 1, maximum: 100, default: 25 }
 } as const;
 

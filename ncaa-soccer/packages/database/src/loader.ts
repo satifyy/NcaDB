@@ -40,6 +40,15 @@ function chunks<T>(items: T[], size = CHUNK): T[][] {
     return out;
 }
 
+/**
+ * A whole-season load may delete at most this many stored source rows, or this share of
+ * the season, whichever is larger. Beyond it the load is refused and rolled back.
+ */
+export const MASS_DELETE_MIN_ROWS = 25;
+export const MASS_DELETE_MAX_SHARE = 0.05;
+
+export class MassDeletionError extends Error {}
+
 const zero = (): EntityCounts => ({ inserted: 0, updated: 0, unchanged: 0, deleted: 0 });
 
 export async function sportId(client: PoolClient | Pool): Promise<number> {
@@ -374,7 +383,8 @@ async function upsertGameSources(
     seasonId: number,
     games: MergedGame[],
     gameIds: Map<string, number>,
-    complete: boolean
+    complete: boolean,
+    allowMassDelete: boolean
 ): Promise<EntityCounts> {
     const counts = zero();
     const rows = games.flatMap(g =>
@@ -412,6 +422,20 @@ async function upsertGameSources(
         // fixture left with no source and no box score was a spelling the scraper has
         // since merged away; one that still has stats is kept whatever happens.
         const keys = rows.map(r => r.dedupe_key);
+        // ...unless the batch would remove a large part of the season, which is what a
+        // truncated file or a broken scrape looks like, not what the sources did.
+        const { rows: doomed } = await client.query<{ n: number; total: number }>(
+            `SELECT count(*) FILTER (WHERE NOT (dedupe_key = ANY($2::text[])))::int AS n, count(*)::int AS total
+             FROM game_sources WHERE season_id = $1`,
+            [seasonId, keys]
+        );
+        const limit = Math.max(MASS_DELETE_MIN_ROWS, Math.ceil(doomed[0].total * MASS_DELETE_MAX_SHARE));
+        if (doomed[0].n > limit && !allowMassDelete) {
+            throw new MassDeletionError(
+                `Refusing to delete ${doomed[0].n} of ${doomed[0].total} stored schedule rows for this season ` +
+                    `(limit ${limit}). If the season really shrank, re-run with --allow-mass-delete.`
+            );
+        }
         const removed = await client.query(
             `DELETE FROM game_sources WHERE season_id = $1 AND NOT (dedupe_key = ANY($2::text[]))`,
             [seasonId, keys]
@@ -573,7 +597,8 @@ async function recomputeTeamGameStats(client: PoolClient, seasonId: number): Pro
     // Statistics for the rows this transaction just wrote. Without them a first load
     // plans these joins as if the tables were empty, and nested-loops its way into the
     // statement timeout.
-    await client.query('ANALYZE games, player_game_stats, team_game_stats');
+    // Through a SECURITY DEFINER function: ANALYZE needs ownership, the worker has none.
+    await client.query('SELECT ncadb_analyze_ingestion_tables()');
     await client.query(
         `INSERT INTO team_game_stats (game_id, team_id, players, minutes, goals, assists, shots,
                                       shots_on_goal, saves, reported_score, goals_reconciliation, updated_at)
@@ -713,7 +738,7 @@ export async function loadSeason(pool: Pool, batch: SeasonBatch): Promise<LoadRe
         }
 
         const { ids: gameIds, counts: gameCounts } = await upsertGames(client, seasonId, merged);
-        const sourceCounts = await upsertGameSources(client, seasonId, merged, gameIds, batch.complete);
+        const sourceCounts = await upsertGameSources(client, seasonId, merged, gameIds, batch.complete, !!batch.allowMassDelete);
 
         // Which game each box-score row points at. Built from the database rather than
         // the batch, so a partial batch can still attach stats to games loaded earlier.
@@ -832,6 +857,6 @@ export async function loadSeason(pool: Pool, batch: SeasonBatch): Promise<LoadRe
 
 /** Rebuilds the read models the API's leaderboards and records come from. */
 export async function refreshReadModels(pool: Pool): Promise<void> {
-    await pool.query('REFRESH MATERIALIZED VIEW CONCURRENTLY player_season_stats');
-    await pool.query('REFRESH MATERIALIZED VIEW CONCURRENTLY team_season_records');
+    // Through a SECURITY DEFINER function: refreshing a view needs ownership.
+    await pool.query('SELECT ncadb_refresh_read_models()');
 }

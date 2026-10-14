@@ -7,9 +7,10 @@ ENV NODE_ENV=production \
 
 WORKDIR /app
 COPY . .
+# Code owned by root and read-only to the runtime user, which writes nothing.
 RUN npm ci --include=dev --no-audit --no-fund \
     && npx tsc -b \
-    && chown -R node:node /app
+    && chmod -R a-w /app
 
 USER node
 EXPOSE 3001
