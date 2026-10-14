@@ -79,11 +79,25 @@ jobs:
         run: npm run lint
         working-directory: ncaa-soccer/apps/dashboard
 
+      # Built exactly as production is (served under /ncadb/), against the fixture API the
+      # smoke test starts.
       - name: Build dashboard
         run: npm run build
         working-directory: ncaa-soccer/apps/dashboard
         env:
-          VITE_API_BASE_URL: https://api.example.invalid
+          BASE_PATH: /ncadb
+          VITE_API_BASE_URL: http://127.0.0.1:4791
+
+      # A real browser loads the build with the production CSP: assets resolve under the
+      # base path, the app renders visible content, navigation works, and an API outage or
+      # a malformed response shows a message instead of a blank page.
+      - name: Browser smoke test
+        run: |
+          npx playwright install --with-deps chromium
+          npm run smoke
+        working-directory: ncaa-soccer/apps/dashboard
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '0'
 
   secrets:
     runs-on: ubuntu-latest

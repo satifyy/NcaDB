@@ -12,6 +12,7 @@ import { GamesView } from './components/views/GamesView';
 import { DirectoryView } from './components/views/DirectoryView';
 import { StatusView } from './components/views/StatusView';
 import { Notice } from './components/ui';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { navigate, useRoute } from './route';
 
 /** What the one search box narrows, per view, so its placeholder is never a lie. */
@@ -65,7 +66,7 @@ function App({ analyticsReady }: { analyticsReady: boolean }) {
                         </Notice>
                     </div>
                 ) : (
-                    <>
+                    <ErrorBoundary scope="view" resetKey={`${route.view}/${route.id ?? ''}`}>
                         {route.view === 'overview' && <OverviewView onView={next => navigate(next)} />}
                         {route.view === 'rankings' && <RankingsView searchTerm={searchTerm} />}
                         {route.view === 'predictions' && <PredictionsView searchTerm={searchTerm} />}
@@ -77,7 +78,7 @@ function App({ analyticsReady }: { analyticsReady: boolean }) {
                         {route.view === 'games' && <GamesView gameId={route.id} />}
                         {route.view === 'directory' && <DirectoryView searchTerm={searchTerm} playerId={route.id} />}
                         {route.view === 'status' && <StatusView />}
-                    </>
+                    </ErrorBoundary>
                 )}
             </main>
         </div>

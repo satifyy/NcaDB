@@ -2,6 +2,7 @@
 export function Boot({ message, onRetry }: { message: string; onRetry?: () => void }) {
   return (
     <div className="boot" role={onRetry ? 'alert' : 'status'}>
+      <p className="boot-title">College Soccer Lab</p>
       <p>{message}</p>
       {onRetry && (
         <button type="button" className="pager-button" onClick={onRetry}>
