@@ -5,10 +5,11 @@
 | Postgres | Railway service `Postgres` (template), private network only | — | — |
 | API | Railway service `api`, root `ncaa-soccer`, `Dockerfile.api` | GitHub `satifyy/NcaDB` | push to the tracked branch |
 | Worker | Railway service `worker`, root `ncaa-soccer`, `Dockerfile.worker`, cron `0 8,9 * * *` | same | same (the image; it runs on the cron) |
-| Dashboard | Vercel project, root `ncaa-soccer/apps/dashboard` | same | push (production: main; previews: PRs) |
+| Dashboard | Vercel project `ncadb`, root `ncaa-soccer/apps/dashboard`, served at **https://satifyy.com/ncadb/** | same (Git link pending) | `vercel deploy --prod` from the repo root until the Git link is connected |
 
-Production URLs at the time of writing: API `https://api-production-24fc6.up.railway.app`
-(`/health`, `/api/v1/status`, `/api/v1/openapi.json`).
+Production URLs: site **https://satifyy.com/ncadb/** (proxied by the satifyy.com hub,
+repo `satifyy/webpage`, see its `ROUTING.md`), origin `https://ncadb.vercel.app`; API
+`https://api-production-24fc6.up.railway.app` (`/health`, `/api/v1/status`, `/api/v1/openapi.json`).
 
 > The Railway services currently track `feature/production-data-platform` so the branch
 > could be verified before merge. **After merging PR #21, point them at `main`:**
@@ -56,21 +57,32 @@ worker to receive alerts.
 Initial data: the committed CSVs were loaded once through a temporary TCP proxy
 (`backfill --seasons 2016-2026 --from-csv .`, 3 min), and the proxy was then deleted.
 
-## Vercel
+## Vercel and satifyy.com
 
-Import the GitHub repo in Vercel (or `npx vercel link` from `apps/dashboard`) with:
+The dashboard is its own Vercel project (`ncadb`, scope `santy0629-8466s-projects`) and
+is **served only through the satifyy.com hub**: `satifyy/webpage`'s `vercel.json` redirects
+`/ncadb` → `/ncadb/` and rewrites `/ncadb/:path*` → `https://ncadb.vercel.app/:path*`
+(the hub deploys from its `production` branch). The browser only ever sees satifyy.com.
 
 | Setting | Value |
 | --- | --- |
-| Root Directory | `ncaa-soccer/apps/dashboard` (“include files outside root” on — it is a workspace) |
-| Framework | Vite (from `vercel.json`) |
-| Install / Build / Output | from `vercel.json`: `npm ci --workspace apps/dashboard` at the monorepo root, `npm run build`, `dist` |
-| Env `VITE_API_BASE_URL` | the API origin, for **Production and Preview** |
-| Production branch | `main` |
+| Root Directory | `ncaa-soccer/apps/dashboard` (files outside the root included — it is an npm workspace) |
+| Framework / install / build / output | Vite; from `apps/dashboard/vercel.json` |
+| Env `BASE_PATH` | `/ncadb` — Vite `base`, so assets resolve under the hub's prefix |
+| Env `VITE_API_BASE_URL` | `https://api-production-24fc6.up.railway.app` (public by design; no secrets on Vercel) |
+| Deployment Protection | **off** — required, or the hub proxies Vercel's login wall |
 
-`VITE_API_BASE_URL` is compiled into the bundle and is public by design; no server
-secret is ever given to Vercel. After the first deploy, add the Vercel production domain
-and the preview pattern to the API's `CORS_ALLOWED_ORIGINS` (re-run `configure.sh --cors …`).
+The API's `CORS_ALLOWED_ORIGINS` is `https://satifyy.com,https://www.satifyy.com,https://ncadb.vercel.app`.
+
+Deploy from the repo root (`.vercelignore` keeps the data CSVs out of the upload):
+
+```bash
+npx vercel deploy --prod --scope santy0629-8466s-projects
+```
+
+**Git-based deploys** need the Vercel GitHub app to have access to `satifyy/NcaDB`
+(GitHub → Settings → Applications → Vercel → Repository access), then
+`npx vercel git connect` from the repo root. Production branch: `main`.
 
 ## CI/CD
 

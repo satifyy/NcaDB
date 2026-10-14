@@ -1,0 +1,11 @@
+# Only the dashboard and the workspace manifests it installs from are needed to build.
+**/node_modules
+**/dist
+**/*.tsbuildinfo
+ncaa-soccer/data
+ncaa-soccer/apps/scraper/src
+ncaa-soccer/apps/dashboard-legacy
+ncaa-soccer/apps/worker/test
+ncaa-soccer/packages/*/src
+ncaa-soccer/packages/*/test
+ncaa-soccer/packages/*/migrations

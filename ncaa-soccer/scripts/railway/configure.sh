@@ -14,7 +14,7 @@
 # Usage: scripts/railway/configure.sh [--cors "https://a.vercel.app,https://b-*.vercel.app"]
 set -euo pipefail
 
-CORS="${CORS_ALLOWED_ORIGINS:-http://localhost:5173}"
+CORS="${CORS_ALLOWED_ORIGINS:-https://satifyy.com,https://www.satifyy.com,https://ncadb.vercel.app}"
 if [[ "${1:-}" == "--cors" ]]; then CORS="$2"; fi
 
 status=$(railway status --json)
