@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { FavoriteButton } from '../../auth/controls';
 import { useApi } from '../../api';
 import type { Paged } from '../../api';
 import { shortDate, num } from '../../format';
@@ -198,6 +199,9 @@ function PlayerProfile({ id }: { id: string }) {
                                 {p.seasons.length} season{p.seasons.length === 1 ? '' : 's'} at {p.team_name}
                                 {p.conference ? ` (${p.conference})` : ''}
                             </p>
+                        </div>
+                        <div className="page-actions">
+                            <FavoriteButton kind="player" id={p.id} label="player" />
                         </div>
                     </div>
                     <div className="stack">

@@ -10,22 +10,33 @@ import rateLimit from '@fastify/rate-limit';
 import swagger from '@fastify/swagger';
 import { Pool } from 'pg';
 import { ApiConfig, originMatcher } from './config';
+import { Authenticator } from './auth';
 import { ApiError } from './http';
 import { adminRoutes } from './routes/admin';
 import { gameRoutes } from './routes/games';
+import { meRoutes } from './routes/me';
 import { metaRoutes } from './routes/meta';
 import { playerRoutes } from './routes/players';
 import { teamRoutes } from './routes/teams';
 
-export async function buildApp(pool: Pool, config: ApiConfig, options: { logger?: boolean } = {}): Promise<FastifyInstance> {
+/**
+ * `pool` is the public, read-only sports connection (ncadb_api). `options.accounts` is the
+ * separate ncadb_accounts connection for signed-in users' own data; without it, or without
+ * Clerk settings, the user routes answer 503 and only the operator token reaches admin.
+ */
+export async function buildApp(
+    pool: Pool,
+    config: ApiConfig,
+    options: { logger?: boolean; accounts?: Pool } = {}
+): Promise<FastifyInstance> {
     const app = Fastify({
         logger: options.logger === false ? false : { level: process.env.LOG_LEVEL || 'info' },
         // Railway terminates TLS at its edge proxy, which overwrites X-Forwarded-For with the
         // real client address (verified: a spoofed header does not change the rate-limit
         // key), so the forwarded address can be trusted.
         trustProxy: true,
-        // The API takes no request bodies; anything larger than this is not a real client.
-        bodyLimit: 1024,
+        // Only the signed-in routes take bodies, and those are a few small fields.
+        bodyLimit: 4096,
         connectionTimeout: 30_000,
         requestTimeout: 30_000,
         keepAliveTimeout: 65_000,
@@ -43,7 +54,10 @@ export async function buildApp(pool: Pool, config: ApiConfig, options: { logger?
                     'Read-only NCAA Division I men’s soccer data: teams, players, games, box scores and data freshness.'
             },
             components: {
-                securitySchemes: { admin: { type: 'http', scheme: 'bearer' } }
+                securitySchemes: {
+                    admin: { type: 'http', scheme: 'bearer' },
+                    session: { type: 'http', scheme: 'bearer', bearerFormat: 'Clerk session token (JWT)' }
+                }
             }
         }
     });
@@ -51,7 +65,9 @@ export async function buildApp(pool: Pool, config: ApiConfig, options: { logger?
     const allowed = originMatcher(config.corsOrigins);
     await app.register(cors, {
         origin: (origin, cb) => cb(null, !origin || allowed(origin)),
-        methods: ['GET', 'HEAD', 'OPTIONS'],
+        // Writes exist only under /api/v1/me and /api/v1/admin, and need a bearer token.
+        // No credentials mode: the API uses no cookies.
+        methods: ['GET', 'HEAD', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE'],
         allowedHeaders: ['Authorization', 'Content-Type', 'If-None-Match'],
         exposedHeaders: ['ETag'],
         maxAge: 86400
@@ -107,7 +123,16 @@ export async function buildApp(pool: Pool, config: ApiConfig, options: { logger?
     await app.register(teamRoutes, shared);
     await app.register(playerRoutes, shared);
     await app.register(gameRoutes, shared);
-    if (config.adminToken) await app.register(adminRoutes, { pool, token: config.adminToken });
+    const auth = config.auth && options.accounts ? new Authenticator(config.auth, options.accounts) : undefined;
+    if (auth) {
+        await app.register(meRoutes, { accounts: options.accounts!, auth });
+    } else {
+        app.all('/api/v1/me', { schema: { hide: true } }, async (_request, reply) => authUnavailable(reply));
+        app.all('/api/v1/me/*', { schema: { hide: true } }, async (_request, reply) => authUnavailable(reply));
+    }
+    if (config.adminToken || auth) {
+        await app.register(adminRoutes, { pool, token: config.adminToken, accounts: options.accounts, auth });
+    }
 
     app.get('/api/v1/openapi.json', { schema: { hide: true } }, async () => app.swagger());
     app.get('/', { schema: { hide: true } }, async () => ({
@@ -117,4 +142,11 @@ export async function buildApp(pool: Pool, config: ApiConfig, options: { logger?
     }));
 
     return app;
+}
+
+function authUnavailable(reply: import('fastify').FastifyReply) {
+    return reply
+        .code(503)
+        .header('Cache-Control', 'no-store')
+        .send({ error: { code: 'auth_unavailable', message: 'Sign-in is not available on this server' } });
 }

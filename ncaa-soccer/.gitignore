@@ -44,3 +44,6 @@ data/pipeline_state.json
 # the site rebuilds it at deploy time. Committing it meant every refresh run pushed 70 MB
 # of JSON that says nothing the CSVs beside it don't already say.
 apps/dashboard/src/data/
+
+# Screenshots from apps/dashboard/scripts/auth-e2e.mjs
+apps/dashboard/.e2e-screenshots/

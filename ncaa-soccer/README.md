@@ -12,6 +12,7 @@ the dashboard on Vercel reads only the API.
 | Schema, identity rules, backups | [docs/DATABASE.md](docs/DATABASE.md) |
 | Railway, Vercel, CI/CD, cost | [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) |
 | Every operational command | [docs/OPERATIONS.md](docs/OPERATIONS.md) |
+| Accounts: sign-in, roles, permissions | [docs/AUTHENTICATION.md](docs/AUTHENTICATION.md) |
 
 ```bash
 npm ci

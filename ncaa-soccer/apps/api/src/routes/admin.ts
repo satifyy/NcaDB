@@ -1,14 +1,19 @@
 /**
- * Read-only operational detail: full run records, task errors, per-team coverage.
+ * Operational detail: full run records, task errors, per-team coverage, and audited
+ * maintenance requests.
  *
- * Behind a bearer token, and absent entirely when ADMIN_API_TOKEN is unset. Nothing here
- * starts a scrape — ingestion is triggered only from the worker CLI (see OPERATIONS.md),
- * so no HTTP request can make the service hammer source sites.
+ * Two ways in. Scripts present the operator token (ADMIN_API_TOKEN). People sign in, and
+ * the role stored for them in accounts.user_profiles must be `admin`; the token's claims
+ * and anything the browser says are never consulted for that. Absent entirely when
+ * neither is configured. Nothing here starts a scrape: a maintenance request is recorded
+ * and the worker carries it out after its next scheduled run (see OPERATIONS.md), so no
+ * HTTP request can make the service hammer source sites.
  */
 
 import { timingSafeEqual } from 'crypto';
-import { FastifyInstance } from 'fastify';
+import { FastifyInstance, FastifyRequest } from 'fastify';
 import { Pool } from 'pg';
+import { audit, Authenticator } from '../auth';
 import { ApiError, idParam, notFound, offset, Page, paged, paginationQuery } from '../http';
 import { seasonQuery } from './shared';
 
@@ -18,8 +23,15 @@ function tokensMatch(given: string, expected: string): boolean {
     return a.length === b.length && timingSafeEqual(a, b);
 }
 
-export async function adminRoutes(app: FastifyInstance, opts: { pool: Pool; token: string }) {
-    const { pool, token } = opts;
+export interface AdminOptions {
+    pool: Pool;
+    token?: string;
+    accounts?: Pool;
+    auth?: Authenticator;
+}
+
+export async function adminRoutes(app: FastifyInstance, opts: AdminOptions) {
+    const { pool, token, accounts, auth } = opts;
 
     // Every admin route: tighter rate limit, hidden from the public OpenAPI document.
     app.addHook('onRoute', routeOptions => {
@@ -27,21 +39,115 @@ export async function adminRoutes(app: FastifyInstance, opts: { pool: Pool; toke
         routeOptions.schema = { ...routeOptions.schema, hide: true };
     });
 
+    const denied = (request: FastifyRequest, presented: string, status = 401): never => {
+        // Logged as a security event, distinguishable from ingestion noise; the
+        // presented value never is.
+        request.log.warn(
+            { event: 'security.admin_auth_failed', ip: request.ip, path: request.url, presented },
+            'admin authentication failed'
+        );
+        if (status === 403) throw new ApiError(403, 'forbidden', 'Administrator access is required');
+        throw new ApiError(401, 'unauthorized', 'A valid admin token or administrator session is required');
+    };
+
     app.addHook('onRequest', async (request, reply) => {
         reply.header('Cache-Control', 'no-store');
         const header = request.headers.authorization ?? '';
         const given = header.startsWith('Bearer ') ? header.slice(7) : '';
-        if (!given || !tokensMatch(given, token)) {
-            // Logged as a security event, distinguishable from ingestion noise; the
-            // presented value never is.
-            request.log.warn(
-                { event: 'security.admin_auth_failed', ip: request.ip, path: request.url, presented: given ? 'wrong token' : 'none' },
-                'admin authentication failed'
-            );
-            throw new ApiError(401, 'unauthorized', 'A valid admin token is required');
+        if (!given) return denied(request, 'none');
+        if (token && tokensMatch(given, token)) {
+            request.log.info({ event: 'security.admin_access', ip: request.ip, path: request.url, via: 'token' }, 'admin access');
+            return;
         }
-        request.log.info({ event: 'security.admin_access', ip: request.ip, path: request.url }, 'admin access');
+        if (!auth || !accounts) return denied(request, 'wrong token');
+        const principal = await auth.authenticate(request).catch(() => denied(request, 'invalid session'));
+        if (principal.role !== 'admin') {
+            await audit(accounts, request, principal, 'admin.denied', { path: request.routeOptions?.url ?? request.url });
+            return denied(request, `role ${principal.role}`, 403);
+        }
+        request.principal = principal;
+        request.log.info(
+            { event: 'security.admin_access', ip: request.ip, path: request.url, via: 'session', subject: principal.subject },
+            'admin access'
+        );
+        await audit(accounts, request, principal, 'admin.access', { method: request.method, path: request.routeOptions?.url ?? request.url });
     });
+
+    app.get('/api/v1/admin/whoami', async request => ({
+        data: request.principal ? { via: 'session', user_id: request.principal.subject, role: request.principal.role } : { via: 'token' }
+    }));
+
+    app.get<{ Querystring: Page }>(
+        '/api/v1/admin/maintenance',
+        { schema: { tags: ['admin'], summary: 'Maintenance requests', querystring: { type: 'object', properties: paginationQuery } } },
+        async request => {
+            const q = request.query;
+            const { rows } = await pool.query(
+                `SELECT id::int, action, target_run_id::int, reason, requested_by, status, result_run_id::int, note,
+                        created_at, started_at, finished_at, count(*) OVER () AS total_count
+                 FROM maintenance_requests ORDER BY created_at DESC LIMIT $1 OFFSET $2`,
+                [q.page_size, offset(q)]
+            );
+            return paged(rows, q);
+        }
+    );
+
+    app.post<{ Body: { action: 'retry_run' | 'rebuild_analytics'; target_run_id?: number; reason: string; confirm: boolean } }>(
+        '/api/v1/admin/maintenance',
+        {
+            config: { rateLimit: { max: 10, timeWindow: '1 hour' } },
+            schema: {
+                tags: ['admin'],
+                summary: 'Request maintenance (carried out by the worker after its next scheduled run)',
+                body: {
+                    type: 'object',
+                    additionalProperties: false,
+                    required: ['action', 'reason', 'confirm'],
+                    properties: {
+                        action: { type: 'string', enum: ['retry_run', 'rebuild_analytics'] },
+                        target_run_id: { type: 'integer', minimum: 1 },
+                        reason: { type: 'string', minLength: 10, maxLength: 500 },
+                        // Explicit, per request: the UI asks for it, and a replayed or scripted
+                        // call without it does nothing.
+                        confirm: { type: 'boolean', const: true }
+                    }
+                }
+            }
+        },
+        async (request, reply) => {
+            const principal = request.principal;
+            // The operator token is for reading; a request must name the person who made it.
+            if (!principal || !accounts) throw new ApiError(403, 'forbidden', 'Maintenance requests need an administrator session');
+            const b = request.body;
+            if (b.action === 'retry_run') {
+                if (!b.target_run_id) throw new ApiError(400, 'invalid_request', 'retry_run needs target_run_id');
+                const { rows } = await accounts.query('SELECT status FROM ingestion_runs WHERE id = $1', [b.target_run_id]);
+                if (!rows[0]) throw notFound('Run');
+                if (!['failed', 'abandoned'].includes(rows[0].status)) {
+                    throw new ApiError(409, 'not_retryable', `Run ${b.target_run_id} is ${rows[0].status}; only failed or abandoned runs are retried`);
+                }
+            } else if (b.target_run_id !== undefined) {
+                throw new ApiError(400, 'invalid_request', `${b.action} takes no target_run_id`);
+            }
+            try {
+                await accounts.query(
+                    `INSERT INTO maintenance_requests (action, target_run_id, reason, requested_by) VALUES ($1, $2, $3, $4)`,
+                    [b.action, b.target_run_id ?? null, b.reason.trim(), principal.subject]
+                );
+            } catch (err) {
+                if ((err as { code?: string }).code === '23505') {
+                    throw new ApiError(409, 'already_requested', 'The same maintenance is already pending');
+                }
+                throw err;
+            }
+            await audit(accounts, request, principal, 'admin.maintenance_requested', {
+                action: b.action,
+                target_run_id: b.target_run_id ?? null,
+                reason: b.reason.trim()
+            });
+            return reply.code(202).send({ data: { status: 'pending', action: b.action, target_run_id: b.target_run_id ?? null } });
+        }
+    );
 
     app.get<{ Querystring: Page & { kind?: string; status?: string } }>(
         '/api/v1/admin/runs',

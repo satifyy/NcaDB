@@ -130,6 +130,8 @@ try {
         await assets(base);
         await render(browser, base, { label: 'home', expectText: /Teams[\s\S]*Smoke Test Duke/ });
         await render(browser, base, { label: 'navigation', hash: '#/status', expectText: /Data status/ });
+        // Account routes, in a build without a Clerk key: a clear message, never a blank page.
+        await render(browser, `${base}login`, { label: 'account route, sign-in off', expectText: /Log in[\s\S]*not switched on/ });
         apiMode = 'malformed';
         await render(browser, base, { label: 'malformed data (error boundary)', hash: '#/teams', expectText: /could not be displayed[\s\S]*Reload/ });
         apiMode = 'down';

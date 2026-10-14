@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { FavoriteButton } from '../../auth/controls';
 import { useApi } from '../../api';
 import type { Paged } from '../../api';
 import { shortDate, BOXSCORE_LABEL, num, STATUS_LABEL } from '../../format';
@@ -236,7 +237,10 @@ function TeamSeasonPage({ team }: { team: TeamDetail }) {
                         </p>
                     )}
                 </div>
-                {seasons.length > 0 && <SeasonSelect seasons={seasons} value={season} onChange={setSeason} />}
+                <div className="page-actions">
+                    <FavoriteButton kind="team" id={team.slug} label="team" />
+                    {seasons.length > 0 && <SeasonSelect seasons={seasons} value={season} onChange={setSeason} />}
+                </div>
             </div>
 
             {seasons.length === 0 ? (

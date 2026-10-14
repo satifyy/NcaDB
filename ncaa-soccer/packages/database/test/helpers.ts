@@ -13,7 +13,7 @@ export const skipWithoutDb = TEST_DATABASE_URL ? false : 'TEST_DATABASE_URL is n
 
 export async function freshDatabase(): Promise<Pool> {
     const pool = createPool({ connectionString: TEST_DATABASE_URL, max: 4, applicationName: 'ncadb-test' });
-    await pool.query('DROP SCHEMA public CASCADE; CREATE SCHEMA public;');
+    await pool.query('DROP SCHEMA IF EXISTS accounts CASCADE; DROP SCHEMA public CASCADE; CREATE SCHEMA public;');
     await migrate(pool);
     return pool;
 }

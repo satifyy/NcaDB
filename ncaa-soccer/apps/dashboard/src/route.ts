@@ -22,8 +22,15 @@ export function parseHash(hash: string, fallback: ViewId): Route {
     return KNOWN.has(view) ? { view: view as ViewId, id: id || null } : { view: fallback, id: null };
 }
 
+/** On the statistics page a bare hash; on an account page (`/ncadb/profile`) the base path too. */
+function prefix(): string {
+    const base = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+    return typeof window !== 'undefined' && window.location.pathname !== base ? base : '';
+}
+
 export function href(view: ViewId, id?: string | number | null): string {
-    return id === undefined || id === null ? `#/${view}` : `#/${view}/${encodeURIComponent(String(id))}`;
+    const hash = id === undefined || id === null ? `#/${view}` : `#/${view}/${encodeURIComponent(String(id))}`;
+    return `${prefix()}${hash}`;
 }
 
 export function useRoute(fallback: ViewId): Route {
@@ -40,5 +47,7 @@ export function useRoute(fallback: ViewId): Route {
 }
 
 export function navigate(view: ViewId, id?: string | number | null): void {
-    window.location.hash = href(view, id);
+    const target = href(view, id);
+    if (target.startsWith('#')) window.location.hash = target;
+    else window.location.assign(target);
 }
