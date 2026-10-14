@@ -1,7 +1,7 @@
 import { PlayerStat } from '@ncaa/shared';
 import { ParseResult, ParserOptions } from '../types';
 import { TeamNameResolver } from '../names';
-import { SCRAPER_USER_AGENT as USER_AGENT } from '../politeness';
+import { safeFetch } from '../url_guard';
 
 /**
  * Box scores on WMT Digital sites are an iframe onto `wmt.games`, whose own DOM is
@@ -156,14 +156,18 @@ export class WmtBoxScoreParser {
         const fetchImpl = options?.fetchImpl || fetch;
         const timeoutMs = options?.timeoutMs ?? 30000;
 
-        const get = async (url: string): Promise<Response> => {
+        // The box-score URL comes from a scraped schedule, so it is vetted (and every
+        // redirect re-checked) before anything is requested; bodies are size-capped.
+        const get = async (url: string) => {
             const controller = new AbortController();
             const timer = setTimeout(() => controller.abort(), timeoutMs);
             try {
-                return await fetchImpl(url, {
-                    headers: { 'User-Agent': USER_AGENT },
-                    signal: controller.signal
+                const res = await safeFetch(url, {
+                    signal: controller.signal,
+                    fetchImpl,
+                    skipDnsCheck: options?.fetchImpl !== undefined
                 });
+                return { ok: res.ok, status: res.status, text: async () => res.text, json: async () => JSON.parse(res.text) };
             } finally {
                 clearTimeout(timer);
             }

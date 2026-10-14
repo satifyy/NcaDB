@@ -2,7 +2,8 @@
  * The worker's commands. Every one of them runs to completion and exits: the nightly
  * schedule starts a fresh process, and nothing depends on a terminal or a laptop.
  *
- *   migrate                       apply pending database migrations
+ *   migrate                       apply pending database migrations (owner credentials)
+ *   provision-roles               set the least-privileged roles' passwords from the environment
  *   nightly [--force] [--season Y] [--no-analytics] [--cron]
  *   backfill (--season Y | --seasons A-B) [--team NAME]... [--from YYYY-MM-DD] [--to YYYY-MM-DD]
  *            [--missing-only] [--force] [--no-schedules] [--from-csv DIR] [--no-analytics]
@@ -161,6 +162,7 @@ interface BackfillOptions {
     schedules: boolean;
     fromCsv?: string;
     analytics: boolean;
+    allowMassDelete: boolean;
 }
 
 function backfillOptions(args: Args): BackfillOptions {
@@ -175,7 +177,8 @@ function backfillOptions(args: Args): BackfillOptions {
         force: has(args, 'force'),
         schedules: !has(args, 'no-schedules'),
         fromCsv: one(args, 'from-csv'),
-        analytics: !has(args, 'no-analytics')
+        analytics: !has(args, 'no-analytics'),
+        allowMassDelete: has(args, 'allow-mass-delete')
     };
 }
 
@@ -197,7 +200,8 @@ async function backfill(pool: Pool, config: WorkerConfig, opts: BackfillOptions,
                 const result = await loadFromWorkDir(ctx, season, {
                     complete: true,
                     includeStats: true,
-                    root: path.resolve(opts.fromCsv)
+                    root: path.resolve(opts.fromCsv),
+                    allowMassDelete: opts.allowMassDelete
                 });
                 loaded = !!result;
             } else {
@@ -341,14 +345,42 @@ async function health(pool: Pool, config: WorkerConfig): Promise<number> {
     return EXIT_OK;
 }
 
+/**
+ * Sets the login passwords of the least-privileged roles from the environment
+ * (NCADB_API_DB_PASSWORD, NCADB_WORKER_DB_PASSWORD). Values are never logged. A role
+ * whose variable is unset is left alone, so this is safe to run on every deploy.
+ */
+async function provisionRoles(pool: Pool): Promise<number> {
+    const roles: [string, string | undefined][] = [
+        ['ncadb_api', process.env.NCADB_API_DB_PASSWORD],
+        ['ncadb_worker', process.env.NCADB_WORKER_DB_PASSWORD]
+    ];
+    for (const [role, password] of roles) {
+        if (!password) {
+            log.warn('role password not provided; left unchanged', { role });
+            continue;
+        }
+        if (password.length < 24) throw new UsageError(`The password for ${role} must be at least 24 characters`);
+        // ALTER ROLE cannot take a bind parameter; format(%L) quotes the literal server-side.
+        const { rows } = await pool.query<{ sql: string }>('SELECT format($1::text, $2::text) AS sql', [
+            `ALTER ROLE ${role} PASSWORD %L`,
+            password
+        ]);
+        await pool.query(rows[0].sql);
+        log.info('role password set', { role });
+    }
+    return EXIT_OK;
+}
+
 // ---------------------------------------------------------------------------------------
 
 const USAGE = `Usage: npm run worker -- <command> [options]
 
-  migrate
+  migrate                      (uses MIGRATION_DATABASE_URL when set)
+  provision-roles              (sets ncadb_api / ncadb_worker passwords from the environment)
   nightly [--force] [--season YYYY] [--no-analytics]
   backfill (--season YYYY | --seasons A-B) [--team NAME]... [--from YYYY-MM-DD] [--to YYYY-MM-DD]
-           [--missing-only] [--force] [--no-schedules] [--from-csv DIR] [--no-analytics]
+           [--missing-only] [--force] [--no-schedules] [--from-csv DIR] [--no-analytics] [--allow-mass-delete]
   refresh-game --game ID [--analytics]
   retry [--run ID]
   analytics
@@ -363,7 +395,15 @@ async function main(): Promise<number> {
     }
     const config = loadConfig();
     const trigger = has(args, 'cron') ? 'cron' : 'manual';
-    const pool = createPool({ max: 4, applicationName: `ncadb-worker:${args.command}` });
+    // Schema changes and role passwords need the owner; everything else runs as the
+    // least-privileged ncadb_worker role. MIGRATION_DATABASE_URL is set only where the
+    // migrate step runs, so the nightly process never holds owner credentials.
+    const ownerCommand = args.command === 'migrate' || args.command === 'provision-roles';
+    const pool = createPool({
+        max: 4,
+        applicationName: `ncadb-worker:${args.command}`,
+        connectionString: ownerCommand ? process.env.MIGRATION_DATABASE_URL || process.env.DATABASE_URL : undefined
+    });
     try {
         try {
             await waitForDatabase(pool);
@@ -375,6 +415,9 @@ async function main(): Promise<number> {
             const result = await migrate(pool);
             log.info('migrations', { ...result });
             return EXIT_OK;
+        }
+        if (args.command === 'provision-roles') {
+            return await provisionRoles(pool);
         }
         await requireMigrated(pool);
         const runId = one(args, 'run') ? Number(one(args, 'run')) : undefined;
