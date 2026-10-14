@@ -5,6 +5,52 @@ import { z } from 'zod';
 import { SidearmBoxScoreParser } from './boxscore';
 import * as cheerio from 'cheerio';
 
+/**
+ * Parses a JavaScript array/object literal as data.
+ *
+ * JSON first; failing that, the bare `undefined`, `NaN` and `Infinity` tokens a payload
+ * embedded in a script may carry are replaced with `null` — outside string literals
+ * only — and JSON is tried again. Anything else is rejected. Nothing is ever executed.
+ */
+export function parseJsLiteral(text: string): unknown {
+    try {
+        return JSON.parse(text);
+    } catch {
+        /* fall through */
+    }
+    let out = '';
+    let inString = false;
+    for (let i = 0; i < text.length; i++) {
+        const ch = text[i];
+        if (inString) {
+            out += ch;
+            if (ch === '\\') {
+                out += text[++i] ?? '';
+            } else if (ch === '"') {
+                inString = false;
+            }
+            continue;
+        }
+        if (ch === '"') {
+            inString = true;
+            out += ch;
+            continue;
+        }
+        const token = /^(?:undefined|NaN|-?Infinity)\b/.exec(text.slice(i, i + 10));
+        if (token && !/[A-Za-z0-9_$]/.test(text[i - 1] ?? '')) {
+            out += 'null';
+            i += token[0].length - 1;
+            continue;
+        }
+        out += ch;
+    }
+    try {
+        return JSON.parse(out);
+    } catch {
+        return null;
+    }
+}
+
 const SidearmGameSchema = z.object({
     id: z.number(),
     date: z.string(),
@@ -1317,29 +1363,18 @@ export class SidearmParser implements Parser {
                         }
                     }
                     const rawJson = endIdx !== -1 ? scriptContent.slice(startIdx, endIdx + 1) : scriptContent.slice(startIdx);
-                    try {
-                        parsedFromScript = new Function(`return ${rawJson}`)();
-                    } catch (e) {
-                        if (options?.debug) console.error('[sidearm] Failed to eval sliced NextGen array', e);
-                    }
+                    // Parsed as data, never evaluated: this text comes from a third-party
+                    // page, and executing it would hand that site our process.
+                    const literal = parseJsLiteral(rawJson);
+                    if (Array.isArray(literal)) parsedFromScript = literal;
+                    else if (options?.debug) console.error('[sidearm] Sliced NextGen array is not a data literal');
                 }
 
-                // Fallback: attempt to evaluate window.__NUXT__ object and pull its data array
-                if (!Array.isArray(parsedFromScript) || parsedFromScript.length === 0) {
-                    try {
-                        const wrapped = `(function(){ const window = {}; const globalThis = {}; ${scriptContent}; return (window.__NUXT__ || (globalThis as any).__NUXT__ || (typeof __NUXT__ !== 'undefined' ? __NUXT__ : null)); })()`;
-                        const nuxtObj = new Function(wrapped)();
-                        if (nuxtObj && Array.isArray(nuxtObj.data)) {
-                            // Flatten in case data is nested arrays
-                            const flat = ([] as any[]).concat(...nuxtObj.data);
-                            const shallow = flat.find((item: any) => Array.isArray(item) && item[0] === 'ShallowReactive');
-                            parsedFromScript = shallow ? flat : nuxtObj.data;
-                            if (options?.debug) console.log(`[sidearm] Parsed __NUXT__ payload length=${parsedFromScript.length}`);
-                        }
-                    } catch (e) {
-                        if (options?.debug) console.error('[sidearm] Failed to eval __NUXT__ payload', e);
-                    }
-                }
+                // There used to be a further fallback here that executed the page's whole
+                // inline script to read window.__NUXT__. It is gone: running a third-party
+                // site's JavaScript in the scraper is remote code execution waiting for one
+                // compromised athletics site. Pages it would have rescued now yield no rows,
+                // which the row guard and the coverage report surface.
 
                 data = parsedFromScript;
             }
