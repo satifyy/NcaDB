@@ -1,4 +1,4 @@
-# Handoff — state as of 2026-10-14 ~04:00 UTC
+# Handoff — state as of 2026-10-14 ~04:30 UTC
 
 Work in progress; delete this file once the items below are done.
 
@@ -32,16 +32,13 @@ which has no Dockerfile yet, and fails.
 
 ## Open items, in order
 
-1. **Verification run in flight** (worker @ 0f87cef, started ~03:55 UTC). The previous run
-   (#4) loaded data fine as `ncadb_worker` but failed in analytics with EACCES — fixed in
-   0f87cef. Check it: `railway cron list --service worker` and `curl <api>/api/v1/data-status | jq '.recent_runs[0]'`.
-2. **Then redeploy the worker** at 0f87cef (command above). `NIGHTLY_RECOVERY_AFTER_HOURS` has
-   been set back to 26 with `--skip-deploys`, but the deployed snapshot still has 0, which
-   makes both cron firings run each night until the redeploy.
-3. Grant the Railway and Vercel GitHub apps access to `satifyy/NcaDB` (GitHub → Settings →
+1. ~~Verification run~~ — done: run #5 succeeded end to end as `ncadb_worker` (scrape, load,
+   analytics, read-model refresh); worker redeployed with `NIGHTLY_RECOVERY_AFTER_HOURS=26`.
+   The next scheduled run is 03:00 America/Chicago.
+2. Grant the Railway and Vercel GitHub apps access to `satifyy/NcaDB` (GitHub → Settings →
    Applications), then create Railway deploy triggers on `main` and `npx vercel git connect`.
-4. Merge #21 → #22 → #23 into `main`, then point everything at `main`.
-5. Optional: `ALERT_WEBHOOK_URL` on the worker; Railway usage limit (workspace-wide — affects
+3. Merge #21 → #22 → #23 into `main`, then point everything at `main`.
+4. Optional: `ALERT_WEBHOOK_URL` on the worker; Railway usage limit (workspace-wide — affects
    other projects); Cloudflare Access in front of admin routes.
 
 ## Docs
