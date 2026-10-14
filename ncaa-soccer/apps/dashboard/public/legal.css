@@ -1,0 +1,44 @@
+/* Privacy policy and terms: static pages, so they keep working without the app's script. */
+:root {
+    color-scheme: dark;
+    --bg: #0b1220;
+    --surface: #1e293b;
+    --line: #334155;
+    --ink: #f8fafc;
+    --ink-2: #cbd5e1;
+    --muted: #94a3b8;
+    --accent: #a5b4fc;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    background: radial-gradient(1200px 600px at 15% -10%, rgba(99, 102, 241, 0.14), transparent 60%), var(--bg);
+    background-attachment: fixed;
+    color: var(--ink-2);
+    font: 16px/1.65 Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+header, main, footer {
+    max-width: 46rem;
+    margin: 0 auto;
+    padding: 0 16px;
+}
+
+header { padding-top: 24px; }
+header a { color: var(--ink); font-weight: 700; text-decoration: none; }
+header a:hover { color: var(--accent); }
+
+h1 { color: var(--ink); font-size: 2rem; line-height: 1.2; margin: 40px 0 4px; }
+h2 { color: var(--ink); font-size: 1.15rem; margin: 36px 0 8px; padding-top: 20px; border-top: 1px solid var(--line); }
+.updated { color: var(--muted); font-size: 0.9rem; margin: 0 0 24px; }
+.summary { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 18px; }
+p, li { margin: 0 0 10px; }
+ul { padding-left: 1.25rem; }
+strong { color: var(--ink); }
+a { color: var(--accent); }
+
+footer { color: var(--muted); font-size: 0.9rem; padding-top: 32px; padding-bottom: 48px; }
+footer a { margin-right: 16px; }
