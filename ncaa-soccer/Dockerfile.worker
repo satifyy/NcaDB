@@ -14,9 +14,11 @@ ENV NODE_ENV=production \
 WORKDIR /app
 COPY . .
 # Dev dependencies included: tsx runs the TypeScript scripts, as it does locally.
+# The code stays owned by root: the runtime user can read and execute it but not
+# change it. Everything the worker writes goes to WORK_DIR under /tmp.
 RUN npm ci --include=dev --no-audit --no-fund \
     && npx tsc -b \
-    && chown -R pwuser:pwuser /app
+    && chmod -R a-w /app
 
 USER pwuser
 CMD ["npx", "tsx", "apps/worker/src/cli.ts", "nightly", "--cron"]

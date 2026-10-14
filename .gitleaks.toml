@@ -9,3 +9,13 @@ paths = [
   '''ncaa-soccer/apps/worker/test/''',
   '''ncaa-soccer/packages/database/test/''',
 ]
+
+# Public reCAPTCHA site keys that athletics websites embed in every page they serve,
+# captured in saved third-party HTML (raw scrapes, parser fixtures). They are public by
+# design and not NcaDB credentials. `dedupe_key` is a column name.
+regexTarget = "match"
+regexes = [
+  '''captchaKey"?\s*[:=]''',
+  '''sitekey"?\s*[:=]''',
+  '''dedupe_key''',
+]
