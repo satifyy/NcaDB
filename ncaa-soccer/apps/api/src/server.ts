@@ -11,7 +11,19 @@ async function main() {
         statementTimeoutMs: Number(process.env.DATABASE_STATEMENT_TIMEOUT_MS || 5_000)
     });
     await waitForDatabase(pool);
-    const app = await buildApp(pool, config);
+    // Signed-in users' own data goes through a second identity, ncadb_accounts, which can
+    // reach the accounts schema; the public pool above cannot (see migration 003).
+    const accounts =
+        config.auth && process.env.ACCOUNTS_DATABASE_URL
+            ? createPool({
+                  connectionString: process.env.ACCOUNTS_DATABASE_URL,
+                  max: Number(process.env.ACCOUNTS_DATABASE_POOL_MAX || 5),
+                  applicationName: 'ncadb-api:accounts',
+                  statementTimeoutMs: 5_000
+              })
+            : undefined;
+    if (accounts) await waitForDatabase(accounts);
+    const app = await buildApp(pool, config, { accounts });
 
     const pending = await pendingMigrations(pool);
     if (pending.length > 0) {
@@ -19,12 +31,14 @@ async function main() {
         // migrate step is what should have run; /api/v1/status reports this too.
         app.log.warn({ pending }, 'database has pending migrations');
     }
-    if (!config.adminToken) app.log.info('ADMIN_API_TOKEN unset or shorter than 24 characters; admin routes disabled');
+    if (!config.adminToken) app.log.info('ADMIN_API_TOKEN unset or shorter than 24 characters; operator token disabled');
+    if (!accounts) app.log.info('Clerk settings or ACCOUNTS_DATABASE_URL unset; sign-in features disabled');
 
     const shutdown = async (signal: string) => {
         app.log.info({ signal }, 'shutting down');
         await app.close();
         await pool.end();
+        await accounts?.end();
         process.exit(0);
     };
     process.once('SIGTERM', () => void shutdown('SIGTERM'));

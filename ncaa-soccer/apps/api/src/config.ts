@@ -1,3 +1,5 @@
+import { AuthConfig, loadAuthConfig } from './auth';
+
 export interface ApiConfig {
     port: number;
     host: string;
@@ -9,6 +11,8 @@ export interface ApiConfig {
     /** Seconds browsers and CDNs may cache public data responses. */
     cacheSeconds: number;
     version: string;
+    /** Clerk session verification. Unset disables sign-in features (user routes return 503). */
+    auth?: AuthConfig;
 }
 
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): ApiConfig {
@@ -22,7 +26,8 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): ApiConfig {
         adminToken: env.ADMIN_API_TOKEN && env.ADMIN_API_TOKEN.length >= 24 ? env.ADMIN_API_TOKEN : undefined,
         rateLimitPerMinute: Number(env.RATE_LIMIT_PER_MINUTE || 300),
         cacheSeconds: Number(env.API_CACHE_SECONDS || 300),
-        version: (env.RAILWAY_GIT_COMMIT_SHA || env.GIT_SHA || 'dev').slice(0, 12)
+        version: (env.RAILWAY_GIT_COMMIT_SHA || env.GIT_SHA || 'dev').slice(0, 12),
+        auth: loadAuthConfig(env)
     };
 }
 

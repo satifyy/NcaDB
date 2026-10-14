@@ -22,5 +22,8 @@
     },
     "dependencies": {
         "cheerio": "^1.1.2"
+    },
+    "overrides": {
+        "@clerk/shared": "4.37.0"
     }
 }

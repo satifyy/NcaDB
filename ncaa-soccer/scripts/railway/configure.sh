@@ -9,10 +9,12 @@
 #   railway add --service migrate --repo satifyy/NcaDB --branch main
 #
 # Credential layout (least privilege):
-#   migrate  holds the owner URL (MIGRATION_DATABASE_URL) and the two role passwords.
-#            It runs `migrate` then `provision-roles` and exits. Nothing else ever sees
-#            owner credentials.
-#   api      connects as ncadb_api (SELECT only, 5 s statements).
+#   migrate  holds the owner URL (MIGRATION_DATABASE_URL) and the three role passwords.
+#            It runs `migrate`, `provision-roles` and `sync-admins` (administrators =
+#            NCADB_ADMIN_SUBJECTS, when set) and exits. Nothing else ever sees owner
+#            credentials.
+#   api      connects as ncadb_api (SELECT only, 5 s statements), and as ncadb_accounts
+#            (signed-in users' own data) once sign-in is configured.
 #   worker   connects as ncadb_worker (data read/write, no DDL).
 # Postgres has no public endpoint; all three reach it on the private network.
 #
@@ -72,7 +74,7 @@ update "$migrate_id" '{
   "rootDirectory": "ncaa-soccer",
   "dockerfilePath": "Dockerfile.api",
   "watchPatterns": ["packages/database/**", "ncaa-soccer/packages/database/**"],
-  "startCommand": "sh -c \"npx tsx apps/worker/src/cli.ts migrate && npx tsx apps/worker/src/cli.ts provision-roles\"",
+  "startCommand": "sh -c \"npx tsx apps/worker/src/cli.ts migrate && npx tsx apps/worker/src/cli.ts provision-roles && npx tsx apps/worker/src/cli.ts sync-admins\"",
   "restartPolicyType": "NEVER"
 }'
 
@@ -83,7 +85,7 @@ limits "$migrate_id" 0.5 0.5
 
 # Role passwords: generated once, stored only on the migrate service, never printed.
 have() { railway variable list --service "$1" --json | jq -e --arg k "$2" 'has($k)' >/dev/null; }
-for key in NCADB_API_DB_PASSWORD NCADB_WORKER_DB_PASSWORD; do
+for key in NCADB_API_DB_PASSWORD NCADB_WORKER_DB_PASSWORD NCADB_ACCOUNTS_DB_PASSWORD; do
   if ! have migrate "$key"; then
     openssl rand -hex 32 | railway variable set "$key" --stdin --service migrate --skip-deploys >/dev/null
   fi
@@ -98,7 +100,9 @@ db_url() { # role password_reference
 railway variable set --service api --skip-deploys \
   "DATABASE_URL=$(db_url ncadb_api NCADB_API_DB_PASSWORD)" \
   NODE_ENV=production LOG_LEVEL=info DATABASE_POOL_MAX=10 DATABASE_STATEMENT_TIMEOUT_MS=5000 \
-  RATE_LIMIT_PER_MINUTE=300 API_CACHE_SECONDS=300 "CORS_ALLOWED_ORIGINS=$CORS" >/dev/null
+  RATE_LIMIT_PER_MINUTE=300 API_CACHE_SECONDS=300 "CORS_ALLOWED_ORIGINS=$CORS" \
+  "ACCOUNTS_DATABASE_URL=$(db_url ncadb_accounts NCADB_ACCOUNTS_DB_PASSWORD)" >/dev/null
+# Sign-in stays off until the Clerk variables are set too (docs/AUTHENTICATION.md).
 
 # Generated once and never printed. Read it with: railway variable list --service api --kv
 if ! have api ADMIN_API_TOKEN; then

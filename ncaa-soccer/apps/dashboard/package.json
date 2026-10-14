@@ -11,6 +11,7 @@
     "smoke": "node scripts/smoke.mjs"
   },
   "dependencies": {
+    "@clerk/react": "6.17.3",
     "chart.js": "^4.5.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.562.0",

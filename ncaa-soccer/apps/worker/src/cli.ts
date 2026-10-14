@@ -4,6 +4,10 @@
  *
  *   migrate                       apply pending database migrations (owner credentials)
  *   provision-roles               set the least-privileged roles' passwords from the environment
+ *   set-role --subject ID --role user|admin --reason TEXT --actor NAME
+ *                                 change an account's role, audited (owner credentials)
+ *   sync-admins                   make the administrators exactly NCADB_ADMIN_SUBJECTS (owner credentials)
+ *   maintenance                   carry out pending admin maintenance requests
  *   nightly [--force] [--season Y] [--no-analytics] [--cron]
  *   backfill (--season Y | --seasons A-B) [--team NAME]... [--from YYYY-MM-DD] [--to YYYY-MM-DD]
  *            [--missing-only] [--force] [--no-schedules] [--from-csv DIR] [--no-analytics]
@@ -34,6 +38,8 @@ import { ingestSeason, loadFromWorkDir, rebuildAnalytics } from './ingest';
 import { log } from './log';
 import { notify } from './notify';
 import { EXIT_FAILED, EXIT_OK, RunContext, executeRun, task } from './run';
+import { processMaintenanceRequests } from './maintenance';
+import { changeRole, parseAdminSubjects, RoleError, syncAdmins } from './roles';
 import { localTime, nightlyGate, seasonFor } from './schedule';
 
 class UsageError extends Error {}
@@ -254,7 +260,7 @@ async function refreshGame(pool: Pool, config: WorkerConfig, gameId: number, ana
     });
 }
 
-async function retry(pool: Pool, config: WorkerConfig, runId?: number): Promise<number> {
+async function retry(pool: Pool, config: WorkerConfig, runId?: number, triggerOverride?: string): Promise<number> {
     const { rows } = await pool.query(
         runId
             ? `SELECT id::int, kind, params FROM ingestion_runs WHERE id = $1`
@@ -270,7 +276,7 @@ async function retry(pool: Pool, config: WorkerConfig, runId?: number): Promise<
     }
     log.info('retrying run', { run_id: run.id, kind: run.kind });
     const p = run.params;
-    const trigger = `retry:${run.id}`;
+    const trigger = triggerOverride ?? `retry:${run.id}`;
     switch (run.kind) {
         case 'nightly':
             return nightly(pool, config, { force: true, season: p.season, analytics: p.analytics ?? true }, trigger);
@@ -353,7 +359,8 @@ async function health(pool: Pool, config: WorkerConfig): Promise<number> {
 async function provisionRoles(pool: Pool): Promise<number> {
     const roles: [string, string | undefined][] = [
         ['ncadb_api', process.env.NCADB_API_DB_PASSWORD],
-        ['ncadb_worker', process.env.NCADB_WORKER_DB_PASSWORD]
+        ['ncadb_worker', process.env.NCADB_WORKER_DB_PASSWORD],
+        ['ncadb_accounts', process.env.NCADB_ACCOUNTS_DB_PASSWORD]
     ];
     for (const [role, password] of roles) {
         if (!password) {
@@ -372,12 +379,69 @@ async function provisionRoles(pool: Pool): Promise<number> {
     return EXIT_OK;
 }
 
+/** One audited role change by hand (local or break-glass). See roles.ts. */
+async function setRole(pool: Pool, args: Args): Promise<number> {
+    const role = one(args, 'role');
+    if (role !== 'user' && role !== 'admin') throw new UsageError('Give --role user or --role admin');
+    try {
+        await changeRole(pool, { subject: one(args, 'subject') ?? '', role, reason: one(args, 'reason') ?? '', actor: one(args, 'actor') ?? '' });
+    } catch (err) {
+        if (err instanceof RoleError) throw new UsageError(err.message);
+        throw err;
+    }
+    return EXIT_OK;
+}
+
+/**
+ * Makes the administrators exactly NCADB_ADMIN_SUBJECTS (migrate service). Unset: nothing
+ * changes, so a missing variable can never demote everyone; set to an empty value it does
+ * demote everyone, deliberately.
+ */
+async function syncAdminsFromEnv(pool: Pool): Promise<number> {
+    const subjects = parseAdminSubjects(process.env.NCADB_ADMIN_SUBJECTS);
+    if (subjects === undefined) {
+        log.info('NCADB_ADMIN_SUBJECTS unset; administrators unchanged');
+        return EXIT_OK;
+    }
+    const reason = process.env.NCADB_ADMIN_CHANGE_REASON?.trim() || 'Administrator list on the migrate service (NCADB_ADMIN_SUBJECTS)';
+    const actor = `migrate:${process.env.RAILWAY_DEPLOYMENT_ID ?? 'local'}`;
+    try {
+        const result = await syncAdmins(pool, subjects, reason, actor);
+        log.info('administrators synced', { ...result, admins: subjects.length });
+        if (result.pending.length) log.warn('listed administrators have not signed in yet', { pending: result.pending });
+    } catch (err) {
+        if (err instanceof RoleError) throw new UsageError(err.message);
+        throw err;
+    }
+    return EXIT_OK;
+}
+
+/** Carries out pending admin requests. Never fails the caller: problems are recorded per request. */
+async function maintenance(pool: Pool, config: WorkerConfig): Promise<number> {
+    try {
+        const processed = await processMaintenanceRequests(pool, {
+            retryRun: (runId, trigger) => retry(pool, config, runId, trigger),
+            rebuildAnalytics: trigger =>
+                executeRun(pool, config, { kind: 'analytics', trigger, params: {} }, async ctx => {
+                    await rebuildAnalytics(ctx);
+                })
+        });
+        if (processed > 0) log.info('maintenance requests processed', { count: processed });
+    } catch (err) {
+        log.error('maintenance processing failed', { error: (err as Error).message });
+    }
+    return EXIT_OK;
+}
+
 // ---------------------------------------------------------------------------------------
 
 const USAGE = `Usage: npm run worker -- <command> [options]
 
   migrate                      (uses MIGRATION_DATABASE_URL when set)
-  provision-roles              (sets ncadb_api / ncadb_worker passwords from the environment)
+  provision-roles              (sets ncadb_api / ncadb_worker / ncadb_accounts passwords from the environment)
+  set-role --subject ID --role user|admin --reason TEXT --actor NAME   (owner credentials; audited)
+  sync-admins                  (owner credentials; administrators = NCADB_ADMIN_SUBJECTS, audited)
+  maintenance                  (pending admin maintenance requests)
   nightly [--force] [--season YYYY] [--no-analytics]
   backfill (--season YYYY | --seasons A-B) [--team NAME]... [--from YYYY-MM-DD] [--to YYYY-MM-DD]
            [--missing-only] [--force] [--no-schedules] [--from-csv DIR] [--no-analytics] [--allow-mass-delete]
@@ -398,7 +462,7 @@ async function main(): Promise<number> {
     // Schema changes and role passwords need the owner; everything else runs as the
     // least-privileged ncadb_worker role. MIGRATION_DATABASE_URL is set only where the
     // migrate step runs, so the nightly process never holds owner credentials.
-    const ownerCommand = args.command === 'migrate' || args.command === 'provision-roles';
+    const ownerCommand = ['migrate', 'provision-roles', 'set-role', 'sync-admins'].includes(args.command);
     const pool = createPool({
         max: 4,
         applicationName: `ncadb-worker:${args.command}`,
@@ -419,15 +483,28 @@ async function main(): Promise<number> {
         if (args.command === 'provision-roles') {
             return await provisionRoles(pool);
         }
+        if (args.command === 'set-role') {
+            return await setRole(pool, args);
+        }
+        if (args.command === 'sync-admins') {
+            return await syncAdminsFromEnv(pool);
+        }
         await requireMigrated(pool);
         const runId = one(args, 'run') ? Number(one(args, 'run')) : undefined;
         switch (args.command) {
-            case 'nightly':
-                return await nightly(pool, config, {
+            case 'nightly': {
+                const code = await nightly(pool, config, {
                     force: has(args, 'force'),
                     season: one(args, 'season') ? Number(one(args, 'season')) : undefined,
                     analytics: !has(args, 'no-analytics')
                 }, trigger);
+                // Admin requests run after the scheduled work, on the same ingestion lock
+                // discipline, and never change the scheduled run's exit status.
+                if (trigger === 'cron') await maintenance(pool, config);
+                return code;
+            }
+            case 'maintenance':
+                return await maintenance(pool, config);
             case 'backfill':
                 return await backfill(pool, config, backfillOptions(args), trigger);
             case 'refresh-game': {

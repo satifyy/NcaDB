@@ -1,17 +1,20 @@
 import { Search, Activity } from 'lucide-react';
 import type { ChangeEvent } from 'react';
 import { useApi } from '../../api';
+import { AccountMenu } from '../../auth/controls';
 import { href } from '../../route';
 import { VIEWS } from '../../views';
 import type { ViewId } from '../../views';
 
 interface MastheadProps {
-    view: ViewId;
+    /** The statistics view on screen; null on an account page. */
+    view: ViewId | null;
     onView: (view: ViewId) => void;
-    searchTerm: string;
-    onSearch: (term: string) => void;
+    /** Omitted on account pages, which have nothing to search. */
+    searchTerm?: string;
+    onSearch?: (term: string) => void;
     /** What the search box narrows on this view, so the placeholder is never a lie. */
-    searchPlaceholder: string;
+    searchPlaceholder?: string;
     /** On pages the search does not apply to, the box is disabled rather than ignored. */
     searchDisabled?: boolean;
 }
@@ -37,7 +40,7 @@ export function Masthead({ view, onView, searchTerm, onSearch, searchPlaceholder
         : null;
     const stale = hours !== null && hours > 36;
 
-    const handleChange = (event: ChangeEvent<HTMLInputElement>) => onSearch(event.target.value);
+    const handleChange = (event: ChangeEvent<HTMLInputElement>) => onSearch?.(event.target.value);
 
     return (
         <header className="masthead">
@@ -77,17 +80,20 @@ export function Masthead({ view, onView, searchTerm, onSearch, searchPlaceholder
                 </nav>
 
                 <div className="masthead-actions">
-                    <div className="search-box">
-                        <Search size={16} />
-                        <input
-                            type="search"
-                            value={searchTerm}
-                            onChange={handleChange}
-                            placeholder={searchPlaceholder}
-                            aria-label={searchPlaceholder}
-                            disabled={searchDisabled}
-                        />
-                    </div>
+                    {onSearch && (
+                        <div className="search-box">
+                            <Search size={16} />
+                            <input
+                                type="search"
+                                value={searchTerm}
+                                onChange={handleChange}
+                                placeholder={searchPlaceholder}
+                                aria-label={searchPlaceholder}
+                                disabled={searchDisabled}
+                            />
+                        </div>
+                    )}
+                    <AccountMenu />
                 </div>
             </div>
         </header>

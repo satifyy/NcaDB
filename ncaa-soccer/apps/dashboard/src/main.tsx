@@ -4,6 +4,10 @@ import App from './App.tsx'
 import { bootstrapData } from './analytics'
 import { Boot } from './components/Boot'
 import { ErrorBoundary } from './components/ErrorBoundary'
+import { AccountProvider } from './auth/account'
+import { AuthShell } from './auth/AuthShell'
+import { authPageFromPath } from './auth/config'
+import { SessionProvider } from './auth/session'
 import './styles/global.css'
 
 const root = ReactDOM.createRoot(document.getElementById('root')!)
@@ -26,16 +30,34 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
   })
 }
 
+/** Session state for the masthead and the account pages, around everything. */
+function withSession(children: React.ReactNode) {
+  return (
+    <React.StrictMode>
+      <SessionProvider>
+        <AccountProvider>{children}</AccountProvider>
+      </SessionProvider>
+    </React.StrictMode>
+  )
+}
+
 function start() {
+  // Account pages (/ncadb/login, /ncadb/profile, …) need no statistics to render, so they
+  // do not wait on the analytics index.
+  const page = authPageFromPath(window.location.pathname)
+  if (page) {
+    root.render(withSession(<ErrorBoundary scope="app"><AuthShell page={page} /></ErrorBoundary>))
+    return
+  }
   root.render(<Boot message="Loading NCAA Division I men’s soccer data…" />)
   withTimeout(bootstrapData(), STARTUP_TIMEOUT_MS)
     .then(analyticsReady =>
       root.render(
-        <React.StrictMode>
+        withSession(
           <ErrorBoundary scope="app">
             <App analyticsReady={analyticsReady} />
-          </ErrorBoundary>
-        </React.StrictMode>,
+          </ErrorBoundary>,
+        ),
       ),
     )
     .catch((err: Error) =>

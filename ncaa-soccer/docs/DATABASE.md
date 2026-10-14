@@ -4,6 +4,10 @@ PostgreSQL 14+ (Railway runs 16+). Schema: `packages/database/migrations/*.sql`,
 in name order by `npm run worker -- migrate` (checksummed, advisory-locked, one
 transaction per file). Never edit an applied migration; add a new one.
 
+User accounts (migration 003, schema `accounts`, role `ncadb_accounts`) and admin
+maintenance requests (migration 004) are described in [AUTHENTICATION.md](AUTHENTICATION.md),
+with the permission boundary between the three application roles.
+
 ## Identity rules
 
 | Entity | Natural key | Why |

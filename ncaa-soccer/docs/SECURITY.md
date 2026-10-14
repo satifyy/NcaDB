@@ -34,6 +34,12 @@ Secret boundaries: owner DB credentials exist only in the Postgres service and t
 variables); the admin token only in `api`; nothing secret in Vercel, GitHub, the
 repository or the browser bundle.
 
+Accounts (once enabled) add a third role, `ncadb_accounts`, used by the API only for
+signed-in users' own data. It has no write access to `role`, the sports data or the audit
+trail, and `ncadb_api`/`ncadb_worker` cannot see the `accounts` schema at all. Sessions are
+Clerk's; the API verifies 60-second bearer tokens and uses no cookies. Details, CSP
+changes and residual risks: [AUTHENTICATION.md](AUTHENTICATION.md).
+
 ## Findings
 
 | # | Severity | Finding | Component | Remediation | Status |
