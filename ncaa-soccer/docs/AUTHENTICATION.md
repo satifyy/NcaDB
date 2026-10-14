@@ -10,8 +10,8 @@ the operations console.
 browser (satifyy.com/ncadb/…)                 Clerk (clerk.satifyy.com, accounts.satifyy.com)
  ├─ clerk-js, headless ──── session cookies ──┤  hosted sign-in / sign-up / account pages:
  │   (no UI, no styles)                       │  email + password, email codes, Google,
- │                                            │  verification, recovery, lockout, new-device
- │                                            │  checks, bot protection
+ │                                            │  verification, recovery, lockout
+ │                                            │  (attack protection: see below)
  └─ fetch + Authorization: Bearer <60 s session token>
         │
         ▼
@@ -25,8 +25,8 @@ browser (satifyy.com/ncadb/…)                 Clerk (clerk.satifyy.com, accoun
 **Provider: Clerk.** It has a first-party React SDK that works with this Vite single-page
 app and a backend verifier for Node, and it supplies everything the requirements list
 (email and password, email codes, Google OAuth, verified addresses, recovery, session
-lifetime and renewal, lockout after repeated failures, bot protection) without our
-storing a credential. Auth0 and Cognito would do the same with more integration code;
+lifetime and renewal, lockout after repeated failures, and bot protection on paid plans)
+without our storing a credential. Auth0 and Cognito would do the same with more integration code;
 Supabase or Firebase Auth would bring a second data platform.
 
 **Clerk runs headless on our pages** (`prefetchUI={false}` in `src/auth/session.tsx`).
@@ -166,9 +166,9 @@ Added to the site's policy, and nothing else:
 Still refused: `'unsafe-inline'` anywhere, frames, Clerk's avatar images (initials are
 shown instead), and **Clerk Protect's in-page loader** (`cdn.protect.clerk.com`, then
 randomized `*.client.protect.clerk.com` hosts). Allowing it would need a wildcard script
-origin and it writes a token to localStorage. Bot protection still applies on the hosted
-pages, where every credential is entered, and every flow passes with it refused. The
-browser logs those refusals as CSP violations; they are expected.
+origin and it writes a token to localStorage. Every credential is entered on the hosted
+pages, so any bot protection Clerk applies runs there, and every flow passes with the
+loader refused. The browser logs those refusals as CSP violations; they are expected.
 
 ## Configuration
 
@@ -201,15 +201,35 @@ a `VITE_` variable.
    (Web application) with Clerk's **Authorized redirect URI**
    (`https://clerk.satifyy.com/v1/oauth_callback`) and paste its client id and secret into
    Clerk. Clerk's shared development credentials do not work in production.
-3. **Attack protection**: keep user lockout on (10 attempts / 60 min by default), turn on
-   bot protection and email enumeration protection, keep "client trust" (new-device
-   verification) on.
+3. **Attack protection**: keep user lockout on (10 attempts / 60 min by default). Turn on
+   bot sign-up protection and email enumeration protection where the plan includes them
+   (see *Attack protection in production* below for what is on today).
 4. **Sessions**: maximum lifetime (for example 7 days) and an inactivity timeout (for
    example 24 h). Session tokens stay at 60 s.
 5. **Paths / Account Portal**: allowed redirect URLs `https://satifyy.com/ncadb/*`; after
    sign-in and sign-up `https://satifyy.com/ncadb/dashboard`; after sign-out
    `https://satifyy.com/ncadb/`. Brand the portal with the site's name and logo.
 6. **API keys**: copy the publishable key (Vercel) and the JWT public key (Railway API).
+
+### Attack protection in production
+
+As configured on the production instance (checked 2026-10-14 against Clerk's published
+instance settings):
+
+| Protection | State |
+| --- | --- |
+| Verified email (email code) required to sign up | On |
+| Password: 15 characters minimum, breached passwords refused at sign-in | On |
+| Account lockout: 10 failed attempts, locked 60 minutes | On |
+| Bot sign-up protection (CAPTCHA) | **Off**: needs a paid Clerk plan. Accepted as a known limitation. |
+| Email enumeration protection | **Off** |
+| API rate limiting (`RATE_LIMIT_PER_MINUTE`, per IP) | On |
+| Administrators only via the owner-controlled `NCADB_ADMIN_SUBJECTS` list | On |
+
+Without bot protection a script can create accounts, but each one needs a mailbox that
+receives the verification code, and an account can only touch its own favorites and
+preferences: nobody becomes an administrator by signing up. Turning bot protection on later
+is a dashboard change; no code or redeploy is needed.
 
 ## Rollout (needs authorization; nothing below has been applied to production)
 
@@ -256,6 +276,8 @@ Run the end-to-end suite with a Clerk **development** instance (the script refus
   Acceptable for favorites; an action that cannot tolerate it would need a session lookup.
 - **Clerk is a dependency** for signing in (not for reading statistics). If Clerk is down,
   the account menu hides itself and the statistics keep working.
+- **No bot sign-up protection** on the current Clerk plan (see *Attack protection in
+  production*): automated sign-ups are limited only by email verification and rate limits.
 - **Bundle size**: `@clerk/react` adds about 29 KB gzipped even with sign-in off.
 - **Admin role is cached per request only**, so a revoked administrator loses access on
   their next request. Their already-loaded admin page stays visible until they reload.
