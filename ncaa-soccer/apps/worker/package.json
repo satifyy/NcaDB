@@ -1,0 +1,15 @@
+{
+    "name": "@ncaa/worker",
+    "version": "0.0.0",
+    "private": true,
+    "description": "Scheduled ingestion: scrapes with the existing pipeline, persists to PostgreSQL.",
+    "scripts": {
+        "typecheck": "tsc -p tsconfig.json",
+        "start": "tsx src/cli.ts"
+    },
+    "dependencies": {
+        "@ncaa/database": "*",
+        "@ncaa/parsers": "*",
+        "@ncaa/storage": "*"
+    }
+}

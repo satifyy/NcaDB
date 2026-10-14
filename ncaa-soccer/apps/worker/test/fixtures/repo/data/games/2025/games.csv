@@ -1,0 +1,7 @@
+game_id,date,home_team_name,away_team_name,home_team_ranked,away_team_ranked,home_score,away_score,location_type,status,schedule_url,boxscore_url,boxscore_url_alt,dedupe_key,game_type
+sidearm-2025-09-05-Duke-Clemson,2025-09-05,Duke,Clemson,false,true,2,1,home,final,,https://goduke.com/boxscore/1,,2025-09-05-Clemson-Duke,regular
+wmt-2025-09-05-Clemson-Duke,2025-09-05,Clemson,#9 Duke University,false,false,1,2,away,final,,https://clemsontigers.com/boxscore/9,,2025-09-05-Clemson-Duke-University,regular
+sidearm-2025-09-12-Indiana-Duke,2025-09-12,Indiana,Duke,false,false,0,0,home,final,,https://iuhoosiers.com/boxscore/2,,2025-09-12-Duke-Indiana,regular
+sidearm-2025-09-19-Duke-Mount-Olive,2025-09-19,Duke,Mount Olive,false,false,4,0,home,final,,,,2025-09-19-Duke-Mount-Olive,exhibition
+sidearm-2025-11-14-Duke-TBD,2025-11-14,Duke,ACC Semifinals,false,false,,,neutral,scheduled,,,,2025-11-14-ACC-Semifinals-Duke,conference_tournament
+sidearm-2025-10-30-Clemson-Indiana,2025-10-30,Clemson,Indiana,false,false,,,home,scheduled,,,,2025-10-30-Clemson-Indiana,regular

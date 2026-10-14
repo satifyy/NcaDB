@@ -1,0 +1,11 @@
+# Default rules, plus an allowlist for the obviously fake tokens the tests use.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Test fixtures"
+paths = [
+  '''ncaa-soccer/apps/api/test/''',
+  '''ncaa-soccer/apps/worker/test/''',
+  '''ncaa-soccer/packages/database/test/''',
+]

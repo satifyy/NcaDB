@@ -1,0 +1,110 @@
+[
+    {
+        "team_id": "GARDNER_WEBB",
+        "name_canonical": "Gardner-Webb",
+        "conference": "Big South",
+        "sport": "msoc",
+        "schedule_url": "https://gwusports.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Gardner–Webb University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 21
+    },
+    {
+        "team_id": "HIGH_POINT",
+        "name_canonical": "High Point",
+        "conference": "Big South",
+        "sport": "msoc",
+        "schedule_url": "https://highpointpanthers.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "High Point University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 87
+    },
+    {
+        "team_id": "LONGWOOD",
+        "name_canonical": "Longwood",
+        "conference": "Big South",
+        "sport": "msoc",
+        "schedule_url": "https://longwoodlancers.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Longwood University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 134
+    },
+    {
+        "team_id": "PRESBYTERIAN",
+        "name_canonical": "Presbyterian",
+        "conference": "Big South",
+        "sport": "msoc",
+        "schedule_url": "https://gobluehose.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Presbyterian College"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 166
+    },
+    {
+        "team_id": "RADFORD",
+        "name_canonical": "Radford",
+        "conference": "Big South",
+        "sport": "msoc",
+        "schedule_url": "https://radfordathletics.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Radford University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 20
+    },
+    {
+        "team_id": "UNC_ASHEVILLE",
+        "name_canonical": "UNC Asheville",
+        "conference": "Big South",
+        "sport": "msoc",
+        "schedule_url": "https://uncabulldogs.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 19
+    },
+    {
+        "team_id": "USC_UPSTATE",
+        "name_canonical": "USC Upstate",
+        "conference": "Big South",
+        "sport": "msoc",
+        "schedule_url": "https://upstatespartans.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 21
+    },
+    {
+        "team_id": "WINTHROP",
+        "name_canonical": "Winthrop",
+        "conference": "Big South",
+        "sport": "msoc",
+        "schedule_url": "https://winthropeagles.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Winthrop University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 112
+    }
+]

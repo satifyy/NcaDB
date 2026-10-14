@@ -1,0 +1,5 @@
+[
+    { "team_id": "DUKE", "name_canonical": "Duke", "conference": "ACC", "sport": "msoc", "schedule_url": "https://goduke.com/sports/mens-soccer/schedule", "platform_guess": "sidearm", "aliases": ["Duke University"] },
+    { "team_id": "CLEMSON", "name_canonical": "Clemson", "conference": "ACC", "sport": "msoc", "schedule_url": "https://clemsontigers.com/sports/mens-soccer/schedule", "platform_guess": "wmt" },
+    { "team_id": "INDIANA", "name_canonical": "Indiana", "conference": "Big Ten", "sport": "msoc", "schedule_url": "https://iuhoosiers.com/sports/mens-soccer/schedule", "platform_guess": "sidearm" }
+]

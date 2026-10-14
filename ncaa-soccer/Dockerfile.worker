@@ -1,0 +1,22 @@
+# Ingestion worker: the existing scrapers (Playwright for Sidearm sites) plus the
+# database loader. Runs as a Railway cron service: starts, does one run, exits.
+#
+# The base image carries Chromium for exactly the Playwright version in the lockfile
+# (playwright-chromium 1.57.0); bump the two together.
+FROM mcr.microsoft.com/playwright:v1.57.0-noble
+
+ENV NODE_ENV=production \
+    PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 \
+    PLAYWRIGHT_BROWSERS_PATH=/ms-playwright \
+    WORK_DIR=/tmp/ncadb-work \
+    npm_config_update_notifier=false
+
+WORKDIR /app
+COPY . .
+# Dev dependencies included: tsx runs the TypeScript scripts, as it does locally.
+RUN npm ci --include=dev --no-audit --no-fund \
+    && npx tsc -b \
+    && chown -R pwuser:pwuser /app
+
+USER pwuser
+CMD ["npx", "tsx", "apps/worker/src/cli.ts", "nightly", "--cron"]

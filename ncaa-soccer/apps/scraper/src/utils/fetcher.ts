@@ -2,6 +2,8 @@ import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import axiosRetry from 'axios-retry';
 import * as fs from 'fs';
 import * as path from 'path';
+import { RAW_DIR } from '@ncaa/storage';
+import { SCRAPER_USER_AGENT, envNumber } from '@ncaa/parsers';
 
 export interface FetcherConfig {
     delayMs?: number;
@@ -18,11 +20,11 @@ export class Fetcher {
 
     constructor(config: FetcherConfig = {}) {
         this.config = {
-            delayMs: 1000,
+            delayMs: envNumber('SCRAPER_REQUEST_DELAY_MS', 1000),
             timeout: 10000,
-            retries: 3,
-            userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-            rawDir: path.resolve(process.cwd(), 'data/raw'), // Default to data/raw in root
+            retries: envNumber('SCRAPER_MAX_RETRIES', 3),
+            userAgent: SCRAPER_USER_AGENT,
+            rawDir: RAW_DIR,
             ...config
         };
 

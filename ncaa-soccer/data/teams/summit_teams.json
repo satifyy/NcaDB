@@ -1,0 +1,80 @@
+[
+    {
+        "team_id": "DELAWARE",
+        "name_canonical": "Delaware",
+        "conference": "Summit",
+        "sport": "msoc",
+        "schedule_url": "https://bluehens.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of Delaware"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 17
+    },
+    {
+        "team_id": "KANSAS_CITY",
+        "name_canonical": "Kansas City",
+        "conference": "Summit",
+        "sport": "msoc",
+        "schedule_url": "https://kcroos.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 24
+    },
+    {
+        "team_id": "OMAHA",
+        "name_canonical": "Omaha",
+        "conference": "Summit",
+        "sport": "msoc",
+        "schedule_url": "https://omavs.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 70
+    },
+    {
+        "team_id": "ORAL_ROBERTS",
+        "name_canonical": "Oral Roberts",
+        "conference": "Summit",
+        "sport": "msoc",
+        "schedule_url": "https://oruathletics.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Oral Roberts University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 106
+    },
+    {
+        "team_id": "ST_THOMAS",
+        "name_canonical": "St. Thomas",
+        "conference": "Summit",
+        "sport": "msoc",
+        "schedule_url": "https://tommiesports.com/sports/msoc/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of St. Thomas (Minnesota)"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 17
+    },
+    {
+        "team_id": "UMASS",
+        "name_canonical": "UMass",
+        "conference": "Summit",
+        "sport": "msoc",
+        "schedule_url": "https://umassathletics.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 17
+    }
+]

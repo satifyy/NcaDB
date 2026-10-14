@@ -48,6 +48,19 @@ export class SidearmBoxScoreParser {
             return { game: {}, playerStats: advancedTableStats };
         }
 
+        // A captioned player table, read by its own headers.
+        //
+        // Tried before the positional reader below because that one identifies a player
+        // table by counting columns — eight or more — and then reads fixed offsets out of
+        // it. Layouts that omit a column break both halves at once: William & Mary
+        // publishes "Pos, #, Player, SH, SOG, G, A" with no minutes, so every row was
+        // discarded as invalid and the game was logged as having no player table at all,
+        // when it had two.
+        const captioned = this.parseCaptionedTables($, gameId);
+        if (captioned.length > 0) {
+            return { game: {}, playerStats: captioned };
+        }
+
         // Find tables with class 'sidearm-table overall-stats' OR 'w-full'
         // Try multiple selectors to handle different Sidearm layouts
         let tables = $('table.sidearm-table.overall-stats');
@@ -152,6 +165,110 @@ export class SidearmBoxScoreParser {
             game: {},
             playerStats
         };
+    }
+
+    /**
+     * Column names a Sidearm player table uses, mapped onto what they mean.
+     *
+     * Sites abbreviate inconsistently and drop columns they have no data for, so the
+     * position of a statistic is not fixed and its absence is normal. Reading the header
+     * row makes both survivable.
+     */
+    private static readonly PLAYER_COLUMNS: Record<string, string[]> = {
+        jersey: ['#', 'no', 'no.', 'number'],
+        player: ['player', 'name', 'athlete'],
+        shots: ['sh', 'shots', 'sh.'],
+        shots_on_goal: ['sog', 'sh att-og', 'shots on goal', 'so g'],
+        goals: ['g', 'goals'],
+        assists: ['a', 'assists', 'ast'],
+        minutes: ['min', 'min.', 'minutes', 'mp']
+    };
+
+    /**
+     * Player rows from tables that say what they are.
+     *
+     * A caption of "ELON - Player Stats" identifies both the table and the squad in it,
+     * which is stronger evidence than the column count the positional reader relies on —
+     * and it keeps a "Team Statistics" table, which is also eight columns wide, from being
+     * read as a roster.
+     */
+    private parseCaptionedTables($: cheerio.CheerioAPI, gameId: string): PlayerStat[] {
+        const stats: PlayerStat[] = [];
+
+        $('table').each((_, table) => {
+            const caption = $(table).find('caption').text().replace(/\s+/g, ' ').trim();
+            if (!/player\s*stat/i.test(caption)) return;
+
+            // "W&M - Player Stats" -> "W&M". The team is whatever precedes the dash; a
+            // caption without one names no squad and is left to the positional reader.
+            const dash = caption.search(/\s[-–—]\s/);
+            const teamName = dash === -1 ? '' : caption.slice(0, dash).trim();
+            if (!teamName) return;
+
+            const headers = $(table)
+                .find('thead th, tr:first-child th')
+                .map((__, cell) => $(cell).text().replace(/\s+/g, ' ').trim().toLowerCase())
+                .get();
+            if (headers.length === 0) return;
+
+            const columnOf = (field: string): number => {
+                const names = SidearmBoxScoreParser.PLAYER_COLUMNS[field];
+                return headers.findIndex(header => names.includes(header));
+            };
+            const at = {
+                jersey: columnOf('jersey'),
+                player: columnOf('player'),
+                shots: columnOf('shots'),
+                shots_on_goal: columnOf('shots_on_goal'),
+                goals: columnOf('goals'),
+                assists: columnOf('assists'),
+                minutes: columnOf('minutes')
+            };
+            // Without a name column there is no player to record, whatever else is there.
+            if (at.player === -1) return;
+
+            $(table)
+                .find('tbody tr')
+                .each((__, row) => {
+                    const cells = $(row).find('td');
+                    if (cells.length <= at.player) return;
+
+                    const text = (index: number) => (index === -1 ? '' : $(cells[index]).text().trim());
+                    const number = (index: number) => {
+                        const parsed = parseInt(text(index), 10);
+                        return Number.isFinite(parsed) ? parsed : 0;
+                    };
+
+                    const playerName = this.normalizePlayerName(text(at.player));
+                    // Sidearm closes these tables with "Totals" and "TM TEAM" rows, which
+                    // are the table's own arithmetic rather than anyone who played.
+                    if (!playerName || /^(totals?|tm team|team)$/i.test(playerName)) return;
+
+                    const normalised = playerName.toLowerCase().replace(/[^a-z0-9]/g, '');
+                    if (!normalised) return;
+
+                    stats.push({
+                        game_id: gameId,
+                        team_id: teamName,
+                        player_name: playerName,
+                        player_key: `${teamName.toLowerCase().replace(/[^a-z0-9]/g, '')}:${normalised}`,
+                        jersey_number: text(at.jersey) || null,
+                        // Absent, not zero: a table without a minutes column says nothing
+                        // about how long anyone played, and recording that as 0 would put
+                        // every one of these players on the bench.
+                        minutes: at.minutes === -1 ? null : number(at.minutes),
+                        goals: number(at.goals),
+                        assists: number(at.assists),
+                        shots: number(at.shots),
+                        stats: {
+                            shots_on_goal: number(at.shots_on_goal),
+                            saves: 0
+                        }
+                    } as PlayerStat);
+                });
+        });
+
+        return stats;
     }
 
     private parseAdvancedTables($: cheerio.CheerioAPI, gameId: string): PlayerStat[] {

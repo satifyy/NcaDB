@@ -1,0 +1,87 @@
+# Runs on every pull request and on main. Nothing here deploys: Railway (API, worker)
+# and Vercel (dashboard) deploy from main through their GitHub integrations, and only
+# after this workflow is green if branch protection requires it (see docs/DEPLOYMENT.md).
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_call:
+
+defaults:
+  run:
+    working-directory: ncaa-soccer
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: ncadb_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/ncadb_test
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+    steps:
+      - uses: actions/checkout@v4
+
+      # `apps/dashboard/src/data` used to be 72 MB of generated JSON committed by hand.
+      # The dashboard now reads it from the API; it must never come back into git.
+      - name: No generated dashboard data in git
+        run: |
+          tracked=$(git ls-files apps/dashboard/src/data)
+          if [ -n "$tracked" ]; then
+            echo "::error::Generated dashboard data is tracked."
+            echo "$tracked"
+            exit 1
+          fi
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: ncaa-soccer/package-lock.json
+
+      - run: npm ci
+
+      - name: Typecheck (packages, scraper, worker, API)
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npm test
+
+      # Migrations applied from scratch, then loader, API and worker CLI against a real
+      # Postgres: idempotency, corrections, rollback, locking, failure and retry.
+      - name: Database, API and worker tests
+        run: npm run test:db
+
+      - name: Validate team inventories
+        run: npm run validate
+
+      - name: Lint dashboard
+        run: npm run lint
+        working-directory: ncaa-soccer/apps/dashboard
+
+      - name: Build dashboard
+        run: npm run build
+        working-directory: ncaa-soccer/apps/dashboard
+        env:
+          VITE_API_BASE_URL: https://api.example.invalid
+
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Scan for committed secrets
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

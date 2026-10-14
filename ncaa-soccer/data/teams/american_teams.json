@@ -1,0 +1,118 @@
+[
+    {
+        "team_id": "CHARLOTTE",
+        "name_canonical": "Charlotte",
+        "conference": "American",
+        "sport": "msoc",
+        "schedule_url": "https://charlotte49ers.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 18
+    },
+    {
+        "team_id": "FAU",
+        "name_canonical": "FAU",
+        "conference": "American",
+        "sport": "msoc",
+        "schedule_url": "https://fausports.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 19
+    },
+    {
+        "team_id": "FIU",
+        "name_canonical": "FIU",
+        "conference": "American",
+        "sport": "msoc",
+        "schedule_url": "https://fiusports.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 160
+    },
+    {
+        "team_id": "MEMPHIS",
+        "name_canonical": "Memphis",
+        "conference": "American",
+        "sport": "msoc",
+        "schedule_url": "https://gotigersgo.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of Memphis"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 15
+    },
+    {
+        "team_id": "MISSOURI_STATE",
+        "name_canonical": "Missouri State",
+        "conference": "American",
+        "sport": "msoc",
+        "schedule_url": "https://missouristatebears.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "Missouri State University"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 20
+    },
+    {
+        "team_id": "SOUTH_FLORIDA",
+        "name_canonical": "South Florida",
+        "conference": "American",
+        "sport": "msoc",
+        "schedule_url": "https://gousfbulls.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of South Florida"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 20
+    },
+    {
+        "team_id": "TEMPLE_UNIVERSITY",
+        "name_canonical": "Temple University",
+        "conference": "American",
+        "sport": "msoc",
+        "schedule_url": "https://owlsports.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 16
+    },
+    {
+        "team_id": "TULSA",
+        "name_canonical": "Tulsa",
+        "conference": "American",
+        "sport": "msoc",
+        "schedule_url": "https://tulsahurricane.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [
+            "University of Tulsa"
+        ],
+        "timezone": "America/New_York",
+        "verified_games": 20
+    },
+    {
+        "team_id": "UAB",
+        "name_canonical": "UAB",
+        "conference": "American",
+        "sport": "msoc",
+        "schedule_url": "https://uabsports.com/sports/mens-soccer/schedule",
+        "platform_guess": "sidearm",
+        "parser_key": "sidearm_std",
+        "aliases": [],
+        "timezone": "America/New_York",
+        "verified_games": 19
+    }
+]

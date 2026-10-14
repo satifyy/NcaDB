@@ -1,18 +1,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { chromium } from 'playwright-chromium';
-import { parse } from 'csv-parse/sync';
+import { GameCsvRow, RAW_DIR, gamesCsv, readAll } from '@ncaa/storage';
 import { SidearmParser } from '@ncaa/parsers';
-
-type CsvGameRow = {
-    date: string;
-    home_team_name: string;
-    away_team_name: string;
-    home_score?: string;
-    away_score?: string;
-    status?: string;
-    boxscore_url?: string;
-};
 
 // Normalize a boxscore URL using the schedule page as base.
 const resolveBoxscoreUrl = (rawUrl: string | undefined, baseUrl: string): string | undefined => {
@@ -39,78 +29,82 @@ const resolveBoxscoreUrl = (rawUrl: string | undefined, baseUrl: string): string
 const normalizeKey = (date: string, home: string, away: string) => `${date}__${home.toLowerCase().trim()}__${away.toLowerCase().trim()}`;
 
 const readCsvGames = (year: string, teamName: string) => {
-    const csvPath = path.resolve(__dirname, `../../../../data/games/${year}/games.csv`);
-    const content = fs.readFileSync(csvPath, 'utf8');
-    const rows = parse<CsvGameRow>(content, { columns: true });
+    const rows = readAll<GameCsvRow>(gamesCsv(year));
     return rows.filter((r) => r.home_team_name === teamName || r.away_team_name === teamName);
 };
 
 const fetchHtmlLikeV2 = async (url: string, alias: string) => {
     const browser = await chromium.launch({ headless: true, timeout: 60000 });
-    const page = await browser.newPage({
-        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122 Safari/537.36'
-    });
-    page.setDefaultNavigationTimeout(60000);
-    page.setDefaultTimeout(30000);
-
-    const tableToggleSelector = '#_viewType_table, button[aria-label="Table View"], a[aria-label="Switch to Grid View"], a[data-view="grid"], a:has-text("Grid")';
-    const tableSelectorConcrete = '.c-schedule__table, #tablePanel table, table[data-table-view]';
-
-    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
-    await page.waitForTimeout(2000);
-
+    // Closed in `finally`. Every navigation and selector wait below can throw, and a
+    // leaked browser keeps the process alive long after the comparison has failed.
+    let html: string;
     try {
-        await page.evaluate(() => {
-            const popups = document.querySelectorAll('.c-polite-pop-up--index, .s-popup, [class*="popup"], [id*="popup"], #iubenda-cs-banner, [class*="iubenda"]');
-            popups.forEach(p => {
-                const el = p as HTMLElement;
-                el.style.display = 'none';
-                el.style.visibility = 'hidden';
-                el.style.opacity = '0';
-                el.style.pointerEvents = 'none';
-            });
+        const page = await browser.newPage({
+            userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122 Safari/537.36'
         });
-    } catch {
-        /* ignore */
-    }
+        page.setDefaultNavigationTimeout(60000);
+        page.setDefaultTimeout(30000);
 
-    try {
-        const dropdownSelector = 'select#view, select.dropdown__select, select[name="view"]';
-        const dropdown = await page.$(dropdownSelector);
-        if (dropdown) {
-            await page.selectOption(dropdownSelector, 'list');
-            await page.waitForTimeout(1000);
+        const tableToggleSelector = '#_viewType_table, button[aria-label="Table View"], a[aria-label="Switch to Grid View"], a[data-view="grid"], a:has-text("Grid")';
+        const tableSelectorConcrete = '.c-schedule__table, #tablePanel table, table[data-table-view]';
+
+        await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
+        await page.waitForTimeout(2000);
+
+        try {
+            await page.evaluate(() => {
+                const popups = document.querySelectorAll('.c-polite-pop-up--index, .s-popup, [class*="popup"], [id*="popup"], #iubenda-cs-banner, [class*="iubenda"]');
+                popups.forEach(p => {
+                    const el = p as HTMLElement;
+                    el.style.display = 'none';
+                    el.style.visibility = 'hidden';
+                    el.style.opacity = '0';
+                    el.style.pointerEvents = 'none';
+                });
+            });
+        } catch {
+            /* ignore */
         }
-    } catch {
-        /* ignore */
-    }
 
-    try {
-        if (await page.$(tableToggleSelector)) {
-            await page.click(tableToggleSelector, { timeout: 5000, force: true });
+        try {
+            const dropdownSelector = 'select#view, select.dropdown__select, select[name="view"]';
+            const dropdown = await page.$(dropdownSelector);
+            if (dropdown) {
+                await page.selectOption(dropdownSelector, 'list');
+                await page.waitForTimeout(1000);
+            }
+        } catch {
+            /* ignore */
         }
-    } catch {
-        /* ignore */
+
+        try {
+            if (await page.$(tableToggleSelector)) {
+                await page.click(tableToggleSelector, { timeout: 5000, force: true });
+            }
+        } catch {
+            /* ignore */
+        }
+
+        try {
+            await page.waitForSelector(tableSelectorConcrete, { timeout: 5000 });
+        } catch {
+            /* ignore */
+        }
+        await page.waitForTimeout(1500);
+
+        for (let i = 0; i < 2; i++) {
+            await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+            await page.waitForTimeout(800);
+            await page.evaluate(() => window.scrollTo(0, 0));
+            await page.waitForTimeout(500);
+        }
+
+        html = await page.content();
+    } finally {
+        await browser.close();
     }
 
-    try {
-        await page.waitForSelector(tableSelectorConcrete, { timeout: 5000 });
-    } catch {
-        /* ignore */
-    }
-    await page.waitForTimeout(1500);
-
-    for (let i = 0; i < 2; i++) {
-        await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-        await page.waitForTimeout(800);
-        await page.evaluate(() => window.scrollTo(0, 0));
-        await page.waitForTimeout(500);
-    }
-
-    const html = await page.content();
-    await browser.close();
-
-    const rawDir = path.resolve(__dirname, '../../../../data/raw');
+    const rawDir = RAW_DIR;
     if (!fs.existsSync(rawDir)) fs.mkdirSync(rawDir, { recursive: true });
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
     const slug = alias.replace(/[^a-zA-Z0-9_-]/g, '_');

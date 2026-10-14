@@ -1,0 +1,22 @@
+# Built inside the image.
+**/node_modules
+**/dist
+**/*.tsbuildinfo
+
+# The database is the system of record on the server: the committed CSVs are loaded
+# once with `backfill --from-csv` from a checkout, never shipped in the image.
+data/games
+data/player_stats
+data/predictions
+data/raw
+data/ratings/*
+!data/ratings/model.json
+data/pipeline_state.json
+data/season_coverage.json
+apps/dashboard
+apps/dashboard-legacy
+apps/scraper/src/scripts/archive
+**/test/fixtures
+.env
+.env.*
+*.log

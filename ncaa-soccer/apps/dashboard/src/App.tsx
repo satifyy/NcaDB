@@ -1,71 +1,87 @@
-import { useState, useMemo } from 'react';
-import { Header } from './components/Layout/Header';
-import { KPIGrid } from './components/Dashboard/KPIGrid';
-import { ChartsGrid } from './components/Dashboard/ChartsGrid';
-import { PlayerTable } from './components/Dashboard/PlayerTable';
-import playerStatsData from './data/player_stats.json';
-import type { PlayerStat } from './types';
+import { useState } from 'react';
+import { Masthead } from './components/Layout/Masthead';
+import { VIEWS } from './views';
+import type { ViewId } from './views';
+import { OverviewView } from './components/views/OverviewView';
+import { RankingsView } from './components/views/RankingsView';
+import { PredictionsView } from './components/views/PredictionsView';
+import { ImpactView } from './components/views/ImpactView';
+import { PlayersView } from './components/views/PlayersView';
+import { TeamsView } from './components/views/TeamsView';
+import { GamesView } from './components/views/GamesView';
+import { DirectoryView } from './components/views/DirectoryView';
+import { StatusView } from './components/views/StatusView';
+import { Notice } from './components/ui';
+import { navigate, useRoute } from './route';
 
-function App() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [teamFilter, setTeamFilter] = useState('all');
+/** What the one search box narrows, per view, so its placeholder is never a lie. */
+const PLACEHOLDER: Record<ViewId, string> = {
+    overview: 'Search players and teams…',
+    rankings: 'Search teams or conferences…',
+    predictions: 'Search this week’s fixtures…',
+    impact: 'Search players, teams, conferences…',
+    players: 'Search players, teams, conferences…',
+    teams: 'Search teams…',
+    games: 'Search is not used here',
+    directory: 'Search players by name…',
+    status: 'Search is not used here'
+};
 
-  // Cast imported JSON to typed array
-  const allStats: PlayerStat[] = playerStatsData as unknown as PlayerStat[];
+/**
+ * The shell: one masthead, one search term, and whichever view the URL names.
+ *
+ * Each view owns its own season and filters, because they mean different things — a
+ * season of predictions and a season of career totals are not the same selection, and
+ * forcing them to share one would make switching views silently change what a reader was
+ * looking at. The search term is shared, because "Clemson" means Clemson everywhere.
+ *
+ * `analyticsReady` is false on a deployment whose nightly analytics have not run yet;
+ * the database-backed views still work, and the others say why they are empty.
+ */
+function App({ analyticsReady }: { analyticsReady: boolean }) {
+    const route = useRoute(analyticsReady ? 'overview' : 'teams');
+    const [search, setSearch] = useState({ view: route.view, term: '' });
+    // The term belongs to the view it was typed in; a new view starts with an empty box.
+    const searchTerm = search.view === route.view ? search.term : '';
+    const spec = VIEWS.find(v => v.id === route.view)!;
 
-  // Extract unique teams
-  const teams = useMemo(() => {
-    return [...new Set(allStats.map(p => p.team_id))].sort();
-  }, [allStats]);
+    return (
+        <div className="app-shell">
+            <Masthead
+                view={route.view}
+                onView={next => navigate(next)}
+                searchTerm={searchTerm}
+                onSearch={term => setSearch({ view: route.view, term })}
+                searchPlaceholder={PLACEHOLDER[route.view]}
+                searchDisabled={route.view === 'games' || route.view === 'status' || route.id !== null}
+            />
 
-  // Filter Data
-  const filteredData = useMemo(() => {
-    const lowerTerm = searchTerm.toLowerCase();
-    return allStats.filter(p => {
-      const matchesSearch =
-        p.player_name.toLowerCase().includes(lowerTerm) ||
-        p.team_id.toLowerCase().includes(lowerTerm);
-      const matchesTeam = teamFilter === 'all' || p.team_id === teamFilter;
-
-      return matchesSearch && matchesTeam;
-    });
-  }, [allStats, searchTerm, teamFilter]);
-
-  return (
-    <div className="container" style={{ paddingBottom: '4rem' }}>
-      <Header onSearch={setSearchTerm} />
-
-      <main>
-        {/* Controls */}
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1.5rem' }}>
-          <select
-            value={teamFilter}
-            onChange={(e) => setTeamFilter(e.target.value)}
-            style={{
-              padding: '0.5rem 1rem',
-              borderRadius: 'var(--radius-md)',
-              backgroundColor: 'var(--color-bg-secondary)',
-              color: 'var(--color-text-primary)',
-              border: '1px solid var(--color-bg-tertiary)',
-              outline: 'none',
-              cursor: 'pointer'
-            }}
-          >
-            <option value="all">All Teams</option>
-            {teams.map(team => (
-              <option key={team} value={team}>{team}</option>
-            ))}
-          </select>
+            <main className="container" id="main">
+                {spec.analytics && !analyticsReady ? (
+                    <div style={{ marginTop: 'var(--space-8)' }}>
+                        <Notice kind="info">
+                            Ratings, forecasts and season tables are built by the nightly analytics run, which has not completed
+                            on this deployment yet. Teams, Games and Players are available now.
+                        </Notice>
+                    </div>
+                ) : (
+                    <>
+                        {route.view === 'overview' && <OverviewView onView={next => navigate(next)} />}
+                        {route.view === 'rankings' && <RankingsView searchTerm={searchTerm} />}
+                        {route.view === 'predictions' && <PredictionsView searchTerm={searchTerm} />}
+                        {route.view === 'impact' && <ImpactView searchTerm={searchTerm} />}
+                        {route.view === 'players' && (
+                            <PlayersView searchTerm={searchTerm} onSearch={term => setSearch({ view: 'players', term })} />
+                        )}
+                        {route.view === 'teams' && <TeamsView searchTerm={searchTerm} teamId={route.id} />}
+                        {route.view === 'games' && <GamesView gameId={route.id} />}
+                        {route.view === 'directory' && <DirectoryView searchTerm={searchTerm} playerId={route.id} />}
+                        {route.view === 'status' && <StatusView />}
+                    </>
+                )}
+            </main>
         </div>
-
-        <KPIGrid stats={filteredData} />
-
-        <ChartsGrid data={filteredData} />
-
-        <PlayerTable data={filteredData} />
-      </main>
-    </div>
-  );
+    );
 }
 
 export default App;

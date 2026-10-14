@@ -1,17 +1,32 @@
-import { TeamSchema, TeamResolver } from '@ncaa/shared';
+import { TeamSchema, TeamResolver, Team } from '@ncaa/shared';
+import * as fs from 'fs';
 import * as path from 'path';
+import { TEAMS_DIR, TEAM_ALIASES } from '@ncaa/storage';
 
 console.log("Starting inventory validation...");
 
 // Path to data
-const dataPath = path.resolve(__dirname, '../../../data/teams');
-const teamsPath = path.join(dataPath, 'acc_teams.json');
-const aliasesPath = path.join(dataPath, 'team_aliases.json');
+const dataPath = TEAMS_DIR;
+const aliasesPath = TEAM_ALIASES;
 
-const resolver = new TeamResolver(teamsPath, aliasesPath);
-const teams = resolver.getTeams();
+// Every conference inventory, not just the ACC, so a discovery run is checked too.
+// `d1_msoc_teams.json` is their union (`p5_msoc_teams.json` was its name while the
+// dataset was five conferences), so validating it as well would double-report, and
+// `test_teams.json` is a hand-written fixture rather than a real inventory.
+const NOT_INVENTORIES = new Set(['d1_msoc_teams.json', 'p5_msoc_teams.json', 'test_teams.json']);
+const inventoryFiles = fs
+    .readdirSync(dataPath)
+    .filter(file => file.endsWith('_teams.json') && !NOT_INVENTORIES.has(file))
+    .sort();
 
-console.log(`Loaded ${teams.length} teams.`);
+const teams: Team[] = [];
+for (const file of inventoryFiles) {
+    const loaded = new TeamResolver(path.join(dataPath, file), aliasesPath).getTeams();
+    console.log(`  ${file}: ${loaded.length} teams`);
+    teams.push(...loaded);
+}
+
+console.log(`Loaded ${teams.length} teams from ${inventoryFiles.length} inventories.`);
 
 let errorCount = 0;
 const teamIds = new Set<string>();
