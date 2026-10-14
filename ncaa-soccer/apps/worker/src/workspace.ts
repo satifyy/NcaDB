@@ -22,14 +22,31 @@ export const inventoryFile = (root: string) => path.join(root, 'data/teams/d1_ms
 export const teamsDir = (root: string) => path.join(root, 'data/teams');
 export const dashboardDataDir = (root: string) => path.join(root, 'apps/dashboard/src/data');
 
+/**
+ * Copies file contents into newly created files.
+ *
+ * Not `fs.cpSync`: that preserves permissions, and the image's code is read-only to the
+ * runtime user, so the copies came out read-only too — and the second preparation in a
+ * run (hydrate, then analytics) failed with EACCES writing into them.
+ */
+function copyWritable(from: string, to: string): void {
+    if (fs.statSync(from).isDirectory()) {
+        fs.mkdirSync(to, { recursive: true });
+        for (const entry of fs.readdirSync(from)) copyWritable(path.join(from, entry), path.join(to, entry));
+        return;
+    }
+    fs.mkdirSync(path.dirname(to), { recursive: true });
+    fs.rmSync(to, { force: true });
+    fs.writeFileSync(to, fs.readFileSync(from));
+}
+
 /** Creates the scratch tree with the inventory and the fitted model in place. */
 export function prepareWorkDir(config: WorkerConfig): void {
     fs.mkdirSync(path.join(config.workDir, 'data'), { recursive: true });
-    fs.cpSync(teamsDir(config.codeRoot), teamsDir(config.workDir), { recursive: true });
+    copyWritable(teamsDir(config.codeRoot), teamsDir(config.workDir));
     const model = path.join(config.codeRoot, 'data/ratings/model.json');
     if (fs.existsSync(model)) {
-        fs.mkdirSync(path.join(config.workDir, 'data/ratings'), { recursive: true });
-        fs.copyFileSync(model, path.join(config.workDir, 'data/ratings/model.json'));
+        copyWritable(model, path.join(config.workDir, 'data/ratings/model.json'));
     }
     // Stage progress from an earlier process means nothing here: every run starts from
     // what the database holds, not from what a previous container left on disk.
