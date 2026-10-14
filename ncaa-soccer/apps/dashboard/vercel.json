@@ -19,7 +19,7 @@
             "destination": "/terms.html"
         },
         {
-            "source": "/(login|signup|profile|dashboard|admin)/?",
+            "source": "/:page(login|signup|profile|dashboard|admin)",
             "destination": "/index.html"
         }
     ],
