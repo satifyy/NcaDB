@@ -33,16 +33,23 @@ export const dashboardDataDir = (root: string) => path.join(root, 'apps/dashboar
  * link planted in the scratch tree cannot redirect a write elsewhere.
  */
 function copyWritable(from: string, to: string): void {
-    const source = fs.lstatSync(from);
-    if (source.isSymbolicLink()) throw new Error(`Refusing to copy symlink ${from}`);
-    if (source.isDirectory()) {
-        fs.mkdirSync(to, { recursive: true, mode: 0o700 });
-        for (const entry of fs.readdirSync(from)) copyWritable(path.join(from, entry), path.join(to, entry));
-        return;
+    // One descriptor for both the type check and the read, so the file checked is the
+    // file copied. O_NOFOLLOW makes opening a symlink fail (ELOOP).
+    const fd = fs.openSync(from, fs.constants.O_RDONLY | fs.constants.O_NOFOLLOW);
+    let content: Buffer;
+    try {
+        if (fs.fstatSync(fd).isDirectory()) {
+            fs.mkdirSync(to, { recursive: true, mode: 0o700 });
+            for (const entry of fs.readdirSync(from)) copyWritable(path.join(from, entry), path.join(to, entry));
+            return;
+        }
+        content = fs.readFileSync(fd);
+    } finally {
+        fs.closeSync(fd);
     }
     fs.mkdirSync(path.dirname(to), { recursive: true, mode: 0o700 });
     fs.rmSync(to, { force: true });
-    fs.writeFileSync(to, fs.readFileSync(from), { flag: 'wx', mode: 0o600 });
+    fs.writeFileSync(to, content, { flag: 'wx', mode: 0o600 });
 }
 
 /**
