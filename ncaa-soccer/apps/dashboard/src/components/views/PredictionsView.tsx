@@ -5,7 +5,7 @@ import { ANALYTICS, loadPredictions } from '../../analytics';
 import type { PredictedWeek, SeasonPredictions } from '../../analytics';
 import { BAR_GEOMETRY, LINE_GEOMETRY, baseOptions, token } from '../../charts';
 import { percent, shortDate, weekLabel } from '../../format';
-import { Card, Legend, MatchCard, Notice, Stat } from '../ui';
+import { Card, Legend, MatchCard, Notice, SectionEyebrow, Stat } from '../ui';
 
 /** Fixtures shown before the "show the rest" control appears. */
 const PAGE = 24;
@@ -209,6 +209,7 @@ export function PredictionsView({ searchTerm }: Props) {
         <>
             <div className="page-header">
                 <div>
+                    <SectionEyebrow>Algorithmic Forecast & Calibration Registry</SectionEyebrow>
                     <h1 className="page-title">Week-by-week predictions</h1>
                     <p className="page-lede">
                         Every fixture gets three probabilities and an expected scoreline, from ratings frozen at

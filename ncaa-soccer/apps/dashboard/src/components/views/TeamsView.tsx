@@ -4,7 +4,7 @@ import { useApi } from '../../api';
 import type { Paged } from '../../api';
 import { shortDate, BOXSCORE_LABEL, num, STATUS_LABEL } from '../../format';
 import { Link, Loaded, Pager, ResultBadge, SeasonSelect } from '../data';
-import { Card, Stat } from '../ui';
+import { Card, SectionEyebrow, Stat } from '../ui';
 
 interface TeamListRow {
     id: number;
@@ -105,6 +105,7 @@ function TeamList({ searchTerm }: { searchTerm: string }) {
         <>
             <div className="page-header">
                 <div>
+                    <SectionEyebrow>Division I Program Directory</SectionEyebrow>
                     <h1 className="page-title">Teams</h1>
                     <p className="page-lede">
                         Every program in the database, with its record for the current season. Division I programs
@@ -220,12 +221,9 @@ function TeamSeasonPage({ team }: { team: TeamDetail }) {
         <>
             <div className="page-header">
                 <div>
-                    <p className="text-sm text-muted">
-                        <a className="data-link" href="#/teams">
-                            Teams
-                        </a>{' '}
-                        / {team.conference ?? (team.is_division_one ? 'Division I' : 'Outside Division I')}
-                    </p>
+                    <SectionEyebrow>
+                        {team.conference ?? (team.is_division_one ? 'Division I' : 'Outside Division I')} · Program Dossier & Official Ledger
+                    </SectionEyebrow>
                     <h1 className="page-title">{team.name}</h1>
                     {team.schedule_url && (
                         <p className="page-lede">

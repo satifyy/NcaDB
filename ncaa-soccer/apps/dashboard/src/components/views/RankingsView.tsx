@@ -5,7 +5,7 @@ import type { EloTimeline, TeamRating } from '../../analytics';
 import type { ChartOptions } from 'chart.js';
 import { baseOptions, LINE_GEOMETRY, MAX_SERIES, seriesColor, SERIES, token } from '../../charts';
 import { count, shortDate, signed } from '../../format';
-import { Card, Legend, Notice, Stat } from '../ui';
+import { Card, Legend, Notice, SectionEyebrow, Stat } from '../ui';
 
 type SortKey = 'rank' | 'elo' | 'trend' | 'wins' | 'goals_for' | 'peak_elo';
 
@@ -171,6 +171,7 @@ export function RankingsView({ searchTerm }: Props) {
         <>
             <div className="page-header">
                 <div>
+                    <SectionEyebrow>The National Table & Longitudinal Trajectory</SectionEyebrow>
                     <h1 className="page-title">Elo ratings</h1>
                     <p className="page-lede">
                         Every Division I program on one scale, updated after each result. A rating of 1500 is

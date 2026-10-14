@@ -5,7 +5,7 @@ import { ANALYTICS, loadImpact, loadStandouts } from '../../analytics';
 import type { ImpactPlayer, Standout } from '../../analytics';
 import { BAR_GEOMETRY, baseOptions, token } from '../../charts';
 import { count, shortDate, weekLabel } from '../../format';
-import { Card, Legend, Notice, Stat } from '../ui';
+import { Card, Legend, Notice, SectionEyebrow, Stat } from '../ui';
 
 type SortKey = 'impact' | 'per90' | 'rating' | 'goals' | 'assists' | 'saves' | 'minutes' | 'opponents';
 
@@ -229,6 +229,7 @@ export function ImpactView({ searchTerm }: Props) {
         <>
             <div className="page-header">
                 <div>
+                    <SectionEyebrow>Talent Evaluation & Individual Impact Currency</SectionEyebrow>
                     <h1 className="page-title">Player impact</h1>
                     <p className="page-lede">
                         Goals, chances and saves converted into one currency — goal equivalents — then scaled by
