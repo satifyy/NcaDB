@@ -21,6 +21,10 @@
         {
             "source": "/:page(login|signup|profile|dashboard|admin)",
             "destination": "/index.html"
+        },
+        {
+            "source": "/:page(login|signup|profile|dashboard|admin)/",
+            "destination": "/index.html"
         }
     ],
     "headers": [
