@@ -272,7 +272,10 @@ body {
     display: flex;
     align-items: center;
     gap: var(--space-6);
-    padding: var(--space-4) 0;
+    /* Vertical only: the .container side gutter must survive, or on a phone the brand,
+       search and navigation sit flush against the screen edges. */
+    padding-top: var(--space-4);
+    padding-bottom: var(--space-4);
 }
 
 .brand {
@@ -1140,6 +1143,12 @@ body {
     .data-table td {
         padding-left: var(--space-3);
         padding-right: var(--space-3);
+    }
+
+    /* One long school name should not push the score and opponent off screen. */
+    .data-table .team-cell {
+        white-space: normal;
+        min-width: 7.5rem;
     }
 }
 
