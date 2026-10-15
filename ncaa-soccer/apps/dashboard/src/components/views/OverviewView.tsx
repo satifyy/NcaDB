@@ -5,8 +5,15 @@ import { ANALYTICS, loadPredictions, loadRatings, loadStandouts } from '../../an
 import type { PredictedWeek, SeasonPredictions, Standout, TeamRating } from '../../analytics';
 import { BAR_GEOMETRY, baseOptions, token } from '../../charts';
 import { count, percent, shortDate, signed, weekLabel } from '../../format';
-import { Card, MatchCard, Notice, Stat } from '../ui';
+import { DropCap, MatchCard, Notice, PullQuote, SectionEyebrow, Stat } from '../ui';
 import type { ViewId } from '../../views';
+import { href } from '../../route';
+
+/** "12 points", "1 point": the Elo gap between two teams, rounded. */
+const pointsBehind = (leader: TeamRating, other: TeamRating) => {
+    const gap = Math.round(leader.elo - other.elo);
+    return `${gap} point${gap === 1 ? '' : 's'}`;
+};
 
 /** Conferences with fewer than this many rated teams are too small to average. */
 const MIN_CONFERENCE_TEAMS = 4;
@@ -16,11 +23,12 @@ interface Props {
 }
 
 /**
- * The front page: what is true right now, with a way into each of the other views.
+ * Concept A: Sports Editorial Front Page ("The Collegiate Tribune")
  *
- * Deliberately narrow. Everything here is either a single number that needs no chart, or
- * the top of a list that the view behind it holds in full — an overview that reproduces
- * every table is not an overview.
+ * Classical 3-column broadsheet newspaper composition:
+ * - Column 1: The National Table & Conference Strength Index
+ * - Column 2: Lead Narrative Dispatch with Dropped Cap, Pull Quote & KPI Blocks
+ * - Column 3: The Scout's Notebook (Standouts & Marquee Fixture Forecasts)
  */
 export function OverviewView({ onView }: Props) {
     const [ratings, setRatings] = useState<TeamRating[] | null>(null);
@@ -42,13 +50,12 @@ export function OverviewView({ onView }: Props) {
         return weeks.find(entry => entry.week === ANALYTICS.current_week) ?? weeks[weeks.length - 1];
     }, [predictions]);
 
-    // The marquee fixtures of the week: the ones between the best pairs of teams, which is
-    // what "the games to watch" means when nothing else about a fixture is known.
+    // Marquee fixtures: highest combined Elo
     const marquee = useMemo(
         () =>
             [...(week?.games ?? [])]
                 .sort((a, b) => b.home_elo + b.away_elo - (a.home_elo + a.away_elo))
-                .slice(0, 6),
+                .slice(0, 4),
         [week]
     );
 
@@ -75,13 +82,10 @@ export function OverviewView({ onView }: Props) {
                 conference,
                 mean: elos.reduce((sum, elo) => sum + elo, 0) / elos.length
             }))
-            // Strongest first: with a category y-axis the first label sits at the top.
             .sort((a, b) => b.mean - a.mean);
 
         return {
             labels: rows.map(row => row.conference),
-            // Floor to the 25 below the weakest conference, so the shortest bar is still a
-            // bar. A fixed floor renders whichever conference falls under it as nothing.
             floor: rows.length > 0 ? Math.floor(Math.min(...rows.map(r => r.mean)) / 25) * 25 - 25 : 1300,
             datasets: [
                 {
@@ -108,19 +112,15 @@ export function OverviewView({ onView }: Props) {
             },
             scales: {
                 x: {
-                    // Not from zero: every conference is somewhere near 1500 and a
-                    // zero-based axis would compress the whole range into one stripe.
                     min: conferenceChart.floor,
                     grid: { color: token('--chart-grid') },
                     border: { display: false },
-                    ticks: { color: token('--chart-axis'), font: { size: 11 } }
+                    ticks: { color: token('--chart-axis'), font: { size: 10 } }
                 },
                 y: {
                     grid: { display: false },
                     border: { display: false },
-                    // Every conference is named: skipping labels on a category axis
-                    // leaves bars nobody can identify.
-                    ticks: { color: token('--color-text-secondary'), font: { size: 11 }, autoSkip: false }
+                    ticks: { color: token('--color-text-secondary'), font: { size: 10 }, autoSkip: false }
                 }
             }
         };
@@ -128,23 +128,12 @@ export function OverviewView({ onView }: Props) {
 
     const leader = divisionOne[0];
     const test = ANALYTICS.model.performance.test;
+    const runnerUp = divisionOne[1];
+    const standoutStar = latestStandouts.players[0];
 
     return (
-        <>
-            <div className="page-header">
-                <div>
-                    <h1 className="page-title">
-                        {ANALYTICS.current_season} Division I men’s soccer
-                    </h1>
-                    <p className="page-lede">
-                        Ratings, forecasts and player valuations built from{' '}
-                        {ANALYTICS.seasons.length} scraped seasons of schedules and box scores. Every number on
-                        this site comes from the results themselves — no polls, no votes, no rankings borrowed
-                        from anyone.
-                    </p>
-                </div>
-            </div>
-
+        <div className="broadsheet-frontpage">
+            {/* Excluded Season Notice */}
             {excluded.length > 0 && (
                 <div style={{ marginBottom: 'var(--space-4)' }}>
                     <Notice>
@@ -152,172 +141,234 @@ export function OverviewView({ onView }: Props) {
                             {excluded.map(season => season.season).join(', ')} excluded from every total on this
                             site.
                         </strong>{' '}
-                        {excluded
-                            .map(
-                                season =>
-                                    `${season.season}: only ${season.teams_with_roster} of ${season.rated_teams} programs have a roster in the data (${percent(
-                                        season.roster_share
-                                    )}).`
-                            )
-                            .join(' ')}{' '}
-                        A season missing more than a fifth of the league cannot be compared with one that is
-                        complete, so it is named here rather than quietly averaged in.
+                        A season missing more than a fifth of the league cannot be compared with complete records.
                     </Notice>
                 </div>
             )}
 
-            <div className="grid grid-4" style={{ marginBottom: 'var(--space-4)' }}>
-                <Stat
-                    label="Top rated team"
-                    value={leader?.team ?? '—'}
-                    small
-                    foot={leader && `${leader.elo} Elo · ${signed(leader.trend)} in four weeks`}
-                />
-                <Stat
-                    label="Prediction accuracy"
-                    value={percent(record.overall.accuracy, 1)}
-                    foot={`${count(record.overall.games)} completed fixtures, all seasons`}
-                />
-                <Stat
-                    label="Held-out log loss"
-                    value={test.log_loss.toFixed(3)}
-                    foot={`beats a base-rate forecast at ${test.baseline_log_loss.toFixed(3)}`}
-                />
-                <Stat
-                    label="Seasons rated"
-                    value={ANALYTICS.seasons.length}
-                    foot={`${ANALYTICS.seasons[0]}–${ANALYTICS.seasons[ANALYTICS.seasons.length - 1]}${
-                        excluded.length > 0 ? `, ${excluded.length} excluded` : ''
-                    }`}
-                />
-            </div>
+            {/* 3-Column Classical Broadsheet Layout */}
+            <div className="broadsheet-grid">
+                {/* COLUMN 1: STANDINGS & CONFERENCE POWER */}
+                <div className="broadsheet-col">
+                    <SectionEyebrow>The National Table</SectionEyebrow>
+                    <h3 className="headline-secondary">Division I Elo Hierarchy</h3>
+                    <p className="text-muted text-sm" style={{ marginBottom: '0.75rem' }}>
+                        Nightly algorithmic evaluation based on quality of opposition, goal differential, and home advantage.
+                    </p>
 
-            <div className="stack">
-                {marquee.length > 0 && (
-                    <Card
-                        title={week ? `Games to watch — week of ${weekLabel(week.week)}` : 'This week'}
-                        note={
-                            <button type="button" className="link-button" onClick={() => onView('predictions')}>
-                                every fixture and the model’s record →
-                            </button>
-                        }
-                    >
-                        <div className="grid grid-2">
-                            {marquee.map(game => (
-                                <MatchCard key={game.id} game={game} />
-                            ))}
-                        </div>
-                    </Card>
-                )}
-
-                <div className="grid grid-2">
-                    <Card
-                        title="Top of the table"
-                        note={
-                            <button type="button" className="link-button" onClick={() => onView('rankings')}>
-                                full ratings →
-                            </button>
-                        }
-                        bodyless
-                    >
-                        <div className="table-scroll">
-                            <table className="data-table">
-                                <thead>
-                                    <tr>
-                                        <th className="rank-cell">#</th>
-                                        <th>Team</th>
-                                        <th>Conference</th>
-                                        <th className="numeric">Elo</th>
-                                        <th className="numeric">4wk</th>
-                                        <th className="numeric">W-D-L</th>
+                    <div className="table-scroll">
+                        <table className="broadsheet-table">
+                            <thead>
+                                <tr>
+                                    <th className="rank-cell">Rnk</th>
+                                    <th>School</th>
+                                    <th>Conf</th>
+                                    <th className="numeric">Elo</th>
+                                    <th className="numeric">4wk</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {divisionOne.slice(0, 10).map(team => (
+                                    <tr key={team.team}>
+                                        <td className="rank-cell"><strong>{team.rank}</strong></td>
+                                        <td className="team-cell">
+                                            <a href={href('teams', team.team)} className="data-link font-medium">
+                                                {team.team}
+                                            </a>
+                                        </td>
+                                        <td className="text-muted text-sm">{team.conference}</td>
+                                        <td className="numeric elo-cell">
+                                            <strong>{team.elo}</strong>
+                                        </td>
+                                        <td
+                                            className={`numeric ${
+                                                team.trend > 0 ? 'trend-up' : team.trend < 0 ? 'trend-down' : 'text-muted'
+                                            }`}
+                                        >
+                                            {team.trend === 0 ? '—' : signed(team.trend)}
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    {divisionOne.slice(0, 10).map(team => (
-                                        <tr key={team.team}>
-                                            <td className="rank-cell">{team.rank}</td>
-                                            <td className="team-cell">{team.team}</td>
-                                            <td className="text-muted">{team.conference}</td>
-                                            <td className="numeric elo-cell">{team.elo}</td>
-                                            <td
-                                                className={`numeric delta ${
-                                                    team.trend > 0 ? 'is-up' : team.trend < 0 ? 'is-down' : 'is-flat'
-                                                }`}
-                                            >
-                                                {team.trend === 0 ? '—' : signed(team.trend)}
-                                            </td>
-                                            <td className="numeric">
-                                                {team.wins}-{team.draws}-{team.losses}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    </Card>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
 
-                    <Card
-                        title="Players of the week"
-                        note={
-                            latestStandouts.week ? (
-                                <button type="button" className="link-button" onClick={() => onView('impact')}>
-                                    {weekLabel(latestStandouts.week)} · impact leaderboard →
-                                </button>
-                            ) : (
-                                'No games yet'
-                            )
-                        }
-                        bodyless
-                    >
-                        <div>
-                            {latestStandouts.players.slice(0, 6).map((entry, index) => (
-                                <div className="standout" key={entry.identity + entry.date}>
-                                    <span className={`standout-rank ${index === 0 ? 'is-first' : ''}`}>
-                                        {index + 1}
-                                    </span>
-                                    <span>
-                                        <span className="standout-name">{entry.player_name}</span>{' '}
-                                        {entry.is_keeper && <span className="badge is-keeper">GK</span>}
-                                        <div className="standout-meta">
-                                            {entry.team} vs {entry.opponent ?? 'unknown'} ·{' '}
-                                            {shortDate(entry.date)} ·{' '}
-                                            {entry.is_keeper
-                                                ? `${entry.saves} saves`
-                                                : `${entry.goals}G ${entry.assists}A`}
-                                        </div>
-                                    </span>
-                                    <span className="standout-value">
-                                        <div className="standout-impact">{entry.impact.toFixed(1)}</div>
-                                        <div className="standout-meta">impact</div>
-                                    </span>
-                                </div>
-                            ))}
-                            {latestStandouts.players.length === 0 && (
-                                <div className="card-body">
-                                    <Notice kind="info">
-                                        No box scores yet for the {ANALYTICS.current_season} season.
-                                    </Notice>
-                                </div>
-                            )}
+                    <div style={{ marginTop: '0.75rem', textAlign: 'right' }}>
+                        <button type="button" className="link-button" onClick={() => onView('rankings')}>
+                            View all {divisionOne.length} Division I programs →
+                        </button>
+                    </div>
+
+                    <div style={{ marginTop: 'var(--space-8)' }}>
+                        <SectionEyebrow>Conference Power Index</SectionEyebrow>
+                        <h4 className="headline-secondary" style={{ fontSize: '1.1rem' }}>Mean Elo Strength</h4>
+                        <p className="text-muted text-sm" style={{ marginBottom: '0.5rem' }}>
+                            Calculated across programs with at least {MIN_CONFERENCE_TEAMS} member teams.
+                        </p>
+                        <div className="chart-frame is-list" style={{ minHeight: '320px' }}>
+                            <Bar data={conferenceChart} options={conferenceOptions} />
                         </div>
-                    </Card>
+                    </div>
                 </div>
 
-                <Card title="Conference strength" note="Mean Elo of each conference’s programs">
-                    <div className="chart-frame is-list">
-                        <Bar data={conferenceChart} options={conferenceOptions} />
+                {/* COLUMN 2: LEAD EDITORIAL DISPATCH */}
+                <div className="broadsheet-col broadsheet-col-lead">
+                    <SectionEyebrow>Frontline Analysis</SectionEyebrow>
+                    <h2 className="headline-lead">
+                        {leader
+                            ? `The ${leader.team} Standard: How the Summit of Collegiate Soccer Was Claimed`
+                            : `The ${ANALYTICS.current_season} Campaign Under Review`}
+                    </h2>
+                    <div className="story-byline">
+                        By the <strong>College Soccer Lab</strong> model · Updated nightly from Division I results
                     </div>
-                </Card>
+
+                    {leader ? (
+                        <p className="editorial-lead-para">
+                            <DropCap>W</DropCap>
+                            ITH an Elo rating of <strong>{leader.elo}</strong>, {leader.team} lead{' '}
+                            {count(divisionOne.length)} rated Division I programs in the {ANALYTICS.current_season}{' '}
+                            season, {signed(leader.trend)} over the last four weeks.
+                            {runnerUp && ` ${runnerUp.team} sit ${pointsBehind(leader, runnerUp)} behind.`}
+                        </p>
+                    ) : (
+                        <p className="editorial-lead-para">
+                            Ratings for the {ANALYTICS.current_season} season have not been published yet.
+                        </p>
+                    )}
+
+                    {record.overall.games > 0 && (
+                        <PullQuote cite="Prediction record">
+                            “The model has called {percent(record.overall.accuracy, 1)} of{' '}
+                            {count(record.overall.games)} results correctly.”
+                        </PullQuote>
+                    )}
+
+                    <p style={{ marginTop: '1rem', color: 'var(--color-text-secondary)' }}>
+                        Every rating here is computed from scraped schedules and box scores
+                        {divisionOne.length > 0 ? ` across ${count(divisionOne.length)} Division I programs` : ''}. No
+                        ballots and no coaches’ polls: only results, weighed by the strength of the opponent.
+                    </p>
+
+                    {/* Editorial KPI Triad */}
+                    <div className="editorial-kpi-grid">
+                        <Stat
+                            label="National #1 Elo"
+                            value={leader?.elo ?? '—'}
+                            foot={leader ? `${leader.team} · ${signed(leader.trend)} 4wk` : undefined}
+                        />
+                        <Stat
+                            label="Model Accuracy"
+                            value={percent(record.overall.accuracy, 1)}
+                            foot={`${count(record.overall.games)} verified fixtures`}
+                        />
+                        <Stat
+                            label="Held-Out Log Loss"
+                            value={test.log_loss.toFixed(3)}
+                            foot={`Baseline: ${test.baseline_log_loss.toFixed(3)}`}
+                        />
+                    </div>
+
+                    {/* Lead Marquee Matchup */}
+                    {marquee[0] && (
+                        <div style={{ marginTop: 'var(--space-6)' }}>
+                            <SectionEyebrow>Marquee Match of the Week</SectionEyebrow>
+                            <MatchCard game={marquee[0]} />
+                        </div>
+                    )}
+                </div>
+
+                {/* COLUMN 3: THE SCOUT'S NOTEBOOK & UPCOMING FIXTURES */}
+                <div className="broadsheet-col">
+                    <SectionEyebrow>The Scout's Notebook</SectionEyebrow>
+                    <div className="dispatch-card is-highlight">
+                        <div className="dispatch-kicker">TALENT SPOTLIGHT</div>
+                        <h4 className="dispatch-title">
+                            {standoutStar ? standoutStar.player_name : 'No standouts yet'}
+                        </h4>
+                        <p className="text-muted text-sm" style={{ marginTop: '0.25rem', lineHeight: 1.5 }}>
+                            {standoutStar
+                                ? `${standoutStar.player_name} (${standoutStar.team}) generated ${standoutStar.impact.toFixed(
+                                      1
+                                  )} impact rating against ${standoutStar.opponent ?? 'opposition'}.`
+                                : "Standouts appear once this season's box scores have been processed."}
+                        </p>
+                        <div style={{ marginTop: '0.5rem' }}>
+                            <button
+                                type="button"
+                                className="link-button font-medium"
+                                onClick={() => onView('impact')}
+                            >
+                                Open Talent Impact Leaderboard →
+                            </button>
+                        </div>
+                    </div>
+
+                    <div style={{ marginTop: 'var(--space-6)' }}>
+                        <SectionEyebrow>
+                            {latestStandouts.week ? `${weekLabel(latestStandouts.week)} Standout Roster` : 'Weekly Standout Roster'}
+                        </SectionEyebrow>
+                        <div className="editorial-standouts-list">
+                            {latestStandouts.players.slice(0, 5).map((entry, idx) => (
+                                <div className="editorial-standout-row" key={entry.identity + entry.date}>
+                                    <span className="editorial-standout-num">{idx + 1}</span>
+                                    <div className="editorial-standout-info">
+                                        <div className="font-medium text-sm">
+                                            {entry.player_name}{' '}
+                                            {entry.is_keeper && <span className="badge is-keeper">GK</span>}
+                                        </div>
+                                        <div className="text-muted text-sm">
+                                            {entry.team} vs {entry.opponent ?? 'opp'} · {shortDate(entry.date)}
+                                        </div>
+                                    </div>
+                                    <div className="editorial-standout-metric">
+                                        <strong>{entry.impact.toFixed(1)}</strong>
+                                        <span className="text-muted" style={{ fontSize: '0.65rem', display: 'block' }}>
+                                            IMPACT
+                                        </span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Additional Marquee Games */}
+                    {marquee.length > 1 && (
+                        <div style={{ marginTop: 'var(--space-6)' }}>
+                            <SectionEyebrow>Upcoming Fixture Forecasts</SectionEyebrow>
+                            <div className="stack" style={{ gap: 'var(--space-3)' }}>
+                                {marquee.slice(1, 4).map(game => (
+                                    <div key={game.id} style={{ borderBottom: '1px solid var(--color-border)', paddingBottom: '0.5rem' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', fontWeight: 600 }}>
+                                            <span>{game.home} vs {game.away}</span>
+                                            <span style={{ color: 'var(--color-accent-primary)' }}>
+                                                {Math.round(game.p[0] * 100)}% / {Math.round(game.p[2] * 100)}%
+                                            </span>
+                                        </div>
+                                        <div className="text-muted" style={{ fontSize: '0.75rem', marginTop: '2px' }}>
+                                            {shortDate(game.date)} · Projected xG: {game.xg[0].toFixed(1)}–{game.xg[1].toFixed(1)}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                            <div style={{ marginTop: '0.75rem', textAlign: 'right' }}>
+                                <button type="button" className="link-button" onClick={() => onView('predictions')}>
+                                    All fixture forecasts →
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
             </div>
 
-            <p className="footnote">
-                <strong>Where the numbers come from.</strong> Schedules and box scores are scraped from every
-                Division I program’s own athletics site, merged on a shared fixture key so the two schools’
-                versions of a game become one row, and checked season by season for roster coverage before
-                anything is computed from them. Elo is fitted by running the whole history under candidate
-                parameters and scoring the ratings each game was played at — never the ratings that game
-                produced.
-            </p>
-        </>
+            {/* Historical Archive Colophon */}
+            <footer className="broadsheet-colophon">
+                <p>
+                    <strong>The Collegiate Tribune Methodological Note:</strong> Schedules and box scores are scraped
+                    directly from official athletic departments, reconciled across opposing sides, and modeled through
+                    continuous Elo updates and regression-derived expected goals algorithms.
+                </p>
+            </footer>
+        </div>
     );
 }

@@ -160,3 +160,45 @@ export function MatchCard({ game }: { game: PredictedGame }) {
         </article>
     );
 }
+
+/** Classical broadsheet dropped capital letter for opening journalistic paragraphs. */
+export function DropCap({ children }: { children: ReactNode }) {
+    return <span className="drop-cap">{children}</span>;
+}
+
+/** Italic editorial pull-quote framed by top and bottom hairline rules. */
+export function PullQuote({ children, cite }: { children: ReactNode; cite?: ReactNode }) {
+    return (
+        <blockquote className="pull-quote">
+            <p className="pull-quote-text">{children}</p>
+            {cite && <footer className="pull-quote-cite">— {cite}</footer>}
+        </blockquote>
+    );
+}
+
+/** Broadsheet section eyebrow with trailing hairline rule. */
+export function SectionEyebrow({ children }: { children: ReactNode }) {
+    return <div className="section-eyebrow">{children}</div>;
+}
+
+/** Journalistic dispatch card with optional cardinal accent marker. */
+export function EditorialDispatch({
+    title,
+    kicker,
+    children,
+    highlight
+}: {
+    title: ReactNode;
+    kicker?: ReactNode;
+    children: ReactNode;
+    highlight?: boolean;
+}) {
+    return (
+        <div className={highlight ? 'dispatch-card is-highlight' : 'dispatch-card'}>
+            {kicker && <div className="dispatch-kicker">{kicker}</div>}
+            <h4 className="dispatch-title">{title}</h4>
+            <div className="dispatch-body">{children}</div>
+        </div>
+    );
+}
+

@@ -3,7 +3,7 @@ import { useApi } from '../../api';
 import type { Paged } from '../../api';
 import { shortDate, BOXSCORE_LABEL, num, STATUS_LABEL } from '../../format';
 import { Link, Loaded, Pager, SeasonSelect } from '../data';
-import { Card, Notice } from '../ui';
+import { Card, Notice, SectionEyebrow } from '../ui';
 
 interface GameRow {
     id: number;
@@ -91,6 +91,7 @@ function GameList() {
         <>
             <div className="page-header">
                 <div>
+                    <SectionEyebrow>National Match Registry & Results</SectionEyebrow>
                     <h1 className="page-title">Games</h1>
                     <p className="page-lede">
                         Every fixture in the database, merged from both schools’ schedules. Open a game for its box score.
@@ -263,24 +264,26 @@ function GameDetail({ id }: { id: string }) {
                     <>
                         <div className="page-header">
                             <div>
-                                <p className="text-sm text-muted">
-                                    <a className="data-link" href="#/games">Games</a> / {shortDate(g.date)}, {g.season}
-                                    {g.location_type === 'neutral' ? ' · neutral site' : ''}
-                                    {g.game_type && g.game_type !== 'regular' ? ` · ${g.game_type.replace('_', ' ')}` : ''}
-                                </p>
+                                <SectionEyebrow>
+                                    Championship Chronicle & Box Score · {shortDate(g.date)}, {g.season}
+                                    {g.location_type === 'neutral' ? ' · Neutral Site' : ''}
+                                    {g.game_type && g.game_type !== 'regular' ? ` · ${g.game_type.replace('_', ' ').toUpperCase()}` : ''}
+                                </SectionEyebrow>
                                 <h1 className="page-title">
                                     <Link view="teams" id={g.home_team_slug}>{g.home_team_name}</Link>{' '}
-                                    {g.home_score === null ? 'vs' : `${g.home_score}–${g.away_score}`}{' '}
+                                    <span style={{ color: 'var(--color-accent-primary)', margin: '0 0.25rem' }}>
+                                        {g.home_score === null ? 'vs' : `${g.home_score}–${g.away_score}`}
+                                    </span>{' '}
                                     <Link view="teams" id={g.away_team_slug}>{g.away_team_name}</Link>
                                 </h1>
                                 <p className="page-lede">
-                                    {STATUS_LABEL[g.status] ?? g.status} · last verified{' '}
-                                    {new Date(g.last_verified_at).toLocaleString()}
+                                    {STATUS_LABEL[g.status] ?? g.status} · Last verified{' '}
+                                    {new Date(g.last_verified_at).toLocaleDateString()}
                                     {g.boxscore_url && (
                                         <>
                                             {' · '}
                                             <a className="data-link" href={g.boxscore_url} target="_blank" rel="noreferrer noopener">
-                                                official box score
+                                                Official box score dispatch ↗
                                             </a>
                                         </>
                                     )}

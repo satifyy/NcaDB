@@ -4,7 +4,7 @@ import { useApi } from '../../api';
 import type { Paged } from '../../api';
 import { shortDate, num } from '../../format';
 import { Link, Loaded, Pager, ResultBadge, SeasonSelect } from '../data';
-import { Card, Notice, Stat } from '../ui';
+import { Card, Notice, SectionEyebrow, Stat } from '../ui';
 
 interface PlayerRow {
     id: number;
@@ -97,6 +97,7 @@ function PlayerSearch({ searchTerm }: { searchTerm: string }) {
         <>
             <div className="page-header">
                 <div>
+                    <SectionEyebrow>National Student-Athlete Directory</SectionEyebrow>
                     <h1 className="page-title">Players</h1>
                     <p className="page-lede">
                         Search by name with the box above. Totals are summed from individual box scores; a player who moved
@@ -190,14 +191,12 @@ function PlayerProfile({ id }: { id: string }) {
                 <>
                     <div className="page-header">
                         <div>
-                            <p className="text-sm text-muted">
-                                <a className="data-link" href="#/directory">Players</a> /{' '}
-                                <Link view="teams" id={p.team_slug}>{p.team_name}</Link>
-                            </p>
+                            <SectionEyebrow>
+                                {p.team_name} {p.conference ? `(${p.conference})` : ''} · Student-Athlete Dossier
+                            </SectionEyebrow>
                             <h1 className="page-title">{p.name}</h1>
                             <p className="page-lede">
-                                {p.seasons.length} season{p.seasons.length === 1 ? '' : 's'} at {p.team_name}
-                                {p.conference ? ` (${p.conference})` : ''}
+                                {p.seasons.length} campaign{p.seasons.length === 1 ? '' : 's'} recorded with {p.team_name}
                             </p>
                         </div>
                         <div className="page-actions">
