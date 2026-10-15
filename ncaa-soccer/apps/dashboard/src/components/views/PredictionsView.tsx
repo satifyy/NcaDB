@@ -351,7 +351,7 @@ export function PredictionsView({ searchTerm }: Props) {
                         >
                             <div className="card-body">
                                 <div className="chart-frame is-short">
-                                    <Bar data={lossChart} options={lossOptions} />
+                                    <Bar data={lossChart} options={lossOptions} role="img" aria-label="Bar chart of the model’s log loss by season against the base rate" />
                                 </div>
                             </div>
                             <Legend
@@ -369,7 +369,7 @@ export function PredictionsView({ searchTerm }: Props) {
                         >
                             <div className="card-body">
                                 <div className="chart-frame is-short">
-                                    <Line data={calibrationChart} options={calibrationOptions} />
+                                    <Line data={calibrationChart} options={calibrationOptions} role="img" aria-label="Calibration chart: forecast probability against the observed rate" />
                                 </div>
                             </div>
                             <Legend

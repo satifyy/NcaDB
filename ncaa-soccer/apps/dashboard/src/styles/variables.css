@@ -17,7 +17,9 @@
     /* --- Ink: Classical Editorial Typography ---------------------------------- */
     --color-text-primary: #18191a;
     --color-text-secondary: #555861;
-    --color-text-muted: #7e828d;
+    /* Darkened from #7e828d, which measured 3.35:1 on the parchment surfaces; this is
+       at least 4.5:1 on every surface text sits on (white, primary, secondary). */
+    --color-text-muted: #646871;
     --color-text-accent: #8c1d1d;
 
     /* --- Chrome Accent: Collegiate Cardinal & Hairline Rules ------------------ */
@@ -80,4 +82,20 @@
     /* --- Motion --------------------------------------------------------------- */
     --transition-fast: 120ms ease;
     --transition-normal: 220ms ease;
+
+    /* --- Layout --------------------------------------------------------------- */
+    /* Page gutter: the 16px phone gutter, plus the notch / rounded-corner inset in
+       landscape on phones that have one (needs viewport-fit=cover in index.html). */
+    --gutter: max(var(--space-4), env(safe-area-inset-left), env(safe-area-inset-right));
+    /* Height of the sticky section bar, so anchored content is not hidden beneath it. */
+    --nav-height: 44px;
+    /* Minimum size of a control on a touch screen (WCAG 2.5.5 / Apple HIG). */
+    --touch-target: 44px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    :root {
+        --transition-fast: 0ms;
+        --transition-normal: 0ms;
+    }
 }

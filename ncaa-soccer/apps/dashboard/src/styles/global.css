@@ -28,7 +28,7 @@ a {
 .container {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 0 var(--space-4);
+    padding: 0 var(--gutter);
 }
 
 .text-muted {
@@ -98,7 +98,7 @@ a {
 .control select {
     appearance: none;
     /* Matched to .segmented so the three control labels share a baseline. */
-    height: 38px;
+    min-height: 38px;
     padding: 0 2rem 0 0.75rem;
     min-width: 180px;
     max-width: 260px;
@@ -109,7 +109,6 @@ a {
     border: 1px solid var(--color-bg-tertiary);
     border-radius: var(--radius-md);
     cursor: pointer;
-    outline: none;
     transition: border-color var(--transition-fast);
     /* Chevron, so the control does not depend on the platform's select arrow. */
     background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
@@ -200,6 +199,46 @@ a {
 
 /* --- Biggest movers --- */
 
+.movers-panel,
+.kpi-grid,
+.charts-grid {
+    margin-bottom: var(--space-6);
+}
+
+.charts-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr));
+}
+
+.movers-head {
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.movers-title {
+    margin-right: auto;
+}
+
+.movers-title .card-note {
+    display: block;
+    margin-top: var(--space-1);
+}
+
+.movers-who {
+    min-width: 0;
+}
+
+.stat-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+}
+
+.stat-icon {
+    display: flex;
+    color: var(--color-text-muted);
+}
+
 .movers-list {
     list-style: none;
 }
@@ -209,8 +248,27 @@ a {
     grid-template-columns: 2rem minmax(0, 1fr) auto auto;
     align-items: center;
     gap: var(--space-4);
-    padding: 0.875rem 1.5rem;
-    border-bottom: 1px solid var(--color-bg-tertiary);
+    padding: 0.875rem var(--space-5);
+    border-bottom: 1px solid var(--color-border);
+}
+
+/* On a phone the before → after figures drop under the name. */
+@media (max-width: 640px) {
+    .movers-row {
+        grid-template-columns: 1.5rem minmax(0, 1fr) auto;
+        gap: var(--space-1) var(--space-3);
+        padding: var(--space-3) var(--space-4);
+    }
+
+    .movers-change {
+        grid-column: 2;
+        grid-row: 2;
+    }
+
+    .movers-delta {
+        grid-column: 3;
+        grid-row: 1 / span 2;
+    }
 }
 
 .movers-row:last-child {
@@ -256,7 +314,7 @@ body {
 
 .app-shell {
     min-height: 100vh;
-    padding-bottom: var(--space-12);
+    padding-bottom: calc(var(--space-12) + env(safe-area-inset-bottom));
 }
 
 /* =========================================================================
@@ -265,16 +323,13 @@ body {
 
 .broadsheet-header {
     background-color: var(--color-bg-primary);
-    border-bottom: 3px double var(--color-border-strong);
-    position: sticky;
-    top: 0;
-    z-index: 100;
 }
 
 .broadsheet-top-line {
     background-color: var(--color-bg-secondary);
     border-bottom: 1px solid var(--color-border);
     padding: 6px 0;
+    padding-top: max(6px, env(safe-area-inset-top));
     font-size: 0.6875rem;
     font-weight: 700;
     text-transform: uppercase;
@@ -288,30 +343,19 @@ body {
     align-items: center;
 }
 
-/* On a phone the strip keeps only the edition and sync date, on one line. */
-@media (max-width: 640px) {
-    .hide-mobile {
-        display: none;
-    }
-
-    .broadsheet-top-inner {
-        justify-content: center;
-        white-space: nowrap;
-    }
-}
-
 .broadsheet-title-container {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--space-6);
-    padding: var(--space-4) var(--space-4) var(--space-3);
+    gap: var(--space-3) var(--space-6);
+    padding-top: var(--space-4);
+    padding-bottom: var(--space-3);
     flex-wrap: wrap;
 }
 
 .broadsheet-branding {
-    flex: 1;
-    min-width: 280px;
+    flex: 1 1 280px;
+    min-width: 0;
 }
 
 .broadsheet-kicker {
@@ -326,7 +370,7 @@ body {
 
 .broadsheet-main-title {
     font-family: var(--font-serif);
-    font-size: clamp(2rem, 3.8vw, 3rem);
+    font-size: clamp(1.5rem, 3.8vw, 3rem);
     font-weight: 700;
     line-height: 1;
     letter-spacing: -0.02em;
@@ -368,45 +412,79 @@ body {
     box-shadow: 0 0 0 1px var(--color-accent-primary);
 }
 
+/* On a phone the strip keeps only the edition and sync date, the tagline goes, and the
+   search box takes the full width beside the account button. */
+@media (max-width: 640px) {
+    .hide-mobile {
+        display: none;
+    }
+
+    .broadsheet-top-inner {
+        justify-content: center;
+        white-space: nowrap;
+    }
+
+    .broadsheet-tagline {
+        display: none;
+    }
+
+    .broadsheet-title-container {
+        padding-top: var(--space-3);
+    }
+
+    .broadsheet-actions {
+        width: 100%;
+    }
+
+    .broadsheet-actions .search-box {
+        flex: 1;
+        width: auto;
+    }
+}
+
 /* Running Scoreboard Ribbon */
 .scoreboard-strip {
     background-color: var(--color-bg-secondary);
     border-top: 1px solid var(--color-border);
-    border-bottom: 1px solid var(--color-border);
     padding: 6px 0;
     overflow-x: auto;
+    overscroll-behavior-x: contain;
     scrollbar-width: thin;
 }
 
 .scoreboard-scroll {
     display: flex;
     gap: var(--space-3);
-    padding: 0 var(--space-4);
+    padding: 0 var(--gutter);
     max-width: 1400px;
     margin: 0 auto;
+    list-style: none;
+}
+
+.scoreboard-scroll > li {
+    flex-shrink: 0;
 }
 
 .scoreboard-pill {
+    display: block;
     background-color: #ffffff;
     border: 1px solid var(--color-border);
     padding: 5px 10px;
     min-width: 170px;
-    flex-shrink: 0;
-    cursor: pointer;
     font-size: 0.75rem;
     line-height: 1.3;
-    transition: border-color var(--transition-fast), transform var(--transition-fast);
+    color: inherit;
+    transition: border-color var(--transition-fast);
 }
 
 .scoreboard-pill:hover {
     border-color: var(--color-accent-primary);
-    transform: translateY(-1px);
 }
 
 .score-pill-header {
     display: flex;
     justify-content: space-between;
-    font-size: 0.65rem;
+    font-size: 0.6875rem;
     color: var(--color-text-muted);
     font-weight: 700;
     text-transform: uppercase;
@@ -417,6 +495,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: var(--space-2);
 }
 
 .score-team-name {
@@ -432,40 +511,52 @@ body {
 .score-final-badge {
     color: var(--color-success);
     font-weight: 700;
-    font-size: 0.65rem;
 }
 
 .score-upcoming-badge {
     color: var(--color-accent-primary);
     font-weight: 700;
-    font-size: 0.65rem;
 }
 
-/* Competition Ribbon */
+/* --- Section bar: the one pinned piece of the masthead ----------------------------- */
+
 .broadsheet-nav {
-    border-top: 1px solid var(--color-border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
     background-color: var(--color-bg-primary);
+    border-top: 1px solid var(--color-border);
+    border-bottom: 3px double var(--color-border-strong);
 }
 
 .broadsheet-nav-inner {
     display: flex;
-    align-items: center;
-    gap: var(--space-4);
-    overflow-x: auto;
-    scrollbar-width: none;
-    padding-top: 2px;
-    padding-bottom: 2px;
+    align-items: stretch;
+    gap: var(--space-2);
 }
 
-.broadsheet-nav-inner::-webkit-scrollbar {
+.nav-ribbon {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    flex: 1;
+    min-width: 0;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    padding: 2px 0;
+}
+
+.nav-ribbon::-webkit-scrollbar {
     display: none;
 }
 
-.broadsheet-nav-inner .nav-item {
-    background: none;
-    border: none;
+.nav-item {
+    display: inline-flex;
+    align-items: center;
+    min-height: 38px;
     border-bottom: 2px solid transparent;
-    padding: 8px 6px;
+    padding: 0 6px;
     font-family: var(--font-sans);
     font-size: 0.8125rem;
     font-weight: 700;
@@ -473,39 +564,123 @@ body {
     letter-spacing: 0.08em;
     color: var(--color-text-secondary);
     white-space: nowrap;
-    cursor: pointer;
     transition: color var(--transition-fast), border-color var(--transition-fast);
 }
 
-.broadsheet-nav-inner .nav-item:hover,
-.broadsheet-nav-inner .nav-item.is-active {
+.nav-item:hover,
+.nav-item.is-active {
     color: var(--color-accent-primary);
     border-bottom-color: var(--color-accent-primary);
 }
 
-/* Backwards-compatible .masthead class */
-.masthead {
-    background-color: var(--color-bg-primary);
-    border-bottom: 3px double var(--color-border-strong);
+.nav-icon-button {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    flex-shrink: 0;
+    min-width: var(--touch-target);
+    min-height: var(--touch-target);
+    padding: 0 var(--space-2);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-primary);
+    background: none;
+    border: none;
 }
 
-.brand {
+.nav-icon-button:hover,
+.nav-menu-toggle[aria-expanded='true'] {
+    color: var(--color-accent-primary);
+}
+
+.nav-panel {
+    border-top: 1px solid var(--color-border);
+    background-color: var(--color-bg-primary);
+    max-height: calc(100dvh - var(--nav-height));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.nav-panel-inner {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+    gap: var(--space-2) var(--space-6);
+    padding-top: var(--space-3);
+    padding-bottom: var(--space-4);
+}
+
+.nav-panel-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.nav-panel-heading {
+    margin-bottom: var(--space-1);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-accent-primary);
+}
+
+.nav-panel-link {
     display: flex;
     align-items: center;
-    gap: var(--space-3);
-    flex-shrink: 0;
+    min-height: var(--touch-target);
+    padding: 0 var(--space-3);
+    margin: 0 calc(-1 * var(--space-3));
+    font-weight: 600;
+    color: var(--color-text-primary);
+    border-left: 3px solid transparent;
 }
 
-.brand-name {
-    font-family: var(--font-serif);
-    font-size: 1.25rem;
-    font-weight: 700;
-    line-height: 1.1;
+.nav-panel-link:hover {
+    background-color: var(--color-bg-secondary);
 }
 
-.brand-sub {
-    font-size: 0.75rem;
-    color: var(--color-text-muted);
+.nav-panel-link.is-active {
+    color: var(--color-accent-primary);
+    border-left-color: var(--color-accent-primary);
+    background-color: var(--color-accent-light);
+}
+
+/* Below this width the nine sections no longer fit on one line: the ribbon scrolls (to
+   the current section, with a fade at the edge saying there is more), and the Menu lists
+   all of them. Touch-sized targets from here down. */
+@media (max-width: 1100px) {
+    .nav-item {
+        min-height: var(--touch-target);
+    }
+
+    .nav-ribbon {
+        gap: var(--space-2);
+        mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+    }
+
+    .nav-menu-toggle {
+        display: inline-flex;
+        border-left: 1px solid var(--color-border);
+        padding-left: var(--space-3);
+    }
+}
+
+@media (max-width: 640px) {
+    .nav-search-shortcut {
+        display: inline-flex;
+    }
+
+    /* The label goes; the icon and its accessible name stay. */
+    .nav-menu-toggle span {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+    }
 }
 
 .search-box {
@@ -524,7 +699,7 @@ body {
 
 .search-box input {
     width: 100%;
-    height: 38px;
+    min-height: 38px;
     padding: 0 0.875rem 0 2.375rem;
     font-family: inherit;
     font-size: 0.875rem;
@@ -532,7 +707,6 @@ body {
     background-color: #ffffff;
     border: 1px solid var(--color-border);
     border-radius: var(--radius-sm);
-    outline: none;
     transition: border-color var(--transition-fast);
 }
 
@@ -747,20 +921,45 @@ body {
    Tables
    ========================================================================= */
 
+.table-frame {
+    position: relative;
+}
+
 .table-scroll {
     overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table-scroll:focus-visible {
+    outline: 2px solid var(--color-accent-primary);
+    outline-offset: -2px;
+}
+
+/* More columns to the right: the edge fades, so a cut-off table reads as one that scrolls. */
+.table-frame[data-at-end='false']::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 32px;
+    pointer-events: none;
+    background: linear-gradient(to right, rgba(251, 250, 246, 0), rgba(24, 25, 26, 0.14));
 }
 
 .data-table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     font-size: 0.875rem;
+    font-variant-numeric: tabular-nums;
 }
 
 .data-table th {
     position: sticky;
     top: 0;
-    z-index: 1;
+    z-index: 2;
     padding: 0.625rem var(--space-4);
     font-size: 0.75rem;
     font-weight: 600;
@@ -779,6 +978,92 @@ body {
     white-space: nowrap;
 }
 
+/* The name column stays put while the numbers scroll under it. Opaque, so rows passing
+   beneath do not show through; shadowed once something has. */
+.data-table .col-sticky {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background-color: var(--color-bg-elevated);
+}
+
+.data-table th.col-sticky {
+    z-index: 3;
+    background-color: var(--color-bg-secondary);
+}
+
+.table-frame[data-at-start='false'] .col-sticky {
+    box-shadow: 6px 0 6px -6px rgba(24, 25, 26, 0.35);
+}
+
+.data-table tbody tr:hover .col-sticky {
+    background-color: var(--color-bg-secondary);
+}
+
+/* A wrapped long text column (error messages) instead of one 2,000px line. */
+.data-table .cell-wrap {
+    white-space: normal;
+    min-width: 16rem;
+    max-width: 32rem;
+}
+
+/* A link in a table cell gets the row's height to land on, not just its line of text. */
+.data-table td > .data-link {
+    display: inline-block;
+    padding: 0.25rem 0;
+    margin: -0.25rem 0;
+}
+
+.text-strong {
+    color: var(--color-text-primary);
+}
+
+.cell-sub {
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: var(--color-text-muted);
+}
+
+.team-trail {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+
+.data-table abbr[title] {
+    text-decoration: none;
+    cursor: help;
+}
+
+.sort-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.125rem;
+    min-height: 24px;
+    padding: 0;
+    font: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
+    color: inherit;
+    background: none;
+    border: none;
+}
+
+.data-table th.numeric .sort-button {
+    justify-content: flex-end;
+    width: 100%;
+}
+
+.sort-button:hover,
+th[aria-sort] .sort-button {
+    color: var(--color-text-primary);
+}
+
+.sort-indicator {
+    display: inline-block;
+    min-width: 0.7em;
+}
+
 .data-table tbody tr:hover {
     background-color: var(--color-bg-secondary);
 }
@@ -786,15 +1071,6 @@ body {
 .data-table .numeric {
     text-align: right;
     font-variant-numeric: tabular-nums;
-}
-
-.data-table .sortable {
-    cursor: pointer;
-    user-select: none;
-}
-
-.data-table .sortable:hover {
-    color: var(--color-text-primary);
 }
 
 .rank-cell {
@@ -890,6 +1166,16 @@ body {
     background-color: #ffedd5;
     color: #9a3412;
     border-color: #fed7aa;
+}
+
+.badge.is-final {
+    background-color: var(--color-bg-elevated);
+    color: var(--color-text-primary);
+    border-color: var(--color-border-strong);
+}
+
+.badge.is-past {
+    opacity: 0.7;
 }
 
 .badge.is-keeper {
@@ -1188,20 +1474,6 @@ body {
     color: var(--color-text-secondary);
 }
 
-@media (max-width: 900px) {
-    .masthead-inner {
-        flex-wrap: wrap;
-    }
-
-    .search-box {
-        width: 100%;
-    }
-
-    .masthead-actions {
-        width: 100%;
-    }
-}
-
 /* =========================================================================
    Database-backed views: links, pager, inputs, boot screen
    ========================================================================= */
@@ -1241,7 +1513,7 @@ body {
 }
 
 .pager-button {
-    height: 34px;
+    min-height: 34px;
     padding: 0 0.875rem;
     font-family: inherit;
     font-size: 0.875rem;
@@ -1263,7 +1535,7 @@ body {
 }
 
 .date-input {
-    height: 38px;
+    min-height: 38px;
     padding: 0 0.75rem;
     min-width: 160px;
     font-family: inherit;
@@ -1276,7 +1548,6 @@ body {
 }
 
 .date-input:focus {
-    outline: none;
     border-color: var(--color-accent-primary);
 }
 
@@ -1317,27 +1588,17 @@ body {
         padding-right: var(--space-3);
     }
 
-    /* One long school name should not push the score and opponent off screen. */
+    /* One long school or player name wraps rather than pushing the numbers off screen;
+       a pinned name column is capped so it never takes most of a phone's width. */
     .data-table .team-cell {
         white-space: normal;
         min-width: 7.5rem;
     }
-}
 
-/* Nine views do not fit beside the brand and search on a laptop screen, and a nav that
-   scrolls sideways with its scrollbar hidden hides the last three. Below this width the
-   navigation takes a row of its own. */
-@media (max-width: 1500px) {
-    .masthead-inner {
-        flex-wrap: wrap;
-        row-gap: var(--space-2);
-    }
-
-    .nav {
-        order: 3;
-        width: 100%;
-        margin-left: 0;
-        margin-bottom: var(--space-2);
+    .data-table .col-sticky {
+        max-width: 10.5rem;
+        white-space: normal;
+        line-height: 1.3;
     }
 }
 
@@ -1419,12 +1680,15 @@ body {
     border-color: var(--color-border-strong);
 }
 
-.button:focus-visible,
-.account-trigger:focus-visible,
-.account-dropdown [role='menuitem']:focus-visible,
-.input:focus-visible {
+/* One focus ring for every control on the site, keyboard only. */
+:focus-visible {
     outline: 2px solid var(--color-accent-primary);
     outline-offset: 2px;
+}
+
+input:focus-visible,
+select:focus-visible {
+    outline-offset: 0;
 }
 
 .button:disabled {
@@ -1433,6 +1697,7 @@ body {
 }
 
 .button-primary {
+    color: #ffffff;
     background-color: var(--color-accent-primary);
     border-color: var(--color-accent-primary);
 }
@@ -1521,7 +1786,7 @@ body {
     height: 30px;
     font-size: 0.75rem;
     font-weight: 700;
-    color: var(--color-text-primary);
+    color: #ffffff;
     background-color: var(--color-accent-primary);
     border-radius: var(--radius-full);
 }
@@ -1858,7 +2123,7 @@ body {
 
 .dispatch-kicker {
     font-family: var(--font-mono);
-    font-size: 0.65rem;
+    font-size: 0.6875rem;
     font-weight: 700;
     letter-spacing: 0.12em;
     color: var(--color-accent-primary);
@@ -1969,9 +2234,184 @@ body {
     }
     .broadsheet-col-lead {
         padding-left: 0;
+        order: -1;
     }
     .editorial-kpi-grid {
         grid-template-columns: 1fr;
     }
 }
 
+
+/* =========================================================================
+   Game page: scoreline and the phone jump bar
+   ========================================================================= */
+
+.game-header {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Home, score, away: the score sits between the names whatever their length, and a
+   long name wraps inside its own column instead of pushing the score onto a new line. */
+.scoreline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 var(--space-4);
+}
+
+/* On a phone the names wrap in balanced columns either side of the score. */
+@media (max-width: 640px) {
+    .scoreline {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        align-items: center;
+    }
+
+    .scoreline-team.is-away {
+        text-align: right;
+    }
+}
+
+.scoreline-score {
+    font-size: 1.15em;
+    color: var(--color-accent-primary);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.box-anchor {
+    min-width: 0;
+    scroll-margin-top: calc(var(--nav-height) + var(--space-3));
+}
+
+.box-jump {
+    display: none;
+}
+
+@media (max-width: 900px) {
+    .box-jump {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-2);
+        margin-bottom: var(--space-4);
+    }
+
+    .box-jump .button {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: block;
+        line-height: var(--touch-target);
+    }
+}
+
+/* =========================================================================
+   Phones and touch screens
+   ========================================================================= */
+
+@media (max-width: 640px) {
+    .page-header {
+        margin: var(--space-5) 0 var(--space-4);
+    }
+
+    .page-title {
+        font-size: clamp(1.6rem, 7vw, 1.85rem);
+    }
+
+    .scoreline {
+        gap: var(--space-3);
+        font-size: clamp(1.25rem, 5.5vw, 1.6rem);
+    }
+
+    /* Four figures read as a 2 × 2 block, not four full-width boxes a screen tall. */
+    .grid-4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--space-3);
+    }
+
+    .grid-4 .stat {
+        padding: var(--space-3);
+    }
+
+    .grid-4 .stat-value {
+        font-size: 1.6rem;
+    }
+
+    .grid-4 .stat-value.is-small {
+        font-size: 1.25rem;
+    }
+
+    .card-head {
+        padding: var(--space-3) var(--space-4) var(--space-2);
+        flex-wrap: wrap;
+        row-gap: 0;
+    }
+
+    .card-title {
+        font-size: 1.125rem;
+    }
+
+    .card-body {
+        padding: var(--space-3) var(--space-4) var(--space-4);
+    }
+
+    .filter-bar {
+        padding: var(--space-3);
+        gap: var(--space-3);
+        margin-bottom: var(--space-4);
+    }
+
+    .filter-bar .control-wide {
+        flex-basis: 100%;
+    }
+
+    .filter-summary {
+        margin-left: 0;
+        padding-bottom: 0;
+    }
+
+    .pager {
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+}
+
+/* Controls a finger presses are at least 44 px tall. */
+@media (max-width: 640px), (pointer: coarse) {
+    .control select,
+    .date-input,
+    .search-box input,
+    .input,
+    .button,
+    .pager-button,
+    .account-trigger {
+        min-height: var(--touch-target);
+    }
+
+    /* 16px stops iOS Safari zooming the page when a field is focused. */
+    .control select,
+    .date-input,
+    .search-box input,
+    .input {
+        font-size: 1rem;
+    }
+
+    .pager-button {
+        min-width: var(--touch-target);
+    }
+
+    .segmented button,
+    .chip {
+        min-height: 36px;
+    }
+
+    .account-dropdown [role='menuitem'] {
+        min-height: var(--touch-target);
+    }
+
+    .link-button {
+        min-height: 32px;
+    }
+}

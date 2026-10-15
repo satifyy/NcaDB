@@ -12,7 +12,7 @@ import type { FormEvent, ReactNode } from 'react';
 import { LogIn, Star, Trash2, UserPlus } from 'lucide-react';
 import { ApiRequestError, useApi } from '../api';
 import { Card, Notice } from '../components/ui';
-import { Loaded } from '../components/data';
+import { Loaded, TableScroll } from '../components/data';
 import { href } from '../route';
 import { BASE, pagePath } from './config';
 import type { AuthPage } from './config';
@@ -631,7 +631,7 @@ function AdminConsole() {
     return (
         <div className="stack">
             <Card title="Ingestion runs" note="latest 15" bodyless>
-                <div className="table-scroll">
+                <TableScroll label="Ingestion runs">
                     <table className="data-table">
                         <thead>
                             <tr>
@@ -655,15 +655,15 @@ function AdminConsole() {
                                         </span>
                                     </td>
                                     <td>{new Date(r.started_at).toLocaleString()}</td>
-                                    <td className="text-sm">{r.error ?? ''}</td>
+                                    <td className="text-sm cell-wrap">{r.error ?? ''}</td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
-                </div>
+                </TableScroll>
             </Card>
             <Card title="Failed tasks and data issues" note="last 7 days" bodyless>
-                <div className="table-scroll">
+                <TableScroll label="Failed tasks and data issues">
                     <table className="data-table">
                         <thead>
                             <tr>
@@ -683,12 +683,12 @@ function AdminConsole() {
                                     <td>{e.category}</td>
                                     <td>{e.code}</td>
                                     <td>{e.count}</td>
-                                    <td className="text-sm">{e.message}</td>
+                                    <td className="text-sm cell-wrap">{e.message}</td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
-                </div>
+                </TableScroll>
             </Card>
             <div className="grid grid-2">
                 <Card title="Request maintenance">

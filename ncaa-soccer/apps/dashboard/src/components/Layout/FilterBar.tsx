@@ -45,7 +45,7 @@ export function FilterBar({
 }: FilterBarProps) {
     return (
         <section className="filter-bar" aria-label="Filters">
-            <div className="control">
+            <div className="control control-wide">
                 <label className="control-label" id="season-label">
                     Season
                 </label>
@@ -119,7 +119,7 @@ export function FilterBar({
 
             <div className="filter-summary">
                 <span>
-                    <strong style={{ color: 'var(--color-text-primary)' }}>{shown.toLocaleString()}</strong>
+                    <strong className="text-strong">{shown.toLocaleString()}</strong>
                     {shown === total ? ' players' : ` of ${total.toLocaleString()} players`}
                 </span>
                 {filtered && (

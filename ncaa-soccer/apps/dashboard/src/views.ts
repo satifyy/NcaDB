@@ -22,16 +22,23 @@ export interface ViewSpec {
     label: string;
     /** Built from the nightly analytics files rather than queried from the database. */
     analytics: boolean;
+    /** Which heading the view sits under in the section menu. */
+    group: ViewGroup;
 }
 
+export type ViewGroup = 'Browse' | 'Analysis' | 'About the data';
+
+/** The section menu's headings, in order: the record pages a reader looks things up in first. */
+export const VIEW_GROUPS: ViewGroup[] = ['Browse', 'Analysis', 'About the data'];
+
 export const VIEWS: ViewSpec[] = [
-    { id: 'overview', label: 'Overview', analytics: true },
-    { id: 'rankings', label: 'Rankings', analytics: true },
-    { id: 'predictions', label: 'Predictions', analytics: true },
-    { id: 'impact', label: 'Player impact', analytics: true },
-    { id: 'players', label: 'Season stats', analytics: true },
-    { id: 'teams', label: 'Teams', analytics: false },
-    { id: 'games', label: 'Games', analytics: false },
-    { id: 'directory', label: 'Players', analytics: false },
-    { id: 'status', label: 'Data status', analytics: false }
+    { id: 'overview', label: 'Overview', analytics: true, group: 'Analysis' },
+    { id: 'rankings', label: 'Rankings', analytics: true, group: 'Analysis' },
+    { id: 'predictions', label: 'Predictions', analytics: true, group: 'Analysis' },
+    { id: 'impact', label: 'Player impact', analytics: true, group: 'Analysis' },
+    { id: 'players', label: 'Season stats', analytics: true, group: 'Analysis' },
+    { id: 'teams', label: 'Teams', analytics: false, group: 'Browse' },
+    { id: 'games', label: 'Games', analytics: false, group: 'Browse' },
+    { id: 'directory', label: 'Players', analytics: false, group: 'Browse' },
+    { id: 'status', label: 'Data status', analytics: false, group: 'About the data' }
 ];

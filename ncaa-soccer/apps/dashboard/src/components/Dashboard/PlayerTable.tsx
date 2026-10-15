@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { PlayerStat } from '../../types';
-import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Card } from '../ui';
+import { Pager, SortHeader, TableScroll } from '../data';
 
 interface PlayerTableProps {
     data: PlayerStat[];
@@ -15,69 +16,18 @@ type SortDirection = 'asc' | 'desc';
  * A list rather than eleven hand-written `<Th>` elements, because every one of them took
  * the same four props and the sort state had to be threaded through each.
  */
-const COLUMNS: { field: SortField; label: string; numeric?: boolean }[] = [
-    { field: 'player_name', label: 'Player' },
+const COLUMNS: { field: SortField; label: string; title?: string; numeric?: boolean; className?: string }[] = [
+    { field: 'player_name', label: 'Player', className: 'col-sticky' },
     { field: 'team_id', label: 'Team' },
     { field: 'conference', label: 'Conference' },
-    { field: 'games_played', label: 'GP', numeric: true },
-    { field: 'minutes', label: 'Min', numeric: true },
-    { field: 'goals', label: 'G', numeric: true },
-    { field: 'assists', label: 'A', numeric: true },
-    { field: 'g_per_90', label: 'G/90', numeric: true },
-    { field: 'conversion_rate', label: 'Conv %', numeric: true },
-    { field: 'shots', label: 'Sh', numeric: true }
+    { field: 'games_played', label: 'GP', title: 'Games played', numeric: true },
+    { field: 'minutes', label: 'Min', title: 'Minutes', numeric: true },
+    { field: 'goals', label: 'G', title: 'Goals', numeric: true },
+    { field: 'assists', label: 'A', title: 'Assists', numeric: true },
+    { field: 'g_per_90', label: 'G/90', title: 'Goals per 90 minutes', numeric: true },
+    { field: 'conversion_rate', label: 'Conv %', title: 'Shot conversion rate', numeric: true },
+    { field: 'shots', label: 'Sh', title: 'Shots', numeric: true }
 ];
-
-/**
- * Declared here rather than inside {@link PlayerTable}.
- *
- * A component created during a render is a new component type on every render, so React
- * unmounts the old one and mounts a new one instead of updating it — the whole header
- * is torn down and rebuilt on every keystroke in the search box, and any state it held
- * would be lost each time.
- */
-function SortIcon({ active, direction }: { active: boolean; direction: SortDirection }) {
-    if (!active) return <div style={{ width: 16 }} />;
-    return direction === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />;
-}
-
-function Th({
-    field,
-    label,
-    numeric,
-    sortField,
-    sortDirection,
-    onSort
-}: {
-    field: SortField;
-    label: string;
-    numeric?: boolean;
-    sortField: SortField;
-    sortDirection: SortDirection;
-    onSort: (field: SortField) => void;
-}) {
-    return (
-        <th
-            onClick={() => onSort(field)}
-            style={{
-                textAlign: numeric ? 'right' : 'left',
-                cursor: 'pointer',
-                userSelect: 'none',
-                padding: '1rem',
-                color: 'var(--color-text-muted)',
-                fontWeight: 600,
-                fontSize: '0.875rem',
-                borderBottom: '1px solid var(--color-bg-tertiary)'
-            }}
-            className="hover:text-primary transition-colors"
-        >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', justifyContent: numeric ? 'flex-end' : 'flex-start' }}>
-                {label}
-                <SortIcon active={sortField === field} direction={sortDirection} />
-            </div>
-        </th>
-    );
-}
 
 export function PlayerTable({ data }: PlayerTableProps) {
     // Narrowing the filters shortens the list, and page 40 of a 20-row result is blank,
@@ -139,121 +89,62 @@ export function PlayerTable({ data }: PlayerTableProps) {
     };
 
     return (
-        <section style={{
-            backgroundColor: 'var(--color-bg-secondary)',
-            borderRadius: 'var(--radius-lg)',
-            border: '1px solid var(--color-bg-tertiary)',
-            overflow: 'hidden'
-        }}>
-            <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--color-bg-tertiary)' }}>
-                <h2 className="font-bold" style={{ fontSize: '1.25rem' }}>Detailed Player Statistics</h2>
-            </div>
-
-            <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '940px' }}>
+        <Card title="Detailed player statistics" note={`${sortedData.length.toLocaleString()} players`} bodyless>
+            <TableScroll label="Detailed player statistics">
+                <table className="data-table">
                     <thead>
                         <tr>
-                            <th style={{ padding: '1rem', textAlign: 'left', color: 'var(--color-text-muted)', borderBottom: '1px solid var(--color-bg-tertiary)' }}>#</th>
+                            <th scope="col" className="rank-cell">#</th>
                             {COLUMNS.map(column => (
-                                <Th
+                                <SortHeader
                                     key={column.field}
-                                    {...column}
-                                    sortField={sortField}
-                                    sortDirection={sortDirection}
-                                    onSort={handleSort}
+                                    label={column.label}
+                                    title={column.title}
+                                    numeric={column.numeric}
+                                    className={column.className}
+                                    active={sortField === column.field}
+                                    direction={sortDirection === 'asc' ? 'ascending' : 'descending'}
+                                    onSort={() => handleSort(column.field)}
                                 />
                             ))}
                         </tr>
                     </thead>
                     <tbody>
                         {paginatedData.map((p, i) => (
-                            <tr key={p.player_key} style={{ borderBottom: '1px solid var(--color-bg-tertiary)' }} className="hover:bg-slate-800/50">
-                                <td style={{ padding: '1rem', color: 'var(--color-text-muted)' }}>{startIndex + i + 1}</td>
-                                <td style={{ padding: '1rem' }}>
-                                    <div className="font-medium" style={{ color: 'var(--color-text-primary)' }}>{p.player_name}</div>
-                                    <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
-                                        {p.jersey_number ? `#${p.jersey_number}` : ''}
-                                    </div>
+                            <tr key={p.player_key}>
+                                <td className="rank-cell">{startIndex + i + 1}</td>
+                                <td className="team-cell col-sticky">
+                                    {p.player_name}
+                                    {p.jersey_number && <div className="cell-sub">#{p.jersey_number}</div>}
                                 </td>
-                                <td style={{ padding: '1rem' }}>
+                                <td>
                                     {/* A career shows the schools in order, so a transfer
                                         reads as a move rather than as the last school only. */}
-                                    <span style={{ display: 'inline-flex', flexWrap: 'wrap', gap: '0.25rem' }}>
+                                    <span className="team-trail">
                                         {(p.teams ?? [p.team_id]).map((team, n) => (
-                                            <span key={team} style={{
-                                                padding: '0.25rem 0.5rem',
-                                                borderRadius: 'var(--radius-full)',
-                                                backgroundColor: 'var(--color-bg-tertiary)',
-                                                fontSize: '0.75rem',
-                                                opacity: n < (p.teams?.length ?? 1) - 1 ? 0.65 : 1
-                                            }}>
+                                            <span key={team} className={n < (p.teams?.length ?? 1) - 1 ? 'badge is-past' : 'badge'}>
                                                 {team}
                                             </span>
                                         ))}
                                     </span>
-                                    {p.season.includes('–') && (
-                                        <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.25rem' }}>
-                                            {p.season}
-                                        </div>
-                                    )}
+                                    {p.season.includes('–') && <div className="cell-sub">{p.season}</div>}
                                 </td>
-                                <td style={{ padding: '1rem', fontSize: '0.8125rem', color: 'var(--color-text-secondary)' }}>
-                                    {(p.conferences ?? [p.conference]).join(' · ')}
-                                </td>
-                                <td align="right" style={{ padding: '1rem' }}>{p.games_played}</td>
-                                <td align="right" style={{ padding: '1rem' }}>{p.minutes}</td>
-                                <td align="right" style={{ padding: '1rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>{p.goals}</td>
-                                <td align="right" style={{ padding: '1rem' }}>{p.assists}</td>
-                                <td align="right" style={{ padding: '1rem' }}>{p.g_per_90.toFixed(2)}</td>
-                                <td align="right" style={{ padding: '1rem', color: p.conversion_rate > 20 ? 'var(--color-success)' : 'inherit' }}>
+                                <td className="text-muted">{(p.conferences ?? [p.conference]).join(' · ')}</td>
+                                <td className="numeric">{p.games_played}</td>
+                                <td className="numeric">{p.minutes.toLocaleString()}</td>
+                                <td className="numeric font-bold">{p.goals}</td>
+                                <td className="numeric">{p.assists}</td>
+                                <td className="numeric">{p.g_per_90.toFixed(2)}</td>
+                                <td className={p.conversion_rate > 20 ? 'numeric delta is-up' : 'numeric'}>
                                     {p.conversion_rate.toFixed(1)}%
                                 </td>
-                                <td align="right" style={{ padding: '1rem' }}>{p.shots}</td>
+                                <td className="numeric">{p.shots}</td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
-            </div>
-
-            <div style={{
-                padding: '1rem 1.5rem',
-                borderTop: '1px solid var(--color-bg-tertiary)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between'
-            }}>
-                <span className="text-sm text-muted">Page {page} of {totalPages}</span>
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
-                    <button
-                        onClick={() => setPage(Math.max(1, page - 1))}
-                        disabled={page === 1}
-                        style={{
-                            padding: '0.5rem',
-                            borderRadius: 'var(--radius-md)',
-                            backgroundColor: 'var(--color-bg-tertiary)',
-                            color: page === 1 ? 'var(--color-text-muted)' : 'var(--color-text-primary)',
-                            border: 'none',
-                            opacity: page === 1 ? 0.5 : 1
-                        }}
-                    >
-                        <ChevronLeft size={20} />
-                    </button>
-                    <button
-                        onClick={() => setPage(Math.min(totalPages, page + 1))}
-                        disabled={page === totalPages}
-                        style={{
-                            padding: '0.5rem',
-                            borderRadius: 'var(--radius-md)',
-                            backgroundColor: 'var(--color-bg-tertiary)',
-                            color: page === totalPages ? 'var(--color-text-muted)' : 'var(--color-text-primary)',
-                            border: 'none',
-                            opacity: page === totalPages ? 0.5 : 1
-                        }}
-                    >
-                        <ChevronRight size={20} />
-                    </button>
-                </div>
-            </div>
-        </section>
-    )
+            </TableScroll>
+            <Pager page={page} pages={totalPages} total={sortedData.length} onPage={setPage} />
+        </Card>
+    );
 }

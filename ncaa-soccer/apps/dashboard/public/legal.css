@@ -1,21 +1,23 @@
-/* Privacy policy and terms: static pages, so they keep working without the app's script. */
+/* Privacy policy and terms: static pages, so they keep working without the app's script.
+   Same newsprint palette as the app (src/styles/variables.css); system fonts, because the
+   app's self-hosted fonts are bundled with its script. */
 :root {
-    color-scheme: dark;
-    --bg: #0b1220;
-    --surface: #1e293b;
-    --line: #334155;
-    --ink: #f8fafc;
-    --ink-2: #cbd5e1;
-    --muted: #94a3b8;
-    --accent: #a5b4fc;
+    color-scheme: light;
+    --bg: #fbfaf6;
+    --surface: #f4efe6;
+    --line: #dbd4c5;
+    --ink: #18191a;
+    --ink-2: #33363b;
+    --muted: #555861;
+    --accent: #8c1d1d;
+    --serif: Newsreader, Georgia, 'Times New Roman', serif;
 }
 
 * { box-sizing: border-box; }
 
 body {
     margin: 0;
-    background: radial-gradient(1200px 600px at 15% -10%, rgba(99, 102, 241, 0.14), transparent 60%), var(--bg);
-    background-attachment: fixed;
+    background: var(--bg);
     color: var(--ink-2);
     font: 16px/1.65 Inter, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -24,21 +26,35 @@ body {
 header, main, footer {
     max-width: 46rem;
     margin: 0 auto;
-    padding: 0 16px;
+    padding: 0 max(16px, env(safe-area-inset-left)) 0 max(16px, env(safe-area-inset-right));
 }
 
-header { padding-top: 24px; }
-header a { color: var(--ink); font-weight: 700; text-decoration: none; }
+header {
+    padding-top: 20px;
+    padding-bottom: 12px;
+    border-bottom: 3px double var(--ink);
+}
+header a {
+    font-family: var(--serif);
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    color: var(--ink);
+    text-decoration: none;
+}
 header a:hover { color: var(--accent); }
 
-h1 { color: var(--ink); font-size: 2rem; line-height: 1.2; margin: 40px 0 4px; }
-h2 { color: var(--ink); font-size: 1.15rem; margin: 36px 0 8px; padding-top: 20px; border-top: 1px solid var(--line); }
+h1, h2 { font-family: var(--serif); color: var(--ink); letter-spacing: -0.01em; }
+h1 { font-size: 2rem; line-height: 1.2; margin: 32px 0 4px; }
+h2 { font-size: 1.25rem; margin: 36px 0 8px; padding-top: 20px; border-top: 1px solid var(--line); }
 .updated { color: var(--muted); font-size: 0.9rem; margin: 0 0 24px; }
-.summary { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 18px; }
+.summary { background: var(--surface); border: 1px solid var(--line); padding: 14px 18px; }
 p, li { margin: 0 0 10px; }
 ul { padding-left: 1.25rem; }
 strong { color: var(--ink); }
-a { color: var(--accent); }
+a { color: var(--accent); text-underline-offset: 2px; }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 footer { color: var(--muted); font-size: 0.9rem; padding-top: 32px; padding-bottom: 48px; }
-footer a { margin-right: 16px; }
+footer a { display: inline-block; margin-right: 16px; padding: 8px 0; }

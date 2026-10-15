@@ -8,6 +8,8 @@ import { AccountProvider } from './auth/account'
 import { AuthShell } from './auth/AuthShell'
 import { authPageFromPath } from './auth/config'
 import { SessionProvider } from './auth/session'
+import { parseHash } from './route'
+import { preloadView } from './viewLoaders'
 // Self-hosted, so the production CSP (style-src/font-src 'self') does not block them.
 import '@fontsource-variable/newsreader/opsz.css'
 import '@fontsource-variable/newsreader/opsz-italic.css'
@@ -55,6 +57,8 @@ function start() {
     return
   }
   root.render(<Boot message="Loading NCAA Division I men’s soccer data…" />)
+  // The view's code downloads alongside the analytics index, not after it.
+  preloadView(parseHash(window.location.hash, 'overview').view)
   withTimeout(bootstrapData(), STARTUP_TIMEOUT_MS)
     .then(analyticsReady =>
       root.render(
