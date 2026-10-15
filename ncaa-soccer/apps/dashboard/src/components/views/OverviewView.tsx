@@ -8,6 +8,7 @@ import { count, percent, shortDate, signed, weekLabel } from '../../format';
 import { DropCap, MatchCard, Notice, PullQuote, SectionEyebrow, Stat } from '../ui';
 import type { ViewId } from '../../views';
 import { href } from '../../route';
+import { TeamOfWeek } from '../TeamOfWeek';
 
 /** "12 points", "1 point": the Elo gap between two teams, rounded. */
 const pointsBehind = (leader: TeamRating, other: TeamRating) => {
@@ -145,6 +146,8 @@ export function OverviewView({ onView }: Props) {
                     </Notice>
                 </div>
             )}
+
+            <TeamOfWeek />
 
             {/* 3-Column Classical Broadsheet Layout */}
             <div className="broadsheet-grid">

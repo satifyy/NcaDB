@@ -2422,3 +2422,487 @@ select:focus-visible {
         min-height: 32px;
     }
 }
+
+/* =========================================================================
+   Team of the Week (Overview)
+   ========================================================================= */
+
+.totw {
+    margin-bottom: var(--space-8);
+    padding-bottom: var(--space-8);
+    border-bottom: 2px solid var(--color-border-strong);
+}
+
+.totw-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-bottom: var(--space-3);
+}
+
+.totw-title {
+    margin-bottom: var(--space-1);
+}
+
+.totw-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    align-items: center;
+}
+
+.totw-weeknav {
+    display: flex;
+    gap: var(--space-2);
+    align-items: center;
+}
+
+.totw-weeknav .button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.totw-week-select select {
+    min-width: 150px;
+}
+
+.totw-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-3);
+    margin-bottom: var(--space-3);
+}
+
+.totw .notice {
+    margin-bottom: var(--space-3);
+}
+
+.totw-mode {
+    display: inline-flex;
+    margin-bottom: var(--space-3);
+}
+
+.totw-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    gap: var(--space-6);
+    align-items: start;
+}
+
+.totw-main {
+    min-width: 0;
+}
+
+/* The pitch: a portrait field with the XI in four lines, attack at the top. */
+.totw-pitch {
+    position: relative;
+    display: grid;
+    grid-template-rows: repeat(4, 1fr);
+    gap: var(--space-2);
+    max-width: 640px;
+    aspect-ratio: 100 / 112;
+    padding: var(--space-4) var(--space-3);
+    background-color: #2f5d3a;
+    background-image: repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.035) 0 12.5%, transparent 12.5% 25%);
+    border: 1px solid var(--color-border-strong);
+}
+
+.totw-pitch-lines {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.35);
+    stroke-width: 0.5;
+    vector-effect: non-scaling-stroke;
+    pointer-events: none;
+}
+
+.totw-line {
+    position: relative;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    gap: var(--space-2);
+    min-width: 0;
+}
+
+.totw-marker-cell {
+    flex: 0 1 23%;
+    min-width: 0;
+    display: flex;
+    justify-content: center;
+}
+
+.totw-marker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    width: 100%;
+    min-height: var(--touch-target);
+    padding: var(--space-2) var(--space-1);
+    font-family: inherit;
+    color: var(--color-text-primary);
+    text-align: center;
+    background-color: rgba(251, 250, 246, 0.96);
+    border: 1px solid transparent;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    cursor: pointer;
+    transition: border-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.totw-marker:hover {
+    border-color: var(--color-border-strong);
+}
+
+.totw-marker.is-selected {
+    border-color: var(--color-accent-primary);
+    box-shadow: 0 0 0 2px var(--color-accent-primary);
+}
+
+.totw-marker.is-empty {
+    flex: 0 1 23%;
+    cursor: default;
+    color: rgba(255, 255, 255, 0.85);
+    background: transparent;
+    border: 1px dashed rgba(255, 255, 255, 0.6);
+    box-shadow: none;
+}
+
+.totw-marker-rating,
+.totw-marker-pos {
+    font-size: 0.75rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    padding: 2px 6px;
+    color: #fff;
+    background-color: var(--color-accent-primary);
+}
+
+.totw-marker-pos {
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.totw-marker-name {
+    max-width: 100%;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+}
+
+.totw-name-short {
+    display: none;
+}
+
+.totw-marker-team,
+.totw-marker-stats {
+    max-width: 100%;
+    font-size: 0.6875rem;
+    line-height: 1.25;
+    color: var(--color-text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.totw-marker-stats {
+    color: var(--color-text-muted);
+    font-variant-numeric: tabular-nums;
+}
+
+/* Under the pitch the table is the phone's list; elsewhere the Table toggle shows it. */
+.totw-list-companion {
+    display: none;
+}
+
+.totw-table tr.is-selected td {
+    background-color: var(--color-accent-light);
+}
+
+.totw-row-button {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1px;
+    width: 100%;
+    min-height: var(--touch-target);
+    justify-content: center;
+    padding: 0;
+    font-family: inherit;
+    font-size: 0.875rem;
+    text-align: left;
+    color: var(--color-text-primary);
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.totw-row-button:hover .font-medium,
+.totw-row-button:hover > span:first-child {
+    color: var(--color-accent-primary);
+}
+
+.totw-aside {
+    min-width: 0;
+    padding-left: var(--space-6);
+    border-left: 1px solid var(--color-border);
+}
+
+.totw-detail:focus {
+    outline: none;
+}
+
+.totw-detail-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.totw-detail-rating {
+    font-family: var(--font-serif);
+    font-size: 2rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-accent-primary);
+}
+
+.totw-detail-rating .text-muted {
+    font-size: 1rem;
+}
+
+.totw-detail-name {
+    margin: var(--space-2) 0 var(--space-1);
+    overflow-wrap: anywhere;
+}
+
+.totw-detail-why {
+    margin: var(--space-3) 0;
+    line-height: 1.55;
+}
+
+.totw-detail-missing {
+    color: var(--color-warning);
+    margin-bottom: var(--space-3);
+}
+
+.totw-games {
+    display: grid;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+}
+
+.totw-game {
+    padding: var(--space-3);
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+}
+
+.totw-game-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-1) var(--space-3);
+    margin-bottom: var(--space-2);
+}
+
+.totw-components {
+    display: grid;
+    gap: 2px;
+    margin: 0;
+    font-size: 0.8125rem;
+}
+
+.totw-components > div {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-3);
+}
+
+.totw-components dd {
+    margin: 0;
+    font-variant-numeric: tabular-nums;
+}
+
+.totw-components-total {
+    margin-top: 2px;
+    padding-top: 4px;
+    font-weight: 700;
+    border-top: 1px solid var(--color-border);
+}
+
+.totw-rankings {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-4);
+    margin-top: var(--space-6);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-border);
+}
+
+.totw-ranking {
+    min-width: 0;
+}
+
+.totw-ranking-title,
+.totw-ranking-sub {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-accent-primary);
+    margin-bottom: var(--space-1);
+}
+
+.totw-ranking-sub {
+    margin-top: var(--space-3);
+    color: var(--color-text-muted);
+}
+
+.totw-inline-rating {
+    color: var(--color-accent-primary);
+    font-variant-numeric: tabular-nums;
+}
+
+.totw-mentions {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.totw-method {
+    margin-top: var(--space-4);
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+}
+
+.totw-method summary {
+    min-height: var(--touch-target);
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    color: var(--color-text-accent);
+    cursor: pointer;
+}
+
+.totw-method p {
+    max-width: 75ch;
+    line-height: 1.6;
+}
+
+@media (max-width: 1100px) {
+    .totw-rankings {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 900px) {
+    .totw-body {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .totw-pitch {
+        margin: 0 auto;
+    }
+
+    .totw-aside {
+        padding-left: 0;
+        padding-top: var(--space-4);
+        border-left: none;
+        border-top: 1px solid var(--color-border);
+        scroll-margin-top: calc(var(--nav-height) + var(--space-3));
+    }
+
+    .totw-detail {
+        scroll-margin-top: calc(var(--nav-height) + var(--space-3));
+    }
+}
+
+@media (max-width: 640px) {
+    .totw-head {
+        align-items: stretch;
+    }
+
+    .totw-controls,
+    .totw-weeknav {
+        width: 100%;
+    }
+
+    .totw-week-select {
+        flex: 1;
+    }
+
+    .totw-week-select select,
+    .totw-controls .control select {
+        min-width: 0;
+        max-width: none;
+        width: 100%;
+    }
+
+    .totw-controls > .control {
+        width: 100%;
+    }
+
+    .totw-weeknav .button {
+        min-width: var(--touch-target);
+        min-height: var(--touch-target);
+        padding: 0 var(--space-3);
+    }
+
+    .totw-hide-sm {
+        display: none;
+    }
+
+    /* A simplified pitch: surname and rating only, each marker still a 44px target;
+       the full ranked list follows underneath. */
+    .totw-pitch {
+        aspect-ratio: auto;
+        min-height: 360px;
+        padding: var(--space-3) var(--space-1);
+        gap: var(--space-3);
+    }
+
+    .totw-line {
+        gap: 2px;
+    }
+
+    .totw-marker {
+        padding: var(--space-1) 2px;
+    }
+
+    .totw-marker-team,
+    .totw-marker-stats,
+    .totw-name-full {
+        display: none;
+    }
+
+    .totw-name-short {
+        display: inline;
+    }
+
+    .totw-marker-name {
+        font-size: 0.75rem;
+    }
+
+    .totw-list-companion {
+        display: block;
+        margin-top: var(--space-4);
+    }
+
+    .totw-col-stats {
+        display: none;
+    }
+
+    .totw-rankings {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
