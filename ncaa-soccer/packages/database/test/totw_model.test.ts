@@ -9,6 +9,7 @@ import {
     WEIGHTS,
     explain,
     keeperGoalsAllowed,
+    ratingOf,
     rateGame,
     rateWeek,
     selectTeam,
@@ -27,6 +28,7 @@ function row(overrides: Partial<PlayerGameInput> = {}): PlayerGameInput {
         gameId: 100,
         gameDate: '2026-10-07',
         opponentName: 'Elon',
+        opponentDivisionOne: true,
         positionGroup: 'MID',
         position: 'mid',
         minutes: 90,
@@ -171,6 +173,27 @@ test('ties break deterministically: best game, then fewer minutes, then player i
 test('the same inputs always produce the same ratings', () => {
     const rows = fullWeek();
     assert.deepEqual(rateWeek(rows), rateWeek([...rows].reverse()));
+});
+
+test('a game against a team outside Division I counts at three quarters', () => {
+    const d1 = rateGame(row({ positionGroup: 'FWD', goals: 3, teamScore: 3, opponentScore: 0 }))!;
+    const other = rateGame(row({ positionGroup: 'FWD', goals: 3, teamScore: 3, opponentScore: 0, opponentDivisionOne: false }))!;
+    assert.equal(other.score, Math.round(d1.score * WEIGHTS.nonDivisionOneOpponent * 1000) / 1000);
+    assert.ok(other.components.opponent_outside_division_one < 0);
+    // A defender's bad day is not softened by the discount.
+    const conceded = rateGame(row({ positionGroup: 'DEF', teamScore: 0, opponentScore: 3, opponentDivisionOne: false }))!;
+    assert.equal(conceded.components.opponent_outside_division_one, undefined);
+});
+
+test('the rating curve: the group 90th percentile rates 6.3, and the scale never saturates', () => {
+    assert.equal(ratingOf(1, 1), 6.3);
+    assert.equal(ratingOf(2, 1), 8.6);
+    assert.equal(ratingOf(3, 1), 9.5);
+    assert.ok(ratingOf(4.9, 1.31) < 10);
+    assert.equal(ratingOf(0, 1), 0);
+    assert.equal(ratingOf(-0.5, 1), 0);
+    // Distinct top scores stay distinct, which a clamped z-score did not manage.
+    assert.notEqual(ratingOf(4.9, 1.31), ratingOf(3.3, 1.31));
 });
 
 test('ratings sit on 0-10 and rank within their group', () => {

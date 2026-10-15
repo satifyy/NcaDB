@@ -8,6 +8,9 @@ import { batch, freshDatabase, game, skipWithoutDb, stat } from '../../../packag
 import { buildApp } from '../src/app';
 import { loadConfig } from '../src/config';
 
+/** The fixture holds one game; production needs twenty before a week gets an XI. */
+const ONE_GAME = { minCapturedGames: 1 };
+
 const v2 = (name: string, team: string, group: 'GK' | 'DEF' | 'MID' | 'FWD', extra: Partial<PlayerStatRecord> = {}) =>
     stat(name, team, { position: group, positionGroup: group, started: true, captureVersion: 2, saves: null, ...extra });
 
@@ -27,7 +30,7 @@ describe('Team of the Week API', { skip: skipWithoutDb }, () => {
             v2('Cy Striker', 'clemson', 'FWD', { jerseyNumber: '9', goals: 1 }),
             v2('Ed Bench', 'clemson', 'FWD', { jerseyNumber: '19', minutes: 20 })
         ]));
-        await computeTeamOfWeek(pool, 2025, new Date('2025-09-20T12:00:00Z'));
+        await computeTeamOfWeek(pool, 2025, new Date('2025-09-20T12:00:00Z'), ONE_GAME);
         app = await buildApp(pool, loadConfig({ ADMIN_API_TOKEN: 'test-admin-token-0123456789abcdef' }), { logger: false });
     });
     after(async () => {

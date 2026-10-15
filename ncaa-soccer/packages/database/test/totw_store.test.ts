@@ -9,6 +9,8 @@ import { createPool, computeTeamOfWeek, loadSeason, MODEL_VERSION } from '../src
 import type { PlayerStatRecord } from '../src';
 import { batch, freshDatabase, game, skipWithoutDb, stat, TEST_DATABASE_URL } from './helpers';
 
+/** The fixtures hold one game; production needs twenty before a week gets an XI. */
+const ONE_GAME = { minCapturedGames: 1 };
 const PASSWORD = 'test-only-password-not-a-secret-0123';
 const poolAs = (role: string) => {
     const url = new URL(TEST_DATABASE_URL!);
@@ -57,7 +59,7 @@ describe('team of the week store', { skip: skipWithoutDb }, () => {
         )).rows;
 
     test('the worker computes a week: eleven slots, filled where players qualify, empty where not', async () => {
-        const result = await computeTeamOfWeek(worker, 2025, final);
+        const result = await computeTeamOfWeek(worker, 2025, final, ONE_GAME);
         assert.deepEqual(result, { season: 2025, weeks: 1, computed: 1, unchanged: 0 });
         const xi = await selections();
         assert.equal(xi.length, 11);
@@ -86,14 +88,14 @@ describe('team of the week store', { skip: skipWithoutDb }, () => {
 
     test('running again with nothing changed writes nothing', async () => {
         const before = (await owner.query('SELECT computed_at FROM totw_weeks')).rows[0].computed_at;
-        const result = await computeTeamOfWeek(worker, 2025, final);
+        const result = await computeTeamOfWeek(worker, 2025, final, ONE_GAME);
         assert.deepEqual([result.computed, result.unchanged], [0, 1]);
         assert.deepEqual((await owner.query('SELECT computed_at FROM totw_weeks')).rows[0].computed_at, before);
     });
 
     test('a corrected box score recomputes its week and raises the revision', async () => {
         await loadSeason(worker, batch(2025, [game()], boxScore({ 'Cy Striker': { goals: 0 }, 'Mo Mid': { goals: 3 } })));
-        const result = await computeTeamOfWeek(worker, 2025, final);
+        const result = await computeTeamOfWeek(worker, 2025, final, ONE_GAME);
         assert.equal(result.computed, 1);
         const { rows: [week] } = await owner.query('SELECT revision FROM totw_weeks');
         assert.equal(week.revision, 1);
@@ -104,12 +106,21 @@ describe('team of the week store', { skip: skipWithoutDb }, () => {
 
     test('a week inside the correction window is provisional, and the status change alone is recorded', async () => {
         await owner.query('DELETE FROM totw_weeks');
-        await computeTeamOfWeek(worker, 2025, new Date('2025-09-10T12:00:00Z'));
+        await computeTeamOfWeek(worker, 2025, new Date('2025-09-10T12:00:00Z'), ONE_GAME);
         assert.equal((await owner.query('SELECT status FROM totw_weeks')).rows[0].status, 'provisional');
-        const later = await computeTeamOfWeek(worker, 2025, final);
+        const later = await computeTeamOfWeek(worker, 2025, final, ONE_GAME);
         assert.equal(later.computed, 1);
         const { rows: [week] } = await owner.query('SELECT status, revision FROM totw_weeks');
         assert.deepEqual([week.status, week.revision], ['final', 0], 'a status change is not a revision');
+    });
+
+    test('a week with too few captured games is stored without an XI, and says why', async () => {
+        await computeTeamOfWeek(worker, 2025, final);
+        const { rows: [week] } = await owner.query('SELECT completeness FROM totw_weeks');
+        assert.deepEqual([week.completeness.published, week.completeness.reason], [false, 'too_few_games']);
+        const { rows: [n] } = await owner.query('SELECT count(player_id)::int AS filled FROM totw_selections');
+        assert.equal(n.filled, 0);
+        await computeTeamOfWeek(worker, 2025, final, ONE_GAME);
     });
 
     test('the API role can read the tables and cannot write them', async () => {

@@ -53,6 +53,7 @@ interface InputRow {
     game_id: string;
     game_date: string;
     opponent_name: string;
+    opponent_division_one: boolean;
     position_group: PositionGroup;
     position: string | null;
     minutes: number;
@@ -91,7 +92,7 @@ const INPUT_SQL = `
         WHERE s.season_id = $1 AND s.capture_version >= 2
     )
     SELECT r.player_id, p.display_name AS player_name, r.team_id, t.name AS team_name, r.game_id,
-           r.game_date::text AS game_date, o.name AS opponent_name, r.position_group, r.position, r.minutes,
+           r.game_date::text AS game_date, o.name AS opponent_name, o.is_division_one AS opponent_division_one, r.position_group, r.position, r.minutes,
            r.goals, r.assists, r.shots_on_goal, r.saves, r.goals_allowed, r.team_score, r.opponent_score,
            r.team_keepers_used, r.game_minutes
     FROM rows r
@@ -143,6 +144,7 @@ function toInput(r: InputRow): PlayerGameInput {
         gameId: Number(r.game_id),
         gameDate: r.game_date,
         opponentName: r.opponent_name,
+        opponentDivisionOne: r.opponent_division_one,
         positionGroup: r.position_group,
         position: r.position ?? '',
         minutes: r.minutes,
@@ -177,7 +179,13 @@ async function ensureModelVersion(pool: Pool): Promise<void> {
  * Computes every week of a season that has played games, writing only weeks whose
  * inputs or status changed.
  */
-export async function computeTeamOfWeek(pool: Pool, season: number, now = new Date()): Promise<TotwRunResult> {
+export async function computeTeamOfWeek(
+    pool: Pool,
+    season: number,
+    now = new Date(),
+    options: { minCapturedGames?: number } = {}
+): Promise<TotwRunResult> {
+    const minGames = options.minCapturedGames ?? RULES.minCapturedGames;
     const { rows: seasonRows } = await pool.query<{ id: number }>(
         `SELECT s.id FROM seasons s JOIN competitions c ON c.id = s.competition_id
          WHERE c.code = 'ncaa-d1-msoc' AND s.year = $1`,
@@ -206,7 +214,7 @@ export async function computeTeamOfWeek(pool: Pool, season: number, now = new Da
     for (const [weekStart, inputs] of [...byWeek].sort(([a], [b]) => a.localeCompare(b))) {
         result.weeks++;
         const status = weekStatus(weekStart, today);
-        const inputsHash = hashOf([MODEL_VERSION, inputs]);
+        const inputsHash = hashOf([MODEL_VERSION, minGames, inputs]);
         const { rows: existing } = await pool.query<{ id: string; inputs_hash: string; status: string }>(
             `SELECT id, inputs_hash, status FROM totw_weeks WHERE season_id = $1 AND week_start = $2 AND model_version = $3`,
             [seasonId, weekStart, MODEL_VERSION]
@@ -215,10 +223,14 @@ export async function computeTeamOfWeek(pool: Pool, season: number, now = new Da
             result.unchanged++;
             continue;
         }
-        const groups = rateWeek(inputs);
-        const xi = selectTeam(groups);
         const c = coverageByWeek.get(weekStart);
-        const completeness = summarize(c, groups);
+        // Too few captured games and there is no XI to speak of: a week of three preseason
+        // fixtures would otherwise "select" whoever played in them. The week is still
+        // stored, so the site can say why it is empty.
+        const enough = (c?.games_captured ?? 0) >= minGames;
+        const groups = enough ? rateWeek(inputs) : rateWeek([]);
+        const xi = selectTeam(groups);
+        const completeness = { ...summarize(c, groups), published: enough, reason: enough ? null : 'too_few_games' };
 
         await withTransaction(pool, async client => {
             const changedInputs = existing[0] && existing[0].inputs_hash !== inputsHash;

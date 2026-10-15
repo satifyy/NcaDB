@@ -37,7 +37,13 @@ export const WEIGHTS = {
     save: 0.25,
     keeperGoalAllowed: -0.5,
     /** Weekly score = best × this + mean × (1 − this). */
-    bestGameShare: 0.75
+    bestGameShare: 0.75,
+    /**
+     * A game against a team outside Division I counts at this share of its positive
+     * score. Those opponents (D2, NAIA) are where most lopsided scorelines come from;
+     * this is a deliberately blunt correction, not an opponent-strength model.
+     */
+    nonDivisionOneOpponent: 0.75
 } as const;
 
 export const RULES = {
@@ -48,7 +54,9 @@ export const RULES = {
     /** A regulation game; a longer one (overtime) uses its own length. */
     regulationMinutes: 90,
     formation: { GK: 1, DEF: 4, MID: 3, FWD: 3 } as Record<PositionGroup, number>,
-    honorableMentions: 2
+    honorableMentions: 2,
+    /** A week with fewer games captured (box scores with positions) gets no XI. */
+    minCapturedGames: 20
 } as const;
 
 /** One player's row from one game, joined with what the game and their team did. */
@@ -60,6 +68,8 @@ export interface PlayerGameInput {
     gameId: number;
     gameDate: string;
     opponentName: string;
+    /** Whether the opponent is a Division I program. */
+    opponentDivisionOne: boolean;
     positionGroup: PositionGroup;
     /** The label the box score printed, for display. */
     position: string;
@@ -85,6 +95,7 @@ export interface RatedGame {
     gameId: number;
     gameDate: string;
     opponentName: string;
+    opponentDivisionOne: boolean;
     teamScore: number;
     opponentScore: number;
     minutes: number;
@@ -111,7 +122,7 @@ export interface PlayerWeek {
     bestGame: number;
     meanGame: number;
     raw: number;
-    /** 0–10, from the player's z-score within the week's position group. */
+    /** 0–10, against the week's position group: see {@link ratingOf}. */
     rating: number;
     rank: number;
     /** Statistics that were not reported for at least one rated game. */
@@ -170,11 +181,16 @@ export function rateGame(row: PlayerGameInput): RatedGame | null {
         if (row.saves !== null) add('saves', row.saves * WEIGHTS.save);
     }
 
+    const subtotal = Object.values(components).reduce((sum, value) => sum + value, 0);
+    if (!row.opponentDivisionOne && subtotal > 0) {
+        add('opponent_outside_division_one', -subtotal * (1 - WEIGHTS.nonDivisionOneOpponent));
+    }
     const score = round(Object.values(components).reduce((sum, value) => sum + value, 0));
     return {
         gameId: row.gameId,
         gameDate: row.gameDate,
         opponentName: row.opponentName,
+        opponentDivisionOne: row.opponentDivisionOne,
         teamScore: row.teamScore,
         opponentScore: row.opponentScore,
         minutes: row.minutes,
@@ -203,6 +219,30 @@ function weekGroup(rows: PlayerGameInput[]): PlayerGameInput[] {
         if (total > (minutes.get(best) ?? 0)) best = group;
     }
     return rows.filter(row => row.positionGroup === best);
+}
+
+/** The `q` quantile of `values` (linear interpolation), or 0 for none. */
+function percentile(values: number[], q: number): number {
+    if (values.length === 0) return 0;
+    const sorted = [...values].sort((a, b) => a - b);
+    const at = (sorted.length - 1) * q;
+    const lo = Math.floor(at);
+    return sorted[lo] + (sorted[Math.ceil(at)] - sorted[lo]) * (at - lo);
+}
+
+/**
+ * The 0–10 rating: `10 × (1 − e^(−score / scale))`, where `scale` is the 90th-percentile
+ * week score in the player's group that week.
+ *
+ * Week scores are heavily right-skewed — most players score a few tenths, a hat trick
+ * scores four — so a z-score puts the whole XI at the ceiling. This curve keeps them
+ * apart: the group's 90th percentile rates 6.3, twice it 8.6, three times 9.5, and 10 is
+ * never quite reached. A score at or below zero rates 0. Ratings compare players within a
+ * group and week; they are not comparable across groups.
+ */
+export function ratingOf(score: number, scale: number): number {
+    if (score <= 0 || scale <= 0) return score > 0 ? 10 : 0;
+    return Math.round(10 * (1 - Math.exp(-score / scale)) * 10) / 10;
 }
 
 /** Deterministic order: score, then best game, then fewer minutes (efficiency), then id. */
@@ -252,12 +292,10 @@ export function rateWeek(rows: PlayerGameInput[]): Record<PositionGroup, PlayerW
 
     for (const group of Object.keys(groups) as PositionGroup[]) {
         const list = groups[group].sort(compare);
-        const mean = list.reduce((s, p) => s + p.raw, 0) / (list.length || 1);
-        const sd = Math.sqrt(list.reduce((s, p) => s + (p.raw - mean) ** 2, 0) / (list.length || 1));
+        const scale = percentile(list.map(p => p.raw), 0.9);
         list.forEach((player, index) => {
             player.rank = index + 1;
-            const z = sd > 0 ? (player.raw - mean) / sd : 0;
-            player.rating = Math.round(Math.min(10, Math.max(0, 5 + 1.25 * z)) * 10) / 10;
+            player.rating = ratingOf(player.raw, scale);
         });
     }
     return groups;

@@ -70,6 +70,9 @@ export interface TotwWeek {
             position_share: number | null;
             keeper_official_ga_share: number | null;
             keeper_saves_share: number | null;
+            /** False when the week had too few captured games for an XI. */
+            published?: boolean;
+            reason?: string | null;
         };
         previous: string | null;
         next: string | null;
@@ -468,7 +471,13 @@ export function TeamOfWeek() {
             {data && (
                 <>
                     <Freshness data={data} />
-                    {data.filled < 11 && (
+                    {data.week.completeness.published === false ? (
+                        <Notice kind="info">
+                            Too few games had box scores with positions this week (
+                            {count(data.week.completeness.games_captured)} of {count(data.week.completeness.final_games)})
+                            to pick a meaningful XI. A week needs at least 20.
+                        </Notice>
+                    ) : data.filled < 11 && (
                         <Notice>
                             Only {data.filled} of 11 places could be filled: some positions had no player with enough
                             minutes and recorded positions this week. Empty places are left empty rather than filled
