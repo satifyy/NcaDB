@@ -432,8 +432,15 @@ body {
         padding-top: var(--space-3);
     }
 
+    /* The account button sits at the right edge, with or without a search box beside
+       it, so its right-aligned menu opens on screen. */
     .broadsheet-actions {
         width: 100%;
+        justify-content: flex-end;
+    }
+
+    .account-dropdown {
+        max-width: calc(100vw - 2 * var(--gutter));
     }
 
     .broadsheet-actions .search-box {
