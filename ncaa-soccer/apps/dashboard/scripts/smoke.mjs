@@ -92,12 +92,33 @@ async function assets(site) {
     }
 }
 
+/**
+ * Clerk Protect's in-page loader is refused by the CSP on purpose (docs/AUTHENTICATION.md,
+ * "Content Security Policy"), so the browser reports it on every page with sign-in on.
+ * A message is excused only when the blocked URL (the first one in it; the rest quote the
+ * policy) is on one of those hosts, compared by parsed hostname. Anything else still fails.
+ */
+const isClerkProtect = url => {
+    try {
+        const { protocol, hostname } = new URL(url);
+        return protocol === 'https:' && (hostname === 'cdn.protect.clerk.com' || hostname.endsWith('.client.protect.clerk.com'));
+    } catch {
+        return false;
+    }
+};
+const EXPECTED_REFUSAL = {
+    test: text => {
+        const blocked = text.match(/https?:\/\/[^\s'"]+/);
+        return blocked !== null && isClerkProtect(blocked[0].replace(/\.$/, ''));
+    }
+};
+
 async function render(browser, site, { expectText, hash = '', label }) {
     const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
     const errors = [];
     page.on('pageerror', e => errors.push(`pageerror: ${e.message}`));
-    page.on('console', m => m.type() === 'error' && !/Failed to load resource/.test(m.text()) && errors.push(m.text()));
-    await page.exposeFunction('__cspViolation', v => errors.push(`CSP: ${v}`));
+    page.on('console', m => m.type() === 'error' && !/Failed to load resource/.test(m.text()) && !EXPECTED_REFUSAL.test(m.text()) && errors.push(m.text()));
+    await page.exposeFunction('__cspViolation', v => EXPECTED_REFUSAL.test(v) || errors.push(`CSP: ${v}`));
     await page.addInitScript(() =>
         document.addEventListener('securitypolicyviolation', e => window.__cspViolation(`${e.violatedDirective} ${e.blockedURI}`))
     );
