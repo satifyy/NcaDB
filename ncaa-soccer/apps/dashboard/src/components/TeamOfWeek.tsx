@@ -385,7 +385,11 @@ export function TeamOfWeek() {
     const panelRef = useRef<HTMLDivElement>(null);
 
     const current = useApi<TotwWeek>(week ? `/api/v1/team-of-week/${week}` : '/api/v1/team-of-week', { competition });
-    const data = current.data;
+    // The week on screen stays until the next one arrives, so moving between weeks does
+    // not blank the section for the length of a request.
+    const [shown, setShown] = useState<TotwWeek | null>(null);
+    if (current.data && current.data !== shown) setShown(current.data);
+    const data = current.data ?? (current.loading ? shown : null);
     const weeks = useApi<{ data: WeekListing[] }>(data ? '/api/v1/team-of-week/weeks' : null, { season: data?.week.season, competition });
 
     // Every player the section can show, so a selection survives switching views.
@@ -417,7 +421,7 @@ export function TeamOfWeek() {
     const selected = selectedId !== null ? everyone.get(selectedId) ?? null : null;
 
     return (
-        <section className="totw" aria-labelledby="totw-title">
+        <section className="totw" aria-labelledby="totw-title" aria-busy={current.loading}>
             <SectionEyebrow>Team of the Week</SectionEyebrow>
             <div className="totw-head">
                 <div>
@@ -496,13 +500,13 @@ export function TeamOfWeek() {
                                 <XiTable xi={data.xi} selected={selectedId} onSelect={select} />
                             </div>
                         </div>
-                        <aside className="totw-aside" aria-label="Selected player">
+                        <div className="totw-aside">
                             {selected ? (
                                 <PlayerDetail player={selected} panelRef={panelRef} />
                             ) : (
                                 <div className="text-muted text-sm">Choose a player to see why they were selected.</div>
                             )}
-                        </aside>
+                        </div>
                     </div>
                     <Rankings data={data} onSelect={select} />
                     <details className="totw-method">
