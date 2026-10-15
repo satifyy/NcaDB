@@ -10,6 +10,7 @@
     "dependencies": {
         "@ncaa/database": "*",
         "@ncaa/parsers": "*",
+        "@ncaa/shared": "*",
         "@ncaa/storage": "*"
     }
 }

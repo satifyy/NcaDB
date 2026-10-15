@@ -509,6 +509,11 @@ interface StatRow {
     shots: number | null;
     shots_on_goal: number | null;
     saves: number | null;
+    position: string | null;
+    position_group: string | null;
+    started: boolean | null;
+    goals_allowed: number | null;
+    capture_version: number;
     source_game_id: string;
     source_team_name: string;
     source_player_name: string;
@@ -526,7 +531,8 @@ async function upsertStats(
         CREATE TEMP TABLE _batch_stats (
             game_id bigint, player_id bigint, team_id int, jersey_number text, jersey_key text,
             minutes smallint, goals smallint, assists smallint, shots smallint, shots_on_goal smallint,
-            saves smallint, source_game_id text, source_team_name text, source_player_name text,
+            saves smallint, position text, position_group text, started boolean, goals_allowed smallint,
+            capture_version smallint, source_game_id text, source_team_name text, source_player_name text,
             source_player_key text, content_hash text
         ) ON COMMIT DROP`);
     for (const part of chunks(rows)) {
@@ -535,7 +541,8 @@ async function upsertStats(
              SELECT * FROM jsonb_to_recordset($1::jsonb) AS x(
                  game_id bigint, player_id bigint, team_id int, jersey_number text, jersey_key text,
                  minutes smallint, goals smallint, assists smallint, shots smallint, shots_on_goal smallint,
-                 saves smallint, source_game_id text, source_team_name text, source_player_name text,
+                 saves smallint, position text, position_group text, started boolean, goals_allowed smallint,
+                 capture_version smallint, source_game_id text, source_team_name text, source_player_name text,
                  source_player_key text, content_hash text)`,
             [JSON.stringify(part)]
         );
@@ -546,10 +553,12 @@ async function upsertStats(
     const upserted = await client.query<{ inserted: string; updated: string }>(
         `WITH up AS (
              INSERT INTO player_game_stats (game_id, player_id, team_id, season_id, jersey_number, jersey_key,
-                 minutes, goals, assists, shots, shots_on_goal, saves, source_game_id, source_team_name,
+                 minutes, goals, assists, shots, shots_on_goal, saves, position, position_group, started,
+                 goals_allowed, capture_version, source_game_id, source_team_name,
                  source_player_name, source_player_key, content_hash)
              SELECT game_id, player_id, team_id, $1, jersey_number, jersey_key, minutes, goals, assists,
-                    shots, shots_on_goal, saves, source_game_id, source_team_name, source_player_name,
+                    shots, shots_on_goal, saves, position, position_group, started, goals_allowed,
+                    capture_version, source_game_id, source_team_name, source_player_name,
                     source_player_key, content_hash
              FROM _batch_stats
              ON CONFLICT (game_id, player_id, jersey_key) DO UPDATE SET
@@ -561,6 +570,11 @@ async function upsertStats(
                  shots = EXCLUDED.shots,
                  shots_on_goal = EXCLUDED.shots_on_goal,
                  saves = EXCLUDED.saves,
+                 position = EXCLUDED.position,
+                 position_group = EXCLUDED.position_group,
+                 started = EXCLUDED.started,
+                 goals_allowed = EXCLUDED.goals_allowed,
+                 capture_version = EXCLUDED.capture_version,
                  source_game_id = EXCLUDED.source_game_id,
                  source_team_name = EXCLUDED.source_team_name,
                  source_player_name = EXCLUDED.source_player_name,
@@ -782,8 +796,12 @@ export async function loadSeason(pool: Pool, batch: SeasonBatch): Promise<LoadRe
             if (!sides.get(gameId)?.includes(teamId)) wrongSide.push(s);
 
             const jerseyKey = s.jerseyNumber ?? '';
-            const content = [teamId, s.jerseyNumber, s.minutes, s.goals, s.assists, s.shots, s.shotsOnGoal, s.saves,
+            const content: unknown[] = [teamId, s.jerseyNumber, s.minutes, s.goals, s.assists, s.shots, s.shotsOnGoal, s.saves,
                 s.sourceGameId, s.sourceTeamName, s.sourcePlayerName, s.sourcePlayerKey];
+            // Version-1 rows hash exactly as they did before migration 005, so reloading
+            // a season that predates it reports every row unchanged instead of rewriting
+            // all of them. A row captured at version 2 hashes its new fields too.
+            if (s.captureVersion > 1) content.push(s.position, s.positionGroup, s.started, s.goalsAllowed, s.captureVersion);
             const key = `${gameId}|${playerId}|${jerseyKey}`;
             if (statRows.has(key)) duplicates++;
             statRows.set(key, {
@@ -798,6 +816,11 @@ export async function loadSeason(pool: Pool, batch: SeasonBatch): Promise<LoadRe
                 shots: s.shots,
                 shots_on_goal: s.shotsOnGoal,
                 saves: s.saves,
+                position: s.position,
+                position_group: s.positionGroup,
+                started: s.started,
+                goals_allowed: s.goalsAllowed,
+                capture_version: s.captureVersion,
                 source_game_id: s.sourceGameId,
                 source_team_name: s.sourceTeamName,
                 source_player_name: s.sourcePlayerName,

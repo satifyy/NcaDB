@@ -61,6 +61,13 @@ export interface PlayerStatRecord {
     shots: number | null;
     shotsOnGoal: number | null;
     saves: number | null;
+    /** As the box score printed it; null when it printed none. */
+    position: string | null;
+    positionGroup: 'GK' | 'DEF' | 'MID' | 'FWD' | null;
+    started: boolean | null;
+    goalsAllowed: number | null;
+    /** See migration 005. Rows from files without the column are version 1. */
+    captureVersion: number;
     sourceTeamName: string;
     sourcePlayerName: string;
     sourcePlayerKey: string;

@@ -171,6 +171,87 @@ describe('season loader', { skip: skipWithoutDb }, () => {
     });
 });
 
+describe('box-score capture version 2 (migration 005)', { skip: skipWithoutDb }, () => {
+    let pool: Pool;
+    before(async () => {
+        pool = await freshDatabase();
+    });
+    after(async () => {
+        await pool?.end();
+    });
+
+    // A keeper whose box score had a goalkeeping table, and an outfielder with no keeper
+    // record: saves and goals allowed are NULL for him, not 0.
+    const v2 = () => [
+        stat('Bo Keeper', 'duke', { jerseyNumber: '1', saves: 5, goalsAllowed: 1, position: 'GK', positionGroup: 'GK', started: true, captureVersion: 2 }),
+        stat('Ana Scorer', 'duke', { goals: 2, saves: null, position: 'def', positionGroup: 'DEF', started: false, captureVersion: 2 }),
+        stat('Cy Striker', 'clemson', { goals: 1, saves: null, position: 'D/M', positionGroup: null, started: true, captureVersion: 2 })
+    ];
+    const v1 = () => [
+        stat('Bo Keeper', 'duke', { jerseyNumber: '1', saves: 5 }),
+        stat('Ana Scorer', 'duke', { goals: 2 }),
+        stat('Cy Striker', 'clemson', { goals: 1 })
+    ];
+    const stored = async () =>
+        (await pool.query(
+            `SELECT p.display_name AS name, s.saves, s.goals_allowed, s.position, s.position_group, s.started, s.capture_version
+             FROM player_game_stats s JOIN players p ON p.id = s.player_id ORDER BY p.display_name`
+        )).rows;
+
+    test('rows loaded without the new fields are version 1, and reloading them changes nothing', async () => {
+        await loadSeason(pool, batch(2025, [game()], v1()));
+        const again = await loadSeason(pool, batch(2025, [game()], v1()));
+        assert.deepEqual(again.playerStats, { inserted: 0, updated: 0, unchanged: 3, deleted: 0 });
+        for (const row of await stored()) {
+            assert.equal(row.capture_version, 1);
+            assert.equal(row.position, null);
+            assert.equal(row.goals_allowed, null);
+        }
+    });
+
+    test('a re-read box score at version 2 upgrades the stored rows in place', async () => {
+        const result = await loadSeason(pool, batch(2025, [game()], v2()));
+        assert.deepEqual(result.playerStats, { inserted: 0, updated: 3, unchanged: 0, deleted: 0 });
+        assert.deepEqual(await stored(), [
+            { name: 'Ana Scorer', saves: null, goals_allowed: null, position: 'def', position_group: 'DEF', started: false, capture_version: 2 },
+            { name: 'Bo Keeper', saves: 5, goals_allowed: 1, position: 'GK', position_group: 'GK', started: true, capture_version: 2 },
+            { name: 'Cy Striker', saves: null, goals_allowed: null, position: 'D/M', position_group: null, started: true, capture_version: 2 }
+        ]);
+    });
+
+    test('repeated version-2 ingestion is idempotent', async () => {
+        const result = await loadSeason(pool, batch(2025, [game()], v2()));
+        assert.deepEqual(result.playerStats, { inserted: 0, updated: 0, unchanged: 3, deleted: 0 });
+    });
+
+    test('a corrected position or keeper line is an update', async () => {
+        const corrected = v2();
+        corrected[0].goalsAllowed = 2;
+        corrected[1].position = 'mid';
+        corrected[1].positionGroup = 'MID';
+        const result = await loadSeason(pool, batch(2025, [game()], corrected));
+        assert.equal(result.playerStats.updated, 2);
+    });
+
+    test('the export carries the new columns, so hydration round-trips them', async () => {
+        const rows = await exportPlayerStatRows(pool, 2025);
+        const keeper = rows.find(r => r.player_name === 'Bo Keeper')!;
+        assert.deepEqual(
+            [keeper.position, keeper.started, keeper.goals_allowed, keeper.saves, keeper.capture_version],
+            ['GK', '1', '2', '5', '2']
+        );
+        const scorer = rows.find(r => r.player_name === 'Ana Scorer')!;
+        assert.deepEqual([scorer.saves, scorer.goals_allowed, scorer.started], ['', '', '0']);
+    });
+
+    test('team totals ignore missing saves rather than counting them as zero', async () => {
+        const { rows } = await pool.query(
+            `SELECT t.slug, tg.saves FROM team_game_stats tg JOIN teams t ON t.id = tg.team_id ORDER BY t.slug`
+        );
+        assert.deepEqual(rows, [{ slug: 'clemson', saves: null }, { slug: 'duke', saves: 5 }]);
+    });
+});
+
 describe('ingestion lock and run recovery', { skip: skipWithoutDb }, () => {
     let pool: Pool;
     before(async () => {
