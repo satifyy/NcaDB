@@ -98,6 +98,18 @@ jobs:
         working-directory: ncaa-soccer/apps/dashboard
         env:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '0'
+          SMOKE_SCREENSHOTS: ${{ github.workspace }}/smoke-screenshots
+
+      # Phone, tablet and laptop screenshots of the fixture pages, for reviewing layout
+      # changes by eye: the smoke test checks overflow and reachability, not appearance.
+      - name: Upload layout screenshots
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: layout-screenshots
+          path: smoke-screenshots/
+          if-no-files-found: ignore
+          retention-days: 14
 
   secrets:
     runs-on: ubuntu-latest
