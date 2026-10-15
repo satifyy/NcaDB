@@ -1260,7 +1260,7 @@ body {
     background-color: var(--color-bg-primary);
     border: 1px solid var(--color-bg-tertiary);
     border-radius: var(--radius-md);
-    color-scheme: dark;
+    color-scheme: light;
 }
 
 .date-input:focus {

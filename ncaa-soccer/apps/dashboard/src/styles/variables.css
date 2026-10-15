@@ -68,9 +68,9 @@
     --radius-full: 9999px;
 
     /* --- Typography ----------------------------------------------------------- */
-    --font-serif: 'Newsreader', Georgia, serif;
-    --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-    --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+    --font-serif: 'Newsreader Variable', 'Newsreader', Georgia, serif;
+    --font-sans: 'Inter Variable', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
     /* --- Shadows: Editorial flat ink & subtle paper lift ---------------------- */
     --shadow-sm: none;

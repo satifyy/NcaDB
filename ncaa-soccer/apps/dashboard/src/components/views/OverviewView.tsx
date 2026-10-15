@@ -217,7 +217,7 @@ export function OverviewView({ onView }: Props) {
                     </div>
 
                     <p className="editorial-lead-para">
-                        <DropCap>{leader?.team ? leader.team[0] : 'W'}</DropCap>
+                        <DropCap>W</DropCap>
                         ITH an Elo benchmark touching{' '}
                         <strong>{leader ? leader.elo : '1,996'} points</strong> during the {ANALYTICS.current_season}{' '}
                         campaign, {leader?.team ?? 'top-tier collegiate programs'} have established an authoritative

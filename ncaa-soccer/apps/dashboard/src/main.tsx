@@ -8,6 +8,11 @@ import { AccountProvider } from './auth/account'
 import { AuthShell } from './auth/AuthShell'
 import { authPageFromPath } from './auth/config'
 import { SessionProvider } from './auth/session'
+// Self-hosted, so the production CSP (style-src/font-src 'self') does not block them.
+import '@fontsource-variable/newsreader/opsz.css'
+import '@fontsource-variable/newsreader/opsz-italic.css'
+import '@fontsource-variable/inter'
+import '@fontsource-variable/jetbrains-mono'
 import './styles/global.css'
 
 const root = ReactDOM.createRoot(document.getElementById('root')!)
