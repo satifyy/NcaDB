@@ -288,6 +288,18 @@ body {
     align-items: center;
 }
 
+/* On a phone the strip keeps only the edition and sync date, on one line. */
+@media (max-width: 640px) {
+    .hide-mobile {
+        display: none;
+    }
+
+    .broadsheet-top-inner {
+        justify-content: center;
+        white-space: nowrap;
+    }
+}
+
 .broadsheet-title-container {
     display: flex;
     align-items: center;

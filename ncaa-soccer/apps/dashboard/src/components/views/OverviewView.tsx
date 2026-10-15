@@ -9,6 +9,12 @@ import { DropCap, MatchCard, Notice, PullQuote, SectionEyebrow, Stat } from '../
 import type { ViewId } from '../../views';
 import { href } from '../../route';
 
+/** "12 points", "1 point": the Elo gap between two teams, rounded. */
+const pointsBehind = (leader: TeamRating, other: TeamRating) => {
+    const gap = Math.round(leader.elo - other.elo);
+    return `${gap} point${gap === 1 ? '' : 's'}`;
+};
+
 /** Conferences with fewer than this many rated teams are too small to average. */
 const MIN_CONFERENCE_TEAMS = 4;
 
@@ -122,6 +128,7 @@ export function OverviewView({ onView }: Props) {
 
     const leader = divisionOne[0];
     const test = ANALYTICS.model.performance.test;
+    const runnerUp = divisionOne[1];
     const standoutStar = latestStandouts.players[0];
 
     return (
@@ -213,27 +220,34 @@ export function OverviewView({ onView }: Props) {
                             : `The ${ANALYTICS.current_season} Campaign Under Review`}
                     </h2>
                     <div className="story-byline">
-                        By <strong>Marcus Vance</strong>, Senior Analytics Correspondent · Dispatched from National Desk
+                        By the <strong>College Soccer Lab</strong> model · Updated nightly from Division I results
                     </div>
 
-                    <p className="editorial-lead-para">
-                        <DropCap>W</DropCap>
-                        ITH an Elo benchmark touching{' '}
-                        <strong>{leader ? leader.elo : '1,996'} points</strong> during the {ANALYTICS.current_season}{' '}
-                        campaign, {leader?.team ?? 'top-tier collegiate programs'} have established an authoritative
-                        standard in modern soccer analytics. The current era combines relentless vertical pressing with
-                        disciplined possession architecture, challenging conventional tournament models.
-                    </p>
+                    {leader ? (
+                        <p className="editorial-lead-para">
+                            <DropCap>W</DropCap>
+                            ITH an Elo rating of <strong>{leader.elo}</strong>, {leader.team} lead{' '}
+                            {count(divisionOne.length)} rated Division I programs in the {ANALYTICS.current_season}{' '}
+                            season, {signed(leader.trend)} over the last four weeks.
+                            {runnerUp && ` ${runnerUp.team} sit ${pointsBehind(leader, runnerUp)} behind.`}
+                        </p>
+                    ) : (
+                        <p className="editorial-lead-para">
+                            Ratings for the {ANALYTICS.current_season} season have not been published yet.
+                        </p>
+                    )}
 
-                    <PullQuote cite="Collegiate Analytics Bulletin">
-                        “Statistical modeling in collegiate soccer requires isolating genuine match efficiency from
-                        schedule strength—evaluating margin of victory against the true quality of opposition.”
-                    </PullQuote>
+                    {record.overall.games > 0 && (
+                        <PullQuote cite="Prediction record">
+                            “The model has called {percent(record.overall.accuracy, 1)} of{' '}
+                            {count(record.overall.games)} results correctly.”
+                        </PullQuote>
+                    )}
 
                     <p style={{ marginTop: '1rem', color: 'var(--color-text-secondary)' }}>
-                        Every metric published in this chronicle is derived directly from verified schedules and official box
-                        scores across 197 Division I programs. No subjective ballots, no regional coaches’ polls—only the
-                        mathematical realities of performance on the pitch.
+                        Every rating here is computed from scraped schedules and box scores
+                        {divisionOne.length > 0 ? ` across ${count(divisionOne.length)} Division I programs` : ''}. No
+                        ballots and no coaches’ polls: only results, weighed by the strength of the opponent.
                     </p>
 
                     {/* Editorial KPI Triad */}
@@ -270,14 +284,14 @@ export function OverviewView({ onView }: Props) {
                     <div className="dispatch-card is-highlight">
                         <div className="dispatch-kicker">TALENT SPOTLIGHT</div>
                         <h4 className="dispatch-title">
-                            {standoutStar ? standoutStar.player_name : 'Zach Ramsey Spotlight'}
+                            {standoutStar ? standoutStar.player_name : 'No standouts yet'}
                         </h4>
                         <p className="text-muted text-sm" style={{ marginTop: '0.25rem', lineHeight: 1.5 }}>
                             {standoutStar
                                 ? `${standoutStar.player_name} (${standoutStar.team}) generated ${standoutStar.impact.toFixed(
                                       1
                                   )} impact rating against ${standoutStar.opponent ?? 'opposition'}.`
-                                : 'High shot conversion in half-spaces with verified expected goals surplus.'}
+                                : "Standouts appear once this season's box scores have been processed."}
                         </p>
                         <div style={{ marginTop: '0.5rem' }}>
                             <button

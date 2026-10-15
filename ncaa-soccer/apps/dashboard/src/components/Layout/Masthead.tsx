@@ -69,7 +69,7 @@ export function Masthead({ view, onView, searchTerm, onSearch, searchPlaceholder
             {/* Top Publication Volume & Date Line */}
             <div className="broadsheet-top-line">
                 <div className="container broadsheet-top-inner">
-                    <span>VOL. CXVIII NO. 42</span>
+                    <span className="hide-mobile">VOL. CXVIII NO. 42</span>
                     <span className="hide-mobile">NCAA DIVISION I SOCCER CHRONICLE</span>
                     <span>
                         LATE EDITION ·{' '}
