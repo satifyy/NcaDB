@@ -16,6 +16,7 @@
  *                                 current capture version, newest first; re-run to continue
  *   refresh-game --game ID [--analytics]
  *   retry [--run ID]              re-run a failed or abandoned run with its original options
+ *   team-of-week --season Y       recompute Team of the Week for a season from the database
  *   analytics                     rebuild ratings, forecasts and dashboard files from the database
  *   status [--run ID]             latest runs, failures, freshness and coverage, as JSON
  *   health                        exit 1 (and alert) if data is stale or the database unreachable
@@ -24,6 +25,7 @@
 import * as path from 'path';
 import { Pool } from 'pg';
 import {
+    computeTeamOfWeek,
     createPool,
     freshness,
     lastSuccess,
@@ -134,17 +136,26 @@ async function nightly(pool: Pool, config: WorkerConfig, opts: NightlyOptions, t
         });
         if (!outcome.loaded) await markSync(pool, `season:${season}`, ctx.runId, false);
 
-        await finishWithReadModels(ctx, outcome.loaded && opts.analytics && config.analyticsEnabled);
+        await finishWithReadModels(ctx, outcome.loaded && opts.analytics && config.analyticsEnabled, outcome.loaded ? [season] : []);
         await recordCoverage(ctx, season);
         await markSync(pool, 'nightly', ctx.runId, ctx.failures.length === 0, ctx.stats);
     });
 }
 
-async function finishWithReadModels(ctx: RunContext, analytics: boolean): Promise<void> {
+async function finishWithReadModels(ctx: RunContext, analytics: boolean, seasons: number[] = []): Promise<void> {
     await task(ctx, 'refresh_read_models', null, {}, async () => {
         await refreshReadModels(ctx.pool);
         return { value: true };
     });
+    // Team of the Week, for each season this run touched. Only weeks whose inputs (or
+    // status) changed are rewritten, so a night with no new box scores writes nothing.
+    // It runs after the load, so a failure here is reported without undoing any data.
+    for (const season of seasons) {
+        await task(ctx, 'team_of_week', season, {}, async () => {
+            const result = await computeTeamOfWeek(ctx.pool, season);
+            return { value: result, stats: { ...result } };
+        });
+    }
     if (analytics) await rebuildAnalytics(ctx);
 }
 
@@ -231,7 +242,7 @@ async function backfill(pool: Pool, config: WorkerConfig, opts: BackfillOptions,
             loadedAny ||= loaded;
             await markSync(pool, scope, ctx.runId, loaded);
         }
-        await finishWithReadModels(ctx, loadedAny && opts.analytics && config.analyticsEnabled);
+        await finishWithReadModels(ctx, loadedAny && opts.analytics && config.analyticsEnabled, loadedAny ? opts.seasons : []);
     });
 }
 
@@ -283,7 +294,7 @@ async function backfillCapture(
         const after = await gamesBelowCapture(pool, opts.season, version);
         ctx.stats.capture = { version, season: opts.season, remaining_before: before, remaining_after: after };
         log.info('backfill-capture: slice done', { season: opts.season, remaining_before: before, remaining_after: after });
-        await finishWithReadModels(ctx, outcome.loaded && opts.analytics && config.analyticsEnabled);
+        await finishWithReadModels(ctx, outcome.loaded && opts.analytics && config.analyticsEnabled, outcome.loaded ? [opts.season] : []);
     });
 }
 
@@ -312,7 +323,7 @@ async function refreshGame(pool: Pool, config: WorkerConfig, gameId: number, ana
             teams: [game.home, game.away],
             sourceGameIds: game.source_ids.filter(Boolean)
         });
-        await finishWithReadModels(ctx, analytics && config.analyticsEnabled);
+        await finishWithReadModels(ctx, analytics && config.analyticsEnabled, [game.year]);
     });
 }
 
@@ -507,6 +518,7 @@ const USAGE = `Usage: npm run worker -- <command> [options]
                                (re-read stored box scores below the current capture version; re-run to continue)
   refresh-game --game ID [--analytics]
   retry [--run ID]
+  team-of-week --season YYYY   (recompute Team of the Week weeks whose inputs changed)
   analytics
   status [--run ID]
   health`;
@@ -585,6 +597,16 @@ async function main(): Promise<number> {
                 return await executeRun(pool, config, { kind: 'analytics', trigger, params: {} }, async ctx => {
                     await rebuildAnalytics(ctx);
                 });
+            case 'team-of-week': {
+                const season = Number(one(args, 'season'));
+                if (!Number.isInteger(season) || season < 1990) throw new UsageError('Give --season YYYY');
+                return await executeRun(pool, config, { kind: 'team-of-week', trigger, params: { season } }, async ctx => {
+                    await task(ctx, 'team_of_week', season, {}, async () => {
+                        const result = await computeTeamOfWeek(ctx.pool, season);
+                        return { value: result, stats: { ...result } };
+                    });
+                });
+            }
             case 'status':
                 return await status(pool, runId);
             case 'health':

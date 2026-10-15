@@ -46,7 +46,7 @@ describe('user accounts in the database', { skip: skipWithoutDb }, () => {
         await Promise.all([api?.end(), worker?.end(), accounts?.end(), owner?.end()]);
     });
 
-    test('003 through 005 apply on top of a populated 002 database, as production will, and keep its data', async () => {
+    test('003 through 006 apply on top of a populated 002 database, as production will, and keep its data', async () => {
         // Production today: 001 and 002 applied, a season loaded.
         const old = fs.mkdtempSync(path.join(os.tmpdir(), 'ncadb-mig-'));
         for (const f of ['001_initial_schema.sql', '002_least_privilege_roles.sql']) {
@@ -77,7 +77,7 @@ describe('user accounts in the database', { skip: skipWithoutDb }, () => {
         const before = { games: await count(owner, 'games'), stats: await count(owner, 'player_game_stats') };
 
         const result = await migrate(owner);
-        assert.deepEqual(result.applied, ['003_user_accounts.sql', '004_maintenance_requests.sql', '005_boxscore_positions.sql']);
+        assert.deepEqual(result.applied, ['003_user_accounts.sql', '004_maintenance_requests.sql', '005_boxscore_positions.sql', '006_team_of_the_week.sql']);
         assert.deepEqual(
             { games: await count(owner, 'games'), stats: await count(owner, 'player_game_stats') },
             before,
