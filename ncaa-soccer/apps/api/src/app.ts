@@ -18,6 +18,7 @@ import { meRoutes } from './routes/me';
 import { metaRoutes } from './routes/meta';
 import { playerRoutes } from './routes/players';
 import { teamRoutes } from './routes/teams';
+import { teamOfWeekRoutes } from './routes/teamOfWeek';
 
 /**
  * `pool` is the public, read-only sports connection (ncadb_api). `options.accounts` is the
@@ -123,6 +124,7 @@ export async function buildApp(
     await app.register(teamRoutes, shared);
     await app.register(playerRoutes, shared);
     await app.register(gameRoutes, shared);
+    await app.register(teamOfWeekRoutes, shared);
     const auth = config.auth && options.accounts ? new Authenticator(config.auth, options.accounts) : undefined;
     if (auth) {
         await app.register(meRoutes, { accounts: options.accounts!, auth });
