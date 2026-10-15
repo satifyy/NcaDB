@@ -32,7 +32,7 @@ const check = (ok, what) => {
 
 // --- fixture API ------------------------------------------------------------------------
 
-let apiMode = 'ok'; // 'ok' | 'down' | 'malformed' | 'analytics'
+let apiMode = 'ok'; // 'ok' | 'down' | 'malformed' | 'analytics' | 'analytics-no-totw'
 const fixtures = {
     '/api/v1/data-status': { freshness: { last_successful_sync: new Date().toISOString(), hours_since_sync: 1, last_final_game_date: '2026-10-12', latest_run: null }, coverage: [], recent_runs: [], latest_run_issues: [] },
     '/api/v1/conferences': { data: [{ id: 1, name: 'ACC', teams: 1 }] },
@@ -107,7 +107,9 @@ function startApi() {
             return;
         }
         // Analytics not built yet: the app must still start, on the database-backed views.
-        let body = fixtures[url.pathname] ?? (apiMode === 'analytics' ? analyticsFixtures[url.pathname] : undefined);
+        let body = fixtures[url.pathname] ?? (apiMode.startsWith('analytics') ? analyticsFixtures[url.pathname] : undefined);
+        // An API without the Team of the Week routes yet (deployed before them): 404s.
+        if (apiMode === 'analytics-no-totw' && url.pathname.startsWith('/api/v1/team-of-week')) body = undefined;
         if (apiMode === 'malformed' && url.pathname === '/api/v1/teams') body = { data: 'not-a-list', pagination: null };
         if (!body) {
             res.writeHead(404, { 'content-type': 'application/json' });
@@ -333,6 +335,9 @@ try {
         await render(browser, base, { label: 'navigation', hash: '#/status', expectText: /Data status/ });
         await layout(browser, base);
         await teamOfWeek(browser, base);
+        apiMode = 'analytics-no-totw';
+        await render(browser, base, { label: 'overview, Team of the Week not computed', hash: '#/overview', expectText: /No Team of the Week has been computed/ });
+        apiMode = 'ok';
         // Account routes, in a build without a Clerk key: a clear message, never a blank page.
         await render(browser, `${base}login`, { label: 'account route, sign-in off', expectText: /Log in[\s\S]*not switched on/ });
         apiMode = 'malformed';

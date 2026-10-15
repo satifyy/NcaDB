@@ -432,7 +432,7 @@ export function TeamOfWeek() {
                         Eleven players chosen from box-score statistics alone, ranked against their own position. 4-3-3.
                     </p>
                 </div>
-                <div className="totw-controls">
+                {data && <div className="totw-controls">
                     <div className="totw-weeknav" role="group" aria-label="Week">
                         <button type="button" className="button" disabled={!data?.week.previous}
                             onClick={() => data?.week.previous && setWeek(data.week.previous)} aria-label="Previous week">
@@ -460,12 +460,13 @@ export function TeamOfWeek() {
                             <option value="ncaa-d1-msoc">NCAA D-I Men’s</option>
                         </select>
                     </label>
-                </div>
+                </div>}
             </div>
 
             {current.error && (
                 <Notice kind="info">
-                    {current.error.includes('not found')
+                    {/* A 404 is "nothing computed yet" (or, before the API is deployed, no such route). */}
+                    {/not found|no such route/i.test(current.error)
                         ? 'No Team of the Week has been computed for this selection yet. It appears once captured box scores with positions are available.'
                         : current.error}
                 </Notice>
