@@ -52,7 +52,23 @@ export interface PlayerStatCsvRow extends CsvRow {
     shots: string;
     shots_on_goal: string;
     saves: string;
+    /**
+     * The four below are absent from files written before box-score capture version 2
+     * (see `BOXSCORE_CAPTURE_VERSION` in `@ncaa/shared`); a missing `capture_version`
+     * means 1. `saves` and `goals_allowed` are blank where the box score did not say.
+     */
+    position?: string;
+    started?: string;
+    goals_allowed?: string;
+    capture_version?: string;
 }
+
+/** player_stats.csv's columns, in the order every writer produces them. */
+export const PLAYER_STAT_CSV_COLUMNS = [
+    'game_id', 'team_id', 'player_name', 'player_key', 'jersey_number',
+    'minutes', 'goals', 'assists', 'shots', 'shots_on_goal', 'saves',
+    'position', 'started', 'goals_allowed', 'capture_version'
+];
 
 /** `data/player_stats/<season>/aggregated_player_stats.csv` — season totals per player. */
 export interface AggregatedPlayerCsvRow extends CsvRow {
