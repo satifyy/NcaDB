@@ -428,6 +428,9 @@ export class SidearmBoxScoreParser {
             else lastTeam = teamName;
         });
 
+        // A goalkeeping table alone is not this layout: without a captioned player table
+        // the page belongs to another reader, which reads its keepers itself.
+        if (stats.length === 0) return [];
         if (sawKeeperTable) applyKeepers(stats, keepers, gameId);
         return stats;
     }
