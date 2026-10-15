@@ -37,6 +37,14 @@ and re-running the same command skips seasons already done.
 | A date range (box scores) | `npm run worker -- backfill --season 2024 --from 2024-10-01 --to 2024-10-31` |
 | A single date | `... --from 2024-10-05 --to 2024-10-05` |
 | Box scores only, no schedule scrape | add `--no-schedules` |
+| Re-read stored box scores captured before positions/keeper data (150 per run, newest first) | `npm run worker -- backfill-capture --season 2026` |
+| Same, a bigger or smaller slice | `... --limit 400` (1–2000) |
+
+`backfill-capture` re-reads only games whose stored rows are older than the current
+box-score capture version (migration 005), so it is resumable by construction: each run
+takes the next slice and reports `remaining_before` / `remaining_after` in its run stats
+(`status --run N`). It loads as a partial batch, so it never deletes a row it did not
+re-read. Older seasons use the same command with their year.
 
 A full-season scrape is several hours with the server's polite defaults
 (`SCRAPER_CONCURRENCY=3`, 30 s between requests to one school's site). Run long
@@ -52,6 +60,7 @@ inside the worker container with `nohup`.
 | Retry a specific run | `npm run worker -- retry --run 42` |
 | See what a run rejected and why | `npm run worker -- status --run 42` → `errors` (category, code, count, samples) |
 | Rebuild ratings/forecasts/dashboard files only | `npm run worker -- analytics` |
+| Recompute Team of the Week for a season (only weeks whose inputs changed) | `npm run worker -- team-of-week --season 2026` |
 
 A run killed mid-way (deploy, OOM, timeout) leaves nothing half-written: loads are one
 transaction per season, and the next run marks the dead run `abandoned` and alerts.

@@ -32,7 +32,7 @@ const check = (ok, what) => {
 
 // --- fixture API ------------------------------------------------------------------------
 
-let apiMode = 'ok'; // 'ok' | 'down' | 'malformed'
+let apiMode = 'ok'; // 'ok' | 'down' | 'malformed' | 'analytics'
 const fixtures = {
     '/api/v1/data-status': { freshness: { last_successful_sync: new Date().toISOString(), hours_since_sync: 1, last_final_game_date: '2026-10-12', latest_run: null }, coverage: [], recent_runs: [], latest_run_issues: [] },
     '/api/v1/conferences': { data: [{ id: 1, name: 'ACC', teams: 1 }] },
@@ -58,6 +58,46 @@ Object.assign(fixtures, {
     '/api/v1/players': page(Array.from({ length: 50 }, (_, i) => ({ id: i, name: i ? `Player Number ${i}` : LONG_PLAYER, team_slug: 'duke', team_name: LONG_TEAM, conference: 'Patriot', games_played: 13, minutes: 1000, goals: 5, assists: 2, points: 7, shots: 20, shots_on_goal: 9, saves: 0 })), 5997)
 });
 
+// Analytics built, for the Overview and its Team of the Week. Served only in 'analytics'
+// mode, so the checks above keep exercising the fallback to the database-backed views.
+const score = { games: 100, log_loss: 1, brier: 0.6, accuracy: 0.5, baseline_log_loss: 1.05 };
+const totwPlayer = (id, name, team, group, rating, extra = {}) => ({
+    id, name, team: { id, slug: `t${id}`, name: team }, position_group: group, position: group.toLowerCase(), rating, score: rating / 2,
+    best_game: rating / 2, rank: 1, games: 2, minutes: 180, missing: group === 'GK' ? ['saves'] : [],
+    explanation: `2 goals, 1 assist (2 games, 180 min). Best game ${(rating / 2).toFixed(2)} pts; ranked #1 of ${group}s this week.`,
+    game_log: [{ game_id: 1, date: '2026-10-07', opponent: 'California State University Northridge', team_score: 2, opponent_score: 1, minutes: 90,
+        goals: 2, assists: 1, shots_on_goal: 3, saves: group === 'GK' ? null : null, goals_allowed: group === 'GK' ? 1 : null,
+        goals_allowed_source: group === 'GK' ? 'inferred' : null, score: rating / 2, components: { goals: 2, assists: 0.7, result: 0.3 } }],
+    ...extra
+});
+const XI_GROUPS = ['GK', 'DEF', 'DEF', 'DEF', 'DEF', 'MID', 'MID', 'MID', 'FWD', 'FWD', 'FWD'];
+const totwXi = XI_GROUPS.map((group, i) => ({
+    slot: i + 1, position_group: group,
+    // One empty place: the site must show it empty, not borrow from another position.
+    player: i === 10 ? null : totwPlayer(200 + i, i === 2 ? LONG_PLAYER : `Player Number ${i}`, i === 2 || i === 9 ? LONG_TEAM : 'Mercer', group, 9.6 - i * 0.3)
+}));
+const analyticsFixtures = {
+    '/api/v1/artifacts/analytics/index.json': {
+        generated_at: '2026-10-15T09:00:00Z', current_season: '2026', current_week: null, seasons: ['2026'], coverage: [],
+        model: { performance: { train: score, test: score, calibration: [] } },
+        prediction_record: { overall: { games: 0, correct: 0, accuracy: 0, log_loss: 0, baseline_log_loss: 0 }, by_season: {} }
+    },
+    '/api/v1/artifacts/manifest.json': { generated_at: '2026-10-15T09:00:00Z', default_season: '2026', seasons: [] },
+    '/api/v1/artifacts/analytics/ratings.json': { teams: [] },
+    '/api/v1/artifacts/analytics/standouts.json': { weeks: [] },
+    '/api/v1/team-of-week': {
+        week: { start: '2026-10-05', end: '2026-10-11', season: 2026, competition: { code: 'ncaa-d1-msoc', name: "NCAA Division I Men's Soccer" },
+            status: 'provisional', revision: 1, computed_at: '2026-10-15T09:00:00Z', first_computed_at: '2026-10-13T09:00:00Z',
+            completeness: { final_games: 190, games_with_boxscore: 176, games_captured: 170, position_share: 0.97, keeper_official_ga_share: 0.9, keeper_saves_share: 0.88 },
+            previous: '2026-09-28', next: null },
+        formation: '4-3-3', xi: totwXi, filled: 10,
+        best: { GK: totwXi[0].player, DEF: totwXi[1].player, MID: totwXi[5].player, FWD: totwXi[8].player },
+        honorable_mentions: { GK: [totwPlayer(300, 'Backup Keeper', LONG_TEAM, 'GK', 6.1, { rank: 2 })], DEF: [], MID: [], FWD: [] },
+        model: { version: 'totw-1', summary: 'Smoke-test model summary.' }
+    },
+    '/api/v1/team-of-week/weeks': { data: [{ start: '2026-10-05', end: '2026-10-11', status: 'provisional', filled: 10 }, { start: '2026-09-28', end: '2026-10-04', status: 'final', filled: 11 }] }
+};
+
 function startApi() {
     const server = createServer((req, res) => {
         const url = new URL(req.url, 'http://x');
@@ -67,7 +107,7 @@ function startApi() {
             return;
         }
         // Analytics not built yet: the app must still start, on the database-backed views.
-        let body = fixtures[url.pathname];
+        let body = fixtures[url.pathname] ?? (apiMode === 'analytics' ? analyticsFixtures[url.pathname] : undefined);
         if (apiMode === 'malformed' && url.pathname === '/api/v1/teams') body = { data: 'not-a-list', pagination: null };
         if (!body) {
             res.writeHead(404, { 'content-type': 'application/json' });
@@ -182,6 +222,77 @@ async function layout(browser, base) {
     }
 }
 
+/**
+ * Team of the Week on the Overview, at every width: the XI is eleven places (an empty one
+ * shown as empty), every marker is a 44px target with a readable name, the page never
+ * scrolls sideways, a phone gets the ranked list under the pitch, and choosing a player —
+ * by tap or keyboard — opens their breakdown with a link to the full profile.
+ */
+async function teamOfWeek(browser, base) {
+    const shots = process.env.SMOKE_SCREENSHOTS;
+    apiMode = 'analytics';
+    for (const width of WIDTHS) {
+        const context = await browser.newContext({ viewport: { width, height: 900 }, isMobile: width < 768, hasTouch: width < 1100 });
+        const page = await context.newPage();
+        const errors = [];
+        page.on('pageerror', e => errors.push(e.message));
+        await page.goto(base + '#/overview', { waitUntil: 'networkidle' });
+        const label = `team of the week @ ${width}px`;
+        const found = await page.waitForSelector('.totw-pitch', { timeout: 15000 }).then(() => true, () => false);
+        check(found, `${label}: pitch rendered`);
+        if (!found) { await context.close(); continue; }
+        const m = await page.evaluate(() => {
+            const markers = [...document.querySelectorAll('.totw-pitch .totw-marker')];
+            const buttons = markers.filter(el => el.tagName === 'BUTTON');
+            const names = [...document.querySelectorAll('.totw-pitch .totw-marker-name')];
+            const companion = document.querySelector('.totw-list-companion');
+            return {
+                overflow: document.documentElement.scrollWidth - window.innerWidth,
+                slots: markers.length,
+                empty: document.querySelectorAll('.totw-pitch .totw-marker.is-empty').length,
+                smallTargets: buttons.filter(b => b.getBoundingClientRect().height < 44 || b.getBoundingClientRect().width < 44).length,
+                smallestName: Math.min(...names.map(n => parseFloat(getComputedStyle(n).fontSize))),
+                labelled: buttons.every(b => (b.getAttribute('aria-label') || '').includes('rating')),
+                markersInside: markers.every(el => {
+                    const r = el.getBoundingClientRect();
+                    const p = document.querySelector('.totw-pitch').getBoundingClientRect();
+                    return r.left >= p.left - 1 && r.right <= p.right + 1;
+                }),
+                companionVisible: !!companion && getComputedStyle(companion).display !== 'none',
+                partialNotice: /Only 10 of 11 places/.test(document.body.innerText)
+            };
+        });
+        check(m.overflow <= 0, `${label}: no horizontal page overflow${m.overflow > 0 ? ` (${m.overflow}px)` : ''}`);
+        check(m.slots === 11 && m.empty === 1 && m.partialNotice, `${label}: eleven places, the empty one shown and explained`);
+        check(m.smallTargets === 0 && m.smallestName >= 12 && m.markersInside, `${label}: 44px markers inside the pitch, names at least 12px`);
+        check(m.labelled, `${label}: every marker has a spoken description`);
+        check(width <= 640 ? m.companionVisible : !m.companionVisible, `${label}: ranked list under the pitch on phones only`);
+
+        // Choose the long-named defender, by tap on touch screens and by keyboard elsewhere.
+        const target = page.locator('.totw-pitch button.totw-marker', { hasText: width <= 640 ? 'Fuente' : 'Alfonso' });
+        if (width < 1100) await target.tap(); else { await target.focus(); await page.keyboard.press('Enter'); }
+        await page.waitForTimeout(400);
+        const detail = await page.evaluate(() => {
+            const panel = document.querySelector('.totw-detail');
+            const link = panel?.querySelector('a[href*="#/directory/"]');
+            return { name: panel?.querySelector('.totw-detail-name')?.textContent ?? '', link: link?.getAttribute('href') ?? '',
+                inferred: /from the score/.test(document.querySelector('.totw')?.innerText ?? '') };
+        });
+        check(/Tenconi/.test(detail.name) && /#\/directory\/202$/.test(detail.link), `${label}: choosing a player opens their breakdown and profile link`);
+        await page.locator('.totw-mode button', { hasText: 'Table' }).click();
+        const tableRows = await page.locator('.totw-table tbody tr').count();
+        check(tableRows === 11, `${label}: table view lists all eleven places`);
+        if (shots) await page.screenshot({ path: path.join(shots, `totw-${width}.png`), fullPage: false });
+        await page.locator('.totw-mode button', { hasText: 'Pitch' }).click();
+        if (shots) {
+            await page.locator('.totw').screenshot({ path: path.join(shots, `totw-pitch-${width}.png`) });
+        }
+        check(errors.length === 0, `${label}: no errors${errors.length ? ` (${errors.join(' | ').slice(0, 200)})` : ''}`);
+        await context.close();
+    }
+    apiMode = 'ok';
+}
+
 async function render(browser, site, { expectText, hash = '', label }) {
     const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
     const errors = [];
@@ -221,6 +332,7 @@ try {
         await render(browser, base, { label: 'home', expectText: /Teams[\s\S]*Smoke Test Duke/ });
         await render(browser, base, { label: 'navigation', hash: '#/status', expectText: /Data status/ });
         await layout(browser, base);
+        await teamOfWeek(browser, base);
         // Account routes, in a build without a Clerk key: a clear message, never a blank page.
         await render(browser, `${base}login`, { label: 'account route, sign-in off', expectText: /Log in[\s\S]*not switched on/ });
         apiMode = 'malformed';
