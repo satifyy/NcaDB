@@ -3,7 +3,7 @@ import { Bar, Scatter } from 'react-chartjs-2';
 import type { ChartOptions } from 'chart.js';
 import { ANALYTICS, loadImpact, loadStandouts } from '../../analytics';
 import type { ImpactPlayer, Standout } from '../../analytics';
-import { BAR_GEOMETRY, baseOptions, token } from '../../charts';
+import { BAR_GEOMETRY, baseOptions, token, chartLabel } from '../../charts';
 import { count, shortDate, weekLabel } from '../../format';
 import { Card, Legend, Notice, SectionEyebrow, Stat } from '../ui';
 import { SortHeader, TableScroll } from '../data';
@@ -357,7 +357,7 @@ export function ImpactView({ searchTerm }: Props) {
                         <div className="grid grid-2">
                             <Card title={`Top ${BAR_ROWS} by impact`} note={`${season} season`}>
                                 <div className="chart-frame is-tall">
-                                    <Bar data={barChart} options={barOptions} role="img" aria-label={`Bar chart of the top ${BAR_ROWS} players by impact; the leaderboard below lists the same figures`} />
+                                    <Bar data={barChart} options={barOptions} {...chartLabel(`Bar chart of the top ${BAR_ROWS} players by impact; the leaderboard below lists the same figures`)} />
                                 </div>
                             </Card>
 
@@ -368,7 +368,7 @@ export function ImpactView({ searchTerm }: Props) {
                             >
                                 <div className="card-body">
                                     <div className="chart-frame is-tall">
-                                        <Scatter data={scatterChart} options={scatterOptions} role="img" aria-label="Scatter plot of impact per 90 minutes against minutes played" />
+                                        <Scatter data={scatterChart} options={scatterOptions} {...chartLabel('Scatter plot of impact per 90 minutes against minutes played')} />
                                     </div>
                                 </div>
                                 <Legend

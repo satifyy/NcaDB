@@ -11,6 +11,7 @@ import {
 } from 'chart.js';
 import type { TooltipItem } from 'chart.js';
 import { Bar, Scatter } from 'react-chartjs-2';
+import { chartLabel } from '../../charts';
 import { Card } from '../ui';
 import type { PlayerStat } from '../../types';
 
@@ -165,13 +166,13 @@ export function ChartsGrid({ data }: ChartsGridProps) {
     return (
         <section className="grid charts-grid" aria-label="Charts">
             <ChartCard title="Top Goal Scorers">
-                <Bar data={goalsData} options={commonOptions} role="img" aria-label="Bar chart of the ten top goal scorers in the selection" />
+                <Bar data={goalsData} options={commonOptions} {...chartLabel('Bar chart of the ten top goal scorers in the selection')} />
             </ChartCard>
             <ChartCard title="Efficiency: Goals vs Shots (Min 5 Shots)">
-                <Scatter data={efficiencyData} options={efficiencyOptions} role="img" aria-label="Scatter plot of goals against shots for players with at least five shots" />
+                <Scatter data={efficiencyData} options={efficiencyOptions} {...chartLabel('Scatter plot of goals against shots for players with at least five shots')} />
             </ChartCard>
             <ChartCard title="Goal Contributions (G + A)">
-                <Bar data={contributionData} options={commonOptions} role="img" aria-label="Bar chart of the players with the most goals plus assists" />
+                <Bar data={contributionData} options={commonOptions} {...chartLabel('Bar chart of the players with the most goals plus assists')} />
             </ChartCard>
         </section>
     );

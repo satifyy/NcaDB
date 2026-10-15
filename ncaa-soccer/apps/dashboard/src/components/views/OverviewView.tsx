@@ -3,7 +3,7 @@ import { Bar } from 'react-chartjs-2';
 import type { ChartOptions } from 'chart.js';
 import { ANALYTICS, loadPredictions, loadRatings, loadStandouts } from '../../analytics';
 import type { PredictedWeek, SeasonPredictions, Standout, TeamRating } from '../../analytics';
-import { BAR_GEOMETRY, baseOptions, token } from '../../charts';
+import { BAR_GEOMETRY, baseOptions, token, chartLabel } from '../../charts';
 import { count, percent, shortDate, signed, weekLabel } from '../../format';
 import { DropCap, MatchCard, Notice, PullQuote, SectionEyebrow, Stat } from '../ui';
 import type { ViewId } from '../../views';
@@ -206,7 +206,7 @@ export function OverviewView({ onView }: Props) {
                             Calculated across programs with at least {MIN_CONFERENCE_TEAMS} member teams.
                         </p>
                         <div className="chart-frame is-list" style={{ minHeight: '320px' }}>
-                            <Bar data={conferenceChart} options={conferenceOptions} role="img" aria-label="Bar chart of mean Elo rating by conference, strongest first" />
+                            <Bar data={conferenceChart} options={conferenceOptions} {...chartLabel('Bar chart of mean Elo rating by conference, strongest first')} />
                         </div>
                     </div>
                 </div>

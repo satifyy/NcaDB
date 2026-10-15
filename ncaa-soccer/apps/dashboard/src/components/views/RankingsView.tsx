@@ -3,7 +3,7 @@ import { Line } from 'react-chartjs-2';
 import { ANALYTICS, loadRatings, loadTimeline } from '../../analytics';
 import type { EloTimeline, TeamRating } from '../../analytics';
 import type { ChartOptions } from 'chart.js';
-import { baseOptions, LINE_GEOMETRY, MAX_SERIES, seriesColor, SERIES, token } from '../../charts';
+import { baseOptions, LINE_GEOMETRY, MAX_SERIES, seriesColor, SERIES, token, chartLabel } from '../../charts';
 import { count, shortDate, signed } from '../../format';
 import { Card, Legend, Notice, SectionEyebrow, Stat } from '../ui';
 import { SortHeader, TableScroll } from '../data';
@@ -268,7 +268,7 @@ export function RankingsView({ searchTerm }: Props) {
                         <>
                             <div className="card-body">
                                 <div className="chart-frame is-tall">
-                                    <Line data={chart} options={timelineOptions} role="img" aria-label="Line chart of Elo rating over time for the selected teams" />
+                                    <Line data={chart} options={timelineOptions} {...chartLabel('Line chart of Elo rating over time for the selected teams')} />
                                 </div>
                             </div>
                             <Legend

@@ -113,3 +113,12 @@ export const LINE_GEOMETRY = {
     pointHitRadius: 12,
     tension: 0.25
 };
+
+/**
+ * The accessible name for a chart's canvas (Chart.js gives it role="img" and nothing to
+ * read). Spread onto the chart component; returned as a plain object so it does not
+ * depend on which version of the React typings `react-chartjs-2` resolves.
+ */
+export function chartLabel(label: string): object {
+    return { role: 'img', 'aria-label': label };
+}
