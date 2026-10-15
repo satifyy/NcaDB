@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useApi } from '../../api';
 import type { Paged } from '../../api';
 import { shortDate, BOXSCORE_LABEL, num, STATUS_LABEL } from '../../format';
-import { Link, Loaded, Pager, SeasonSelect } from '../data';
+import { Link, Loaded, Pager, SeasonSelect, TableScroll } from '../data';
 import { Card, Notice, SectionEyebrow } from '../ui';
 
 interface GameRow {
@@ -137,7 +137,7 @@ function GameList() {
             <Loaded state={games} isEmpty={d => d.data.length === 0} empty="No games match these filters.">
                 {d => (
                     <Card title={`${num(d.pagination.total)} games`} note="Newest first" bodyless>
-                        <div className="table-scroll">
+                        <TableScroll label="Games">
                             <table className="data-table">
                                 <thead>
                                     <tr>
@@ -157,7 +157,9 @@ function GameList() {
                                                 <Link view="teams" id={g.home_team_slug}>{g.home_team_name}</Link>
                                             </td>
                                             <td className="numeric">
-                                                {g.home_score === null ? '—' : `${g.home_score}–${g.away_score}`}
+                                                <Link view="games" id={g.id}>
+                                                    {g.home_score === null ? 'vs' : `${g.home_score}–${g.away_score}`}
+                                                </Link>
                                             </td>
                                             <td className="team-cell">
                                                 <Link view="teams" id={g.away_team_slug}>{g.away_team_name}</Link>
@@ -175,7 +177,7 @@ function GameList() {
                                     ))}
                                 </tbody>
                             </table>
-                        </div>
+                        </TableScroll>
                         <Pager {...d.pagination} onPage={setPage} />
                     </Card>
                 )}
@@ -203,25 +205,25 @@ function SideTable({ side, score }: { side: Side; score: number | null }) {
             {side.players.length === 0 ? (
                 <div className="card-body text-muted">No box score for this side.</div>
             ) : (
-                <div className="table-scroll">
+                <TableScroll label={`${side.team_name} box score`}>
                     <table className="data-table">
                         <thead>
                             <tr>
                                 <th scope="col">#</th>
-                                <th scope="col">Player</th>
-                                <th scope="col" className="numeric">Min</th>
-                                <th scope="col" className="numeric">G</th>
-                                <th scope="col" className="numeric">A</th>
-                                <th scope="col" className="numeric">Sh</th>
-                                <th scope="col" className="numeric">SOG</th>
-                                <th scope="col" className="numeric">Sv</th>
+                                <th scope="col" className="col-sticky">Player</th>
+                                <th scope="col" className="numeric"><abbr title="Minutes">Min</abbr></th>
+                                <th scope="col" className="numeric"><abbr title="Goals">G</abbr></th>
+                                <th scope="col" className="numeric"><abbr title="Assists">A</abbr></th>
+                                <th scope="col" className="numeric"><abbr title="Shots">Sh</abbr></th>
+                                <th scope="col" className="numeric"><abbr title="Shots on goal">SOG</abbr></th>
+                                <th scope="col" className="numeric"><abbr title="Saves">Sv</abbr></th>
                             </tr>
                         </thead>
                         <tbody>
                             {side.players.map(p => (
                                 <tr key={`${p.player_id}-${p.jersey_number}`}>
                                     <td className="rank-cell">{p.jersey_number ?? ''}</td>
-                                    <td className="team-cell">
+                                    <td className="team-cell col-sticky">
                                         <Link view="directory" id={p.player_id}>{p.name}</Link>
                                     </td>
                                     <td className="numeric">{num(p.minutes)}</td>
@@ -237,7 +239,7 @@ function SideTable({ side, score }: { side: Side; score: number | null }) {
                             <tfoot>
                                 <tr>
                                     <td />
-                                    <td className="font-medium">Totals</td>
+                                    <td className="font-medium col-sticky">Totals</td>
                                     <td />
                                     <td className="numeric font-medium">{num(side.totals.goals)}</td>
                                     <td />
@@ -248,9 +250,27 @@ function SideTable({ side, score }: { side: Side; score: number | null }) {
                             </tfoot>
                         )}
                     </table>
-                </div>
+                </TableScroll>
             )}
         </Card>
+    );
+}
+
+/**
+ * On a phone the two box scores stack, and the away side starts several screens down.
+ * Buttons rather than `#box-away` links, because the hash is the page's route.
+ */
+function BoxJump({ home, away }: { home: string; away: string }) {
+    const jump = (id: string) => document.getElementById(id)?.scrollIntoView({ block: 'start' });
+    return (
+        <div className="box-jump" role="group" aria-label="Jump to a team’s box score">
+            <button type="button" className="button" onClick={() => jump('box-home')}>
+                {home}
+            </button>
+            <button type="button" className="button" onClick={() => jump('box-away')}>
+                {away}
+            </button>
+        </div>
     );
 }
 
@@ -263,22 +283,26 @@ function GameDetail({ id }: { id: string }) {
                 return (
                     <>
                         <div className="page-header">
-                            <div>
+                            <div className="game-header">
                                 <SectionEyebrow>
                                     Championship Chronicle & Box Score · {shortDate(g.date)}, {g.season}
                                     {g.location_type === 'neutral' ? ' · Neutral Site' : ''}
                                     {g.game_type && g.game_type !== 'regular' ? ` · ${g.game_type.replace('_', ' ').toUpperCase()}` : ''}
                                 </SectionEyebrow>
-                                <h1 className="page-title">
-                                    <Link view="teams" id={g.home_team_slug}>{g.home_team_name}</Link>{' '}
-                                    <span style={{ color: 'var(--color-accent-primary)', margin: '0 0.25rem' }}>
+                                <h1 className="page-title scoreline">
+                                    <span className="scoreline-team">
+                                        <Link view="teams" id={g.home_team_slug}>{g.home_team_name}</Link>
+                                    </span>
+                                    <span className="scoreline-score">
                                         {g.home_score === null ? 'vs' : `${g.home_score}–${g.away_score}`}
-                                    </span>{' '}
-                                    <Link view="teams" id={g.away_team_slug}>{g.away_team_name}</Link>
+                                    </span>
+                                    <span className="scoreline-team is-away">
+                                        <Link view="teams" id={g.away_team_slug}>{g.away_team_name}</Link>
+                                    </span>
                                 </h1>
                                 <p className="page-lede">
-                                    {STATUS_LABEL[g.status] ?? g.status} · Last verified{' '}
-                                    {new Date(g.last_verified_at).toLocaleDateString()}
+                                    <span className={g.status === 'final' ? 'badge is-final' : 'badge'}>{STATUS_LABEL[g.status] ?? g.status}</span>{' '}
+                                    Last verified {new Date(g.last_verified_at).toLocaleDateString()}
                                     {g.boxscore_url && (
                                         <>
                                             {' · '}
@@ -300,10 +324,17 @@ function GameDetail({ id }: { id: string }) {
                                     : 'Box scores appear once a game is final.'}
                             </div>
                         ) : (
-                            <div className="grid grid-2">
-                                <SideTable side={data.home} score={g.home_score} />
-                                <SideTable side={data.away} score={g.away_score} />
-                            </div>
+                            <>
+                                <BoxJump home={data.home.team_name} away={data.away.team_name} />
+                                <div className="grid grid-2">
+                                    <div id="box-home" className="box-anchor">
+                                        <SideTable side={data.home} score={g.home_score} />
+                                    </div>
+                                    <div id="box-away" className="box-anchor">
+                                        <SideTable side={data.away} score={g.away_score} />
+                                    </div>
+                                </div>
+                            </>
                         )}
                         {data.unattributed.length > 0 && (
                             <p className="footnote">

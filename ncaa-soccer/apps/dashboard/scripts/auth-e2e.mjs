@@ -73,7 +73,8 @@ function siteServer() {
         .value.replaceAll('https://clerk.satifyy.com', `https://${CLERK_FAPI}`)
         .replace(/https:\/\/api-production[^\s;]+/, E2E_API)
         .replace('; upgrade-insecure-requests', '');
-    const rewrites = (vercel.rewrites ?? []).map(r => new RegExp(`^${r.source}$`));
+    // Vercel sources are path patterns: `/:page(login|signup)` is the group `(login|signup)`.
+    const rewrites = (vercel.rewrites ?? []).map(r => new RegExp(`^${r.source.replace(/:\w+\(/g, '(')}$`));
     const types = { '.js': 'application/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.html': 'text/html; charset=utf-8' };
     const server = createServer((req, res) => {
         const url = new URL(req.url, ORIGIN);
@@ -438,6 +439,25 @@ try {
     }
     await mobile.locator('.account-trigger').click();
     check(await mobile.getByRole('menu').isVisible(), 'mobile 390px: the profile menu opens');
+
+    // The smallest phone the site supports, still signed in: no overflow, the account menu
+    // fits on screen, and the section menu reaches the statistics.
+    await mobile.setViewportSize({ width: 320, height: 568 });
+    for (const route of ['dashboard', 'profile', 'admin']) {
+        await mobile.goto(`${SITE}${route}`, { waitUntil: 'networkidle' });
+        await mobile.waitForTimeout(1500);
+        check(await noOverflow(mobile), `mobile 320px: /ncadb/${route} has no horizontal overflow`);
+        await shot(mobile, `${route}-mobile-320`);
+    }
+    await mobile.locator('.account-trigger').click();
+    const menuBox = await mobile.getByRole('menu').boundingBox();
+    check(menuBox !== null && menuBox.x >= 0 && menuBox.x + menuBox.width <= 320, 'mobile 320px: the profile menu fits on screen');
+    await mobile.keyboard.press('Escape');
+    await mobile.locator('.nav-menu-toggle').click();
+    await mobile.locator('.nav-panel a', { hasText: 'Teams' }).click();
+    await mobile.waitForURL(/\/ncadb\/#\/teams$/, { timeout: 15_000 });
+    const stillSignedIn = await mobile.locator('.account-trigger').waitFor({ timeout: 15_000 }).then(() => true, () => false);
+    check(stillSignedIn, 'mobile 320px: the section menu leads from an account page to Teams, still signed in');
 
     // 11. CSP: nothing on our origin was blocked at any point, except Clerk Protect's
     // in-page loader, which the policy refuses on purpose (see docs/AUTHENTICATION.md): it

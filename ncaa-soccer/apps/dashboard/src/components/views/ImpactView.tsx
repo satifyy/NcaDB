@@ -3,9 +3,10 @@ import { Bar, Scatter } from 'react-chartjs-2';
 import type { ChartOptions } from 'chart.js';
 import { ANALYTICS, loadImpact, loadStandouts } from '../../analytics';
 import type { ImpactPlayer, Standout } from '../../analytics';
-import { BAR_GEOMETRY, baseOptions, token } from '../../charts';
+import { BAR_GEOMETRY, baseOptions, token, chartLabel } from '../../charts';
 import { count, shortDate, weekLabel } from '../../format';
 import { Card, Legend, Notice, SectionEyebrow, Stat } from '../ui';
+import { SortHeader, TableScroll } from '../data';
 
 type SortKey = 'impact' | 'per90' | 'rating' | 'goals' | 'assists' | 'saves' | 'minutes' | 'opponents';
 
@@ -356,7 +357,7 @@ export function ImpactView({ searchTerm }: Props) {
                         <div className="grid grid-2">
                             <Card title={`Top ${BAR_ROWS} by impact`} note={`${season} season`}>
                                 <div className="chart-frame is-tall">
-                                    <Bar data={barChart} options={barOptions} />
+                                    <Bar data={barChart} options={barOptions} {...chartLabel(`Bar chart of the top ${BAR_ROWS} players by impact; the leaderboard below lists the same figures`)} />
                                 </div>
                             </Card>
 
@@ -367,7 +368,7 @@ export function ImpactView({ searchTerm }: Props) {
                             >
                                 <div className="card-body">
                                     <div className="chart-frame is-tall">
-                                        <Scatter data={scatterChart} options={scatterOptions} />
+                                        <Scatter data={scatterChart} options={scatterOptions} {...chartLabel('Scatter plot of impact per 90 minutes against minutes played')} />
                                     </div>
                                 </div>
                                 <Legend
@@ -433,23 +434,21 @@ export function ImpactView({ searchTerm }: Props) {
                                     <Notice kind="info">No qualified players match these filters.</Notice>
                                 </div>
                             ) : (
-                                <div className="table-scroll">
+                                <TableScroll label="Player impact leaderboard">
                                     <table className="data-table">
                                         <thead>
                                             <tr>
-                                                <th className="rank-cell">#</th>
-                                                <th>Player</th>
-                                                <th>Team</th>
+                                                <th scope="col" className="rank-cell">#</th>
+                                                <th scope="col" className="col-sticky">Player</th>
+                                                <th scope="col">Team</th>
                                                 {COLUMNS.map(column => (
-                                                    <th
+                                                    <SortHeader
                                                         key={column.key}
-                                                        className="numeric sortable"
-                                                        onClick={() => setSort(column.key)}
-                                                        aria-sort={sort === column.key ? 'descending' : 'none'}
-                                                    >
-                                                        {column.label}
-                                                        {sort === column.key ? ' ▾' : ''}
-                                                    </th>
+                                                        label={column.label}
+                                                        numeric
+                                                        active={sort === column.key}
+                                                        onSort={() => setSort(column.key)}
+                                                    />
                                                 ))}
 
                                             </tr>
@@ -458,7 +457,7 @@ export function ImpactView({ searchTerm }: Props) {
                                             {ranked.slice(0, LEADERBOARD).map((player, index) => (
                                                 <tr key={player.id}>
                                                     <td className="rank-cell">{index + 1}</td>
-                                                    <td className="team-cell">
+                                                    <td className="team-cell col-sticky">
                                                         {player.name}{' '}
                                                         {player.keeper && <span className="badge is-keeper">GK</span>}
                                                     </td>
@@ -499,7 +498,7 @@ export function ImpactView({ searchTerm }: Props) {
                                             ))}
                                         </tbody>
                                     </table>
-                                </div>
+                                </TableScroll>
                             )}
                         </Card>
                     </div>

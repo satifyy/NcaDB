@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { apiGet, useApi } from '../../api';
 import { percent, num } from '../../format';
-import { Loaded } from '../data';
+import { Loaded, TableScroll } from '../data';
 import { Card, Notice, Stat } from '../ui';
 
 interface Coverage {
@@ -92,7 +92,7 @@ export function StatusView() {
                         </div>
 
                         <Card title="Coverage by season" note="Box scores counted per completed game" bodyless>
-                            <div className="table-scroll">
+                            <TableScroll label="Coverage by season">
                                 <table className="data-table">
                                     <thead>
                                         <tr>
@@ -127,11 +127,11 @@ export function StatusView() {
                                         ))}
                                     </tbody>
                                 </table>
-                            </div>
+                            </TableScroll>
                         </Card>
 
                         <Card title="Recent ingestion runs" bodyless>
-                            <div className="table-scroll">
+                            <TableScroll label="Recent ingestion runs">
                                 <table className="data-table">
                                     <thead>
                                         <tr>
@@ -162,12 +162,12 @@ export function StatusView() {
                                         ))}
                                     </tbody>
                                 </table>
-                            </div>
+                            </TableScroll>
                         </Card>
 
                         {s.latest_run_issues.length > 0 && (
                             <Card title="Data-quality issues in the latest load" note="Rows rejected or flagged, not altered" bodyless>
-                                <div className="table-scroll">
+                                <TableScroll label="Data-quality issues">
                                     <table className="data-table">
                                         <thead>
                                             <tr>
@@ -186,7 +186,7 @@ export function StatusView() {
                                             ))}
                                         </tbody>
                                     </table>
-                                </div>
+                                </TableScroll>
                             </Card>
                         )}
                         <OperationsPanel />
@@ -265,34 +265,36 @@ function OperationsPanel() {
                     {error && <span className="text-sm" style={{ color: 'var(--color-danger)' }}>{error}</span>}
                 </form>
             ) : (
-                <div className="table-scroll">
-                    <table className="data-table">
-                        <thead>
-                            <tr>
-                                <th scope="col">Run</th>
-                                <th scope="col">Kind</th>
-                                <th scope="col">Status</th>
-                                <th scope="col">Started</th>
-                                <th scope="col">Error</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {runs.map(r => (
-                                <tr key={r.id}>
-                                    <td className="rank-cell">#{r.id}</td>
-                                    <td>{r.kind}</td>
-                                    <td><span className={`badge ${STATUS_CLASS[r.status] ?? ''}`}>{r.status}</span></td>
-                                    <td className="text-muted">{new Date(r.started_at).toLocaleString()}</td>
-                                    <td className="text-sm" style={{ whiteSpace: 'normal', maxWidth: '48ch' }}>{r.error ?? ''}</td>
+                <>
+                    <TableScroll label="Operations">
+                        <table className="data-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Run</th>
+                                    <th scope="col">Kind</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Started</th>
+                                    <th scope="col">Error</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {runs.map(r => (
+                                    <tr key={r.id}>
+                                        <td className="rank-cell">#{r.id}</td>
+                                        <td>{r.kind}</td>
+                                        <td><span className={`badge ${STATUS_CLASS[r.status] ?? ''}`}>{r.status}</span></td>
+                                        <td className="text-muted">{new Date(r.started_at).toLocaleString()}</td>
+                                        <td className="text-sm cell-wrap">{r.error ?? ''}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </TableScroll>
                     <p className="footnote">
                         Full task and error detail: <code>GET /api/v1/admin/runs/:id</code>. To re-run a failed run, use the worker
                         CLI (<code>retry</code>) — see OPERATIONS.md.
                     </p>
-                </div>
+                </>
             )}
         </Card>
     );

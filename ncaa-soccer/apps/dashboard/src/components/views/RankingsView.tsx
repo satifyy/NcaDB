@@ -3,9 +3,10 @@ import { Line } from 'react-chartjs-2';
 import { ANALYTICS, loadRatings, loadTimeline } from '../../analytics';
 import type { EloTimeline, TeamRating } from '../../analytics';
 import type { ChartOptions } from 'chart.js';
-import { baseOptions, LINE_GEOMETRY, MAX_SERIES, seriesColor, SERIES, token } from '../../charts';
+import { baseOptions, LINE_GEOMETRY, MAX_SERIES, seriesColor, SERIES, token, chartLabel } from '../../charts';
 import { count, shortDate, signed } from '../../format';
 import { Card, Legend, Notice, SectionEyebrow, Stat } from '../ui';
+import { SortHeader, TableScroll } from '../data';
 
 type SortKey = 'rank' | 'elo' | 'trend' | 'wins' | 'goals_for' | 'peak_elo';
 
@@ -267,7 +268,7 @@ export function RankingsView({ searchTerm }: Props) {
                         <>
                             <div className="card-body">
                                 <div className="chart-frame is-tall">
-                                    <Line data={chart} options={timelineOptions} />
+                                    <Line data={chart} options={timelineOptions} {...chartLabel('Line chart of Elo rating over time for the selected teams')} />
                                 </div>
                             </div>
                             <Legend
@@ -305,29 +306,28 @@ export function RankingsView({ searchTerm }: Props) {
                         </div>
                     </div>
 
-                    <div className="table-scroll">
+                    <TableScroll label="Elo ratings table">
                         <table className="data-table">
                             <thead>
                                 <tr>
-                                    <th
-                                        className="sortable rank-cell"
-                                        onClick={() => setSort('rank')}
-                                        aria-sort={sort === 'rank' ? 'descending' : 'none'}
-                                    >
-                                        #{sort === 'rank' ? ' ▾' : ''}
-                                    </th>
-                                    <th>Team</th>
-                                    <th>Conference</th>
+                                    <SortHeader
+                                        label="#"
+                                        title="Rank"
+                                        className="rank-cell"
+                                        active={sort === 'rank'}
+                                        direction="ascending"
+                                        onSort={() => setSort('rank')}
+                                    />
+                                    <th scope="col" className="col-sticky">Team</th>
+                                    <th scope="col">Conference</th>
                                     {COLUMNS.map(column => (
-                                        <th
+                                        <SortHeader
                                             key={column.key}
-                                            className="sortable numeric"
-                                            onClick={() => setSort(column.key)}
-                                            aria-sort={sort === column.key ? 'descending' : 'none'}
-                                        >
-                                            {column.label}
-                                            {sort === column.key ? ' ▾' : ''}
-                                        </th>
+                                            label={column.label}
+                                            numeric
+                                            active={sort === column.key}
+                                            onSort={() => setSort(column.key)}
+                                        />
                                     ))}
                                 </tr>
                             </thead>
@@ -335,7 +335,7 @@ export function RankingsView({ searchTerm }: Props) {
                                 {(showAll ? rows : rows.slice(0, PAGE)).map(team => (
                                     <tr key={team.team}>
                                         <td className="rank-cell">{team.rank}</td>
-                                        <td className="team-cell">{team.team}</td>
+                                        <td className="team-cell col-sticky">{team.team}</td>
                                         <td className="text-muted">{team.conference}</td>
                                         <td className="numeric elo-cell">{team.elo}</td>
                                         <td
@@ -359,7 +359,7 @@ export function RankingsView({ searchTerm }: Props) {
                                 ))}
                             </tbody>
                         </table>
-                    </div>
+                    </TableScroll>
                     {rows.length > PAGE && (
                         <div className="card-body">
                             <button type="button" className="link-button" onClick={() => setShowAll(value => !value)}>

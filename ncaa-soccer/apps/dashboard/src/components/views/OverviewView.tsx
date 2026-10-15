@@ -3,7 +3,7 @@ import { Bar } from 'react-chartjs-2';
 import type { ChartOptions } from 'chart.js';
 import { ANALYTICS, loadPredictions, loadRatings, loadStandouts } from '../../analytics';
 import type { PredictedWeek, SeasonPredictions, Standout, TeamRating } from '../../analytics';
-import { BAR_GEOMETRY, baseOptions, token } from '../../charts';
+import { BAR_GEOMETRY, baseOptions, token, chartLabel } from '../../charts';
 import { count, percent, shortDate, signed, weekLabel } from '../../format';
 import { DropCap, MatchCard, Notice, PullQuote, SectionEyebrow, Stat } from '../ui';
 import type { ViewId } from '../../views';
@@ -151,7 +151,7 @@ export function OverviewView({ onView }: Props) {
                 {/* COLUMN 1: STANDINGS & CONFERENCE POWER */}
                 <div className="broadsheet-col">
                     <SectionEyebrow>The National Table</SectionEyebrow>
-                    <h3 className="headline-secondary">Division I Elo Hierarchy</h3>
+                    <h2 className="headline-secondary">Division I Elo Hierarchy</h2>
                     <p className="text-muted text-sm" style={{ marginBottom: '0.75rem' }}>
                         Nightly algorithmic evaluation based on quality of opposition, goal differential, and home advantage.
                     </p>
@@ -201,12 +201,12 @@ export function OverviewView({ onView }: Props) {
 
                     <div style={{ marginTop: 'var(--space-8)' }}>
                         <SectionEyebrow>Conference Power Index</SectionEyebrow>
-                        <h4 className="headline-secondary" style={{ fontSize: '1.1rem' }}>Mean Elo Strength</h4>
+                        <h3 className="headline-secondary" style={{ fontSize: '1.1rem' }}>Mean Elo Strength</h3>
                         <p className="text-muted text-sm" style={{ marginBottom: '0.5rem' }}>
                             Calculated across programs with at least {MIN_CONFERENCE_TEAMS} member teams.
                         </p>
                         <div className="chart-frame is-list" style={{ minHeight: '320px' }}>
-                            <Bar data={conferenceChart} options={conferenceOptions} />
+                            <Bar data={conferenceChart} options={conferenceOptions} {...chartLabel('Bar chart of mean Elo rating by conference, strongest first')} />
                         </div>
                     </div>
                 </div>
@@ -214,11 +214,11 @@ export function OverviewView({ onView }: Props) {
                 {/* COLUMN 2: LEAD EDITORIAL DISPATCH */}
                 <div className="broadsheet-col broadsheet-col-lead">
                     <SectionEyebrow>Frontline Analysis</SectionEyebrow>
-                    <h2 className="headline-lead">
+                    <h1 className="headline-lead">
                         {leader
                             ? `The ${leader.team} Standard: How the Summit of Collegiate Soccer Was Claimed`
                             : `The ${ANALYTICS.current_season} Campaign Under Review`}
-                    </h2>
+                    </h1>
                     <div className="story-byline">
                         By the <strong>College Soccer Lab</strong> model · Updated nightly from Division I results
                     </div>
@@ -283,9 +283,9 @@ export function OverviewView({ onView }: Props) {
                     <SectionEyebrow>The Scout's Notebook</SectionEyebrow>
                     <div className="dispatch-card is-highlight">
                         <div className="dispatch-kicker">TALENT SPOTLIGHT</div>
-                        <h4 className="dispatch-title">
+                        <h2 className="dispatch-title">
                             {standoutStar ? standoutStar.player_name : 'No standouts yet'}
-                        </h4>
+                        </h2>
                         <p className="text-muted text-sm" style={{ marginTop: '0.25rem', lineHeight: 1.5 }}>
                             {standoutStar
                                 ? `${standoutStar.player_name} (${standoutStar.team}) generated ${standoutStar.impact.toFixed(

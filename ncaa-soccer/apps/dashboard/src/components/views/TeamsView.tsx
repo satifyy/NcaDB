@@ -3,7 +3,7 @@ import { FavoriteButton } from '../../auth/controls';
 import { useApi } from '../../api';
 import type { Paged } from '../../api';
 import { shortDate, BOXSCORE_LABEL, num, STATUS_LABEL } from '../../format';
-import { Link, Loaded, Pager, ResultBadge, SeasonSelect } from '../data';
+import { Link, Loaded, Pager, ResultBadge, SeasonSelect, TableScroll } from '../data';
 import { Card, SectionEyebrow, Stat } from '../ui';
 
 interface TeamListRow {
@@ -157,27 +157,24 @@ function TeamList({ searchTerm }: { searchTerm: string }) {
             <Loaded state={teams} isEmpty={d => d.data.length === 0} empty="No teams match.">
                 {d => (
                     <Card title={`${num(d.pagination.total)} teams`} note={`Records are for ${d.season}`} bodyless>
-                        <div className="table-scroll">
+                        <TableScroll label="Teams">
                             <table className="data-table">
                                 <thead>
                                     <tr>
-                                        <th scope="col">Team</th>
+                                        <th scope="col" className="col-sticky">Team</th>
                                         <th scope="col">Conference</th>
                                         <th scope="col" className="numeric">
-                                            W-D-L
-                                        </th>
+                                            <abbr title="Wins-draws-losses">W-D-L</abbr></th>
                                         <th scope="col" className="numeric">
-                                            GF
-                                        </th>
+                                            <abbr title="Goals for">GF</abbr></th>
                                         <th scope="col" className="numeric">
-                                            GA
-                                        </th>
+                                            <abbr title="Goals against">GA</abbr></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {d.data.map(t => (
                                         <tr key={t.id}>
-                                            <td className="team-cell">
+                                            <td className="team-cell col-sticky">
                                                 <Link view="teams" id={t.slug}>
                                                     {t.name}
                                                 </Link>
@@ -190,7 +187,7 @@ function TeamList({ searchTerm }: { searchTerm: string }) {
                                     ))}
                                 </tbody>
                             </table>
-                        </div>
+                        </TableScroll>
                         <Pager {...d.pagination} onPage={setPage} />
                     </Card>
                 )}
@@ -259,12 +256,12 @@ function TeamSeasonPage({ team }: { team: TeamDetail }) {
                     <Card title="Schedule and results" note={current?.conference ? `${current.conference} · ${season}` : season} bodyless>
                         <Loaded state={games} isEmpty={d => d.data.length === 0} empty="No games this season.">
                             {d => (
-                                <div className="table-scroll">
+                                <TableScroll label="Schedule and results">
                                     <table className="data-table">
                                         <thead>
                                             <tr>
                                                 <th scope="col">Date</th>
-                                                <th scope="col">Opponent</th>
+                                                <th scope="col" className="col-sticky">Opponent</th>
                                                 <th scope="col">Venue</th>
                                                 <th scope="col">Result</th>
                                                 <th scope="col" className="numeric">
@@ -277,7 +274,7 @@ function TeamSeasonPage({ team }: { team: TeamDetail }) {
                                             {d.data.map(g => (
                                                 <tr key={g.id}>
                                                     <td>{shortDate(g.date)}</td>
-                                                    <td className="team-cell">
+                                                    <td className="team-cell col-sticky">
                                                         <Link view="teams" id={g.opponent_slug}>
                                                             {g.opponent_name}
                                                         </Link>
@@ -311,7 +308,7 @@ function TeamSeasonPage({ team }: { team: TeamDetail }) {
                                             ))}
                                         </tbody>
                                     </table>
-                                </div>
+                                </TableScroll>
                             )}
                         </Loaded>
                     </Card>
@@ -319,26 +316,26 @@ function TeamSeasonPage({ team }: { team: TeamDetail }) {
                     <Card title="Roster" note="Season totals from box scores" bodyless>
                         <Loaded state={roster} isEmpty={d => d.data.length === 0} empty="No box scores for this team this season.">
                             {d => (
-                                <div className="table-scroll">
+                                <TableScroll label="Roster">
                                     <table className="data-table">
                                         <thead>
                                             <tr>
                                                 <th scope="col">#</th>
-                                                <th scope="col">Player</th>
-                                                <th scope="col" className="numeric">GP</th>
-                                                <th scope="col" className="numeric">Min</th>
-                                                <th scope="col" className="numeric">G</th>
-                                                <th scope="col" className="numeric">A</th>
-                                                <th scope="col" className="numeric">Sh</th>
-                                                <th scope="col" className="numeric">SOG</th>
-                                                <th scope="col" className="numeric">Sv</th>
+                                                <th scope="col" className="col-sticky">Player</th>
+                                                <th scope="col" className="numeric"><abbr title="Games played">GP</abbr></th>
+                                                <th scope="col" className="numeric"><abbr title="Minutes">Min</abbr></th>
+                                                <th scope="col" className="numeric"><abbr title="Goals">G</abbr></th>
+                                                <th scope="col" className="numeric"><abbr title="Assists">A</abbr></th>
+                                                <th scope="col" className="numeric"><abbr title="Shots">Sh</abbr></th>
+                                                <th scope="col" className="numeric"><abbr title="Shots on goal">SOG</abbr></th>
+                                                <th scope="col" className="numeric"><abbr title="Saves">Sv</abbr></th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {d.data.map(p => (
                                                 <tr key={p.id}>
                                                     <td className="rank-cell">{p.jersey_number ?? ''}</td>
-                                                    <td className="team-cell">
+                                                    <td className="team-cell col-sticky">
                                                         <Link view="directory" id={p.id}>
                                                             {p.name}
                                                         </Link>
@@ -354,28 +351,28 @@ function TeamSeasonPage({ team }: { team: TeamDetail }) {
                                             ))}
                                         </tbody>
                                     </table>
-                                </div>
+                                </TableScroll>
                             )}
                         </Loaded>
                     </Card>
 
                     {team.seasons.length > 1 && (
                         <Card title="By season" bodyless>
-                            <div className="table-scroll">
+                            <TableScroll label="Record by season">
                                 <table className="data-table">
                                     <thead>
                                         <tr>
-                                            <th scope="col">Season</th>
+                                            <th scope="col" className="col-sticky">Season</th>
                                             <th scope="col">Conference</th>
-                                            <th scope="col" className="numeric">W-D-L</th>
-                                            <th scope="col" className="numeric">GF</th>
-                                            <th scope="col" className="numeric">GA</th>
+                                            <th scope="col" className="numeric"><abbr title="Wins-draws-losses">W-D-L</abbr></th>
+                                            <th scope="col" className="numeric"><abbr title="Goals for">GF</abbr></th>
+                                            <th scope="col" className="numeric"><abbr title="Goals against">GA</abbr></th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {team.seasons.map(s => (
                                             <tr key={s.season}>
-                                                <td>
+                                                <td className="col-sticky">
                                                     <button type="button" className="link-button" onClick={() => setSeason(String(s.season))}>
                                                         {s.season}
                                                     </button>
@@ -390,7 +387,7 @@ function TeamSeasonPage({ team }: { team: TeamDetail }) {
                                         ))}
                                     </tbody>
                                 </table>
-                            </div>
+                            </TableScroll>
                         </Card>
                     )}
                     <p className="footnote">

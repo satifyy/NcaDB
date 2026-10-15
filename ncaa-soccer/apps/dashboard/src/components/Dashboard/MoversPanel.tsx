@@ -47,32 +47,11 @@ export function MoversPanel({ data, mode, comparedTo }: MoversPanelProps) {
               : 'Goal contributions in the last 3 games against the 3 before them';
 
     return (
-        <section
-            style={{
-                backgroundColor: 'var(--color-bg-secondary)',
-                border: '1px solid var(--color-bg-tertiary)',
-                borderRadius: 'var(--radius-lg)',
-                marginBottom: '2rem',
-                overflow: 'hidden'
-            }}
-        >
-            <div
-                style={{
-                    display: 'flex',
-                    flexWrap: 'wrap',
-                    alignItems: 'center',
-                    gap: '1rem',
-                    padding: '1.5rem',
-                    borderBottom: '1px solid var(--color-bg-tertiary)'
-                }}
-            >
-                <div style={{ marginRight: 'auto' }}>
-                    <h2 className="font-bold" style={{ fontSize: '1.25rem' }}>
-                        Biggest Movers
-                    </h2>
-                    <p className="text-muted text-sm" style={{ marginTop: '0.25rem' }}>
-                        {explanation}
-                    </p>
+        <section className="card movers-panel">
+            <div className="card-head movers-head">
+                <div className="movers-title">
+                    <h2 className="card-title">Biggest movers</h2>
+                    <p className="card-note">{explanation}</p>
                 </div>
 
                 <div className="segmented" role="group" aria-label="Direction">
@@ -94,7 +73,7 @@ export function MoversPanel({ data, mode, comparedTo }: MoversPanelProps) {
             </div>
 
             {ranked.length === 0 ? (
-                <p className="text-muted text-sm" style={{ padding: '1.5rem' }}>
+                <p className="card-body text-muted text-sm">
                     {`No ${direction === 'up' ? 'riser' : 'faller'}s in this selection. `}
                     {mode === 'form'
                         ? 'A player needs six games for this comparison.'
@@ -105,19 +84,17 @@ export function MoversPanel({ data, mode, comparedTo }: MoversPanelProps) {
                     {ranked.map((m, i) => (
                         <li key={m.player.player_key} className="movers-row">
                             <span className="movers-rank">{i + 1}</span>
-                            <div style={{ minWidth: 0 }}>
-                                <div className="font-medium" style={{ color: 'var(--color-text-primary)' }}>
-                                    {m.player.player_name}
-                                </div>
+                            <div className="movers-who">
+                                <div className="font-medium text-strong">{m.player.player_name}</div>
                                 <div className="text-muted text-sm">
                                     {m.player.team_id} • {m.player.conference}
                                 </div>
                             </div>
                             <span className="movers-change text-muted text-sm">
-                                {m.previous} → <strong style={{ color: 'var(--color-text-primary)' }}>{m.current}</strong>
+                                {m.previous} → <strong className="text-strong">{m.current}</strong>
                             </span>
                             <span className={`movers-delta ${m.delta > 0 ? 'is-up' : 'is-down'}`}>
-                                {m.delta > 0 ? <ArrowUpRight size={16} /> : <ArrowDownRight size={16} />}
+                                {m.delta > 0 ? <ArrowUpRight size={16} aria-hidden="true" /> : <ArrowDownRight size={16} aria-hidden="true" />}
                                 {m.delta > 0 ? '+' : ''}
                                 {m.delta}
                             </span>

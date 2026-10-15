@@ -196,7 +196,7 @@ export function EditorialDispatch({
     return (
         <div className={highlight ? 'dispatch-card is-highlight' : 'dispatch-card'}>
             {kicker && <div className="dispatch-kicker">{kicker}</div>}
-            <h4 className="dispatch-title">{title}</h4>
+            <h2 className="dispatch-title">{title}</h2>
             <div className="dispatch-body">{children}</div>
         </div>
     );

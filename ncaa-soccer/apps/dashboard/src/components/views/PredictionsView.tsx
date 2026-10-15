@@ -3,7 +3,7 @@ import { Bar, Line } from 'react-chartjs-2';
 import type { ChartOptions } from 'chart.js';
 import { ANALYTICS, loadPredictions } from '../../analytics';
 import type { PredictedWeek, SeasonPredictions } from '../../analytics';
-import { BAR_GEOMETRY, LINE_GEOMETRY, baseOptions, token } from '../../charts';
+import { BAR_GEOMETRY, LINE_GEOMETRY, baseOptions, token, chartLabel } from '../../charts';
 import { percent, shortDate, weekLabel } from '../../format';
 import { Card, Legend, MatchCard, Notice, SectionEyebrow, Stat } from '../ui';
 
@@ -351,7 +351,7 @@ export function PredictionsView({ searchTerm }: Props) {
                         >
                             <div className="card-body">
                                 <div className="chart-frame is-short">
-                                    <Bar data={lossChart} options={lossOptions} />
+                                    <Bar data={lossChart} options={lossOptions} {...chartLabel('Bar chart of the model’s log loss by season against the base rate')} />
                                 </div>
                             </div>
                             <Legend
@@ -369,7 +369,7 @@ export function PredictionsView({ searchTerm }: Props) {
                         >
                             <div className="card-body">
                                 <div className="chart-frame is-short">
-                                    <Line data={calibrationChart} options={calibrationOptions} />
+                                    <Line data={calibrationChart} options={calibrationOptions} {...chartLabel('Calibration chart: forecast probability against the observed rate')} />
                                 </div>
                             </div>
                             <Legend

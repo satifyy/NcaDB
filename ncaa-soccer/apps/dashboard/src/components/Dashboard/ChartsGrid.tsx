@@ -11,6 +11,8 @@ import {
 } from 'chart.js';
 import type { TooltipItem } from 'chart.js';
 import { Bar, Scatter } from 'react-chartjs-2';
+import { chartLabel } from '../../charts';
+import { Card } from '../ui';
 import type { PlayerStat } from '../../types';
 
 /**
@@ -162,20 +164,15 @@ export function ChartsGrid({ data }: ChartsGridProps) {
     };
 
     return (
-        <section style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(min(400px, 100%), 1fr))',
-            gap: '1.5rem',
-            marginBottom: '2rem'
-        }}>
+        <section className="grid charts-grid" aria-label="Charts">
             <ChartCard title="Top Goal Scorers">
-                <Bar data={goalsData} options={commonOptions} />
+                <Bar data={goalsData} options={commonOptions} {...chartLabel('Bar chart of the ten top goal scorers in the selection')} />
             </ChartCard>
             <ChartCard title="Efficiency: Goals vs Shots (Min 5 Shots)">
-                <Scatter data={efficiencyData} options={efficiencyOptions} />
+                <Scatter data={efficiencyData} options={efficiencyOptions} {...chartLabel('Scatter plot of goals against shots for players with at least five shots')} />
             </ChartCard>
             <ChartCard title="Goal Contributions (G + A)">
-                <Bar data={contributionData} options={commonOptions} />
+                <Bar data={contributionData} options={commonOptions} {...chartLabel('Bar chart of the players with the most goals plus assists')} />
             </ChartCard>
         </section>
     );
@@ -183,19 +180,8 @@ export function ChartsGrid({ data }: ChartsGridProps) {
 
 function ChartCard({ title, children }: { title: string, children: React.ReactNode }) {
     return (
-        <div style={{
-            backgroundColor: 'var(--color-bg-secondary)',
-            padding: '1.5rem',
-            borderRadius: 'var(--radius-lg)',
-            border: '1px solid var(--color-bg-tertiary)',
-            height: '350px',
-            display: 'flex',
-            flexDirection: 'column'
-        }}>
-            <h3 className="font-medium" style={{ marginBottom: '1rem', color: 'var(--color-text-primary)' }}>{title}</h3>
-            <div style={{ flex: 1, position: 'relative' }}>
-                {children}
-            </div>
-        </div>
+        <Card title={title}>
+            <div className="chart-frame is-short">{children}</div>
+        </Card>
     );
 }

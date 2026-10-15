@@ -31,7 +31,7 @@ export function KPIGrid({ stats }: KPIGridProps) {
     const avgGoals = totalPlayers > 0 ? (totalGoals / totalPlayers).toFixed(1) : '0.0';
 
     return (
-        <section className="grid grid-4" style={{ marginBottom: 'var(--space-6)' }}>
+        <section className="grid grid-4 kpi-grid" aria-label="Season totals">
             <KPICard
                 title="Players"
                 value={totalPlayers.toLocaleString()}
@@ -78,9 +78,9 @@ interface KPICardProps {
 function KPICard({ title, value, icon, foot, small }: KPICardProps) {
     return (
         <div className="stat">
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem' }}>
+            <div className="stat-head">
                 <span className="stat-label">{title}</span>
-                <span style={{ color: 'var(--color-text-muted)', display: 'flex' }}>{icon}</span>
+                <span className="stat-icon" aria-hidden="true">{icon}</span>
             </div>
             <div className={small ? 'stat-value is-small' : 'stat-value'}>{value}</div>
             {foot && <div className="stat-foot">{foot}</div>}
