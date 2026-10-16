@@ -351,6 +351,13 @@ describe('re-resolved team names', { skip: skipWithoutDb }, () => {
         assert.equal(await count(pool, 'games'), 3, 'before the fix: the decorated name made a second fixture');
         const { rows: [yaleBefore] } = await pool.query(`SELECT id FROM games WHERE game_date = '2026-10-31'`);
 
+        // A dry run reports the corrected season and keeps nothing.
+        const dry = await loadSeason(pool, { ...season([fromCornell('cornell'), fromDartmouth, vsYale('cornell')], box('cornell')), dryRun: true });
+        assert.equal(dry.dryRun, true);
+        assert.deepEqual(dry.rekeyed, { moved: 1, merged: 1 });
+        assert.deepEqual([dry.after?.games, dry.after?.stat_rows, dry.after?.wrong_side, dry.after?.duplicate_stat_keys], [2, 5, 0, 0]);
+        assert.equal(await count(pool, 'games'), 3, 'the dry run was rolled back');
+
         const result = await loadSeason(pool, season([fromCornell('cornell'), fromDartmouth, vsYale('cornell')], box('cornell')));
         assert.equal(await count(pool, 'games'), 2);
         assert.equal(await count(pool, 'player_game_stats'), 5, 'every row once');

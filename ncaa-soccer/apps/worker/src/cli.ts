@@ -14,8 +14,9 @@
  *   backfill-capture --season Y [--limit N] [--no-analytics]
  *                                 re-read up to N stored box scores (default 150) that predate the
  *                                 current capture version, newest first; re-run to continue
- *   renormalize (--season YYYY | --seasons A-B) [--no-analytics]
-                               (re-apply team identity rules to stored seasons; no network)
+ *   renormalize (--season YYYY | --seasons A-B) [--dry-run] [--no-analytics]
+                               (re-apply team identity rules to stored seasons; no network; --dry-run
+                                reports what would change, in the run's stats, and keeps nothing)
   reconcile-identities [--apply]
                                (owner credentials; removes team and player rows no data refers to any
                                 more, moving users' favorites to the surviving identity; dry run by default)
@@ -318,15 +319,19 @@ async function backfillCapture(
 async function renormalize(
     pool: Pool,
     config: WorkerConfig,
-    opts: { seasons: number[]; analytics: boolean },
+    opts: { seasons: number[]; analytics: boolean; dryRun?: boolean },
     trigger: string
 ): Promise<number> {
     return executeRun(pool, config, { kind: 'renormalize', trigger, params: { ...opts } }, async ctx => {
         const loaded: number[] = [];
         for (const season of opts.seasons) {
-            const outcome = await ingestSeason(ctx, { season, schedules: false, boxscores: false, incremental: false, recheckDays: 0 });
+            const outcome = await ingestSeason(ctx, {
+                season, schedules: false, boxscores: false, incremental: false, recheckDays: 0, dryRun: opts.dryRun
+            });
             if (outcome.loaded) loaded.push(season);
         }
+        // A dry run changed nothing, so there is nothing to recompute.
+        if (opts.dryRun) return;
         await finishWithReadModels(ctx, loaded.length > 0 && opts.analytics && config.analyticsEnabled, loaded);
     });
 }
@@ -629,7 +634,8 @@ async function main(): Promise<number> {
                 return EXIT_OK;
             }
             case 'renormalize':
-                return await renormalize(pool, config, { seasons: seasonsFrom(args), analytics: !has(args, 'no-analytics') }, trigger);
+                return await renormalize(
+                    pool, config, { seasons: seasonsFrom(args), analytics: !has(args, 'no-analytics'), dryRun: has(args, 'dry-run') }, trigger);
             case 'backfill-capture': {
                 const season = Number(one(args, 'season'));
                 if (!Number.isInteger(season) || season < 1990) throw new UsageError('Give --season YYYY');

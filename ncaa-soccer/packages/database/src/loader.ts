@@ -816,7 +816,23 @@ function issue(
 // Entry point
 // ---------------------------------------------------------------------------------------
 
+/** Carries a dry run's result out of the transaction it rolls back. */
+class DryRunRollback extends Error {
+    constructor(readonly result: LoadResult) {
+        super('dry run');
+    }
+}
+
 export async function loadSeason(pool: Pool, batch: SeasonBatch): Promise<LoadResult> {
+    try {
+        return await loadSeasonOnce(pool, batch);
+    } catch (err) {
+        if (err instanceof DryRunRollback) return err.result;
+        throw err;
+    }
+}
+
+async function loadSeasonOnce(pool: Pool, batch: SeasonBatch): Promise<LoadResult> {
     return withTransaction(pool, async client => {
         const sport = await sportId(client);
         const seasonId = await ensureSeason(client, batch.season);
@@ -977,15 +993,33 @@ export async function loadSeason(pool: Pool, batch: SeasonBatch): Promise<LoadRe
                 excess, Number(total[0].n), 'warning', 'reconciliation'));
         }
 
-        return {
+        const result: LoadResult = {
             season: batch.season,
             games: gameCounts,
             gameSources: sourceCounts,
             playerStats: statCounts,
             players: { inserted: playersInserted },
             teams: { inserted: teamsInserted },
-            issues
+            issues,
+            rekeyed
         };
+        if (batch.dryRun) {
+            // The season as this load would leave it, read inside the transaction that is
+            // about to be rolled back.
+            const { rows: [after] } = await client.query(
+                `SELECT (SELECT count(*)::int FROM games WHERE season_id = $1) AS games,
+                        (SELECT count(*)::int FROM games WHERE season_id = $1 AND status = 'final') AS finals,
+                        (SELECT count(*)::int FROM player_game_stats WHERE season_id = $1) AS stat_rows,
+                        (SELECT coalesce(sum(goals), 0)::int FROM player_game_stats WHERE season_id = $1) AS goals,
+                        (SELECT count(*)::int FROM player_game_stats p JOIN games g ON g.id = p.game_id
+                          WHERE p.season_id = $1 AND p.team_id <> g.home_team_id AND p.team_id <> g.away_team_id) AS wrong_side,
+                        (SELECT count(*)::int FROM (SELECT 1 FROM player_game_stats WHERE season_id = $1
+                          GROUP BY game_id, player_id, jersey_key HAVING count(*) > 1) d) AS duplicate_stat_keys`,
+                [seasonId]
+            );
+            throw new DryRunRollback({ ...result, dryRun: true, after });
+        }
+        return result;
     });
 }
 
