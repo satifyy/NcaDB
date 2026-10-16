@@ -25,7 +25,7 @@ function inventory(): Inventory {
     ];
     const index = new SchoolIndex<TeamConfig>();
     teams.forEach(t => index.add(t));
-    return { teams, index, unscraped: [] };
+    return { teams, index, unscraped: [], ambiguous: new Map() };
 }
 
 const gameRow = (overrides: Partial<GameCsvRow> = {}): GameCsvRow => ({
@@ -272,4 +272,67 @@ test('two inventory entries answering to the same spellings are refused, not mer
         { team_id: 'LOYOLA_MD', name_canonical: 'Loyola Maryland', schedule_url: 'https://b.com', aliases: ['Loyola (Md.)'] }
     ]));
     assert.throws(() => loadInventory(dir), /LOYOLA_CHICAGO and LOYOLA_MD answer to the same spellings/);
+});
+
+// ---------------------------------------------------------------------------------------
+// UTRGV's spellings, and ambiguous short names placed by their fixture.
+
+import { resolveByFixtureTwin } from '../src/normalize';
+
+test('UTRGV’s spellings resolve to UTRGV; the University of Rio Grande stays a different school', () => {
+    const resolver = new TeamResolver(loadInventory(realTeams));
+    for (const raw of ['The University of Texas Rio Grande Valley', 'UT Rio Grande Valley', 'Texas Rio Grande Valley', 'UTRGV']) {
+        assert.equal(resolver.resolve(raw)?.slug, 'utrgv', raw);
+    }
+    assert.equal(resolver.resolve('Rio Grande')?.slug, 'rio-grande');
+});
+
+const twinRow = (id: string, date: string, home: string, away: string, homeScore = '', awayScore = ''): GameCsvRow => ({
+    game_id: id, date, home_team_name: home, away_team_name: away, home_team_ranked: 'false', away_team_ranked: 'false',
+    home_score: homeScore, away_score: awayScore, status: homeScore ? 'final' : 'scheduled', location_type: 'home',
+    game_type: 'regular', schedule_url: '', boxscore_url: '', boxscore_url_alt: '', dedupe_key: id
+} as GameCsvRow);
+
+test('an ambiguous short name takes the one candidate whose own schedule lists the same match', () => {
+    const inventory = loadInventory(realTeams);
+    const rows = [
+        // Syracuse's schedule says "Loyola"; Loyola Maryland's lists Syracuse the same day.
+        twinRow('cuse-1', '2026-08-28', 'Syracuse', 'Loyola', '2', '0'),
+        twinRow('lmd-1', '2026-08-28', 'Loyola University Maryland', 'Syracuse', '0', '2'),
+        // UIC's "Loyola" is Chicago's game.
+        twinRow('uic-1', '2026-09-13', 'UIC', 'Loyola', '1', '0'),
+        twinRow('luc-1', '2026-09-13', 'UIC', 'Loyola Chicago', '1', '0'),
+        // No twin: stays unresolved.
+        twinRow('x-1', '2026-09-20', 'Navy', 'Loyola'),
+        // Twins for both candidates on the same day (not real, but it must not guess).
+        twinRow('y-1', '2026-09-27', 'Drake', 'Loyola'),
+        twinRow('y-2', '2026-09-27', 'Drake', 'Loyola Chicago'),
+        twinRow('y-3', '2026-09-27', 'Drake', 'Loyola University Maryland'),
+        // USF works the same way.
+        twinRow('ucf-1', '2026-10-03', 'UCF', 'USF', '1', '1'),
+        twinRow('usf-1', '2026-10-03', 'South Florida', 'UCF', '1', '1')
+    ];
+    const issues = new IssueLog();
+    const games = resolveByFixtureTwin(normalizeGames(rows, 2026, new TeamResolver(inventory), issues), inventory, issues);
+    const side = (id: string) => { const g = games.find(x => x.sourceGameId === id)!; return [g.homeSlug, g.awaySlug]; };
+    assert.deepEqual(side('cuse-1'), ['syracuse', 'loyola-university-maryland']);
+    assert.deepEqual(side('uic-1'), ['uic', 'loyola-chicago']);
+    assert.deepEqual(side('x-1'), ['navy', 'loyola'], 'no twin: left unresolved');
+    assert.deepEqual(side('y-1'), ['drake', 'loyola'], 'two candidates: left unresolved');
+    assert.deepEqual(side('ucf-1'), ['ucf', 'south-florida']);
+    const codes = Object.fromEntries(issues.list().map(i => [i.code, i.count]));
+    assert.equal(codes.team_from_fixture_twin, 3);
+    assert.equal(codes.ambiguous_team_unresolved, 2);
+});
+
+test('box-score rows labelled with the short name follow the placed fixture side', () => {
+    const inventory = loadInventory(realTeams);
+    const games = [twinRow('cuse-1', '2026-08-28', 'Syracuse', 'Loyola', '2', '0'), twinRow('lmd-1', '2026-08-28', 'Loyola University Maryland', 'Syracuse', '0', '2')];
+    const stats = [
+        { game_id: 'cuse-1', team_id: 'Loyola', player_name: 'Ann Ace', player_key: '', jersey_number: '9', minutes: '90', goals: '0', assists: '0', shots: '1', shots_on_goal: '0', saves: '', position: 'F', started: '1', goals_allowed: '', capture_version: '2' },
+        { game_id: 'cuse-1', team_id: 'Syracuse', player_name: 'Sy Cuse', player_key: '', jersey_number: '10', minutes: '90', goals: '2', assists: '0', shots: '3', shots_on_goal: '2', saves: '', position: 'F', started: '1', goals_allowed: '', capture_version: '2' }
+    ] as PlayerStatCsvRow[];
+    const { batch } = buildSeasonBatch(2026, games, stats, inventory, true);
+    assert.equal(batch.stats.find(s => s.playerName === 'Ann Ace')?.teamSlug, 'loyola-university-maryland');
+    assert.ok(!batch.teams.some(t => t.slug === 'loyola'), 'no team left behind under the short name');
 });

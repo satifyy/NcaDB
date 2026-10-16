@@ -84,6 +84,12 @@ export interface Inventory {
      * are kept out of `teams`, which is the scrape list.
      */
     unscraped: TeamConfig[];
+    /**
+     * Short names two Division I programs share ("Loyola", "USF"), each with its
+     * candidates' canonical names (`ambiguous_names.json`). No alias can be right for
+     * them; see {@link resolveByFixtureTwin}.
+     */
+    ambiguous: Map<string, string[]>;
 }
 
 /** The Division I inventory, the unscraped Division I programs and the alias file. */
@@ -103,7 +109,13 @@ export function loadInventory(teamsDir: string): Inventory {
         const clash = index.add({ ...team, aliases: [...(team.aliases || []), ...(aliases[team.team_id] || [])] });
         if (clash) throw new Error(`Inventory entries ${clash.team_id} and ${team.team_id} answer to the same spellings`);
     }
-    return { teams, index, unscraped };
+    const ambiguousPath = path.join(teamsDir, 'ambiguous_names.json');
+    const ambiguous = new Map<string, string[]>(
+        fs.existsSync(ambiguousPath)
+            ? Object.entries(JSON.parse(fs.readFileSync(ambiguousPath, 'utf8')) as Record<string, string[]>).map(([k, v]) => [k.toLowerCase(), v])
+            : []
+    );
+    return { teams, index, unscraped, ambiguous };
 }
 
 /**
@@ -451,6 +463,50 @@ export function attributeToFixtures(
     });
 }
 
+/**
+ * Places an ambiguous short name ("Loyola", "USF") by the fixture it appears in.
+ *
+ * The name fits two programs, so on its own it stays an unresolved team of its own. But
+ * the row comes from the opponent's schedule, and the real school's own schedule lists
+ * the same match: same date, same opponent. When the season holds such a row for
+ * exactly one of the candidates, the ambiguous side is that candidate, and the two rows
+ * become one fixture. No twin, or twins for both candidates, and it is left as it was.
+ * Box-score rows labelled with the short name then follow the fixture side
+ * ({@link attributeToFixtures}).
+ */
+export function resolveByFixtureTwin(games: GameSourceRecord[], inventory: Inventory, issues: IssueLog): GameSourceRecord[] {
+    if (inventory.ambiguous.size === 0) return games;
+    const candidates = new Map([...inventory.ambiguous].map(([name, list]) => [teamSlug(name), new Set(list.map(teamSlug))]));
+    const short = (raw: string) => {
+        const key = cleanTeamName(raw).name.trim().toLowerCase();
+        return inventory.ambiguous.has(key) ? teamSlug(key) : null;
+    };
+    // Who each team played on each date, as every other row in the season reports it.
+    const opponents = new Map<string, Set<string>>(); // `${date}|${team}` -> opponents
+    for (const g of games) {
+        for (const [a, b] of [[g.homeSlug, g.awaySlug], [g.awaySlug, g.homeSlug]]) {
+            const key = `${g.date}|${a}`;
+            if (!opponents.has(key)) opponents.set(key, new Set());
+            opponents.get(key)!.add(b);
+        }
+    }
+    return games.map(g => {
+        const side = short(g.homeName) === g.homeSlug ? 'home' : short(g.awayName) === g.awaySlug ? 'away' : null;
+        if (!side) return g;
+        const ambiguousSlug = side === 'home' ? g.homeSlug : g.awaySlug;
+        const opponent = side === 'home' ? g.awaySlug : g.homeSlug;
+        const twins = [...(candidates.get(ambiguousSlug) ?? [])].filter(c => opponents.get(`${g.date}|${opponent}`)?.has(c));
+        const sample = { game_id: g.sourceGameId, date: g.date, name: side === 'home' ? g.homeName : g.awayName, opponent };
+        if (twins.length !== 1) {
+            issues.add('ambiguous_team_unresolved', 'Ambiguous short names with no single same-day twin fixture (left unresolved)', sample);
+            return g;
+        }
+        issues.add('team_from_fixture_twin', 'Ambiguous short names placed by the same match on the real school’s schedule',
+            { ...sample, team: twins[0] });
+        return side === 'home' ? { ...g, homeSlug: twins[0] } : { ...g, awaySlug: twins[0] };
+    });
+}
+
 /** Builds the loader's batch for one season from its two CSVs' rows. */
 export function buildSeasonBatch(
     season: number,
@@ -461,7 +517,7 @@ export function buildSeasonBatch(
 ): { batch: SeasonBatch; issues: QualityIssue[] } {
     const resolver = new TeamResolver(inventory);
     const issues = new IssueLog();
-    const games = normalizeGames(gameRows, season, resolver, issues);
+    const games = resolveByFixtureTwin(normalizeGames(gameRows, season, resolver, issues), inventory, issues);
     const stats = attributeToFixtures(normalizeStats(statRows, resolver, issues), games, issues);
     const used = new Set([...games.flatMap(g => [g.homeSlug, g.awaySlug]), ...stats.map(s => s.teamSlug)]);
     return {

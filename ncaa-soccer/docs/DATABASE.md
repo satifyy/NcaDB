@@ -25,6 +25,13 @@ disambiguator ("Holy Cross College (Ind.)") keeps a school apart from the Divisi
 program it resembles unless that program's own spellings carry it. Two inventory entries
 that would answer to the same spellings stop the load instead of merging silently.
 
+A few short names fit two Division I programs ("Loyola": Chicago or Maryland; "USF":
+South Florida or San Francisco; `data/teams/ambiguous_names.json`). No alias can be right
+for them. Such a row always comes from the opponent's schedule, and the real school's own
+schedule lists the same match, so the name is placed by that twin: same date, same
+opponent, exactly one candidate. With no twin, or twins for both candidates, it stays an
+unresolved team of its own.
+
 When a stored game's teams resolve differently on a later load, the loader moves it to its
 new key (keeping its id and box score) or merges it into the game already there, and a
 box-score row left filed under a team that is no longer either side is replaced once the
