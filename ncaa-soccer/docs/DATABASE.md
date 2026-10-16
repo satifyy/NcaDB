@@ -16,73 +16,28 @@ with the permission boundary between the three application roles.
 | Game | `(season, date, low team id, high team id)` | Each school publishes its own row for a fixture, in its own orientation and spelling. Once both resolve to the same two teams on the same date they are one game (a team plays at most once a day). |
 | Game source | `(season, dedupe_key)` | One per school row, verbatim, so the scrapers can be re-fed exactly what they wrote. |
 | Player | `(sport, "<team slug>:<letters of First Last>")` | Box scores carry no player id. A name is not a person: the same name at two schools in one season is two people. A transfer is therefore a second player; the API lists same-name players elsewhere as a lead, never merged. |
+
+Before a name is resolved, rank and seed markers ("19 Cornell", "#21/#15 UNC Greensboro",
+"4-Seed Charlotte"), trailing rounds and seeds ("(Sweet 16)", "(#3 Seed)") are stripped,
+and bracket placeholders, conference names and intrasquad games ("ELITE 8", "COLLEGE CUP",
+"Coastal Athletic Association", "Blue & Gold Game") are refused. A trailing state
+disambiguator ("Holy Cross College (Ind.)") keeps a school apart from the Division I
+program it resembles unless that program's own spellings carry it. Two inventory entries
+that would answer to the same spellings stop the load instead of merging silently.
+
+When a stored game's teams resolve differently on a later load, the loader moves it to its
+new key (keeping its id and box score) or merges it into the game already there, and a
+box-score row left filed under a team that is no longer either side is replaced once the
+batch has stored that game's box score for both sides. See `renormalize` and
+`reconcile-identities` in OPERATIONS.md.
 | Player game stat | `(game, player, jersey)` | One name at two numbers in a box score is two people. |
 
 ## Tables
 
 - `sports`, `competitions`, `seasons`, `conferences` — reference data.
-- `teams` — `inventory_id`/`is_division_one` for the 197 scraped programs; opponents
-  outside Division I are teams too, flagged false.
-- `team_seasons` — team × season with conference. The inventory records current
-  alignment only, so `conference_source = 'inventory_current'` marks past seasons as
-  approximate.
-- `games` — merged fixture: scores (NULL until played — never 0), `status`
-  (`scheduled|live|final|postponed|canceled|unknown`), `game_type`, box-score URLs,
-  `boxscore_status` (`none|partial|complete`), `quality_flags` (`score_conflict`),
-  `content_hash`, `first_seen_at`, `updated_at`, `last_verified_at`.
-  CHECKs: different teams; a final has both scores; scores ≥ 0.
-- `game_sources` — raw schedule rows (`payload jsonb`) per game.
-- `players`, `player_team_seasons` (jersey by season).
-- `player_game_stats` — minutes, goals, assists, shots, shots on goal, saves; NULL when
-  the box score did not say. Provenance columns (`source_*`) reproduce the scraper row.
-  From migration 005: the published `position` and its `position_group` (GK/DEF/MID/FWD),
-  `started`, the keeper's `goals_allowed`, and `capture_version` (1 = loaded before these
-  were captured, where `saves = 0` may mean "not published"; 2 = captured, NULL means not
-  reported). `backfill-capture` re-reads rows below the current version.
-- `team_game_stats` — per side totals, the score the schedule reported, and
-  `goals_reconciliation`: `ok`, `unattributed` (fewer player goals than the score —
-  own goals), `excess` (more — a real inconsistency, reported, not altered), `unknown`.
-- `ingestion_runs`, `ingestion_tasks`, `ingestion_errors`, `data_sync_state` — history,
-  per-stage outcomes, categorised errors and data-quality issues, freshness per scope.
-- `totw_*` (migration 006) — Team of the Week, precomputed after every load: weeks
-  (status, revision, inputs hash, completeness), every eligible player's rating and game
-  breakdown, the XI, and the weights of each model version. See
-  [TEAM_OF_THE_WEEK.md](TEAM_OF_THE_WEEK.md).
-- `derived_artifacts` — analytics JSON (ratings, forecasts, impact, season tables) by key.
-- Materialized views `player_season_stats`, `team_season_records` — refreshed
-  `CONCURRENTLY` after every load; back the leaderboards and records.
-
-Indexes cover every API filter: games by date, season+date, each team+date, status;
-stats by player+season, team+season; players by lower(name).
-
-## How a load stays correct
-
-- One transaction per season: a failure leaves the season exactly as before.
-- Every write is `INSERT … ON CONFLICT` on the natural key, updating only when the
-  row's content hash changed. Re-loading identical data reports 0 inserted / 0 updated.
-- A whole-season batch is authoritative for which source rows exist; a partial batch
-  (one team, one game, a date range) only adds and updates.
-- A re-read box score replaces that side of that game (a removed player is removed); a
-  side missing from the batch keeps its rows.
-- Validation rejects rather than coerces, and records every rejection by code with
-  samples: bracket placeholders as opponents, placeholder dates, placeholder players,
-  unnamed teams, stats pointing at no game. Box-score labels that are abbreviations are
-  attributed to a fixture side by elimination or roster overlap, or left flagged.
-
-Verified on the full 2016–2026 history: 22,899 games, 787,110 player-game rows,
-loaded in ~70 s; a second load reports every row unchanged.
-
-## Backups and restore
-
-Railway Postgres has volume backups (Hobby/Pro: enable scheduled backups in the
-service's *Backups* tab). Independently, a logical dump can be taken any time:
-
-```bash
-railway connect Postgres            # interactive psql, for inspection
-# dump through a temporary TCP proxy (see OPERATIONS.md → "Direct database access")
-pg_dump --format=custom --no-owner "$DATABASE_PUBLIC_URL" > ncadb-$(date +%F).dump
-pg_restore --clean --if-exists --no-owner --dbname "$TARGET_URL" ncadb-YYYY-MM-DD.dump
-```
-
-The committed CSVs are a second, independent recovery path: an empty database is
-rebuilt from them with `backfill --seasons 2016-2026 --from-csv .` in about a minute.
+- `teams` — `inventory_id`/`is_division_one` for the 213 Division I programs: the 197 the
+  scraper covers (`data/teams/d1_msoc_teams.json`) and the 16 it does not
+  (`d1_msoc_unscraped.json`, from the conference rosters in `d1_msoc_rosters.json`), whose
+  games are known only from opponents' schedules. Opponents outside Division I are teams
+  too, flagged false. The flag is not per season (a program that changed division is
+  classified by its current membership).
