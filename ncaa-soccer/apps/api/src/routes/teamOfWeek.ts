@@ -39,13 +39,17 @@ interface WeekRow {
 const WEEK_COLUMNS = `w.id, s.year AS season, w.week_start::text, w.week_end::text, w.status, w.revision, w.model_version,
     w.completeness, w.computed_at, w.first_computed_at`;
 
-/** The newest week that has at least one selected player, optionally within a season. */
+/**
+ * The week shown by default: the newest completed week (provisional or final) that has
+ * at least one selected player. A week still being played is only a partial week, so it
+ * is the default only before any week has completed; navigation reaches it either way.
+ */
 async function latestWeek(pool: Pool, season: number | null): Promise<WeekRow | undefined> {
     const { rows } = await pool.query<WeekRow>(
         `SELECT ${WEEK_COLUMNS} FROM totw_weeks w JOIN seasons s ON s.id = w.season_id
          WHERE ($1::int IS NULL OR s.year = $1)
            AND EXISTS (SELECT 1 FROM totw_selections x WHERE x.week_id = w.id AND x.player_id IS NOT NULL)
-         ORDER BY w.week_start DESC, w.model_version DESC LIMIT 1`,
+         ORDER BY (w.status = 'in_progress'), w.week_start DESC, w.model_version DESC LIMIT 1`,
         [season]
     );
     return rows[0];

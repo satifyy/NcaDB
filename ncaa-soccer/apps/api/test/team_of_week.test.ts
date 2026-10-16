@@ -21,15 +21,7 @@ describe('Team of the Week API', { skip: skipWithoutDb }, () => {
     before(async () => {
         pool = await freshDatabase();
         // Duke 2-1 Clemson, Friday 2025-09-05 (week of Monday 2025-09-01).
-        await loadSeason(pool, batch(2025, [game()], [
-            v2('Kat Keeper', 'duke', 'GK', { jerseyNumber: '1', saves: 4, goalsAllowed: 1 }),
-            v2('Dan Back', 'duke', 'DEF', { jerseyNumber: '4' }),
-            v2('Mo Mid', 'duke', 'MID', { jerseyNumber: '8', assists: 1 }),
-            v2('Fay Forward', 'duke', 'FWD', { jerseyNumber: '9', goals: 2, shotsOnGoal: 3 }),
-            v2('Cal Keeper', 'clemson', 'GK', { jerseyNumber: '1', saves: 2 }),
-            v2('Cy Striker', 'clemson', 'FWD', { jerseyNumber: '9', goals: 1 }),
-            v2('Ed Bench', 'clemson', 'FWD', { jerseyNumber: '19', minutes: 20 })
-        ]));
+        await loadSeason(pool, batch(2025, [game()], firstGame));
         await computeTeamOfWeek(pool, 2025, new Date('2025-09-20T12:00:00Z'), ONE_GAME);
         app = await buildApp(pool, loadConfig({ ADMIN_API_TOKEN: 'test-admin-token-0123456789abcdef' }), { logger: false });
     });
@@ -37,6 +29,16 @@ describe('Team of the Week API', { skip: skipWithoutDb }, () => {
         await app?.close();
         await pool?.end();
     });
+
+    const firstGame = [
+            v2('Kat Keeper', 'duke', 'GK', { jerseyNumber: '1', saves: 4, goalsAllowed: 1 }),
+            v2('Dan Back', 'duke', 'DEF', { jerseyNumber: '4' }),
+            v2('Mo Mid', 'duke', 'MID', { jerseyNumber: '8', assists: 1 }),
+            v2('Fay Forward', 'duke', 'FWD', { jerseyNumber: '9', goals: 2, shotsOnGoal: 3 }),
+            v2('Cal Keeper', 'clemson', 'GK', { jerseyNumber: '1', saves: 2 }),
+            v2('Cy Striker', 'clemson', 'FWD', { jerseyNumber: '9', goals: 1 }),
+            v2('Ed Bench', 'clemson', 'FWD', { jerseyNumber: '19', minutes: 20 })
+    ];
 
     const get = (url: string, headers: Record<string, string> = {}) => app.inject({ method: 'GET', url, headers });
 
@@ -102,5 +104,25 @@ describe('Team of the Week API', { skip: skipWithoutDb }, () => {
             const res = await app.inject({ method, url: '/api/v1/team-of-week' });
             assert.ok([404, 405].includes(res.statusCode), `${method} -> ${res.statusCode}`);
         }
+    });
+
+    test('the default is the latest completed week; a week still being played is reached by navigation', async () => {
+        // A Tuesday game in the next week but one, computed on the Thursday: that week is in progress.
+        const id = 'sidearm-2025-09-16-Duke-Clemson';
+        const second = game({ dedupeKey: '2025-09-16-Clemson-Duke', sourceGameId: id, date: '2025-09-16', boxscoreUrl: 'https://goduke.com/boxscore/2' });
+        await loadSeason(pool, batch(2025, [game(), second], [
+            ...firstGame,
+            v2('Fay Forward', 'duke', 'FWD', { sourceGameId: id, jerseyNumber: '9', goals: 3, shotsOnGoal: 4 })
+        ]));
+        await computeTeamOfWeek(pool, 2025, new Date('2025-09-18T12:00:00Z'), ONE_GAME);
+        const weeks = (await get('/api/v1/team-of-week/weeks?season=2025')).json().data;
+        assert.deepEqual(weeks.map((w: any) => [w.start, w.status]), [['2025-09-15', 'in_progress'], ['2025-09-01', 'final']]);
+        const latest = (await get('/api/v1/team-of-week')).json();
+        assert.equal(latest.week.start, '2025-09-01');
+        assert.equal(latest.week.next, '2025-09-15');
+        assert.equal((await get('/api/v1/team-of-week/2025-09-16')).json().week.status, 'in_progress');
+        // With no completed week yet, the week in progress is shown rather than nothing.
+        await pool.query("DELETE FROM totw_weeks WHERE week_start = '2025-09-01'");
+        assert.equal((await get('/api/v1/team-of-week')).json().week.start, '2025-09-15');
     });
 });
