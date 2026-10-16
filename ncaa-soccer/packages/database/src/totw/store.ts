@@ -246,7 +246,9 @@ export async function computeTeamOfWeek(
         const completeness = { ...summarize(c, groups), published: enough, reason: enough ? null : 'too_few_games' };
 
         await withTransaction(pool, async client => {
-            const changedInputs = existing[0] && existing[0].inputs_hash !== inputsHash;
+            // A revision is a change after the week ended (a correction). New games arriving
+            // while the week is still being played are not revisions.
+            const changedInputs = existing[0] && existing[0].inputs_hash !== inputsHash && existing[0].status !== 'in_progress';
             const { rows: week } = await client.query<{ id: string }>(
                 `INSERT INTO totw_weeks (season_id, week_start, week_end, model_version, status, inputs_hash, completeness)
                  VALUES ($1, $2, $2::date + 6, $3, $4, $5, $6)

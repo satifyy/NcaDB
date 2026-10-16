@@ -115,6 +115,17 @@ describe('team of the week store', { skip: skipWithoutDb }, () => {
         assert.deepEqual([week.status, week.revision], ['final', 0], 'a status change is not a revision');
     });
 
+    test('new games during the week in progress are not revisions', async () => {
+        await owner.query('DELETE FROM totw_weeks');
+        await computeTeamOfWeek(worker, 2025, new Date('2025-09-06T12:00:00Z'), ONE_GAME);
+        await loadSeason(worker, batch(2025, [game()], boxScore({ 'Cy Striker': { goals: 0 }, 'Mo Mid': { goals: 2 } })));
+        const result = await computeTeamOfWeek(worker, 2025, new Date('2025-09-07T12:00:00Z'), ONE_GAME);
+        assert.equal(result.computed, 1);
+        const { rows: [week] } = await owner.query('SELECT status, revision FROM totw_weeks');
+        assert.deepEqual([week.status, week.revision], ['in_progress', 0]);
+        await computeTeamOfWeek(worker, 2025, final, ONE_GAME);
+    });
+
     test('a week with too few captured games is stored without an XI, and says why', async () => {
         await computeTeamOfWeek(worker, 2025, final, { firstSeason: 2025 });
         const { rows: [week] } = await owner.query('SELECT completeness FROM totw_weeks');

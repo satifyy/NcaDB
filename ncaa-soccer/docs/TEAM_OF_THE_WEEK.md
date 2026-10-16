@@ -136,9 +136,9 @@ beyond the eligibility threshold.
   re-reads box scores for 7 days after a game); `final` after that.
 - The worker recomputes every week of the loaded season after each load, but each week is
   hashed from exactly the rows the model reads plus the model version: an unchanged week is
-  skipped; a changed one is replaced in one transaction. A changed week that already existed
-  raises its `revision` (shown as "revised N times after corrections"); a status change alone
-  does not.
+  skipped; a changed one is replaced in one transaction. A week that changes after it ended
+  raises its `revision` (shown as "revised N times after corrections"). New games while the
+  week is in progress, or a status change alone, do not.
 - Changing a weight means a new `MODEL_VERSION`; old weeks keep the version and weights they
   were ranked by (`totw_model_versions`).
 - Each week stores completeness: final games, games with box scores, games captured at v2,
