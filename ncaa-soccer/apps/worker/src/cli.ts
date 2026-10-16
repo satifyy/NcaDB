@@ -14,13 +14,12 @@
  *   backfill-capture --season Y [--limit N] [--no-analytics]
  *                                 re-read up to N stored box scores (default 150) that predate the
  *                                 current capture version, newest first; re-run to continue
- *   renormalize (--season YYYY | --seasons A-B) [--dry-run] [--no-analytics]
-                               (re-apply team identity rules to stored seasons; no network; --dry-run
-                                reports what would change, in the run's stats, and keeps nothing)
-  reconcile-identities [--apply]
-                               (owner credentials; removes team and player rows no data refers to any
-                                more, moving users' favorites to the surviving identity; dry run by default)
-  refresh-game --game ID [--analytics]
+ *   renormalize (--season Y | --seasons A-B) [--dry-run] [--no-analytics]
+ *                                 re-apply team identity rules to stored seasons, no network;
+ *                                 --dry-run reports what would change and keeps nothing
+ *   reconcile-identities [--targets FILE --season Y] [--apply]
+ *                                 remove reviewed orphan identities, moving favorites (owner)
+ *   refresh-game --game ID [--analytics]
  *   retry [--run ID]              re-run a failed or abandoned run with its original options
  *   team-of-week --season Y       recompute Team of the Week for a season from the database
  *   analytics                     rebuild ratings, forecasts and dashboard files from the database
@@ -28,6 +27,7 @@
  *   health                        exit 1 (and alert) if data is stale or the database unreachable
  */
 
+import * as fs from 'fs';
 import * as path from 'path';
 import { Pool } from 'pg';
 import {
@@ -53,7 +53,7 @@ import { EXIT_FAILED, EXIT_OK, RunContext, executeRun, task } from './run';
 import { processMaintenanceRequests } from './maintenance';
 import { changeRole, parseAdminSubjects, RoleError, syncAdmins } from './roles';
 import { localTime, nightlyGate, seasonFor } from './schedule';
-import { reconcileIdentities } from './reconcile';
+import { parseTargets, reconcileIdentities } from './reconcile';
 import { loadInventory, TeamResolver } from './normalize';
 import { teamsDir } from './workspace';
 
@@ -556,6 +556,14 @@ const USAGE = `Usage: npm run worker -- <command> [options]
            [--missing-only] [--force] [--no-schedules] [--from-csv DIR] [--no-analytics] [--allow-mass-delete]
   backfill-capture --season YYYY [--limit N] [--no-analytics]
                                (re-read stored box scores below the current capture version; re-run to continue)
+  renormalize (--season YYYY | --seasons A-B) [--dry-run] [--no-analytics]
+                               (re-apply team identity rules to stored seasons; no network; --dry-run
+                                reports what would change, in the run's stats, and keeps nothing)
+  reconcile-identities [--targets FILE --season YYYY] [--apply]
+                               (owner credentials; removes team and player rows no data refers to any
+                                more, moving users' favorites to the surviving identity; dry run by
+                                default; --apply needs a reviewed targets file and the season its rows
+                                may belong to, and touches nothing else)
   refresh-game --game ID [--analytics]
   retry [--run ID]
   team-of-week --season YYYY   (recompute Team of the Week weeks whose inputs changed)
@@ -621,13 +629,26 @@ async function main(): Promise<number> {
                 return await backfill(pool, config, backfillOptions(args), trigger);
             case 'reconcile-identities': {
                 const apply = has(args, 'apply');
-                const report = await reconcileIdentities(pool, new TeamResolver(loadInventory(teamsDir(config.codeRoot))), apply);
+                const file = one(args, 'targets');
+                const seasonArg = one(args, 'season');
+                const season = seasonArg === undefined ? undefined : Number(seasonArg);
+                if (season !== undefined && !Number.isInteger(season)) throw new UsageError('--season must be a year');
+                if (apply && (!file || season === undefined)) {
+                    throw new UsageError('--apply needs --targets FILE and --season YYYY: only reviewed identities are ever removed.');
+                }
+                const targets = file ? parseTargets(fs.readFileSync(file, 'utf8')) : undefined;
+                const report = await reconcileIdentities(pool, new TeamResolver(loadInventory(teamsDir(config.codeRoot))), { apply, targets, season });
                 log.info('reconcile-identities', {
                     applied: report.applied,
+                    season: report.season,
                     teams: report.teams.length,
                     teams_with_successor: report.teams.filter(t => t.successor).length,
                     players: report.players.length,
                     players_with_successor: report.players.filter(p => p.successor).length,
+                    out_of_scope_teams: report.out_of_scope.teams.length,
+                    out_of_scope_players: report.out_of_scope.players.length,
+                    cascades: report.cascades,
+                    problems: report.problems.length,
                     ...report.favorites
                 });
                 console.log(JSON.stringify(report, null, 2));
