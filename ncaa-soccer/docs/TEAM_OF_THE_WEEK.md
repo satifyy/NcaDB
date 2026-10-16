@@ -153,7 +153,7 @@ changes exactly when the week is recomputed). Filters: `season` (year) and `comp
 
 | Endpoint | Returns |
 | --- | --- |
-| `GET /api/v1/team-of-week` | the newest week with at least one selected player |
+| `GET /api/v1/team-of-week` | the newest completed (provisional or final) week with at least one selected player; the week in progress only when none has completed |
 | `GET /api/v1/team-of-week/weeks` | every computed week, newest first: start, end, status, revision, filled places |
 | `GET /api/v1/team-of-week/:date` | the week containing `YYYY-MM-DD` (404 if not computed) |
 
