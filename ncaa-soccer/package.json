@@ -8,7 +8,7 @@
     ],
     "scripts": {
         "build": "tsc -b",
-        "test": "npm run build && tsx --test apps/scraper/src/tests/*.test.ts apps/worker/test/normalize.test.ts apps/worker/test/schedule.test.ts apps/worker/test/workspace.test.ts",
+        "test": "npm run build && tsx --test apps/scraper/src/tests/*.test.ts apps/worker/test/normalize.test.ts apps/worker/test/schedule.test.ts apps/worker/test/workspace.test.ts packages/database/test/totw_model.test.ts",
         "validate": "tsx apps/scraper/src/validate_inventory.ts",
         "worker": "tsx apps/worker/src/cli.ts",
         "api": "tsx apps/api/src/server.ts",

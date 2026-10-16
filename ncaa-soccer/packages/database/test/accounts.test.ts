@@ -10,10 +10,10 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import { Pool } from 'pg';
-import { createPool, loadSeason, migrate, MIGRATIONS_DIR } from '../src';
+import { createPool, migrate, MIGRATIONS_DIR } from '../src';
 import { processMaintenanceRequests } from '../../../apps/worker/src/maintenance';
 import { changeRole, parseAdminSubjects, RoleError, syncAdmins } from '../../../apps/worker/src/roles';
-import { batch, count, game, skipWithoutDb, stat, TEST_DATABASE_URL } from './helpers';
+import { count, skipWithoutDb, TEST_DATABASE_URL } from './helpers';
 
 const PASSWORD = 'test-only-password-not-a-secret-0123';
 
@@ -46,7 +46,7 @@ describe('user accounts in the database', { skip: skipWithoutDb }, () => {
         await Promise.all([api?.end(), worker?.end(), accounts?.end(), owner?.end()]);
     });
 
-    test('003 and 004 apply on top of a populated 002 database, as production will, and keep its data', async () => {
+    test('003 through 006 apply on top of a populated 002 database, as production will, and keep its data', async () => {
         // Production today: 001 and 002 applied, a season loaded.
         const old = fs.mkdtempSync(path.join(os.tmpdir(), 'ncadb-mig-'));
         for (const f of ['001_initial_schema.sql', '002_least_privilege_roles.sql']) {
@@ -54,16 +54,38 @@ describe('user accounts in the database', { skip: skipWithoutDb }, () => {
         }
         await migrate(owner, old);
         fs.rmSync(old, { recursive: true, force: true });
-        await loadSeason(owner, batch(2025, [game()], [stat('Ana Scorer', 'duke', { goals: 2 })]));
+        // Seeded in the 002 schema's own terms: today's loader writes columns that only
+        // exist from 005 on, so it cannot stand in for the code that loaded production.
+        await owner.query(`
+            WITH s AS (SELECT id FROM sports WHERE code = 'msoc'),
+                 c AS (SELECT id FROM competitions WHERE code = 'ncaa-d1-msoc'),
+                 se AS (INSERT INTO seasons (competition_id, year, label) SELECT id, 2025, '2025' FROM c RETURNING id),
+                 t AS (INSERT INTO teams (sport_id, slug, name, is_division_one)
+                       SELECT s.id, v.slug, v.name, true FROM s, (VALUES ('duke', 'Duke'), ('clemson', 'Clemson')) v(slug, name)
+                       RETURNING id, slug),
+                 g AS (INSERT INTO games (season_id, game_date, home_team_id, away_team_id, home_score, away_score,
+                                          status, location_type, content_hash)
+                       SELECT se.id, '2025-09-05', (SELECT id FROM t WHERE slug = 'duke'), (SELECT id FROM t WHERE slug = 'clemson'),
+                              2, 1, 'final', 'home', 'x' FROM se RETURNING id, season_id),
+                 p AS (INSERT INTO players (sport_id, identity_key, name, display_name, team_id)
+                       SELECT s.id, 'duke:anascorer', 'Scorer, Ana', 'Ana Scorer', (SELECT id FROM t WHERE slug = 'duke') FROM s
+                       RETURNING id, team_id)
+            INSERT INTO player_game_stats (game_id, player_id, team_id, season_id, minutes, goals, saves,
+                                           source_game_id, source_team_name, source_player_name, source_player_key, content_hash)
+            SELECT g.id, p.id, p.team_id, g.season_id, 90, 2, 0, 'sidearm-1', 'Duke', 'Scorer, Ana', 'duke:anascorer', 'x'
+            FROM g, p`);
         const before = { games: await count(owner, 'games'), stats: await count(owner, 'player_game_stats') };
 
         const result = await migrate(owner);
-        assert.deepEqual(result.applied, ['003_user_accounts.sql', '004_maintenance_requests.sql']);
+        assert.deepEqual(result.applied, ['003_user_accounts.sql', '004_maintenance_requests.sql', '005_boxscore_positions.sql', '006_team_of_the_week.sql']);
         assert.deepEqual(
             { games: await count(owner, 'games'), stats: await count(owner, 'player_game_stats') },
             before,
             'sports data untouched'
         );
+        // Rows stored before 005 are version 1: nothing claims they carry positions.
+        const { rows: legacy } = await owner.query('SELECT capture_version, position, goals_allowed, saves FROM player_game_stats');
+        assert.deepEqual(legacy, [{ capture_version: 1, position: null, goals_allowed: null, saves: 0 }]);
         // A re-run is a no-op.
         assert.deepEqual((await migrate(owner)).applied, []);
 

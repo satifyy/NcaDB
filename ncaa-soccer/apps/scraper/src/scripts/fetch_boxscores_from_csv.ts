@@ -13,12 +13,14 @@ import {
     isInternalRequest,
     CHROMIUM_NETWORK_GUARD_ARGS
 } from '@ncaa/parsers';
+import { BOXSCORE_CAPTURE_VERSION } from '@ncaa/shared';
 import { buildTeamNameResolver, loadAllTeams } from '../utils/teams';
 const { chromium } = require('playwright-chromium');
 import {
     DEBUG_BOXSCORE_LOG,
     FAILED_BOXSCORES_LOG,
     GameCsvRow,
+    PLAYER_STAT_CSV_COLUMNS,
     PlayerStatCsvRow,
     RAW_DIR,
     playerStatsCsv,
@@ -51,6 +53,11 @@ interface PlayerRow {
     shots: number | null;
     shots_on_goal: number | null;
     saves: number | null;
+    /** As the box score printed it: `GK`, `def`, `M`. Blank when it named none. */
+    position: string | null;
+    started: number | null;
+    goals_allowed: number | null;
+    capture_version: number;
 }
 
 interface ProcessResult {
@@ -233,7 +240,11 @@ function toPlayerRows(game: GameRow, parsed: any[]): { rows: PlayerRow[]; foreig
             assists: p.assists ?? null,
             shots: p.shots ?? null,
             shots_on_goal: toNumber(p.stats?.shots_on_goal),
-            saves: toNumber(p.stats?.saves)
+            saves: toNumber(p.stats?.saves),
+            position: String(p.stats?.position ?? '').trim() || null,
+            started: toNumber(p.stats?.started),
+            goals_allowed: toNumber(p.stats?.goals_allowed),
+            capture_version: BOXSCORE_CAPTURE_VERSION
         };
     });
     return { rows, foreign };
@@ -547,7 +558,7 @@ async function main() {
     const flags = new Set(args.filter(a => a.startsWith('--')));
     // A flag's value is not a positional argument: `--recheck-days 7` read as positional
     // made "7" the game limit, so an incremental run fetched seven box scores and stopped.
-    const VALUE_FLAGS = new Set(['--recheck-days']);
+    const VALUE_FLAGS = new Set(['--recheck-days', '--recapture-below']);
     const positional = args.filter((a, i) => !a.startsWith('--') && !VALUE_FLAGS.has(args[i - 1]));
     const [gamesCsv = 'data/games/2025/games.csv', limitArg] = positional;
     const limit = limitArg ? Number(limitArg) : undefined;
@@ -563,6 +574,23 @@ async function main() {
     const newOnly = flags.has('--new-only');
     const recheckAt = args.indexOf('--recheck-days');
     const recheckDays = recheckAt === -1 ? 3 : Number(args[recheckAt + 1]) || 3;
+    /**
+     * Re-read only games whose stored rows predate a capture version.
+     *
+     * When the parsers learn to keep something they used to drop (positions, keepers'
+     * goals allowed), the rows already stored do not have it, and the incremental run
+     * never revisits a settled game. This selects exactly those games, newest first, so a
+     * bounded run (the limit argument) fills in the most recent weeks before older ones,
+     * and every re-run starts where the last left off: a game is done once its rows carry
+     * the version. Games with no stored rows are not selected; they are what an ordinary
+     * backfill is for.
+     */
+    const recaptureAt = args.indexOf('--recapture-below');
+    const recaptureBelow = recaptureAt === -1 ? undefined : Number(args[recaptureAt + 1]);
+    if (recaptureBelow !== undefined && !(recaptureBelow > 1)) {
+        console.error('--recapture-below needs a capture version above 1');
+        process.exit(1);
+    }
     const csvPath = path.resolve(process.cwd(), gamesCsv);
 
     if (!fs.existsSync(csvPath)) {
@@ -665,6 +693,15 @@ async function main() {
         console.log(
             `Incremental: ${games.length} of ${before} games need box scores ` +
                 `(${before - games.length} already stored and older than ${recheckDays} days).`
+        );
+    }
+
+    if (recaptureBelow !== undefined) {
+        const stale = await gamesBelowCapture(seasonYear, recaptureBelow);
+        const before = games.length;
+        games = games.filter(g => stale.has(g.game_id)).sort((a, b) => b.date.localeCompare(a.date));
+        console.log(
+            `Recapture: ${games.length} of ${before} games have stored rows below capture version ${recaptureBelow}.`
         );
     }
 
@@ -811,10 +848,7 @@ async function main() {
     const outPath = playerStatsCsv(year);
     fs.mkdirSync(path.dirname(outPath), { recursive: true });
 
-    const header = [
-        'game_id', 'team_id', 'player_name', 'player_key', 'jersey_number',
-        'minutes', 'goals', 'assists', 'shots', 'shots_on_goal', 'saves'
-    ];
+    const header = PLAYER_STAT_CSV_COLUMNS;
 
     // A transient failure — a rate limit, a slow render — must not delete stats an
     // earlier run already collected. Rows are kept per game: anything scraped this run
@@ -827,11 +861,10 @@ async function main() {
 
     const lines = [header.join(',')];
     [...allRows, ...carried.rows].forEach(r => {
-        const vals = [
-            r.game_id, r.team_id, r.player_name, r.player_key, r.jersey_number ?? '',
-            r.minutes ?? '', r.goals ?? '', r.assists ?? '', r.shots ?? '',
-            r.shots_on_goal ?? '', r.saves ?? ''
-        ];
+        // Carried rows come back as read, so a file written before a column existed
+        // simply has none for them.
+        const record = r as unknown as Record<string, unknown>;
+        const vals = header.map(column => record[column] ?? '');
         lines.push(vals.map(v => escapeCsv(String(v))).join(','));
     });
 
@@ -971,6 +1004,17 @@ async function settledGames(
         if (game.date >= cutoff) settled.delete(game.game_id);
     }
     return settled;
+}
+
+/** Stored games any of whose rows predate `version`; a missing version means 1. */
+async function gamesBelowCapture(season: string, version: number): Promise<Set<string>> {
+    const outPath = playerStatsCsv(season);
+    const stale = new Set<string>();
+    if (!fs.existsSync(outPath)) return stale;
+    for await (const row of streamRows<PlayerStatCsvRow>(outPath)) {
+        if (row.game_id && (Number(row.capture_version) || 1) < version) stale.add(row.game_id);
+    }
+    return stale;
 }
 
 /**

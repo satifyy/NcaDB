@@ -52,6 +52,13 @@ export interface SeasonPlan {
     to?: string;
     /** Restrict box scores to these scraper game ids. */
     sourceGameIds?: string[];
+    /**
+     * Re-read only games whose stored rows predate this box-score capture version,
+     * newest first (see `backfill-capture`). Implies a partial, add-and-update load.
+     */
+    recaptureBelow?: number;
+    /** At most this many box scores in this run. */
+    limit?: number;
 }
 
 export interface SeasonOutcome {
@@ -61,7 +68,7 @@ export interface SeasonOutcome {
 }
 
 const filtered = (plan: SeasonPlan) =>
-    !!(plan.teams?.length || plan.from || plan.to || plan.sourceGameIds?.length);
+    !!(plan.teams?.length || plan.from || plan.to || plan.sourceGameIds?.length || plan.recaptureBelow || plan.limit);
 
 function addCounts(ctx: RunContext, result: LoadResult): void {
     const totals = (ctx.stats.totals as Record<string, number>) ?? {};
@@ -170,6 +177,8 @@ export async function ingestSeason(ctx: RunContext, plan: SeasonPlan): Promise<S
                     boxscoresOk = true;
                 } else {
                     const args = [games.file];
+                    if (plan.limit) args.push(String(plan.limit));
+                    if (plan.recaptureBelow) args.push('--recapture-below', String(plan.recaptureBelow));
                     if (plan.incremental) args.push('--new-only', '--recheck-days', String(plan.recheckDays));
                     const result = await runScript(config, 'fetch_boxscores_from_csv.ts', args);
                     boxscoresOk = result.code === 0;

@@ -11,8 +11,12 @@
  *   nightly [--force] [--season Y] [--no-analytics] [--cron]
  *   backfill (--season Y | --seasons A-B) [--team NAME]... [--from YYYY-MM-DD] [--to YYYY-MM-DD]
  *            [--missing-only] [--force] [--no-schedules] [--from-csv DIR] [--no-analytics]
+ *   backfill-capture --season Y [--limit N] [--no-analytics]
+ *                                 re-read up to N stored box scores (default 150) that predate the
+ *                                 current capture version, newest first; re-run to continue
  *   refresh-game --game ID [--analytics]
  *   retry [--run ID]              re-run a failed or abandoned run with its original options
+ *   team-of-week --season Y       recompute Team of the Week for a season from the database
  *   analytics                     rebuild ratings, forecasts and dashboard files from the database
  *   status [--run ID]             latest runs, failures, freshness and coverage, as JSON
  *   health                        exit 1 (and alert) if data is stale or the database unreachable
@@ -21,6 +25,7 @@
 import * as path from 'path';
 import { Pool } from 'pg';
 import {
+    computeTeamOfWeek,
     createPool,
     freshness,
     lastSuccess,
@@ -33,6 +38,7 @@ import {
     seasonCoverage,
     waitForDatabase
 } from '@ncaa/database';
+import { BOXSCORE_CAPTURE_VERSION } from '@ncaa/shared';
 import { WorkerConfig, loadConfig } from './config';
 import { ingestSeason, loadFromWorkDir, rebuildAnalytics } from './ingest';
 import { log } from './log';
@@ -130,17 +136,26 @@ async function nightly(pool: Pool, config: WorkerConfig, opts: NightlyOptions, t
         });
         if (!outcome.loaded) await markSync(pool, `season:${season}`, ctx.runId, false);
 
-        await finishWithReadModels(ctx, outcome.loaded && opts.analytics && config.analyticsEnabled);
+        await finishWithReadModels(ctx, outcome.loaded && opts.analytics && config.analyticsEnabled, outcome.loaded ? [season] : []);
         await recordCoverage(ctx, season);
         await markSync(pool, 'nightly', ctx.runId, ctx.failures.length === 0, ctx.stats);
     });
 }
 
-async function finishWithReadModels(ctx: RunContext, analytics: boolean): Promise<void> {
+async function finishWithReadModels(ctx: RunContext, analytics: boolean, seasons: number[] = []): Promise<void> {
     await task(ctx, 'refresh_read_models', null, {}, async () => {
         await refreshReadModels(ctx.pool);
         return { value: true };
     });
+    // Team of the Week, for each season this run touched. Only weeks whose inputs (or
+    // status) changed are rewritten, so a night with no new box scores writes nothing.
+    // It runs after the load, so a failure here is reported without undoing any data.
+    for (const season of seasons) {
+        await task(ctx, 'team_of_week', season, {}, async () => {
+            const result = await computeTeamOfWeek(ctx.pool, season);
+            return { value: result, stats: { ...result } };
+        });
+    }
     if (analytics) await rebuildAnalytics(ctx);
 }
 
@@ -227,7 +242,59 @@ async function backfill(pool: Pool, config: WorkerConfig, opts: BackfillOptions,
             loadedAny ||= loaded;
             await markSync(pool, scope, ctx.runId, loaded);
         }
-        await finishWithReadModels(ctx, loadedAny && opts.analytics && config.analyticsEnabled);
+        await finishWithReadModels(ctx, loadedAny && opts.analytics && config.analyticsEnabled, loadedAny ? opts.seasons : []);
+    });
+}
+
+// ---------------------------------------------------------------------------------------
+
+/** Games in a season whose stored box-score rows predate `version`. */
+async function gamesBelowCapture(pool: Pool, season: number, version: number): Promise<number> {
+    const { rows } = await pool.query<{ n: string }>(
+        `SELECT count(DISTINCT p.game_id) AS n FROM player_game_stats p JOIN seasons s ON s.id = p.season_id
+         WHERE s.year = $1 AND p.capture_version < $2`,
+        [season, version]
+    );
+    return Number(rows[0].n);
+}
+
+/**
+ * Re-reads stored box scores that predate the current capture version, a bounded slice
+ * at a time.
+ *
+ * Bounded so that no single run is a season-long crawl of other people's sites, and
+ * resumable without bookkeeping of its own: a game is done once its stored rows carry
+ * the version, so the next run simply selects what is still below it. The load is a
+ * partial batch — it adds and updates, and never removes a row it did not re-read. Any
+ * season works the same way, which is how older seasons are processed later.
+ */
+async function backfillCapture(
+    pool: Pool,
+    config: WorkerConfig,
+    opts: { season: number; limit: number; analytics: boolean },
+    trigger: string
+): Promise<number> {
+    return executeRun(pool, config, { kind: 'backfill-capture', trigger, params: { ...opts } }, async ctx => {
+        const version = BOXSCORE_CAPTURE_VERSION;
+        const before = await gamesBelowCapture(pool, opts.season, version);
+        ctx.stats.capture = { version, season: opts.season, remaining_before: before };
+        if (before === 0) {
+            log.info('backfill-capture: nothing below the current capture version', { season: opts.season, version });
+            return;
+        }
+        const outcome = await ingestSeason(ctx, {
+            season: opts.season,
+            schedules: false,
+            boxscores: true,
+            incremental: false,
+            recheckDays: 0,
+            recaptureBelow: version,
+            limit: opts.limit
+        });
+        const after = await gamesBelowCapture(pool, opts.season, version);
+        ctx.stats.capture = { version, season: opts.season, remaining_before: before, remaining_after: after };
+        log.info('backfill-capture: slice done', { season: opts.season, remaining_before: before, remaining_after: after });
+        await finishWithReadModels(ctx, outcome.loaded && opts.analytics && config.analyticsEnabled, outcome.loaded ? [opts.season] : []);
     });
 }
 
@@ -256,7 +323,7 @@ async function refreshGame(pool: Pool, config: WorkerConfig, gameId: number, ana
             teams: [game.home, game.away],
             sourceGameIds: game.source_ids.filter(Boolean)
         });
-        await finishWithReadModels(ctx, analytics && config.analyticsEnabled);
+        await finishWithReadModels(ctx, analytics && config.analyticsEnabled, [game.year]);
     });
 }
 
@@ -265,7 +332,7 @@ async function retry(pool: Pool, config: WorkerConfig, runId?: number, triggerOv
         runId
             ? `SELECT id::int, kind, params FROM ingestion_runs WHERE id = $1`
             : `SELECT id::int, kind, params FROM ingestion_runs
-               WHERE status IN ('failed', 'abandoned') AND kind IN ('nightly', 'backfill', 'refresh-game', 'analytics')
+               WHERE status IN ('failed', 'abandoned') AND kind IN ('nightly', 'backfill', 'backfill-capture', 'refresh-game', 'analytics')
                ORDER BY started_at DESC LIMIT 1`,
         runId ? [runId] : []
     );
@@ -284,6 +351,8 @@ async function retry(pool: Pool, config: WorkerConfig, runId?: number, triggerOv
             return backfill(pool, config, { ...p, force: false }, trigger);
         case 'refresh-game':
             return refreshGame(pool, config, p.game, p.analytics, trigger);
+        case 'backfill-capture':
+            return backfillCapture(pool, config, p, trigger);
         case 'analytics':
             return executeRun(pool, config, { kind: 'analytics', trigger, params: {} }, async ctx => {
                 await rebuildAnalytics(ctx);
@@ -445,8 +514,11 @@ const USAGE = `Usage: npm run worker -- <command> [options]
   nightly [--force] [--season YYYY] [--no-analytics]
   backfill (--season YYYY | --seasons A-B) [--team NAME]... [--from YYYY-MM-DD] [--to YYYY-MM-DD]
            [--missing-only] [--force] [--no-schedules] [--from-csv DIR] [--no-analytics] [--allow-mass-delete]
+  backfill-capture --season YYYY [--limit N] [--no-analytics]
+                               (re-read stored box scores below the current capture version; re-run to continue)
   refresh-game --game ID [--analytics]
   retry [--run ID]
+  team-of-week --season YYYY   (recompute Team of the Week weeks whose inputs changed)
   analytics
   status [--run ID]
   health`;
@@ -507,6 +579,13 @@ async function main(): Promise<number> {
                 return await maintenance(pool, config);
             case 'backfill':
                 return await backfill(pool, config, backfillOptions(args), trigger);
+            case 'backfill-capture': {
+                const season = Number(one(args, 'season'));
+                if (!Number.isInteger(season) || season < 1990) throw new UsageError('Give --season YYYY');
+                const limit = one(args, 'limit') ? Number(one(args, 'limit')) : 150;
+                if (!Number.isInteger(limit) || limit < 1 || limit > 2000) throw new UsageError('--limit must be 1-2000');
+                return await backfillCapture(pool, config, { season, limit, analytics: !has(args, 'no-analytics') }, trigger);
+            }
             case 'refresh-game': {
                 const game = Number(one(args, 'game'));
                 if (!Number.isInteger(game) || game <= 0) throw new UsageError('Give --game ID (the database id from the API)');
@@ -518,6 +597,16 @@ async function main(): Promise<number> {
                 return await executeRun(pool, config, { kind: 'analytics', trigger, params: {} }, async ctx => {
                     await rebuildAnalytics(ctx);
                 });
+            case 'team-of-week': {
+                const season = Number(one(args, 'season'));
+                if (!Number.isInteger(season) || season < 1990) throw new UsageError('Give --season YYYY');
+                return await executeRun(pool, config, { kind: 'team-of-week', trigger, params: { season } }, async ctx => {
+                    await task(ctx, 'team_of_week', season, {}, async () => {
+                        const result = await computeTeamOfWeek(ctx.pool, season);
+                        return { value: result, stats: { ...result } };
+                    });
+                });
+            }
             case 'status':
                 return await status(pool, runId);
             case 'health':

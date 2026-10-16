@@ -6,3 +6,5 @@ export * from './runs';
 export * from './exporter';
 export * from './artifacts';
 export * from './metrics';
+export * from './totw/model';
+export * from './totw/store';

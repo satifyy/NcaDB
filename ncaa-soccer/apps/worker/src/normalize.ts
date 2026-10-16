@@ -11,6 +11,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { cleanTeamName } from '@ncaa/parsers';
+import { positionGroup } from '@ncaa/shared';
 import type { GameCsvRow, PlayerStatCsvRow } from '@ncaa/storage';
 import type {
     GameSourceRecord,
@@ -318,6 +319,11 @@ export function normalizeStats(rows: PlayerStatCsvRow[], resolver: TeamResolver,
             shots: count(row.shots, issues, 'shots'),
             shotsOnGoal: count(row.shots_on_goal, issues, 'shots_on_goal'),
             saves: count(row.saves, issues, 'saves'),
+            position: blank(row.position),
+            positionGroup: positionGroup(row.position),
+            started: row.started === '1' ? true : row.started === '0' ? false : null,
+            goalsAllowed: count(row.goals_allowed, issues, 'goals_allowed'),
+            captureVersion: count(row.capture_version) ?? 1,
             sourceTeamName: row.team_id,
             sourcePlayerName: row.player_name,
             sourcePlayerKey: row.player_key || ''

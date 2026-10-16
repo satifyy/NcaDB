@@ -4,6 +4,94 @@ import { PlayerStat, PlayerStatSchema } from '@ncaa/shared';
 import * as cheerio from 'cheerio';
 // import { z } from 'zod'; // Not needed for HTML parsing unless we validate the final object
 
+/** `'1'`/`'0'` (or a number) as 1/0; anything else says nothing about who started. */
+function startedFlag(value: unknown): number | null {
+    const text = String(value ?? '').trim();
+    if (text === '') return null;
+    const n = Number(text);
+    return Number.isFinite(n) ? (n > 0 ? 1 : 0) : null;
+}
+
+/**
+ * Whether a row is one of the section labels Sidearm tables split a squad with.
+ *
+ * Starters come first under "Starters", then "Substitutes" (some sites say "Reserves" or
+ * "Bench"). A label row tells every player row after it how they entered the game; a
+ * table with no labels says nothing about it, and its players are left unknown.
+ */
+function sectionOf(text: string): 'starters' | 'substitutes' | null {
+    const label = text.replace(/\s+/g, ' ').trim().toLowerCase();
+    if (/^starters?$/.test(label)) return 'starters';
+    if (/^(substitutes?|subs|reserves?|bench)$/.test(label)) return 'substitutes';
+    return null;
+}
+
+const letters = (name: string) => name.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+/** One row of a goalkeeping table: Sidearm publishes these apart from the player table. */
+interface KeeperRow {
+    /** The label of the player table the keeper table follows, when there is one. */
+    team: string | null;
+    name: string;
+    jersey: string | null;
+    minutes: number | null;
+    goalsAllowed: number | null;
+    saves: number | null;
+}
+
+/**
+ * Folds goalkeeping rows into the player rows they describe.
+ *
+ * The goalie table names its squad differently from the player table often enough
+ * ("Vermont - Goalie Statistics" under "UVM - Player Stats") that the caption is no key.
+ * A keeper is matched by name — within the squad whose table it follows first, then
+ * anywhere in the box score if that name is unique — and a keeper missing from the
+ * player table becomes a row of their own rather than being dropped.
+ *
+ * Once a box score has a goalkeeping table, a player not in it has no keeper record:
+ * their saves and goals allowed are absent, never 0. Without one, nothing is known about
+ * either, and every row stays blank.
+ */
+function applyKeepers(stats: PlayerStat[], keepers: KeeperRow[], gameId: string): void {
+    for (const stat of stats) {
+        stat.stats.saves = null;
+        stat.stats.goals_allowed = null;
+    }
+    for (const keeper of keepers) {
+        const key = letters(keeper.name);
+        const named = stats.filter(s => letters(s.player_name) === key);
+        const sameTeam = named.filter(s => keeper.team !== null && s.team_id === keeper.team);
+        const byJersey = named.filter(s => keeper.jersey && s.jersey_number === keeper.jersey);
+        const match =
+            sameTeam.length === 1 ? sameTeam[0] :
+            named.length === 1 ? named[0] :
+            byJersey.length === 1 ? byJersey[0] : undefined;
+        if (match) {
+            match.stats.saves = keeper.saves;
+            match.stats.goals_allowed = keeper.goalsAllowed;
+            if ((match.minutes ?? 0) === 0 && keeper.minutes) match.minutes = keeper.minutes;
+            if (!match.stats.position) match.stats.position = 'GK';
+            continue;
+        }
+        const team = keeper.team || 'Unknown';
+        stats.push({
+            game_id: gameId,
+            team_id: team,
+            player_name: keeper.name,
+            player_key: `${letters(team)}:${key}`,
+            jersey_number: keeper.jersey,
+            minutes: keeper.minutes ?? undefined,
+            stats: {
+                position: 'GK',
+                shots_on_goal: null,
+                saves: keeper.saves,
+                goals_allowed: keeper.goalsAllowed,
+                started: null
+            }
+        } as PlayerStat);
+    }
+}
+
 export class SidearmBoxScoreParser {
 
     private parseMinutes(value: string): number {
@@ -71,23 +159,58 @@ export class SidearmBoxScoreParser {
             tables = $('table');
         }
 
+        const keepers: KeeperRow[] = [];
+        let sawKeeperTable = false;
+
         tables.each((i, table) => {
             const caption = $(table).find('caption').text().trim();
             // Heuristic to detect team from caption (e.g. "SMU - Player Stats")
-            // We need to associate this with options.teamName or similar?
-            // Actually, we should probably return stats with "team_name" field populated from the caption or context.
-
-            // For now, let's assume we can pass the team names in options or infer them.
-            // But wait, the shared PlayerStat schema needs `team_id` or `team_name`.
-
             let teamName = 'Unknown';
             if (caption) {
                 teamName = caption.split('-')[0].trim();
             }
 
+            // A goalkeeping table — [Pos,] #, Player, MIN, GA, Saves — is too narrow for
+            // the player reader below, and is the only place this layout reports saves.
+            const headers = $(table).find('thead th, tr:first-child th')
+                .map((_, cell) => $(cell).text().replace(/\s+/g, ' ').trim().toLowerCase()).get();
+            const gaAt = headers.indexOf('ga');
+            const savesAt = headers.findIndex(h => h === 'saves' || h === 'sv');
+            if (gaAt !== -1 && savesAt !== -1) {
+                sawKeeperTable = true;
+                const nameAt = headers.findIndex(h => ['player', 'goalie', 'name'].includes(h));
+                const jerseyAt = headers.indexOf('#');
+                const minAt = headers.findIndex(h => h === 'min' || h === 'minutes');
+                $(table).find('tbody tr').each((_, row) => {
+                    const cols = $(row).find('td');
+                    if (nameAt === -1 || cols.length !== headers.length) return;
+                    const name = this.normalizePlayerName($(cols[nameAt]).text().trim());
+                    if (!name || /^(totals?|tm team|team)$/i.test(name)) return;
+                    const reported = (at: number) => {
+                        const parsed = parseInt($(cols[at]).text().trim(), 10);
+                        return Number.isFinite(parsed) ? parsed : null;
+                    };
+                    keepers.push({
+                        team: teamName === 'Unknown' ? null : teamName,
+                        name,
+                        jersey: jerseyAt === -1 ? null : $(cols[jerseyAt]).text().trim() || null,
+                        minutes: minAt === -1 ? null : Math.round(this.parseMinutes($(cols[minAt]).text())),
+                        goalsAllowed: reported(gaAt),
+                        saves: reported(savesAt)
+                    });
+                });
+                return;
+            }
+
+            let section: 'starters' | 'substitutes' | null = null;
             const rows = $(table).find('tbody tr');
             rows.each((j, row) => {
                 const cols = $(row).find('td');
+                const label = sectionOf($(row).text());
+                if (label) {
+                    section = label;
+                    return;
+                }
                 if (cols.length < 8) return; // Skip invalid rows
 
                 // Column Mapping (based on inspection):
@@ -103,16 +226,6 @@ export class SidearmBoxScoreParser {
                 const playerCell = $(cols[2]);
                 const playerNameRaw = playerCell.text().trim();
                 const playerName = this.normalizePlayerName(playerNameRaw);
-                // Extract Player ID from link? e.g. /sports/mens-soccer/roster/bailey-sparks/1234
-                const playerLink = playerCell.find('a').attr('href');
-                let playerId = playerName.replace(/\s+/g, '-').toLowerCase(); // fallback
-                if (playerLink) {
-                    const parts = playerLink.split('/');
-                    const potentialId = parts[parts.length - 1];
-                    if (potentialId && !isNaN(Number(potentialId))) {
-                        playerId = `sidearm-${potentialId}`;
-                    }
-                }
 
                 const jerseyNumber = $(cols[1]).text().trim();
 
@@ -143,18 +256,19 @@ export class SidearmBoxScoreParser {
 
                     // Dynamic stats map
                     stats: {
+                        position: $(cols[0]).text().trim(),
                         shots_on_goal: sog,
-                        saves: 0
+                        saves: null,
+                        goals_allowed: null,
+                        started: section === null ? null : section === 'starters' ? 1 : 0
                     }
                 };
-
-                // Validate against schema?
-                // const valid = PlayerStatSchema.safeParse(stat);
-                // if (valid.success) playerStats.push(valid.data);
 
                 playerStats.push(stat);
             });
         });
+
+        if (sawKeeperTable) applyKeepers(playerStats, keepers, gameId);
 
         if (playerStats.length === 0) {
             // Fallback to Nuxt parsing
@@ -175,13 +289,16 @@ export class SidearmBoxScoreParser {
      * row makes both survivable.
      */
     private static readonly PLAYER_COLUMNS: Record<string, string[]> = {
+        position: ['pos', 'pos.', 'position'],
         jersey: ['#', 'no', 'no.', 'number'],
-        player: ['player', 'name', 'athlete'],
+        player: ['player', 'name', 'athlete', 'goalie', 'goalkeeper'],
         shots: ['sh', 'shots', 'sh.'],
         shots_on_goal: ['sog', 'sh att-og', 'shots on goal', 'so g'],
         goals: ['g', 'goals'],
         assists: ['a', 'assists', 'ast'],
-        minutes: ['min', 'min.', 'minutes', 'mp']
+        minutes: ['min', 'min.', 'minutes', 'mp'],
+        goals_allowed: ['ga', 'goals against', 'goals allowed'],
+        saves: ['saves', 'sv', 'sv.', 'svs']
     };
 
     /**
@@ -191,13 +308,23 @@ export class SidearmBoxScoreParser {
      * which is stronger evidence than the column count the positional reader relies on —
      * and it keeps a "Team Statistics" table, which is also eight columns wide, from being
      * read as a roster.
+     *
+     * "ELON - Goalie Statistics" is the same squad's goalkeeping, published as its own
+     * table: minutes, goals allowed and saves for each keeper who played. It is the only
+     * place a Sidearm page of this layout reports saves, so it is read and folded into the
+     * player rows rather than skipped for not saying "Player Stats".
      */
     private parseCaptionedTables($: cheerio.CheerioAPI, gameId: string): PlayerStat[] {
         const stats: PlayerStat[] = [];
+        const keepers: KeeperRow[] = [];
+        let sawKeeperTable = false;
+        let lastTeam: string | null = null;
 
         $('table').each((_, table) => {
             const caption = $(table).find('caption').text().replace(/\s+/g, ' ').trim();
-            if (!/player\s*stat/i.test(caption)) return;
+            const isPlayers = /player\s*stat/i.test(caption);
+            const isKeepers = /(goalie|goalkeep|keeper)/i.test(caption);
+            if (!isPlayers && !isKeepers) return;
 
             // "W&M - Player Stats" -> "W&M". The team is whatever precedes the dash; a
             // caption without one names no squad and is left to the positional reader.
@@ -216,21 +343,31 @@ export class SidearmBoxScoreParser {
                 return headers.findIndex(header => names.includes(header));
             };
             const at = {
+                position: columnOf('position'),
                 jersey: columnOf('jersey'),
                 player: columnOf('player'),
                 shots: columnOf('shots'),
                 shots_on_goal: columnOf('shots_on_goal'),
                 goals: columnOf('goals'),
                 assists: columnOf('assists'),
-                minutes: columnOf('minutes')
+                minutes: columnOf('minutes'),
+                goals_allowed: columnOf('goals_allowed'),
+                saves: columnOf('saves')
             };
             // Without a name column there is no player to record, whatever else is there.
             if (at.player === -1) return;
+            if (isKeepers && at.saves === -1 && at.goals_allowed === -1) return;
 
+            let section: 'starters' | 'substitutes' | null = null;
             $(table)
                 .find('tbody tr')
                 .each((__, row) => {
                     const cells = $(row).find('td');
+                    const label = sectionOf($(row).text());
+                    if (label) {
+                        section = label;
+                        return;
+                    }
                     if (cells.length <= at.player) return;
 
                     const text = (index: number) => (index === -1 ? '' : $(cells[index]).text().trim());
@@ -238,20 +375,38 @@ export class SidearmBoxScoreParser {
                         const parsed = parseInt(text(index), 10);
                         return Number.isFinite(parsed) ? parsed : 0;
                     };
+                    // A keeper's column that is there but empty is unreported, not zero.
+                    const reported = (index: number): number | null => {
+                        if (index === -1) return null;
+                        const parsed = parseInt(text(index), 10);
+                        return Number.isFinite(parsed) ? parsed : null;
+                    };
 
                     const playerName = this.normalizePlayerName(text(at.player));
                     // Sidearm closes these tables with "Totals" and "TM TEAM" rows, which
                     // are the table's own arithmetic rather than anyone who played.
                     if (!playerName || /^(totals?|tm team|team)$/i.test(playerName)) return;
 
-                    const normalised = playerName.toLowerCase().replace(/[^a-z0-9]/g, '');
+                    const normalised = letters(playerName);
                     if (!normalised) return;
+
+                    if (isKeepers) {
+                        keepers.push({
+                            team: lastTeam,
+                            name: playerName,
+                            jersey: text(at.jersey) || null,
+                            minutes: at.minutes === -1 ? null : Math.round(this.parseMinutes(text(at.minutes))),
+                            goalsAllowed: reported(at.goals_allowed),
+                            saves: reported(at.saves)
+                        });
+                        return;
+                    }
 
                     stats.push({
                         game_id: gameId,
                         team_id: teamName,
                         player_name: playerName,
-                        player_key: `${teamName.toLowerCase().replace(/[^a-z0-9]/g, '')}:${normalised}`,
+                        player_key: `${letters(teamName)}:${normalised}`,
                         jersey_number: text(at.jersey) || null,
                         // Absent, not zero: a table without a minutes column says nothing
                         // about how long anyone played, and recording that as 0 would put
@@ -261,31 +416,52 @@ export class SidearmBoxScoreParser {
                         assists: number(at.assists),
                         shots: number(at.shots),
                         stats: {
+                            position: text(at.position),
                             shots_on_goal: number(at.shots_on_goal),
-                            saves: 0
+                            saves: null,
+                            goals_allowed: null,
+                            started: section === null ? null : section === 'starters' ? 1 : 0
                         }
                     } as PlayerStat);
                 });
+            if (isKeepers) sawKeeperTable = true;
+            else lastTeam = teamName;
         });
 
+        // A goalkeeping table alone is not this layout: without a captioned player table
+        // the page belongs to another reader, which reads its keepers itself.
+        if (stats.length === 0) return [];
+        if (sawKeeperTable) applyKeepers(stats, keepers, gameId);
         return stats;
     }
 
     private parseAdvancedTables($: cheerio.CheerioAPI, gameId: string): PlayerStat[] {
         const playerStats: PlayerStat[] = [];
+        const keepers: KeeperRow[] = [];
+        let sawKeeperTable = false;
 
         $('table.advanced-table__table').each((_, table) => {
             const headerText = $(table).find('thead th').first().text().trim();
             const teamName = headerText.split('-')[0].trim() || 'Unknown';
 
-            const firstBodyRow = $(table).find('tbody tr').first();
+            const rows = $(table).find('tbody tr');
+            // The first row with more than a label in it sets the table's width; a
+            // "Starters" row ahead of it is one cell wide.
+            const firstBodyRow = rows.filter((__, row) => $(row).find('td').length > 1).first();
             const colCount = firstBodyRow.find('td').length;
             if (colCount === 0) return;
 
             const isGoalkeeping = colCount === 6; // [Pos, #, Player, Minutes, GA, Saves]
+            if (isGoalkeeping) sawKeeperTable = true;
+            let section: 'starters' | 'substitutes' | null = null;
 
-            $(table).find('tbody tr').each((__, row) => {
+            rows.each((__, row) => {
                 const cells = $(row).find('td');
+                const label = sectionOf($(row).text());
+                if (label) {
+                    section = label;
+                    return;
+                }
                 if (cells.length !== colCount) return;
 
                 const position = $(cells[0]).text().trim();
@@ -294,25 +470,20 @@ export class SidearmBoxScoreParser {
                 const playerName = this.normalizePlayerName(playerNameRaw);
                 if (!playerName) return;
 
-                const playerKey = `${teamName.toLowerCase().replace(/[^a-z0-9]/g, '')}:${playerName.toLowerCase().replace(/[^a-z0-9]/g, '')}`;
+                const playerKey = `${letters(teamName)}:${letters(playerName)}`;
 
                 if (isGoalkeeping) {
-                    const minutes = this.parseMinutes($(cells[3]).text());
-                    const goalsAllowed = parseInt($(cells[4]).text().trim(), 10) || 0;
-                    const saves = parseInt($(cells[5]).text().trim(), 10) || 0;
-
-                    playerStats.push({
-                        game_id: gameId,
-                        team_id: teamName,
-                        player_name: playerName,
-                        player_key: playerKey,
-                        jersey_number: jersey || null,
-                        minutes,
-                        stats: {
-                            position,
-                            goals_allowed: goalsAllowed,
-                            saves
-                        }
+                    const reported = (text: string) => {
+                        const parsed = parseInt(text.trim(), 10);
+                        return Number.isFinite(parsed) ? parsed : null;
+                    };
+                    keepers.push({
+                        team: teamName,
+                        name: playerName,
+                        jersey: jersey || null,
+                        minutes: Math.round(this.parseMinutes($(cells[3]).text())),
+                        goalsAllowed: reported($(cells[4]).text()),
+                        saves: reported($(cells[5]).text())
                     });
                 } else {
                     const shots = parseInt($(cells[3]).text().trim(), 10) || 0;
@@ -333,13 +504,19 @@ export class SidearmBoxScoreParser {
                         shots,
                         stats: {
                             position,
-                            shots_on_goal: sog
+                            shots_on_goal: sog,
+                            saves: null,
+                            goals_allowed: null,
+                            started: section === null ? null : section === 'starters' ? 1 : 0
                         }
                     });
                 }
             });
         });
 
+        // A keeper used to come out of this reader twice, once from each table, and the
+        // loader kept whichever came last — the goalkeeping row, with no shots or goals.
+        if (sawKeeperTable) applyKeepers(playerStats, keepers, gameId);
         return playerStats;
     }
 
@@ -420,9 +597,10 @@ export class SidearmBoxScoreParser {
                                         sog = parseInt(resolve(shotsObj.shotsOnGoal) || '0', 10);
                                     }
 
-                                    // Goalie stats
-                                    let saves = 0;
-                                    let goalsAllowed = 0;
+                                    // Goalie stats. Only a player with a goalie record has
+                                    // any: everyone else's are absent, not zero.
+                                    let saves: number | null = null;
+                                    let goalsAllowed: number | null = null;
                                     let goalieMinutes = 0;
 
                                     let goalieObj = playerObj.goalie;
@@ -455,7 +633,8 @@ export class SidearmBoxScoreParser {
                                             position,
                                             shots_on_goal: sog,
                                             saves,
-                                            goals_allowed: goalsAllowed
+                                            goals_allowed: goalsAllowed,
+                                            started: startedFlag(resolve(playerObj.gameStarted))
                                         }
                                     };
 

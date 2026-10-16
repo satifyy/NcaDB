@@ -39,7 +39,11 @@ export const PLAYER_STAT_COLUMNS = [
     'assists',
     'shots',
     'shots_on_goal',
-    'saves'
+    'saves',
+    'position',
+    'started',
+    'goals_allowed',
+    'capture_version'
 ];
 
 export async function exportGameRows(pool: Pool, season: number): Promise<Record<string, string>[]> {
@@ -58,7 +62,8 @@ const cell = (value: number | string | null): string => (value === null ? '' : S
 export async function exportPlayerStatRows(pool: Pool, season: number): Promise<Record<string, string>[]> {
     const { rows } = await pool.query(
         `SELECT p.source_game_id, p.source_team_name, p.source_player_name, p.source_player_key,
-                p.jersey_number, p.minutes, p.goals, p.assists, p.shots, p.shots_on_goal, p.saves
+                p.jersey_number, p.minutes, p.goals, p.assists, p.shots, p.shots_on_goal, p.saves,
+                p.position, p.started, p.goals_allowed, p.capture_version
          FROM player_game_stats p JOIN seasons s ON s.id = p.season_id
          WHERE s.year = $1
          ORDER BY p.source_game_id, p.id`,
@@ -75,7 +80,11 @@ export async function exportPlayerStatRows(pool: Pool, season: number): Promise<
         assists: cell(r.assists),
         shots: cell(r.shots),
         shots_on_goal: cell(r.shots_on_goal),
-        saves: cell(r.saves)
+        saves: cell(r.saves),
+        position: cell(r.position),
+        started: r.started === null ? '' : r.started ? '1' : '0',
+        goals_allowed: cell(r.goals_allowed),
+        capture_version: cell(r.capture_version)
     }));
 }
 

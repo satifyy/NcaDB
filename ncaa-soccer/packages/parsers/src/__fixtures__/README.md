@@ -14,6 +14,7 @@ carries on. A fixture with the answer written down turns that into a failing bui
 | --- | --- | --- |
 | `sidearm_schedule_duke_2025.html` | `https://goduke.com/sports/mens-soccer/schedule/2025` | `SidearmParser.parseSchedule` |
 | `sidearm_boxscore_duke_syracuse_2025.html` | `https://goduke.com/sports/mens-soccer/stats/2025/syracuse/boxscore/24396` | `SidearmBoxScoreParser.parse` |
+| `sidearm_boxscore_bryant_vermont_2025.html` | `https://bryantbulldogs.com/sports/mens-soccer/stats/2025/university-of-vermont/boxscore/12136` (captured 2026-10-15) | `SidearmBoxScoreParser.parse` (captioned tables + Goalie Statistics) |
 | `wmt_schedule_events_clemson_2025.json` | `https://clemsontigers.com/website-api/schedule-events?filter[schedule_id]=4&…` | `WmtParser.parseEvents` |
 | `wmt_stats_clemson_south_carolina_2025.json` | `https://api.wmt.games/api/statistics/games/6391107?with[0]=players` | `WmtBoxScoreParser.parseStats` |
 | `wordpress_schedule_kentucky_2025.html` | `https://ukathletics.com/sports/msoc/schedule/2025` | `WmtWordpressParser.parseSchedule` (`.schedule-item` theme) |

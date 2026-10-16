@@ -35,11 +35,19 @@ with the permission boundary between the three application roles.
 - `players`, `player_team_seasons` (jersey by season).
 - `player_game_stats` — minutes, goals, assists, shots, shots on goal, saves; NULL when
   the box score did not say. Provenance columns (`source_*`) reproduce the scraper row.
+  From migration 005: the published `position` and its `position_group` (GK/DEF/MID/FWD),
+  `started`, the keeper's `goals_allowed`, and `capture_version` (1 = loaded before these
+  were captured, where `saves = 0` may mean "not published"; 2 = captured, NULL means not
+  reported). `backfill-capture` re-reads rows below the current version.
 - `team_game_stats` — per side totals, the score the schedule reported, and
   `goals_reconciliation`: `ok`, `unattributed` (fewer player goals than the score —
   own goals), `excess` (more — a real inconsistency, reported, not altered), `unknown`.
 - `ingestion_runs`, `ingestion_tasks`, `ingestion_errors`, `data_sync_state` — history,
   per-stage outcomes, categorised errors and data-quality issues, freshness per scope.
+- `totw_*` (migration 006) — Team of the Week, precomputed after every load: weeks
+  (status, revision, inputs hash, completeness), every eligible player's rating and game
+  breakdown, the XI, and the weights of each model version. See
+  [TEAM_OF_THE_WEEK.md](TEAM_OF_THE_WEEK.md).
 - `derived_artifacts` — analytics JSON (ratings, forecasts, impact, season tables) by key.
 - Materialized views `player_season_stats`, `team_season_records` — refreshed
   `CONCURRENTLY` after every load; back the leaderboards and records.

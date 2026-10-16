@@ -1,7 +1,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { SidearmParser, SidearmBoxScoreParser } from '@ncaa/parsers';
-import { RAW_DIR, playerStatsCsv } from '@ncaa/storage';
+import { BOXSCORE_CAPTURE_VERSION } from '@ncaa/shared';
+import { PLAYER_STAT_CSV_COLUMNS, RAW_DIR, playerStatsCsv } from '@ncaa/storage';
 import { Fetcher } from '../utils/fetcher';
 
 interface PlayerRow {
@@ -16,6 +17,10 @@ interface PlayerRow {
     shots: number | null;
     shots_on_goal: number | null;
     saves: number | null;
+    position: string | null;
+    started: number | null;
+    goals_allowed: number | null;
+    capture_version: number;
 }
 
 async function main() {
@@ -64,7 +69,11 @@ async function main() {
                     assists: (p as any).assists ?? null,
                     shots: (p as any).shots ?? null,
                     shots_on_goal: toNumberOrNull(p.stats?.shots_on_goal),
-                    saves: toNumberOrNull(p.stats?.saves)
+                    saves: toNumberOrNull(p.stats?.saves),
+                    position: String(p.stats?.position ?? '').trim() || null,
+                    started: toNumberOrNull(p.stats?.started),
+                    goals_allowed: toNumberOrNull(p.stats?.goals_allowed),
+                    capture_version: BOXSCORE_CAPTURE_VERSION
                 });
             });
             console.log(`Parsed ${res.playerStats.length} player rows`);
@@ -77,27 +86,11 @@ async function main() {
     const csvPath = playerStatsCsv(year);
     fs.mkdirSync(path.dirname(csvPath), { recursive: true });
 
-    const header = [
-        'game_id', 'team_id', 'player_name', 'player_key', 'jersey_number',
-        'minutes', 'goals', 'assists', 'shots', 'shots_on_goal', 'saves'
-    ];
-
+    const header = PLAYER_STAT_CSV_COLUMNS;
     const lines = [header.join(',')];
     rows.forEach(r => {
-        const vals = [
-            r.game_id,
-            r.team_id,
-            r.player_name,
-            r.player_key,
-            r.jersey_number ?? '',
-            r.minutes ?? '',
-            r.goals ?? '',
-            r.assists ?? '',
-            r.shots ?? '',
-            r.shots_on_goal ?? '',
-            r.saves ?? ''
-        ];
-        lines.push(vals.map(v => escapeCsv(String(v))).join(','));
+        const record = r as unknown as Record<string, unknown>;
+        lines.push(header.map(column => escapeCsv(String(record[column] ?? ''))).join(','));
     });
 
     fs.writeFileSync(csvPath, lines.join('\n'), 'utf8');

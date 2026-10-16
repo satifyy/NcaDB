@@ -109,6 +109,11 @@ export class WmtBoxScoreParser {
 
             // Field minutes are absent for keepers, who get a goalkeeper-specific counter.
             const minutes = toMinutes(stats.sMinutes ?? stats.sGoalkeeperMinutesPlayed);
+            // Keeper counters exist only for a player who kept goal. For one who did,
+            // a missing counter is a zero the feed did not bother to send; for everyone
+            // else there is no keeper record at all, which is not the same as 0 saves.
+            const keeper = stats.sGoalkeeperMinutesPlayed !== undefined
+                || stats.sSaves !== undefined || stats.sGoalsAllowed !== undefined;
 
             playerStats.push({
                 game_id: `wmt-${data.id ?? 'unknown'}`,
@@ -122,13 +127,15 @@ export class WmtBoxScoreParser {
                 shots: stats.sShotAttempts ?? 0,
                 stats: {
                     shots_on_goal: stats.sShotsOnGoal ?? 0,
-                    saves: stats.sSaves ?? 0,
-                    goals_allowed: stats.sGoalsAllowed ?? 0,
+                    saves: keeper ? stats.sSaves ?? 0 : null,
+                    goals_allowed: keeper ? stats.sGoalsAllowed ?? 0 : null,
                     fouls: stats.sFouls ?? 0,
                     yellow_cards: stats.sYellowCards ?? 0,
                     red_cards: stats.sRedCards ?? 0,
                     position: player.xml_position || '',
-                    started: player.games_started ? 1 : 0
+                    started: player.games_started === null || player.games_started === undefined
+                        ? null
+                        : player.games_started ? 1 : 0
                 }
             });
         }
