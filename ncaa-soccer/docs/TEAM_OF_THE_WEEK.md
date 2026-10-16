@@ -175,6 +175,12 @@ score components.
 Nightly, backfill, backfill-capture and refresh-game runs compute Team of the Week for the
 seasons they loaded, as their own `team_of_week` task after the load and read-model refresh.
 
+Team of the Week starts with **2026** (`TOTW_FIRST_SEASON` in `packages/database/src/totw/store.ts`).
+An earlier season is skipped (`skipped: before_first_season` in the run stats), even when a
+backfill reloads it, so no historical XI is ever published by accident. To add an older
+season later: `backfill-capture --season Y` until `remaining_after` is 0, lower the constant,
+then `team-of-week --season Y`. Nothing else changes.
+
 ## 7. Backtest: 2026 weeks 1–9
 
 Computed on the development copy; full weeks Aug 17 – Oct 11 (8 published weeks, 88 picks),
@@ -247,4 +253,5 @@ Example, week of Oct 5 (provisional when computed):
   here. Combined labels are excluded.
 - **Coverage is not complete.** Games without a box score (PDF-only sources, ~8–10%) cannot
   contribute; their players are simply absent that week.
-- **Only seasons re-read at capture v2 have weeks.** Older seasons need `backfill-capture`.
+- **2026 onward only.** Older seasons were captured before positions and keeper tables were
+  read; they would need `backfill-capture` and a lower `TOTW_FIRST_SEASON` (section 6).

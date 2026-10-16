@@ -44,7 +44,8 @@ and re-running the same command skips seasons already done.
 box-score capture version (migration 005), so it is resumable by construction: each run
 takes the next slice and reports `remaining_before` / `remaining_after` in its run stats
 (`status --run N`). It loads as a partial batch, so it never deletes a row it did not
-re-read. Older seasons use the same command with their year.
+re-read. Older seasons use the same command with their year (Team of the Week itself
+starts at 2026; see TEAM_OF_THE_WEEK.md before extending it).
 
 A full-season scrape is several hours with the server's polite defaults
 (`SCRAPER_CONCURRENCY=3`, 30 s between requests to one school's site). Run long

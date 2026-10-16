@@ -9,7 +9,7 @@ import { buildApp } from '../src/app';
 import { loadConfig } from '../src/config';
 
 /** The fixture holds one game; production needs twenty before a week gets an XI. */
-const ONE_GAME = { minCapturedGames: 1 };
+const ONE_GAME = { minCapturedGames: 1, firstSeason: 2025 };
 
 const v2 = (name: string, team: string, group: 'GK' | 'DEF' | 'MID' | 'FWD', extra: Partial<PlayerStatRecord> = {}) =>
     stat(name, team, { position: group, positionGroup: group, started: true, captureVersion: 2, saves: null, ...extra });

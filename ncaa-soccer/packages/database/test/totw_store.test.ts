@@ -5,12 +5,13 @@
 import { after, before, describe, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { Pool } from 'pg';
-import { createPool, computeTeamOfWeek, loadSeason, MODEL_VERSION } from '../src';
+import { createPool, computeTeamOfWeek, loadSeason, MODEL_VERSION, TOTW_FIRST_SEASON } from '../src';
 import type { PlayerStatRecord } from '../src';
 import { batch, freshDatabase, game, skipWithoutDb, stat, TEST_DATABASE_URL } from './helpers';
 
 /** The fixtures hold one game; production needs twenty before a week gets an XI. */
-const ONE_GAME = { minCapturedGames: 1 };
+// The fixtures are a 2025 game; the season gate is tested on its own below.
+const ONE_GAME = { minCapturedGames: 1, firstSeason: 2025 };
 const PASSWORD = 'test-only-password-not-a-secret-0123';
 const poolAs = (role: string) => {
     const url = new URL(TEST_DATABASE_URL!);
@@ -115,12 +116,20 @@ describe('team of the week store', { skip: skipWithoutDb }, () => {
     });
 
     test('a week with too few captured games is stored without an XI, and says why', async () => {
-        await computeTeamOfWeek(worker, 2025, final);
+        await computeTeamOfWeek(worker, 2025, final, { firstSeason: 2025 });
         const { rows: [week] } = await owner.query('SELECT completeness FROM totw_weeks');
         assert.deepEqual([week.completeness.published, week.completeness.reason], [false, 'too_few_games']);
         const { rows: [n] } = await owner.query('SELECT count(player_id)::int AS filled FROM totw_selections');
         assert.equal(n.filled, 0);
         await computeTeamOfWeek(worker, 2025, final, ONE_GAME);
+    });
+
+    test('a season before the first Team of the Week season is not computed', async () => {
+        assert.ok(TOTW_FIRST_SEASON > 2025);
+        const before = (await owner.query('SELECT count(*)::int AS n FROM totw_weeks')).rows[0].n;
+        const result = await computeTeamOfWeek(worker, 2025, final, { minCapturedGames: 1 });
+        assert.deepEqual(result, { season: 2025, weeks: 0, computed: 0, unchanged: 0, skipped: 'before_first_season' });
+        assert.equal((await owner.query('SELECT count(*)::int AS n FROM totw_weeks')).rows[0].n, before);
     });
 
     test('the API role can read the tables and cannot write them', async () => {

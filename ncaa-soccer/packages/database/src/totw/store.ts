@@ -20,6 +20,14 @@ export type WeekStatus = 'in_progress' | 'provisional' | 'final';
 /** Days after a week ends before it is final: the scrapers re-read box scores for seven. */
 export const FINAL_AFTER_DAYS = 8;
 
+/**
+ * The first season Team of the Week is computed for: the first one whose box scores were
+ * captured with positions and keeper statistics (capture version 2). Earlier seasons are
+ * skipped, so reloading one never publishes a historical XI. To cover an older season,
+ * re-read its box scores (`backfill-capture --season Y`) and lower this.
+ */
+export const TOTW_FIRST_SEASON = 2026;
+
 const addDays = (date: string, days: number) => {
     const d = new Date(`${date}T00:00:00Z`);
     d.setUTCDate(d.getUTCDate() + days);
@@ -165,6 +173,8 @@ export interface TotwRunResult {
     weeks: number;
     computed: number;
     unchanged: number;
+    /** Set when the season was not computed at all. */
+    skipped?: 'before_first_season';
 }
 
 async function ensureModelVersion(pool: Pool): Promise<void> {
@@ -183,9 +193,12 @@ export async function computeTeamOfWeek(
     pool: Pool,
     season: number,
     now = new Date(),
-    options: { minCapturedGames?: number } = {}
+    options: { minCapturedGames?: number; firstSeason?: number } = {}
 ): Promise<TotwRunResult> {
     const minGames = options.minCapturedGames ?? RULES.minCapturedGames;
+    if (season < (options.firstSeason ?? TOTW_FIRST_SEASON)) {
+        return { season, weeks: 0, computed: 0, unchanged: 0, skipped: 'before_first_season' };
+    }
     const { rows: seasonRows } = await pool.query<{ id: number }>(
         `SELECT s.id FROM seasons s JOIN competitions c ON c.id = s.competition_id
          WHERE c.code = 'ncaa-d1-msoc' AND s.year = $1`,
