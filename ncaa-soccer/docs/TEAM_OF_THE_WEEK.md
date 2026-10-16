@@ -261,4 +261,4 @@ Example, week of Oct 5 (provisional when computed):
   issue #42 those 16 were stored as non-Division I: their players were never rated and their
   opponents' games were discounted. Their players are rated only on box scores published by
   opponents the scraper does cover, so they have fewer rated games than other programs.
-  Programs absent from the roster file (UTRGV, IU Indy, UIC) are still outside Division I here.
+  Programs absent from the roster file (IU Indy, UIC) are still outside Division I here.

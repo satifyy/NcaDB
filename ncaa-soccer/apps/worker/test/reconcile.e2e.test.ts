@@ -24,7 +24,7 @@ const inventoryTeams: TeamConfig[] = [
 function resolver(): TeamResolver {
     const index = new SchoolIndex<TeamConfig>();
     inventoryTeams.forEach(t => index.add(t));
-    return new TeamResolver({ teams: inventoryTeams, index, unscraped: [] });
+    return new TeamResolver({ teams: inventoryTeams, index, unscraped: [], ambiguous: new Map() });
 }
 
 const teams: TeamRecord[] = [
