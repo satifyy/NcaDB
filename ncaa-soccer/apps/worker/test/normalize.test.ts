@@ -25,7 +25,7 @@ function inventory(): Inventory {
     ];
     const index = new SchoolIndex<TeamConfig>();
     teams.forEach(t => index.add(t));
-    return { teams, index };
+    return { teams, index, unscraped: [] };
 }
 
 const gameRow = (overrides: Partial<GameCsvRow> = {}): GameCsvRow => ({
@@ -187,4 +187,89 @@ test('only teams a stored row uses are created', () => {
     );
     assert.ok(!batch.teams.some(t => t.slug === 'ou'), 'the abbreviation must not become a team');
     assert.equal(batch.teams.filter(t => t.isDivisionOne).length, 3);
+});
+
+// ---------------------------------------------------------------------------------------
+// Team identity against the real inventory files (issue #42).
+
+import * as path from 'path';
+import { loadInventory } from '../src/normalize';
+import { NOT_A_TEAM } from '../../scraper/src/analytics/matches';
+
+const realTeams = path.resolve(__dirname, '../../../data/teams');
+
+test('ranked spellings resolve to the school, not to a team of their own', () => {
+    const resolver = new TeamResolver(loadInventory(realTeams));
+    for (const [raw, slug] of [
+        ['19 Cornell', 'cornell'],
+        ['22 Cornell', 'cornell'],
+        ['24 Michigan State', 'michigan-state'],
+        ['#21/#15 UNC Greensboro', 'unc-greensboro'],
+        ['(#8/No. 13 seed) Marshall (Sweet 16)', 'marshall']
+    ] as const) {
+        assert.equal(resolver.resolve(raw)?.slug, slug, raw);
+    }
+});
+
+test('bracket placeholders, intrasquad games and conference names are not teams', () => {
+    const resolver = new TeamResolver(loadInventory(realTeams));
+    for (const raw of ['ELITE 8', 'SWEET 16', 'COLLEGE CUP', 'Round of 16', 'Final Four', 'No. 1', 'Blue & Gold Game',
+        'Black & Gold Match', 'Coastal Athletic Association', '2020 Fall Season Cancelled']) {
+        assert.equal(resolver.resolve(raw), null, raw);
+        assert.ok(NOT_A_TEAM.test(raw), raw);
+    }
+    // ...and the words that make them placeholders are in no school's name.
+    for (const raw of ['Cornell', 'Elon', 'Holy Cross', 'Boston College', 'Texas A&M']) assert.ok(!NOT_A_TEAM.test(raw), raw);
+});
+
+test('Division I programs the scraper does not cover are Division I, under one name each', () => {
+    const inventory = loadInventory(realTeams);
+    const resolver = new TeamResolver(inventory);
+    for (const [raw, slug] of [
+        ['Elon University', 'elon'], ['Elon (Alumni Day)', 'elon'], ['Albany', 'ualbany'], ['University at Albany', 'ualbany'],
+        ['Cal State Bakersfield', 'csu-bakersfield'], ['CSU Bakersfield (Big West Crossover)', 'csu-bakersfield'],
+        ['CCSU', 'central-connecticut-state'], ['Fairleigh Dickinson', 'fdu'], ['College of the Holy Cross', 'holy-cross'],
+        ['NIU', 'northern-illinois'], ['UWF', 'west-florida']
+    ] as const) {
+        assert.equal(resolver.resolve(raw)?.slug, slug, raw);
+    }
+    const used = new Set(['elon', 'central-connecticut-state']);
+    const records = resolver.teams(used);
+    assert.equal(records.find(t => t.slug === 'elon')?.isDivisionOne, true);
+    assert.equal(records.find(t => t.slug === 'elon')?.scheduleUrl, null, 'never scraped');
+    assert.equal(records.filter(t => t.isDivisionOne).length, inventory.teams.length + inventory.unscraped.length);
+    assert.ok(!inventory.teams.some(t => t.team_id === 'ELON'), 'kept out of the scrape list');
+});
+
+test('a disambiguated name is a different school, not the Division I one it resembles', () => {
+    const resolver = new TeamResolver(loadInventory(realTeams));
+    for (const [raw, slug] of [
+        ['Holy Cross College (Ind.)', 'holy-cross-college-ind'],
+        ['Georgetown College (Ky.)', 'georgetown-college-ky'],
+        ['Notre Dame College (Ohio)', 'notre-dame-college-ohio'],
+        ['Washington College (Md.)', 'washington-college-md'],
+        ['LIU Post', 'liu-post'],
+        // An inventory spelling that carries the same disambiguator still matches.
+        ['University of Saint Thomas (Minn.)', 'st-thomas']
+    ] as const) {
+        assert.equal(resolver.resolve(raw)?.slug, slug, raw);
+    }
+});
+
+test('ambiguous short forms stay unresolved rather than picking a school', () => {
+    const resolver = new TeamResolver(loadInventory(realTeams));
+    assert.equal(resolver.resolve('Loyola')?.slug, 'loyola', 'Chicago or Maryland: unknowable from the name');
+    assert.equal(resolver.resolve('Loyola Maryland')?.slug, 'loyola-university-maryland');
+    assert.equal(resolver.resolve('USF')?.slug, 'usf', 'South Florida or San Francisco');
+});
+
+test('two inventory entries answering to the same spellings are refused, not merged', () => {
+    const fs = require('fs') as typeof import('fs');
+    const os = require('os') as typeof import('os');
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'inventory-'));
+    fs.writeFileSync(path.join(dir, 'd1_msoc_teams.json'), JSON.stringify([
+        { team_id: 'LOYOLA_CHICAGO', name_canonical: 'Loyola Chicago', schedule_url: 'https://a.com', aliases: ['Loyola (Ill.)'] },
+        { team_id: 'LOYOLA_MD', name_canonical: 'Loyola Maryland', schedule_url: 'https://b.com', aliases: ['Loyola (Md.)'] }
+    ]));
+    assert.throws(() => loadInventory(dir), /LOYOLA_CHICAGO and LOYOLA_MD answer to the same spellings/);
 });

@@ -48,6 +48,15 @@ export function loadAllTeams(teamsDir: string = TEAMS_DIR): TeamConfig[] {
             /* not a usable inventory */
         }
     }
+    // Division I programs that are never scraped, so a box score naming one ("CCSU",
+    // "Elon University") is recognised as that school. They carry no schedule URL, so
+    // they add nothing to the source allowlist built from this list.
+    const unscraped = path.join(teamsDir, 'd1_msoc_unscraped.json');
+    if (fs.existsSync(unscraped)) {
+        for (const team of JSON.parse(fs.readFileSync(unscraped, 'utf8')) as Omit<TeamConfig, 'schedule_url'>[]) {
+            if (team.team_id && !byId.has(team.team_id)) byId.set(team.team_id, { ...team, schedule_url: '' });
+        }
+    }
     return [...byId.values()];
 }
 

@@ -16,14 +16,15 @@
  */
 
 /**
- * Trailing "(...)" qualifiers that describe the fixture, not the school.
+ * Trailing "(...)" qualifiers that describe the fixture, not the school: the round
+ * ("(NCAA First Round)", "(Sweet 16)"), the seed ("USF (#3 Seed)", "New Mexico (5)").
  *
  * Schools abbreviate the exhibition marker as well as spelling it out — "St. Bonaventure
  * (EX)", "CSUN (Exh.)" — and an unstripped marker makes a second team out of one, so the
  * short forms are matched too, but only when they are the whole parenthetical.
  */
 const QUALIFIER_RE =
-    /\s*\((?:\s*(?:ex|exh|exhib|scrim|free|gold division|blue division)\.?\s*|[^()]*\b(?:exhibition|scrimmage|friendly|round|rd\.?|final|finals|semifinal|quarterfinal|tournament|championship|classic|invitational|acc|ncaa|naia|njcaa|usl|mls|mlsnext|nwsl|uslc|usl\s*1|play-?in)\b[^()]*)\)\s*$/i;
+    /\s*\((?:\s*(?:ex|exh|exhib|scrim|free|gold division|blue division)\.?\s*|\s*#?\s*\d{1,2}\s*|[^()]*\b(?:exhibition|scrimmage|friendly|round|rd\.?|final|finals|semifinals?|quarterfinals?|tournament|championship|classic|invitational|acc|ncaa|naia|njcaa|usl|mls|mlsnext|nwsl|uslc|usl\s*1|play-?in|seed|sweet\s*(?:16|sixteen)|elite\s*(?:8|eight)|college\s+cup|final\s+four)\b[^()]*)\)\s*$/i;
 
 /**
  * Whether a stripped qualifier said the fixture was an exhibition rather than a round.
@@ -42,7 +43,8 @@ export const EXHIBITION_RE = /exhibition|scrimmage|friendly|\(\s*(?:ex|exh|exhib
  * tournament brackets'
  * "#2 Seed West Virginia" and "(#8 seed) Portland", the bracket form "[11] No. 5 Bryant",
  * and both the parenthesised "(rv) Delaware" and bare "RV San Francisco" a school just
- * outside the poll is listed as.
+ * outside the poll is listed as. Some schools print the rank with no marker at all
+ * ("19 Cornell"); a school name never starts with a one- or two-digit number and a space.
  *
  * The lone "seed)" is residue rather than a marker any site publishes: rows scraped
  * before this pattern handled "(#4 seed)" had the "(#4 " half stripped and the rest left
@@ -53,20 +55,30 @@ export const EXHIBITION_RE = /exhibition|scrimmage|friendly|\(\s*(?:ex|exh|exhib
  * before a number: "(#8 seed)" opens with the paren but leads with the "#", which a
  * number-first pattern walks straight past, leaving the decoration on the name.
  */
-const POLL = String.raw`(?:\s*\/\s*[A-Za-z0-9-]+)*`;
+// Each further poll may carry its own marker: "#19/#9 Georgetown", "#10/No. 1 Seed WVU".
+const POLL = String.raw`(?:\s*\/\s*(?:#|no\s*\.?\s*)?[A-Za-z0-9-]+)*`;
 const RANK_RE = new RegExp(
     String.raw`^\s*(?:` +
         // "[11] Bryant", "[9/4] Louisville", "[RV/24] Xavier"
-        String.raw`\[\s*(?:rv|\d{1,2})${POLL}\s*\]` +
+        String.raw`\[\s*(?:rv|#?\s*\d{1,2})${POLL}\s*\]` +
         // "(9) North Carolina", "(rv) Delaware", "(#8 seed) Portland", "(#2N) Sacramento State"
         String.raw`|\(\s*(?:rv|(?:#|no\s*\.?)?\s*\d{1,2}[A-Za-z]?${POLL}\s*(?:seed)?)\s*\)` +
+        // A conference seed: "(#1 A-10) Saint Louis"
+        String.raw`|\(\s*#\s*\d{1,2}\s+[A-Za-z0-9-]+\s*\)` +
         // Residue of a "(#4 seed)" stripped by an earlier, narrower pattern.
         String.raw`|seed\)` +
-        String.raw`|rv` +
+        // A seed without a "#": "4 Seed Memphis", "#1-Seed High Point", "4-Seed Charlotte"
+        String.raw`|#?\s*\d{1,2}\s*-?\s*seed` +
+        // A seed whose number was lost upstream: "Seed Green Bay"
+        String.raw`|seed(?=\s)` +
+        String.raw`|rv${POLL}` +
         // "No. 7", "No .13", "#5", "#24/RV", "#37/-"
         String.raw`|(?:no\s*\.?|#)\s*(?:\d{1,2}|rv)${POLL}` +
         // A bare poll pair with no marker at all: "14/9 UMass Lowell"
         String.raw`|\d{1,2}(?:\s*\/\s*[A-Za-z0-9-]+)+` +
+        // A bare ranking: "19 Cornell", "24 Michigan State". One or two digits, then a
+        // space and a letter, so "4th Annual ..." and "2020 Fall ..." are left alone.
+        String.raw`|\d{1,2}(?=\s+[A-Za-z])` +
     String.raw`)\s+(?:seed\s+)?`,
     'i'
 );

@@ -141,7 +141,8 @@
         "UOP"
     ],
     "UNC_WILMINGTON": [
-        "UNCW"
+        "UNCW",
+        "University of North Carolina Wilmington"
     ],
     "UNC_GREENSBORO": [
         "UNCG"
@@ -175,10 +176,14 @@
         "Maryland-Baltimore-County"
     ],
     "CAL_STATE_FULLERTON": [
-        "California State Fullerton"
+        "California State Fullerton",
+        "CSU Fullerton",
+        "Cal St. Fullerton",
+        "California State University at Fullerton"
     ],
     "UC_SANTA_BARBARA": [
-        "UCSB"
+        "UCSB",
+        "University of California Santa Barbara"
     ],
     "GEORGETOWN": [
         "Hoyas"
@@ -212,5 +217,75 @@
     ],
     "GEORGE_WASHINGTON": [
         "GWUMSOC"
+    ],
+    "UMASS": [
+        "Massachusetts",
+        "University of Massachusetts",
+        "UMASS"
+    ],
+    "UMASS_LOWELL": [
+        "University of Massachusetts Lowell"
+    ],
+    "HOUSTON_CHRISTIAN": [
+        "HCU",
+        "Houston Baptist",
+        "Houston Baptist University"
+    ],
+    "NJIT": [
+        "New Jersey Institute of Technology"
+    ],
+    "CALIFORNIA_BAPTIST": [
+        "Cal-Baptist"
+    ],
+    "JAMES_MADISON": [
+        "JMU"
+    ],
+    "OMAHA": [
+        "University of Nebraska at Omaha",
+        "Nebraska-Omaha"
+    ],
+    "WEST_VIRGINIA": [
+        "WVU"
+    ],
+    "QUEENS": [
+        "Queens University Charlotte"
+    ],
+    "WILLIAM_MARY": [
+        "The College of William & Mary"
+    ],
+    "AIR_FORCE": [
+        "Air Force Academy"
+    ],
+    "CAL_POLY": [
+        "Cal Poly SLO",
+        "Cal Poly San Luis Obispo"
+    ],
+    "LOYOLA_UNIVERSITY_MARYLAND": [
+        "Loyola Maryland"
+    ],
+    "LOYOLA_CHICAGO": [
+        "Loyola-Chicago"
+    ],
+    "PURDUE_FORT_WAYNE": [
+        "Fort Wayne"
+    ],
+    "NAVY": [
+        "United States Naval Academy"
+    ],
+    "ORAL_ROBERTS": [
+        "ORU"
+    ],
+    "OLD_DOMINION": [
+        "ODU"
+    ],
+    "WESTERN_MICHIGAN": [
+        "Western Mich."
+    ],
+    "EASTERN_ILLINOIS": [
+        "Eastern Ill."
+    ],
+    "ST_THOMAS": [
+        "University of Saint Thomas (Minn.)",
+        "St. Thomas (Minn.)"
     ]
 }

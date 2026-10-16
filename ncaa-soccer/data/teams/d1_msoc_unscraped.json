@@ -1,0 +1,18 @@
+[
+    { "team_id": "UALBANY", "name_canonical": "UAlbany", "conference": "America East", "aliases": ["Albany", "University at Albany", "Albany (NY)", "UAlbany Great Danes"] },
+    { "team_id": "CSU_BAKERSFIELD", "name_canonical": "CSU Bakersfield", "conference": "Big West", "aliases": ["Bakersfield", "Cal State Bakersfield", "CS Bakersfield", "CSUB", "California State University, Bakersfield"] },
+    { "team_id": "CSUN", "name_canonical": "CSUN", "conference": "Big West", "aliases": ["Cal State Northridge", "CSU Northridge", "California State University, Northridge"] },
+    { "team_id": "ELON", "name_canonical": "Elon", "conference": "CAA", "aliases": ["Elon University"] },
+    { "team_id": "GREEN_BAY", "name_canonical": "Green Bay", "conference": "Horizon", "aliases": ["UW-Green Bay", "Wisconsin-Green Bay", "University of Wisconsin - Green Bay", "University of Wisconsin-Green Bay", "UWGB"] },
+    { "team_id": "NORTHERN_ILLINOIS", "name_canonical": "Northern Illinois", "conference": "Horizon", "aliases": ["NIU", "Northern Illinois University"] },
+    { "team_id": "BOWLING_GREEN", "name_canonical": "Bowling Green", "conference": "Missouri Valley", "aliases": ["Bowling Green State University", "Bowling Green State", "BGSU"] },
+    { "team_id": "BRADLEY", "name_canonical": "Bradley", "conference": "Missouri Valley", "aliases": ["Bradley University"] },
+    { "team_id": "CENTRAL_CONNECTICUT", "name_canonical": "Central Connecticut State", "conference": "NEC", "aliases": ["Central Connecticut", "Central Connecticut State University", "CCSU", "Central Conn. St."] },
+    { "team_id": "FDU", "name_canonical": "FDU", "conference": "NEC", "aliases": ["Fairleigh Dickinson", "Fairleigh Dickinson University"] },
+    { "team_id": "LIU", "name_canonical": "LIU", "conference": "NEC", "aliases": ["Long Island", "Long Island University", "Long Island U", "LIU Brooklyn"] },
+    { "team_id": "INCARNATE_WORD", "name_canonical": "Incarnate Word", "conference": "Ohio Valley", "aliases": ["UIW", "University of the Incarnate Word"] },
+    { "team_id": "SIUE", "name_canonical": "SIUE", "conference": "Ohio Valley", "aliases": ["SIU Edwardsville", "Southern Illinois Edwardsville", "Southern Illinois University Edwardsville"] },
+    { "team_id": "COLGATE", "name_canonical": "Colgate", "conference": "Patriot", "aliases": ["Colgate University"] },
+    { "team_id": "HOLY_CROSS", "name_canonical": "Holy Cross", "conference": "Patriot", "aliases": ["College of the Holy Cross"] },
+    { "team_id": "WEST_FLORIDA", "name_canonical": "West Florida", "conference": "ASUN", "aliases": ["University of West Florida", "UWF"] }
+]

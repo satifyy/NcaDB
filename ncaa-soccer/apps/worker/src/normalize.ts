@@ -59,6 +59,9 @@ export function playerLetters(raw: string): string {
         .replace(/[^a-z]/g, '');
 }
 
+/** A trailing state disambiguator: "(Ind.)", "(N.C.)", "(Ky.)", "(MO)", "(Calif.)". */
+const STATE_TAG = /\(\s*([A-Za-z]{2,6}\.?(?:\s*[A-Za-z]\.)?)\s*\)\s*$/;
+
 const PLACEHOLDER_PLAYER = /^(?:player|team|totals?|tm|unknown|n\/?a|-+|#+)$/i;
 const UNKNOWN_TEAM = /^(?:unknown|tbd|tba)?$/i;
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
@@ -74,19 +77,33 @@ function tomorrow(): string {
 export interface Inventory {
     teams: TeamConfig[];
     index: SchoolIndex<TeamConfig>;
+    /**
+     * Division I programs the scraper does not cover (`d1_msoc_unscraped.json`): their
+     * games are known only from opponents' schedules. They resolve and are stored as
+     * Division I like the scraped inventory, but are never scraped themselves, so they
+     * are kept out of `teams`, which is the scrape list.
+     */
+    unscraped: TeamConfig[];
 }
 
-/** The Division I inventory and its alias file, from an explicit teams directory. */
+/** The Division I inventory, the unscraped Division I programs and the alias file. */
 export function loadInventory(teamsDir: string): Inventory {
     const teams: TeamConfig[] = JSON.parse(fs.readFileSync(path.join(teamsDir, 'd1_msoc_teams.json'), 'utf8'));
+    const unscrapedPath = path.join(teamsDir, 'd1_msoc_unscraped.json');
+    const unscraped: TeamConfig[] = fs.existsSync(unscrapedPath)
+        ? (JSON.parse(fs.readFileSync(unscrapedPath, 'utf8')) as Omit<TeamConfig, 'schedule_url'>[]).map(t => ({ ...t, schedule_url: '' }))
+        : [];
     let aliases: Record<string, string[]> = {};
     const aliasPath = path.join(teamsDir, 'team_aliases.json');
     if (fs.existsSync(aliasPath)) aliases = JSON.parse(fs.readFileSync(aliasPath, 'utf8'));
     const index = new SchoolIndex<TeamConfig>();
-    for (const team of teams) {
-        index.add({ ...team, aliases: [...(team.aliases || []), ...(aliases[team.team_id] || [])] });
+    for (const team of [...teams, ...unscraped]) {
+        // Two entries that answer to each other's spellings would merge silently, and
+        // every game of the second would be filed under the first. Refuse instead.
+        const clash = index.add({ ...team, aliases: [...(team.aliases || []), ...(aliases[team.team_id] || [])] });
+        if (clash) throw new Error(`Inventory entries ${clash.team_id} and ${team.team_id} answer to the same spellings`);
     }
-    return { teams, index };
+    return { teams, index, unscraped };
 }
 
 /**
@@ -109,7 +126,7 @@ export class TeamResolver {
         const cleaned = cleanTeamName(raw).name.trim();
         let result: { slug: string; name: string } | null = null;
         if (cleaned && !NOT_A_TEAM.test(cleaned)) {
-            const known = this.inventory.index.findUnique(cleaned);
+            const known = this.distinct(cleaned, this.inventory.index.findUnique(cleaned));
             const name = known?.name_canonical ?? cleaned;
             const slug = teamSlug(name);
             if (slug) {
@@ -123,15 +140,31 @@ export class TeamResolver {
         return result;
     }
 
-    /** Every inventory team, plus every other team in `used`. */
+    /**
+     * The index match, unless the name carries a disambiguator the match does not.
+     *
+     * The index ignores a trailing "(...)" so "St. John's (NY)" still finds St. John's,
+     * but that same parenthetical is how a schedule tells two schools apart:
+     * "Holy Cross College (Ind.)" is not Holy Cross. A state-style disambiguator
+     * ("(Ind.)", "(N.C.)", "(Ky.)") only matches an entry that spells it too.
+     */
+    private distinct(cleaned: string, known: TeamConfig | undefined): TeamConfig | undefined {
+        const tag = cleaned.match(STATE_TAG)?.[1];
+        if (!known || !tag) return known;
+        const key = (v: string) => v.toLowerCase().replace(/[^a-z]/g, '');
+        const names = [known.name_canonical, ...(known.aliases ?? [])];
+        return names.some(n => key(n.match(STATE_TAG)?.[1] ?? '') === key(tag)) ? known : undefined;
+    }
+
+    /** Every Division I team (scraped or not), plus every other team in `used`. */
     teams(used: Set<string>): TeamRecord[] {
-        const inventory: TeamRecord[] = this.inventory.teams.map(t => ({
+        const inventory: TeamRecord[] = [...this.inventory.teams, ...this.inventory.unscraped].map(t => ({
             slug: teamSlug(t.name_canonical),
             name: t.name_canonical,
             inventoryId: t.team_id,
             isDivisionOne: true,
             conference: t.conference ?? null,
-            scheduleUrl: t.schedule_url ?? null,
+            scheduleUrl: t.schedule_url || null,
             platform: t.platform_guess ?? null,
             timezone: t.timezone ?? null,
             aliases: t.aliases ?? []
