@@ -140,7 +140,11 @@ export async function ingestSeason(ctx: RunContext, plan: SeasonPlan): Promise<S
         let boxscoresOk = !plan.boxscores;
         const stats: Record<string, unknown> = {};
 
-        if (!filtered(plan)) {
+        if (!plan.schedules && !plan.boxscores) {
+            // Nothing to scrape (`renormalize`). The pipeline must not be started at all:
+            // `--only` with no stage means every stage to it.
+            stats.skipped = 'no stages requested';
+        } else if (!filtered(plan)) {
             const stages = [plan.schedules && 'schedules', plan.boxscores && 'boxscores'].filter(Boolean).join(',');
             const args = [
                 '--season', String(season), '--only', stages, '--force',
