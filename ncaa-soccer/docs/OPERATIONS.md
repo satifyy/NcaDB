@@ -64,7 +64,7 @@ inside the worker container with `nohup`.
 | Recompute Team of the Week for a season (only weeks whose inputs changed) | `npm run worker -- team-of-week --season 2026` |
 | Re-apply team identity rules (aliases, ranks, D-I list) to stored seasons, no network | `npm run worker -- renormalize --season 2026` (or `--seasons 2016-2025`) |
 | Report team/player rows no data refers to any more (owner; dry run) | `npm run worker -- reconcile-identities` |
-| ...and remove them, moving users' favorites to the surviving identity | `npm run worker -- reconcile-identities --apply` |
+| ...and remove the reviewed ones, moving users' favorites to the surviving identity | `npm run worker -- reconcile-identities --targets targets.json --season 2026 --apply` |
 
 `renormalize` is the nightly's load path with no scrape in front of it: games whose teams
 now resolve differently are moved to their new fixture (or merged into the one already
@@ -73,6 +73,16 @@ Re-running it changes nothing. It leaves the emptied team and player rows behind
 deleting one deletes the favorites pointing at it; `reconcile-identities` removes them in
 one transaction under the ingestion lock, moving each favorite to the successor identity
 (or removing a placeholder's) and writing every change to the user's activity audit.
+
+An apply removes only what a reviewed targets file lists: each team and player id with
+the successor it was reviewed with (`{"teams": [{"id": 11452, "successor": 109}],
+"players": [...]}`, built from a dry run). It refuses, changing nothing, when a target is
+in use again, would map to a different successor, still has a player or roster row that
+is not a target, or when a delete would cascade to a `team_seasons` / `player_team_seasons`
+row outside `--season`. Orphans not listed are reported as out of scope and left alone;
+targets already removed are reported as such, so re-running the same apply does nothing.
+The output's `removed` block holds every row deleted or rewritten. Back up both schemas
+(`public` and `accounts`) first.
 
 A run killed mid-way (deploy, OOM, timeout) leaves nothing half-written: loads are one
 transaction per season, and the next run marks the dead run `abandoned` and alerts.

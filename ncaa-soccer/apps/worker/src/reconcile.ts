@@ -42,14 +42,35 @@ export interface OrphanPlayer {
     favorites: number;
 }
 
-export interface IdentityReport {
-    applied: boolean;
-    teams: OrphanTeam[];
-    players: OrphanPlayer[];
-    favorites: { teams_moved: number; teams_removed: number; players_moved: number; players_removed: number };
+/**
+ * The identities an apply may touch, each with the successor it was reviewed with
+ * (`null`: deleted without one). Anything not listed is reported and left alone.
+ */
+export interface ReconcileTargets {
+    teams: { id: number; successor: number | null }[];
+    players: { id: number; successor: number | null }[];
 }
 
-// Players that are themselves orphans (below) keep neither a team nor its rosters alive.
+export interface IdentityReport {
+    applied: boolean;
+    /** The season the targets' cascading rows may belong to; null without targets. */
+    season: number | null;
+    /** In scope: the targets (or, without targets, every orphan). */
+    teams: OrphanTeam[];
+    players: OrphanPlayer[];
+    /** Orphans that are not targets: never touched. */
+    out_of_scope: { teams: OrphanTeam[]; players: OrphanPlayer[] };
+    /** Targets that no longer exist (a previous apply removed them): nothing to do. */
+    already_removed: { teams: number[]; players: number[] };
+    /** Rows the deletes would cascade to, by table and season. */
+    cascades: { table: string; season: number; rows: number }[];
+    /** Why an apply would be refused. Empty means it can run. */
+    problems: string[];
+    favorites: { teams_moved: number; teams_removed: number; players_moved: number; players_removed: number };
+    /** On apply: every row removed or rewritten, enough to put them back. */
+    removed?: Record<string, unknown[]>;
+}
+
 const ORPHAN_TEAMS = `
     WITH live AS (
         SELECT p.id, p.team_id FROM players p
@@ -157,30 +178,146 @@ async function moveFavorites(
     return { moved, removed };
 }
 
-export async function reconcileIdentities(pool: Pool, resolver: TeamResolver, apply: boolean): Promise<IdentityReport> {
+/** Reads a targets file: `{ "teams": [{ "id", "successor" }], "players": [...] }`. */
+export function parseTargets(json: string): ReconcileTargets {
+    const raw = JSON.parse(json) as Partial<ReconcileTargets>;
+    const list = (xs: unknown, what: string) => {
+        if (!Array.isArray(xs)) throw new Error(`targets: "${what}" must be a list`);
+        return xs.map(x => {
+            const { id, successor } = x as { id: unknown; successor: unknown };
+            if (!Number.isInteger(id) || !(successor === null || Number.isInteger(successor))) {
+                throw new Error(`targets: every ${what} entry needs an integer "id" and an integer or null "successor"`);
+            }
+            return { id: id as number, successor: successor as number | null };
+        });
+    };
+    return { teams: list(raw.teams, 'teams'), players: list(raw.players, 'players') };
+}
+
+/**
+ * Plans, and with `apply` performs, the removal of orphaned identities.
+ *
+ * An apply needs `targets` and `season`, and is refused when anything differs from what
+ * was reviewed: a target that is no longer an orphan, a successor other than the one
+ * listed, a player outside the targets still on a target team, or a row the deletes
+ * would cascade to (team_seasons, player_team_seasons) in a season other than `season`.
+ */
+export async function reconcileIdentities(
+    pool: Pool,
+    resolver: TeamResolver,
+    options: { apply: boolean; targets?: ReconcileTargets; season?: number }
+): Promise<IdentityReport> {
+    const { apply, targets, season } = options;
+    if (apply && (!targets || season === undefined)) {
+        throw new Error('--apply needs --targets FILE and --season YYYY: only reviewed identities are ever removed.');
+    }
     return withTransaction(pool, async client => {
         const { rows } = await client.query<{ ok: boolean }>('SELECT pg_try_advisory_xact_lock($1) AS ok', [INGESTION_LOCK_KEY]);
         if (!rows[0].ok) throw new Error('An ingestion run holds the lock; run reconcile-identities when it has finished.');
         const plan = await planIdentities(client, resolver);
-        const favorites = { teams_moved: 0, teams_removed: 0, players_moved: 0, players_removed: 0 };
-        if (apply) {
-            const p = await moveFavorites(client, 'players', plan.players);
-            const t = await moveFavorites(client, 'teams', plan.teams);
-            Object.assign(favorites, { players_moved: p.moved, players_removed: p.removed, teams_moved: t.moved, teams_removed: t.removed });
-            // Recorded spellings follow the team to its successor; a placeholder's go with it.
-            for (const t of plan.teams) {
-                if (t.successor) {
-                    await client.query(
-                        `UPDATE source_identifiers SET entity_id = $2 WHERE entity_type = 'team' AND entity_id = $1`,
-                        [t.id, t.successor.id]
-                    );
+        const problems: string[] = [];
+
+        let teams = plan.teams;
+        let players = plan.players;
+        let outTeams: OrphanTeam[] = [];
+        let outPlayers: OrphanPlayer[] = [];
+        const alreadyRemoved = { teams: [] as number[], players: [] as number[] };
+        if (targets) {
+            const existing = async (table: 'teams' | 'players', ids: number[]) =>
+                new Set((await client.query<{ id: string }>(`SELECT id FROM ${table} WHERE id = ANY($1)`, [ids])).rows.map(r => Number(r.id)));
+            const liveTeams = await existing('teams', targets.teams.map(t => t.id));
+            const livePlayers = await existing('players', targets.players.map(p => p.id));
+            const check = <T extends { id: number; successor: { id: number } | null }>(
+                kind: 'team' | 'player', orphans: T[], wanted: ReconcileTargets['teams'], live: Set<number>
+            ) => {
+                const byId = new Map(orphans.map(o => [o.id, o]));
+                const wantedIds = new Set(wanted.map(w => w.id));
+                for (const w of wanted) {
+                    const o = byId.get(w.id);
+                    if (!live.has(w.id)) (kind === 'team' ? alreadyRemoved.teams : alreadyRemoved.players).push(w.id);
+                    else if (!o) problems.push(`${kind} ${w.id} is a target but is in use, not an orphan`);
+                    else if ((o.successor?.id ?? null) !== w.successor) {
+                        problems.push(`${kind} ${w.id} would now map to ${o.successor?.id ?? 'nothing'}, not the reviewed ${w.successor ?? 'nothing'}`);
+                    }
                 }
-            }
-            await client.query(`DELETE FROM source_identifiers WHERE entity_type = 'team' AND entity_id = ANY($1)`, [plan.teams.map(t => t.id)]);
-            // Players first: a player row references its team.
-            await client.query('DELETE FROM players WHERE id = ANY($1)', [plan.players.map(p => p.id)]);
-            await client.query('DELETE FROM teams WHERE id = ANY($1)', [plan.teams.map(t => t.id)]);
+                return { inScope: orphans.filter(o => wantedIds.has(o.id)), out: orphans.filter(o => !wantedIds.has(o.id)) };
+            };
+            const t = check('team', plan.teams, targets.teams, liveTeams);
+            const p = check('player', plan.players, targets.players, livePlayers);
+            teams = t.inScope; outTeams = t.out;
+            players = p.inScope; outPlayers = p.out;
         }
-        return { applied: apply, ...plan, favorites };
+        const teamIds = teams.map(t => t.id);
+        const playerIds = players.map(p => p.id);
+
+        // A player row references its team: one left behind would block the delete.
+        const { rows: strays } = await client.query<{ id: string; identity_key: string }>(
+            'SELECT id, identity_key FROM players WHERE team_id = ANY($1) AND NOT (id = ANY($2)) ORDER BY id',
+            [teamIds, playerIds]
+        );
+        for (const s of strays) problems.push(`player ${s.id} (${s.identity_key}) is on a target team but is not a target`);
+        const { rows: rosterStrays } = await client.query<{ player_id: string; team_id: number }>(
+            'SELECT DISTINCT player_id, team_id FROM player_team_seasons WHERE team_id = ANY($1) AND NOT (player_id = ANY($2)) ORDER BY 1',
+            [teamIds, playerIds]
+        );
+        for (const r of rosterStrays) problems.push(`player ${r.player_id} has a roster row on target team ${r.team_id} but is not a target`);
+
+        // What the deletes cascade to, season by season.
+        const { rows: cascades } = await client.query<{ table: string; season: number; rows: number }>(
+            `SELECT 'team_seasons' AS table, s.year AS season, count(*)::int AS rows
+               FROM team_seasons ts JOIN seasons s ON s.id = ts.season_id WHERE ts.team_id = ANY($1) GROUP BY s.year
+             UNION ALL
+             SELECT 'player_team_seasons', s.year, count(*)::int
+               FROM player_team_seasons pts JOIN seasons s ON s.id = pts.season_id WHERE pts.player_id = ANY($2) GROUP BY s.year
+             ORDER BY 1, 2`,
+            [teamIds, playerIds]
+        );
+        if (season !== undefined) {
+            for (const c of cascades) {
+                if (c.season !== season) problems.push(`deleting would remove ${c.rows} ${c.table} row(s) from ${c.season}, outside ${season}`);
+            }
+        }
+
+        const favorites = { teams_moved: 0, teams_removed: 0, players_moved: 0, players_removed: 0 };
+        const report: IdentityReport = {
+            applied: false, season: season ?? null, teams, players,
+            out_of_scope: { teams: outTeams, players: outPlayers }, already_removed: alreadyRemoved, cascades, problems, favorites
+        };
+        if (!apply) return report;
+        if (problems.length > 0) throw new Error(`Refusing to apply:\n  ${problems.join('\n  ')}`);
+
+        // Everything about to be removed or rewritten, so it can be put back by hand.
+        const snapshot = async (sql: string, args: unknown[]) => (await client.query(sql, args)).rows;
+        report.removed = {
+            teams: await snapshot('SELECT * FROM teams WHERE id = ANY($1)', [teamIds]),
+            players: await snapshot('SELECT * FROM players WHERE id = ANY($1)', [playerIds]),
+            team_seasons: await snapshot('SELECT * FROM team_seasons WHERE team_id = ANY($1)', [teamIds]),
+            player_team_seasons: await snapshot('SELECT * FROM player_team_seasons WHERE player_id = ANY($1)', [playerIds]),
+            source_identifiers: await snapshot(`SELECT * FROM source_identifiers WHERE entity_type = 'team' AND entity_id = ANY($1)`, [teamIds]),
+            user_favorite_teams: await snapshot('SELECT * FROM accounts.user_favorite_teams WHERE team_id = ANY($1)', [teamIds]),
+            user_favorite_players: await snapshot('SELECT * FROM accounts.user_favorite_players WHERE player_id = ANY($1)', [playerIds])
+        };
+
+        const p = await moveFavorites(client, 'players', players);
+        const t = await moveFavorites(client, 'teams', teams);
+        Object.assign(favorites, { players_moved: p.moved, players_removed: p.removed, teams_moved: t.moved, teams_removed: t.removed });
+        // Recorded spellings follow the team to its successor; a placeholder's go with it.
+        for (const team of teams) {
+            if (team.successor) {
+                await client.query(
+                    `UPDATE source_identifiers SET entity_id = $2 WHERE entity_type = 'team' AND entity_id = $1`,
+                    [team.id, team.successor.id]
+                );
+            }
+        }
+        await client.query(`DELETE FROM source_identifiers WHERE entity_type = 'team' AND entity_id = ANY($1)`, [teamIds]);
+        // Cascading rows are deleted explicitly, limited to the season the check allowed.
+        await client.query('DELETE FROM player_team_seasons WHERE player_id = ANY($1)', [playerIds]);
+        await client.query('DELETE FROM team_seasons WHERE team_id = ANY($1)', [teamIds]);
+        // Players first: a player row references its team.
+        await client.query('DELETE FROM players WHERE id = ANY($1)', [playerIds]);
+        await client.query('DELETE FROM teams WHERE id = ANY($1)', [teamIds]);
+        report.applied = true;
+        return report;
     });
 }
