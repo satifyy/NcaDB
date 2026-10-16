@@ -210,3 +210,49 @@ test('columns are read by their header, not by their position', () => {
     assert.equal(player.shots, 5);
     assert.equal(player.stats?.shots_on_goal, 3);
 });
+
+test('strips the rank markers issue #42 found stored as teams', () => {
+    for (const [raw, name] of [
+        // A bare number: no "#", no "No.", no brackets.
+        ['19 Cornell', 'Cornell'],
+        ['22 Cornell', 'Cornell'],
+        ['24 Michigan State', 'Michigan State'],
+        ['1 FIU', 'FIU'],
+        // Each poll in a list carrying its own marker.
+        ['#21/#15 UNC Greensboro', 'UNC Greensboro'],
+        ['#19/#9 Georgetown', 'Georgetown'],
+        ['No. 2/#8 Marshall', 'Marshall'],
+        ['RV/#13 FIU', 'FIU'],
+        ['[#11/9] UCF', 'UCF'],
+        ['[#2] Duke', 'Duke'],
+        // Seeds, spelled every way schedules print them.
+        ['#10/No. 1 Seed WVU', 'WVU'],
+        ['(#24/No. 4 seed) Georgetown', 'Georgetown'],
+        ['(#1 A-10) Saint Louis', 'Saint Louis'],
+        ['#1-Seed High Point', 'High Point'],
+        ['4-Seed Charlotte', 'Charlotte'],
+        ['4 Seed Memphis', 'Memphis'],
+        ['Seed Green Bay', 'Green Bay'],
+        ['No. 1/ No. 10 New Hampshire', 'New Hampshire']
+    ] as const) {
+        assert.equal(cleanTeamName(raw).name, name, raw);
+        assert.equal(cleanTeamName(raw).ranked, true, `${raw} should be flagged ranked`);
+    }
+});
+
+test('strips trailing seeds, bracket rounds and event decorations', () => {
+    for (const [raw, name] of [
+        ['USF (#3 Seed)', 'USF'],
+        ['New Mexico (5)', 'New Mexico'],
+        ['(#8/No. 13 seed) Marshall (Sweet 16)', 'Marshall'],
+        ['New Hampshire (America East Semifinals)', 'New Hampshire']
+    ] as const) {
+        assert.equal(cleanTeamName(raw).name, name, raw);
+    }
+});
+
+test('a leading number that is not a ranking is left alone', () => {
+    for (const name of ['4th Annual Special Goals for Special Kids Game', '2020 Fall Season Cancelled', '1. FC Koln', 'Texas A&M', 'Miami (OH)']) {
+        assert.equal(cleanTeamName(name).name, name);
+    }
+});

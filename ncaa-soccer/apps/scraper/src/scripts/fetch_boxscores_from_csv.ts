@@ -15,6 +15,7 @@ import {
 } from '@ncaa/parsers';
 import { BOXSCORE_CAPTURE_VERSION } from '@ncaa/shared';
 import { buildTeamNameResolver, loadAllTeams } from '../utils/teams';
+import { abbreviates, affinity, assignBoxscoreLinks, contradictsScore } from '../utils/boxscore_links';
 const { chromium } = require('playwright-chromium');
 import {
     DEBUG_BOXSCORE_LOG,
@@ -39,6 +40,10 @@ interface GameRow {
     /** The other school's box score for the same fixture, when the two differ. */
     boxscore_url_alt?: string;
     dedupe_key: string;
+    home_score: number | null;
+    away_score: number | null;
+    /** The link read stands in for the fixture's own, which was blocked or shared. */
+    via_alternate?: boolean;
 }
 
 interface PlayerRow {
@@ -186,34 +191,18 @@ function resolveTeamLabels(
 
     // A label the resolver recognises as a school, which is not one of the two that
     // played, means this page belongs to another fixture.
+    // Except a short abbreviation already matched to a side by its letters: Blackburn
+    // College's box score calls itself "BC", which the resolver also knows as Boston
+    // College, but "BC" against a Blackburn College fixture is Blackburn College.
     const known = (name: string) => (teamNameResolver ? teamNameResolver.lookup(name) : null);
     const foreign = unassigned.filter(label => {
         const resolved = known(label);
-        return resolved !== null && !sides.includes(resolved);
+        if (resolved === null || sides.includes(resolved)) return false;
+        const side = assignment.get(label);
+        return !(side && sides.includes(side) && abbreviates(label, side));
     });
 
     return { assignment, foreign };
-}
-
-/**
- * How strongly an abbreviation points at a team name.
- *
- * "VIL" prefixes "Villanova"; "GSU" opens with the initials of "Georgia State". Scores
- * are only ever compared against each other within one game, so the absolute values
- * just need to rank prefix matches above initial matches and longer matches above
- * shorter ones.
- */
-function affinity(label: string, team: string): number {
-    const l = slugify(label);
-    const t = slugify(team);
-    if (!l || !t) return 0;
-    if (l === t) return 100;
-    if (t.startsWith(l)) return 50 + l.length;
-    if (l.startsWith(t)) return 40 + t.length;
-    const initials = team.split(/\s+/).filter(Boolean).map(word => word[0]).join('').toLowerCase();
-    if (initials.length > 1 && l.startsWith(initials)) return 20 + initials.length;
-    if (initials.length > 1 && initials.startsWith(l)) return 15 + l.length;
-    return 0;
 }
 
 /**
@@ -292,7 +281,9 @@ function parseGamesCsv(csvPath: string): GameRow[] {
         status: row.status || '',
         boxscore_url: row.boxscore_url || '',
         boxscore_url_alt: row.boxscore_url_alt || '',
-        dedupe_key: row.dedupe_key || ''
+        dedupe_key: row.dedupe_key || '',
+        home_score: row.home_score === '' || row.home_score == null ? null : Number(row.home_score),
+        away_score: row.away_score === '' || row.away_score == null ? null : Number(row.away_score)
     }));
 }
 
@@ -366,16 +357,23 @@ async function processGame(
     opts?: { attempt?: number; waitLonger?: boolean; waitMs?: number; scrollWaitMs?: number }
 ): Promise<ProcessResult> {
     // Links come from third-party pages; vet before the browser or a fetch touches them.
-    const verdict = await vetSourceUrl(game.boxscore_url || '', allowedSources);
-    if (!verdict.ok) {
-        logDebug(`BLOCKED [${game.game_id}] ${game.boxscore_url}: ${verdict.reason}`);
-        return { rows: [], success: false, skipped: `blocked URL (${verdict.reason})` };
-    }
     if (game.boxscore_url_alt && !(await vetSourceUrl(game.boxscore_url_alt, allowedSources)).ok) {
         game = { ...game, boxscore_url_alt: '' };
     }
+    const verdict = await vetSourceUrl(game.boxscore_url || '', allowedSources);
+    if (!verdict.ok) {
+        // A primary link off the allowlist is never fetched. The other school's copy of
+        // the same game is, when it passed the same check above: CCSU publishes XML on a
+        // host outside the list, while its opponents' Sidearm pages carry the box score.
+        if (!game.boxscore_url_alt) {
+            logDebug(`BLOCKED [${game.game_id}] ${game.boxscore_url}: ${verdict.reason}`);
+            return { rows: [], success: false, skipped: `blocked URL (${verdict.reason})` };
+        }
+        logDebug(`BLOCKED [${game.game_id}] ${game.boxscore_url}: ${verdict.reason}; using ${game.boxscore_url_alt}`);
+        game = { ...game, boxscore_url: game.boxscore_url_alt, boxscore_url_alt: '', via_alternate: true };
+    }
     await throttle.wait(throttleTarget(game.boxscore_url));
-    const primary = await processGameOnce(browser, game, rawDir, boxParser, opts);
+    const primary = checkScore(game, await processGameOnce(browser, game, rawDir, boxParser, opts));
     if (primary.success || !game.boxscore_url_alt) return primary;
 
     logDebug(`FALLBACK [${game.game_id}] Primary box score empty, trying ${game.boxscore_url_alt}`);
@@ -391,6 +389,18 @@ async function processGame(
         logDebug(`FALLBACK OK [${game.game_id}] Recovered ${fallback.rows.length} stats from the alternate source`);
     }
     return fallback;
+}
+
+/** A substitute link whose page contradicts the final score is another game: refused. */
+function checkScore(game: GameRow, result: ProcessResult): ProcessResult {
+    if (!game.via_alternate || !result.success) return result;
+    const sides = [
+        { name: game.home_team_name, score: game.home_score },
+        { name: game.away_team_name, score: game.away_score }
+    ];
+    if (!contradictsScore(result.rows, sides)) return result;
+    logDebug(`SKIP [${game.game_id}] ${game.boxscore_url} credits more goals than the final score; another game's page.`);
+    return { rows: [], success: false, skipped: 'substitute page does not match the final score' };
 }
 
 async function processGameOnce(
@@ -654,30 +664,15 @@ async function main() {
     games = uniqueGames;
     // ---------------------------
 
-    // A box-score URL that several fixtures point at cannot be the box score of any one
-    // of them. Some schools publish a single stale link on every row — Winthrop hands out
-    // `boxscore.aspx?id=23965` for its whole season — and scraping it once per fixture
-    // credits that one game's players with the same goals four or five times over, in
-    // every season. Which fixture it really belongs to is not knowable from the page, so
-    // the whole ambiguous group is dropped rather than attributed to a guess.
-    const byBoxscore = new Map<string, GameRow[]>();
-    for (const game of games) {
-        const url = (game.boxscore_url || '').trim();
-        if (!url) continue;
-        byBoxscore.set(url, [...(byBoxscore.get(url) || []), game]);
+    // A link several fixtures share is nobody's box score; see assignBoxscoreLinks.
+    const links = assignBoxscoreLinks(games);
+    if (links.rescued.length > 0) {
+        console.warn(`Using the other school's box score for ${links.rescued.length} games whose own link is shared with another fixture.`);
     }
-    const ambiguous = new Set<string>();
-    for (const [url, claimants] of byBoxscore) {
-        if (claimants.length < 2) continue;
-        claimants.forEach(g => ambiguous.add(g.game_id));
-        logDebug(`AMBIGUOUS ${claimants.length} games share ${url}; dropping all of them.`);
+    if (links.dropped.length > 0) {
+        console.warn(`Dropping ${links.dropped.length} games whose box-score URL is shared with another fixture.`);
     }
-    if (ambiguous.size > 0) {
-        console.warn(
-            `Dropping ${ambiguous.size} games whose box-score URL is shared with another fixture.`
-        );
-        games = games.filter(g => !ambiguous.has(g.game_id));
-    }
+    games = links.games;
 
     // The season's full game set, fixed before any narrowing below. Carry-forward reads
     // it to decide which stored rows still belong to this season; narrowing it would

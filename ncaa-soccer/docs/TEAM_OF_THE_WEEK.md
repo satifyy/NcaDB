@@ -255,3 +255,10 @@ Example, week of Oct 5 (provisional when computed):
   contribute; their players are simply absent that week.
 - **2026 onward only.** Older seasons were captured before positions and keeper tables were
   read; they would need `backfill-capture` and a lower `TOTW_FIRST_SEASON` (section 6).
+- **"Division I" is the conference-roster list.** The 213 programs in
+  `data/teams/d1_msoc_rosters.json` are Division I for eligibility and for the opponent
+  weight, including the 16 the scraper does not cover (Elon, CCSU, UAlbany, ...). Before
+  issue #42 those 16 were stored as non-Division I: their players were never rated and their
+  opponents' games were discounted. Their players are rated only on box scores published by
+  opponents the scraper does cover, so they have fewer rated games than other programs.
+  Programs absent from the roster file (UTRGV, IU Indy, UIC) are still outside Division I here.

@@ -97,6 +97,8 @@ export interface SeasonBatch {
     complete: boolean;
     /** Lets a complete batch delete more than the mass-deletion guard allows. */
     allowMassDelete?: boolean;
+    /** Do everything inside the transaction, report it, and roll it back. */
+    dryRun?: boolean;
 }
 
 export interface EntityCounts {
@@ -114,4 +116,9 @@ export interface LoadResult {
     players: { inserted: number };
     teams: { inserted: number };
     issues: QualityIssue[];
+    /** Stored games moved to a new fixture key, or merged into the game already there. */
+    rekeyed?: { moved: number; merged: number };
+    /** Set on a dry run: nothing was kept, and `after` is the season as it would have been. */
+    dryRun?: boolean;
+    after?: { games: number; finals: number; stat_rows: number; goals: number; wrong_side: number; duplicate_stat_keys: number };
 }

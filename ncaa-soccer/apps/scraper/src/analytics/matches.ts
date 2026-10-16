@@ -100,9 +100,18 @@ export const NOT_A_TEAM = new RegExp(
         String.raw`\b(?:tournament|championship|bracket|playoffs?|scrimmage|intrasquad)\b`,
         // The round on its own, which is what a site publishes before the draw is made:
         // "First Round", "CAA Quarterfinals", "American Conference".
-        String.raw`\b(?:quarter-?finals?|semi-?finals?|finals?|conference|league|division|ncaa)\b`,
+        String.raw`\b(?:quarter-?finals?|semi-?finals?|finals?|conference|league|division|association|ncaa)\b`,
         String.raw`\b(?:first|second|third|fourth|opening|play-?in|elite|sweet)\s+(?:round|eight|sixteen)\b`,
-        String.raw`^\s*round\s*\d*\s*$`
+        // The same rounds as a bracket prints them: "ELITE 8", "SWEET 16", "Round of 16",
+        // "COLLEGE CUP", "Final Four".
+        String.raw`\b(?:elite|sweet)\s*(?:8|16)\b`,
+        String.raw`\bcollege\s+cup\b|\bfinal\s+four\b`,
+        String.raw`^\s*round(?:\s+of)?\s*\d*\s*$`,
+        // A rank with no school after it: "No. 1".
+        String.raw`^\s*(?:no\s*\.?|#)\s*\d+\s*$`,
+        // Intrasquad and charity fixtures: "Blue & Gold Game", "Black & Gold Match".
+        String.raw`\b(?:game|match)\s*$`,
+        String.raw`\bseason\s+cancell?ed\b`
     ].join('|'),
     'i'
 );

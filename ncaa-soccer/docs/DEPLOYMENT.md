@@ -3,18 +3,64 @@
 | Piece | Where | Source | Deploys when |
 | --- | --- | --- | --- |
 | Postgres | Railway service `Postgres` (template), private network only | — | — |
-| API | Railway service `api`, root `ncaa-soccer`, `Dockerfile.api` | GitHub `satifyy/NcaDB` | push to the tracked branch |
-| Worker | Railway service `worker`, root `ncaa-soccer`, `Dockerfile.worker`, cron `0 8,9 * * *` | same | same (the image; it runs on the cron) |
-| Dashboard | Vercel project `ncadb`, root `ncaa-soccer/apps/dashboard`, served at **https://satifyy.com/ncadb/** | same (Git link pending) | `vercel deploy --prod` from the repo root until the Git link is connected |
+| Migrate | Railway service `migrate`, root `ncaa-soccer`, `Dockerfile.api`; runs once and exits | GitHub `satifyy/NcaDB`, branch `main` | **manually**, by commit (below) |
+| API | Railway service `api`, root `ncaa-soccer`, `Dockerfile.api` | same | **manually**, by commit, after `migrate` |
+| Worker | Railway service `worker`, root `ncaa-soccer`, `Dockerfile.worker`, cron `0 8,9 * * *` | same | **manually**, by commit, after `migrate` (the image; it runs on the cron) |
+| Dashboard | Vercel project `ncadb`, root `ncaa-soccer/apps/dashboard`, served at **https://satifyy.com/ncadb/** | same (Git integration connected) | **automatically**, on every merge to `main` |
 
 Production URLs: site **https://satifyy.com/ncadb/** (proxied by the satifyy.com hub,
 repo `satifyy/webpage`, see its `ROUTING.md`), origin `https://ncadb.vercel.app`; API
 `https://api-production-24fc6.up.railway.app` (`/health`, `/api/v1/status`, `/api/v1/openapi.json`).
 
-> The Railway services currently track `feature/production-data-platform` so the branch
-> could be verified before merge. **After merging PR #21, point them at `main`:**
-> `railway service source connect --service api --repo satifyy/NcaDB --branch main`
-> (and the same for `worker`).
+## Releasing (the tested procedure)
+
+What actually happens on a merge, as observed on 2026-10-16 (PRs #43, #44, #46): the
+Railway services track `main` but **no Railway deploy starts on a push**, not even after
+CI passes; Vercel **does** build and promote the dashboard to production at once. So the
+dashboard can go live before the API it calls: build UI changes to degrade gracefully
+against an API that lacks their routes (a 404 is "not available yet", not an error).
+
+1. CI green on the PR, then merge (merge commit, as the history uses).
+2. Deploy `migrate` at the merge commit and wait for `SUCCESS`; its log lists the
+   migrations it `applied`. Skip only when no migration changed.
+3. Deploy `api` and `worker` at the same commit. A service whose code did not change can
+   be left alone (the worker for a dashboard-only change).
+4. Verify: `curl https://api-production-24fc6.up.railway.app/api/v1/status` shows the new
+   `version` (the commit's first 12 characters) and `"pending_migrations":[]`.
+
+```bash
+E=b5bdf4e4-0330-4d4e-9c50-49a8ce74e2b6            # production environment
+C=$(git rev-parse origin/main)                     # the merge commit
+svc() { railway api 'query($e: String!) { environment(id: $e) { serviceInstances { edges { node { serviceName serviceId } } } } }' \
+          --raw-var "e=$E" | jq -r ".data.environment.serviceInstances.edges[].node | select(.serviceName==\"$1\") | .serviceId"; }
+deploy() { railway api 'mutation($s: String!, $e: String!, $c: String!) { serviceInstanceDeployV2(serviceId: $s, environmentId: $e, commitSha: $c) }' \
+          --raw-var "s=$(svc $1)" --raw-var "e=$E" --raw-var "c=$C"; }
+deploy migrate   # wait: railway deployment list --service migrate  ->  SUCCESS; railway logs --service migrate
+deploy api; deploy worker
+railway deployment list --service api            # SUCCESS, then check /api/v1/status
+```
+
+Rolling back is the same call with the previous commit. Migrations are forward-only and
+additive by convention, so the older code runs against the newer schema.
+
+### Running worker and owner commands in production
+
+The worker is a cron service: it has no running container to `railway ssh` into, and the
+`api` container holds only the read-only role. One-off commands (`backfill-capture`,
+`renormalize`, `team-of-week`) therefore run from a trusted machine through a temporary
+TCP proxy to Postgres, as the **worker** role, and the proxy is removed afterwards:
+
+```bash
+railway tcp-proxy create --port 5432 --service Postgres        # note the endpoint
+# DATABASE_URL = the worker's (railway variable list --service worker --kv) with host:port
+# replaced by the proxy endpoint; keep it in a 0600 file, never on the command line.
+railway run --service worker -- sh -c '. ./prod-worker.env; npm run worker -- status'
+railway tcp-proxy delete <id> --service Postgres --yes
+```
+
+Owner commands (`reconcile-identities --apply`, `set-role`) need the owner URL instead:
+the `migrate` service's `MIGRATION_DATABASE_URL`, rewritten the same way, exported as
+`MIGRATION_DATABASE_URL` for that one command only.
 
 ## Railway
 
@@ -74,24 +120,23 @@ is **served only through the satifyy.com hub**: `satifyy/webpage`'s `vercel.json
 
 The API's `CORS_ALLOWED_ORIGINS` is `https://satifyy.com,https://www.satifyy.com,https://ncadb.vercel.app`.
 
-Deploy from the repo root (`.vercelignore` keeps the data CSVs out of the upload):
+Production deploys come from the Git integration (production branch `main`). A manual
+deploy from the repo root is still possible (`.vercelignore` keeps the data CSVs out of the
+upload); a raw `*.vercel.app` preview needs `--build-env BASE_PATH=/`:
 
 ```bash
 npx vercel deploy --prod --scope santy0629-8466s-projects
 ```
-
-**Git-based deploys** need the Vercel GitHub app to have access to `satifyy/NcaDB`
-(GitHub → Settings → Applications → Vercel → Repository access), then
-`npx vercel git connect` from the repo root. Production branch: `main`.
 
 ## CI/CD
 
 - `.github/workflows/ci.yml` — every PR and push to main: typecheck, unit tests, Postgres
   integration tests (migrations from scratch, loader, API, worker CLI), inventory
   validation, dashboard lint and build, gitleaks secret scan.
-- Deploys are Railway's and Vercel's GitHub integrations. Protect `main` (require the CI
-  checks) so only reviewed, green code reaches production; feature branches get Vercel
-  previews but never touch the Railway production environment.
+- Vercel's GitHub integration deploys the dashboard on every merge to `main` and builds a
+  preview for every PR. Railway does not deploy on push: releases are deployed by commit
+  (see *Releasing*). Protect `main` (require the CI checks) so only reviewed, green code
+  reaches production; feature branches never touch the Railway production environment.
 - `.github/workflows/refresh.yml` is the legacy CSV refresh, now manual-only.
 
 ## Cost

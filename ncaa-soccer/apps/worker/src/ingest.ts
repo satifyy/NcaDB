@@ -59,6 +59,8 @@ export interface SeasonPlan {
     recaptureBelow?: number;
     /** At most this many box scores in this run. */
     limit?: number;
+    /** Load inside a transaction that is rolled back; report what would change. */
+    dryRun?: boolean;
 }
 
 export interface SeasonOutcome {
@@ -140,7 +142,11 @@ export async function ingestSeason(ctx: RunContext, plan: SeasonPlan): Promise<S
         let boxscoresOk = !plan.boxscores;
         const stats: Record<string, unknown> = {};
 
-        if (!filtered(plan)) {
+        if (!plan.schedules && !plan.boxscores) {
+            // Nothing to scrape (`renormalize`). The pipeline must not be started at all:
+            // `--only` with no stage means every stage to it.
+            stats.skipped = 'no stages requested';
+        } else if (!filtered(plan)) {
             const stages = [plan.schedules && 'schedules', plan.boxscores && 'boxscores'].filter(Boolean).join(',');
             const args = [
                 '--season', String(season), '--only', stages, '--force',
@@ -202,15 +208,16 @@ export async function ingestSeason(ctx: RunContext, plan: SeasonPlan): Promise<S
         complete: !filtered(plan) && scrape.schedulesOk && scrape.boxscoresOk,
         // A box-score stage that failed may have written a thinner file; its rows are
         // not trusted. The schedules it ran after still are.
-        includeStats: scrape.boxscoresOk
+        includeStats: scrape.boxscoresOk,
+        dryRun: plan.dryRun
     });
-    return { season, loaded: !!result, result };
+    return { season, loaded: !!result && !plan.dryRun, result };
 }
 
 export async function loadFromWorkDir(
     ctx: RunContext,
     season: number,
-    options: { complete: boolean; includeStats: boolean; root?: string; allowMassDelete?: boolean }
+    options: { complete: boolean; includeStats: boolean; root?: string; allowMassDelete?: boolean; dryRun?: boolean }
 ): Promise<LoadResult | undefined> {
     const root = options.root ?? ctx.config.workDir;
     return task(ctx, 'load', season, { complete: options.complete, include_stats: options.includeStats }, async taskId => {
@@ -220,8 +227,19 @@ export async function loadFromWorkDir(
         }
         const inventory = loadInventory(teamsDir(root));
         const { batch, issues } = buildSeasonBatch(season, games, options.includeStats ? stats : [], inventory, options.complete);
-        const result = await loadSeason(ctx.pool, { ...batch, allowMassDelete: options.allowMassDelete });
+        const result = await loadSeason(ctx.pool, { ...batch, allowMassDelete: options.allowMassDelete, dryRun: options.dryRun });
         const allIssues = [...issues, ...result.issues];
+        if (result.dryRun) {
+            // Nothing was kept: no issues recorded, no sync marked, nothing counted as loaded.
+            const summary = {
+                games: result.games, game_sources: result.gameSources, player_stats: result.playerStats,
+                players_inserted: result.players.inserted, teams_inserted: result.teams.inserted,
+                rekeyed: result.rekeyed, after: result.after,
+                issues: Object.fromEntries(allIssues.map(i => [i.code, i.count]))
+            };
+            log.info('season dry run (rolled back)', { run_id: ctx.runId, season, ...summary });
+            return { value: result, stats: { dry_run: true, ...summary } };
+        }
         await recordIssues(ctx.pool, ctx.runId, taskId, season, allIssues);
         result.issues = allIssues;
         addCounts(ctx, result);

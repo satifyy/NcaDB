@@ -1,10 +1,10 @@
 # Operations
 
-All commands run from `ncaa-soccer/`. Locally they need `DATABASE_URL`; against
-production, run them **inside the worker container** with `railway ssh --service worker`
-(the database is only reachable on Railway's private network), or prefix with
-`railway run --service worker` when a temporary TCP proxy is enabled (see the last
-section). Every worker command is recorded in `ingestion_runs` and exits 0 on success,
+All commands run from `ncaa-soccer/`. Locally they need `DATABASE_URL`. Against
+production, the database is only reachable on Railway's private network and the worker
+(a cron service) has no running container to `railway ssh` into: run one-off commands
+from a trusted machine through a temporary TCP proxy, as the worker role, and remove the
+proxy afterwards ([DEPLOYMENT.md](DEPLOYMENT.md#running-worker-and-owner-commands-in-production)). Every worker command is recorded in `ingestion_runs` and exits 0 on success,
 1 on failure, 2 on a usage error.
 
 ## Routine
@@ -62,6 +62,17 @@ inside the worker container with `nohup`.
 | See what a run rejected and why | `npm run worker -- status --run 42` → `errors` (category, code, count, samples) |
 | Rebuild ratings/forecasts/dashboard files only | `npm run worker -- analytics` |
 | Recompute Team of the Week for a season (only weeks whose inputs changed) | `npm run worker -- team-of-week --season 2026` |
+| Re-apply team identity rules (aliases, ranks, D-I list) to stored seasons, no network | `npm run worker -- renormalize --season 2026` (or `--seasons 2016-2025`) |
+| Report team/player rows no data refers to any more (owner; dry run) | `npm run worker -- reconcile-identities` |
+| ...and remove them, moving users' favorites to the surviving identity | `npm run worker -- reconcile-identities --apply` |
+
+`renormalize` is the nightly's load path with no scrape in front of it: games whose teams
+now resolve differently are moved to their new fixture (or merged into the one already
+there), and the box-score rows filed under the old name are replaced, not duplicated.
+Re-running it changes nothing. It leaves the emptied team and player rows behind, because
+deleting one deletes the favorites pointing at it; `reconcile-identities` removes them in
+one transaction under the ingestion lock, moving each favorite to the successor identity
+(or removing a placeholder's) and writing every change to the user's activity audit.
 
 A run killed mid-way (deploy, OOM, timeout) leaves nothing half-written: loads are one
 transaction per season, and the next run marks the dead run `abandoned` and alerts.

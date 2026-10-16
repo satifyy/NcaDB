@@ -11,7 +11,8 @@ import {
     refreshReadModels,
     startRun
 } from '../src';
-import { batch, count, freshDatabase, game, skipWithoutDb, stat } from './helpers';
+import type { GameSourceRecord, PlayerStatRecord, SeasonBatch } from '../src';
+import { TEAMS, batch, count, freshDatabase, game, skipWithoutDb, stat } from './helpers';
 
 describe('season loader', { skip: skipWithoutDb }, () => {
     let pool: Pool;
@@ -298,5 +299,94 @@ describe('ingestion lock and run recovery', { skip: skipWithoutDb }, () => {
         const { rows } = await pool.query('SELECT status, finished_at FROM ingestion_runs WHERE id = $1', [id]);
         assert.equal(rows[0].status, 'abandoned');
         assert.ok(rows[0].finished_at);
+    });
+});
+
+describe('re-resolved team names', { skip: skipWithoutDb }, () => {
+    let pool: Pool;
+    before(async () => {
+        pool = await freshDatabase();
+    });
+    after(async () => {
+        await pool?.end();
+    });
+
+    // "19 Cornell" was a team of its own until bare ranks were stripped (issue #42).
+    const teams = [
+        ...TEAMS,
+        { slug: '19-cornell', name: '19 Cornell', isDivisionOne: false },
+        { slug: '22-cornell', name: '22 Cornell', isDivisionOne: false },
+        { slug: 'cornell', name: 'Cornell', inventoryId: 'CORNELL', isDivisionOne: true, conference: 'Ivy' },
+        { slug: 'dartmouth', name: 'Dartmouth', inventoryId: 'DARTMOUTH', isDivisionOne: true, conference: 'Ivy' },
+        { slug: 'yale', name: 'Yale', inventoryId: 'YALE', isDivisionOne: true, conference: 'Ivy' }
+    ];
+    const season = (games: GameSourceRecord[], stats: PlayerStatRecord[]): SeasonBatch =>
+        ({ season: 2026, teams, teamSpellings: new Map(), games, stats, complete: true });
+
+    // Cornell's site: "19 Cornell" at home to Dartmouth, with the box score.
+    const fromCornell = (home: string) => game({
+        dedupeKey: '2026-10-24-19-Cornell-Dartmouth', sourceGameId: 'cornell-1024', date: '2026-10-24',
+        homeSlug: home, awaySlug: 'dartmouth', homeName: '19 Cornell', awayName: 'Dartmouth', homeScore: 2, awayScore: 1
+    });
+    // Dartmouth's site: the same game, already filed under Cornell.
+    const fromDartmouth = game({
+        dedupeKey: '2026-10-24-Dartmouth-Cornell', sourceGameId: 'dartmouth-1024', date: '2026-10-24',
+        homeSlug: 'cornell', awaySlug: 'dartmouth', homeName: 'Cornell', awayName: 'Dartmouth', homeScore: 2, awayScore: 1, locationType: 'away'
+    });
+    // A game nobody else reported: it simply moves.
+    const vsYale = (home: string) => game({
+        dedupeKey: '2026-10-31-22-Cornell-Yale', sourceGameId: 'cornell-1031', date: '2026-10-31',
+        homeSlug: home, awaySlug: 'yale', homeName: '22 Cornell', awayName: 'Yale', homeScore: 1, awayScore: 0
+    });
+    const box = (cornell: string) => [
+        stat('Ann Ace', cornell, { sourceGameId: 'cornell-1024', goals: 2 }),
+        stat('Bea Back', cornell, { sourceGameId: 'cornell-1024', jerseyNumber: '4' }),
+        stat('Dee Dart', 'dartmouth', { sourceGameId: 'cornell-1024', goals: 1 }),
+        stat('Cal Keeper', cornell, { sourceGameId: 'cornell-1031', goals: 1, jerseyNumber: '1' }),
+        stat('Yo Yale', 'yale', { sourceGameId: 'cornell-1031' })
+    ];
+
+    test('a fixture whose team re-resolves merges into the stored one, without a second copy of its box score', async () => {
+        await loadSeason(pool, season([fromCornell('19-cornell'), fromDartmouth, vsYale('22-cornell')], box('19-cornell')));
+        assert.equal(await count(pool, 'games'), 3, 'before the fix: the decorated name made a second fixture');
+        const { rows: [yaleBefore] } = await pool.query(`SELECT id FROM games WHERE game_date = '2026-10-31'`);
+
+        // A dry run reports the corrected season and keeps nothing.
+        const dry = await loadSeason(pool, { ...season([fromCornell('cornell'), fromDartmouth, vsYale('cornell')], box('cornell')), dryRun: true });
+        assert.equal(dry.dryRun, true);
+        assert.deepEqual(dry.rekeyed, { moved: 1, merged: 1 });
+        assert.deepEqual([dry.after?.games, dry.after?.stat_rows, dry.after?.wrong_side, dry.after?.duplicate_stat_keys], [2, 5, 0, 0]);
+        assert.equal(await count(pool, 'games'), 3, 'the dry run was rolled back');
+
+        const result = await loadSeason(pool, season([fromCornell('cornell'), fromDartmouth, vsYale('cornell')], box('cornell')));
+        assert.equal(await count(pool, 'games'), 2);
+        assert.equal(await count(pool, 'player_game_stats'), 5, 'every row once');
+        const { rows: sources } = await pool.query('SELECT count(DISTINCT game_id)::int AS n FROM game_sources WHERE dedupe_key LIKE $1', ['2026-10-24%']);
+        assert.equal(sources[0].n, 1, 'both schools’ rows point at the one game');
+        const { rows: [yaleAfter] } = await pool.query(`SELECT id, home_team_id FROM games WHERE game_date = '2026-10-31'`);
+        assert.equal(yaleAfter.id, yaleBefore.id, 'a game with nothing at its new key keeps its id');
+        const { rows: wrong } = await pool.query(
+            `SELECT count(*)::int AS n FROM player_game_stats p JOIN games g ON g.id = p.game_id
+             WHERE p.team_id NOT IN (g.home_team_id, g.away_team_id)`);
+        assert.equal(wrong[0].n, 0);
+        const { rows: goals } = await pool.query(`SELECT sum(goals)::int AS n FROM player_game_stats`);
+        assert.equal(goals[0].n, 4);
+        assert.ok(result.issues.some(i => i.code === 'games_rekeyed' && i.count === 2));
+    });
+
+    test('loading the corrected season again changes nothing', async () => {
+        const result = await loadSeason(pool, season([fromCornell('cornell'), fromDartmouth, vsYale('cornell')], box('cornell')));
+        assert.deepEqual([result.games.inserted, result.games.updated, result.games.deleted], [0, 0, 0]);
+        assert.deepEqual([result.playerStats.inserted, result.playerStats.updated, result.playerStats.deleted], [0, 0, 0]);
+        assert.ok(!result.issues.some(i => i.code === 'games_rekeyed'));
+    });
+
+    test('rows the batch cannot attribute to either side are kept, not swept away', async () => {
+        // The box score names a side by a label that resolves to neither team ("RGV").
+        const odd = [...box('cornell'), stat('Rae Label', 'indiana', { sourceGameId: 'cornell-1031', goals: 0, jerseyNumber: '9' })];
+        await loadSeason(pool, season([fromCornell('cornell'), fromDartmouth, vsYale('cornell')], odd));
+        await loadSeason(pool, season([fromCornell('cornell'), fromDartmouth, vsYale('cornell')], odd));
+        const { rows } = await pool.query(`SELECT count(*)::int AS n FROM player_game_stats p JOIN players x ON x.id = p.player_id WHERE x.display_name = 'Rae Label'`);
+        assert.equal(rows[0].n, 1);
     });
 });

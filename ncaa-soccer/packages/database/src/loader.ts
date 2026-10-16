@@ -301,6 +301,86 @@ export function mergeFixtures(
     return { games, unresolved };
 }
 
+/**
+ * Moves stored games whose fixture key changed to the key the batch now gives them.
+ *
+ * A game's identity is its date and two teams, so re-resolving a team name ("19 Cornell"
+ * becoming Cornell) changes the key. Left alone, the upsert files the fixture under a
+ * second game while the first keeps its box score: every player row is then stored
+ * twice. A batch game is tied to what is stored through its sources' dedupe keys, so
+ * each stored game a source points at, under a different key, is either
+ *  - moved to the new key, keeping its id, box score and every reference to it, or
+ *  - merged into the game already at the new key: its player rows move across where the
+ *    surviving game does not already hold that player, the rest are dropped, and the
+ *    emptied game is deleted. The batch's own box score then settles the merged game.
+ */
+async function rekeyGames(
+    client: PoolClient,
+    seasonId: number,
+    games: MergedGame[]
+): Promise<{ moved: number; merged: number }> {
+    const keys = games.flatMap(g => g.sources.map(s => s.dedupeKey));
+    if (keys.length === 0) return { moved: 0, merged: 0 };
+    const { rows } = await client.query<{ dedupe_key: string; id: string; game_date: string; low: number; high: number }>(
+        `SELECT s.dedupe_key, g.id, to_char(g.game_date, 'YYYY-MM-DD') AS game_date, g.team_low_id AS low, g.team_high_id AS high
+         FROM game_sources s JOIN games g ON g.id = s.game_id
+         WHERE s.season_id = $1 AND s.dedupe_key = ANY($2::text[])`,
+        [seasonId, keys]
+    );
+    const storedBySource = new Map(rows.map(r => [r.dedupe_key, { id: Number(r.id), key: fixtureKey(r.game_date, r.low, r.high) }]));
+    const stale = games.filter(g => g.sources.some(s => {
+        const stored = storedBySource.get(s.dedupeKey);
+        return stored && stored.key !== g.key;
+    }));
+    if (stale.length === 0) return { moved: 0, merged: 0 };
+
+    const { rows: all } = await client.query<{ id: string; game_date: string; low: number; high: number }>(
+        `SELECT id, to_char(game_date, 'YYYY-MM-DD') AS game_date, team_low_id AS low, team_high_id AS high
+         FROM games WHERE season_id = $1`,
+        [seasonId]
+    );
+    const byKey = new Map(all.map(r => [fixtureKey(r.game_date, r.low, r.high), Number(r.id)]));
+    const done = new Set<number>();
+    let moved = 0;
+    let merged = 0;
+    for (const game of stale) {
+        const olds = [...new Set(game.sources
+            .map(s => storedBySource.get(s.dedupeKey))
+            .filter((x): x is { id: number; key: string } => !!x && x.key !== game.key)
+            .map(x => x.id))].filter(id => !done.has(id));
+        for (const oldId of olds) {
+            done.add(oldId);
+            const target = byKey.get(game.key);
+            if (target === undefined) {
+                // Nothing at the new key: the stored game becomes it. content_hash is
+                // blanked so the upsert that follows rewrites the rest of the row.
+                await client.query(
+                    `UPDATE games SET game_date = $2, home_team_id = $3, away_team_id = $4, content_hash = '', updated_at = now()
+                     WHERE id = $1`,
+                    [oldId, game.date, game.homeId, game.awayId]
+                );
+                for (const [k, v] of byKey) if (v === oldId) byKey.delete(k);
+                byKey.set(game.key, oldId);
+                moved++;
+            } else if (target !== oldId) {
+                await client.query(
+                    `UPDATE player_game_stats p SET game_id = $2
+                     WHERE p.game_id = $1 AND NOT EXISTS (
+                         SELECT 1 FROM player_game_stats q
+                         WHERE q.game_id = $2 AND q.player_id = p.player_id AND q.jersey_key = p.jersey_key)`,
+                    [oldId, target]
+                );
+                await client.query('DELETE FROM player_game_stats WHERE game_id = $1', [oldId]);
+                await client.query('UPDATE game_sources SET game_id = $2 WHERE game_id = $1', [oldId, target]);
+                await client.query('DELETE FROM games WHERE id = $1', [oldId]);
+                for (const [k, v] of byKey) if (v === oldId) byKey.delete(k);
+                merged++;
+            }
+        }
+    }
+    return { moved, merged };
+}
+
 async function upsertGames(
     client: PoolClient,
     seasonId: number,
@@ -603,6 +683,26 @@ async function upsertStats(
                WHERE s.game_id = p.game_id AND s.player_id = p.player_id AND s.jersey_key = p.jersey_key)`
     );
     counts.deleted = removed.rowCount ?? 0;
+
+    // A row filed under a team that is no longer either side of its game is stale: the
+    // game was re-keyed (a team name re-resolved), or the row came from an earlier read
+    // that filed a side under its box-score label ("GATE" for Colgate). It goes only when
+    // the batch has just stored that game's box score for both sides, so it has been
+    // replaced; a side the batch could not attribute keeps whatever was stored for it.
+    const stale = await client.query(
+        `DELETE FROM player_game_stats p
+         USING games g
+         WHERE p.game_id = g.id
+           AND g.id IN (
+               SELECT b.game_id FROM _batch_stats b JOIN games bg ON bg.id = b.game_id
+               WHERE b.team_id IN (bg.home_team_id, bg.away_team_id)
+               GROUP BY b.game_id HAVING count(DISTINCT b.team_id) = 2)
+           AND p.team_id <> g.home_team_id AND p.team_id <> g.away_team_id
+           AND NOT EXISTS (
+               SELECT 1 FROM _batch_stats s
+               WHERE s.game_id = p.game_id AND s.player_id = p.player_id AND s.jersey_key = p.jersey_key)`
+    );
+    counts.deleted += stale.rowCount ?? 0;
     return counts;
 }
 
@@ -716,7 +816,23 @@ function issue(
 // Entry point
 // ---------------------------------------------------------------------------------------
 
+/** Carries a dry run's result out of the transaction it rolls back. */
+class DryRunRollback extends Error {
+    constructor(readonly result: LoadResult) {
+        super('dry run');
+    }
+}
+
 export async function loadSeason(pool: Pool, batch: SeasonBatch): Promise<LoadResult> {
+    try {
+        return await loadSeasonOnce(pool, batch);
+    } catch (err) {
+        if (err instanceof DryRunRollback) return err.result;
+        throw err;
+    }
+}
+
+async function loadSeasonOnce(pool: Pool, batch: SeasonBatch): Promise<LoadResult> {
     return withTransaction(pool, async client => {
         const sport = await sportId(client);
         const seasonId = await ensureSeason(client, batch.season);
@@ -751,6 +867,17 @@ export async function loadSeason(pool: Pool, batch: SeasonBatch): Promise<LoadRe
             );
         }
 
+        const rekeyed = await rekeyGames(client, seasonId, merged);
+        if (rekeyed.moved + rekeyed.merged > 0) {
+            issues.push({
+                category: 'reconciliation',
+                code: 'games_rekeyed',
+                severity: 'warning',
+                count: rekeyed.moved + rekeyed.merged,
+                message: `Stored games whose teams re-resolved: ${rekeyed.moved} moved to their new fixture, ${rekeyed.merged} merged into an existing one`,
+                samples: []
+            });
+        }
         const { ids: gameIds, counts: gameCounts } = await upsertGames(client, seasonId, merged);
         const sourceCounts = await upsertGameSources(client, seasonId, merged, gameIds, batch.complete, !!batch.allowMassDelete);
 
@@ -866,15 +993,33 @@ export async function loadSeason(pool: Pool, batch: SeasonBatch): Promise<LoadRe
                 excess, Number(total[0].n), 'warning', 'reconciliation'));
         }
 
-        return {
+        const result: LoadResult = {
             season: batch.season,
             games: gameCounts,
             gameSources: sourceCounts,
             playerStats: statCounts,
             players: { inserted: playersInserted },
             teams: { inserted: teamsInserted },
-            issues
+            issues,
+            rekeyed
         };
+        if (batch.dryRun) {
+            // The season as this load would leave it, read inside the transaction that is
+            // about to be rolled back.
+            const { rows: [after] } = await client.query(
+                `SELECT (SELECT count(*)::int FROM games WHERE season_id = $1) AS games,
+                        (SELECT count(*)::int FROM games WHERE season_id = $1 AND status = 'final') AS finals,
+                        (SELECT count(*)::int FROM player_game_stats WHERE season_id = $1) AS stat_rows,
+                        (SELECT coalesce(sum(goals), 0)::int FROM player_game_stats WHERE season_id = $1) AS goals,
+                        (SELECT count(*)::int FROM player_game_stats p JOIN games g ON g.id = p.game_id
+                          WHERE p.season_id = $1 AND p.team_id <> g.home_team_id AND p.team_id <> g.away_team_id) AS wrong_side,
+                        (SELECT count(*)::int FROM (SELECT 1 FROM player_game_stats WHERE season_id = $1
+                          GROUP BY game_id, player_id, jersey_key HAVING count(*) > 1) d) AS duplicate_stat_keys`,
+                [seasonId]
+            );
+            throw new DryRunRollback({ ...result, dryRun: true, after });
+        }
+        return result;
     });
 }
 

@@ -14,7 +14,13 @@
  *   backfill-capture --season Y [--limit N] [--no-analytics]
  *                                 re-read up to N stored box scores (default 150) that predate the
  *                                 current capture version, newest first; re-run to continue
- *   refresh-game --game ID [--analytics]
+ *   renormalize (--season YYYY | --seasons A-B) [--dry-run] [--no-analytics]
+                               (re-apply team identity rules to stored seasons; no network; --dry-run
+                                reports what would change, in the run's stats, and keeps nothing)
+  reconcile-identities [--apply]
+                               (owner credentials; removes team and player rows no data refers to any
+                                more, moving users' favorites to the surviving identity; dry run by default)
+  refresh-game --game ID [--analytics]
  *   retry [--run ID]              re-run a failed or abandoned run with its original options
  *   team-of-week --season Y       recompute Team of the Week for a season from the database
  *   analytics                     rebuild ratings, forecasts and dashboard files from the database
@@ -47,6 +53,9 @@ import { EXIT_FAILED, EXIT_OK, RunContext, executeRun, task } from './run';
 import { processMaintenanceRequests } from './maintenance';
 import { changeRole, parseAdminSubjects, RoleError, syncAdmins } from './roles';
 import { localTime, nightlyGate, seasonFor } from './schedule';
+import { reconcileIdentities } from './reconcile';
+import { loadInventory, TeamResolver } from './normalize';
+import { teamsDir } from './workspace';
 
 class UsageError extends Error {}
 
@@ -298,6 +307,35 @@ async function backfillCapture(
     });
 }
 
+/**
+ * Re-applies the current team-identity rules to stored seasons, without the network.
+ *
+ * Each season is exported from the database, normalized again (names cleaned, aliases
+ * and Division I membership re-resolved) and loaded as a whole season, which re-keys
+ * games whose teams now resolve differently and merges the duplicate fixtures that left
+ * behind. Re-running it changes nothing. It is the nightly's own load path, just with no
+ * scrape in front of it.
+ */
+async function renormalize(
+    pool: Pool,
+    config: WorkerConfig,
+    opts: { seasons: number[]; analytics: boolean; dryRun?: boolean },
+    trigger: string
+): Promise<number> {
+    return executeRun(pool, config, { kind: 'renormalize', trigger, params: { ...opts } }, async ctx => {
+        const loaded: number[] = [];
+        for (const season of opts.seasons) {
+            const outcome = await ingestSeason(ctx, {
+                season, schedules: false, boxscores: false, incremental: false, recheckDays: 0, dryRun: opts.dryRun
+            });
+            if (outcome.loaded) loaded.push(season);
+        }
+        // A dry run changed nothing, so there is nothing to recompute.
+        if (opts.dryRun) return;
+        await finishWithReadModels(ctx, loaded.length > 0 && opts.analytics && config.analyticsEnabled, loaded);
+    });
+}
+
 // ---------------------------------------------------------------------------------------
 
 async function refreshGame(pool: Pool, config: WorkerConfig, gameId: number, analytics: boolean, trigger: string) {
@@ -353,6 +391,8 @@ async function retry(pool: Pool, config: WorkerConfig, runId?: number, triggerOv
             return refreshGame(pool, config, p.game, p.analytics, trigger);
         case 'backfill-capture':
             return backfillCapture(pool, config, p, trigger);
+        case 'renormalize':
+            return renormalize(pool, config, p, trigger);
         case 'analytics':
             return executeRun(pool, config, { kind: 'analytics', trigger, params: {} }, async ctx => {
                 await rebuildAnalytics(ctx);
@@ -534,7 +574,7 @@ async function main(): Promise<number> {
     // Schema changes and role passwords need the owner; everything else runs as the
     // least-privileged ncadb_worker role. MIGRATION_DATABASE_URL is set only where the
     // migrate step runs, so the nightly process never holds owner credentials.
-    const ownerCommand = ['migrate', 'provision-roles', 'set-role', 'sync-admins'].includes(args.command);
+    const ownerCommand = ['migrate', 'provision-roles', 'set-role', 'sync-admins', 'reconcile-identities'].includes(args.command);
     const pool = createPool({
         max: 4,
         applicationName: `ncadb-worker:${args.command}`,
@@ -579,6 +619,23 @@ async function main(): Promise<number> {
                 return await maintenance(pool, config);
             case 'backfill':
                 return await backfill(pool, config, backfillOptions(args), trigger);
+            case 'reconcile-identities': {
+                const apply = has(args, 'apply');
+                const report = await reconcileIdentities(pool, new TeamResolver(loadInventory(teamsDir(config.codeRoot))), apply);
+                log.info('reconcile-identities', {
+                    applied: report.applied,
+                    teams: report.teams.length,
+                    teams_with_successor: report.teams.filter(t => t.successor).length,
+                    players: report.players.length,
+                    players_with_successor: report.players.filter(p => p.successor).length,
+                    ...report.favorites
+                });
+                console.log(JSON.stringify(report, null, 2));
+                return EXIT_OK;
+            }
+            case 'renormalize':
+                return await renormalize(
+                    pool, config, { seasons: seasonsFrom(args), analytics: !has(args, 'no-analytics'), dryRun: has(args, 'dry-run') }, trigger);
             case 'backfill-capture': {
                 const season = Number(one(args, 'season'));
                 if (!Number.isInteger(season) || season < 1990) throw new UsageError('Give --season YYYY');
