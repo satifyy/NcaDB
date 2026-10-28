@@ -9,7 +9,7 @@
     "dependencies": {
         "@ncaa/shared": "*",
         "csv-parse": "^7.0.3",
-        "csv-stringify": "^6.6.0"
+        "csv-stringify": "^6.9.0"
     },
     "devDependencies": {
         "typescript": "^5.0.0"
